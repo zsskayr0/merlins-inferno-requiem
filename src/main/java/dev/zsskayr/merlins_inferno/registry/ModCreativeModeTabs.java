@@ -26,6 +26,15 @@ public final class ModCreativeModeTabs {
                     .icon(() -> ModItems.GRIMMORIUM.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.GRIMMORIUM.get());
+                        output.accept(ModItems.IRONWOOD_BAR.get());
+                        output.accept(ModItems.IRONWOOD_SWORD.get());
+                        output.accept(ModItems.IRONWOOD_AXE.get());
+                        output.accept(ModItems.IRONWOOD_SHOVEL.get());
+                        output.accept(ModItems.IRONWOOD_HOE.get());
+                        output.accept(ModItems.IRONWOOD_HELMET.get());
+                        output.accept(ModItems.IRONWOOD_CHESTPLATE.get());
+                        output.accept(ModItems.IRONWOOD_LEGGINGS.get());
+                        output.accept(ModItems.IRONWOOD_BOOTS.get());
                     })
                     .build());
 

@@ -11,6 +11,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
 
+import dev.zsskayr.merlins_inferno.registry.ModArmorMaterials;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModCreativeModeTabs;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
@@ -28,6 +29,8 @@ public class Merlins_inferno {
         modEventBus.addListener(this::commonSetup);
 
         // Each registry class owns its DeferredRegister(s) and hooks itself onto the mod event bus.
+        // ArmorMaterials go first since ModItems' armor pieces reference them.
+        ModArmorMaterials.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModEntityTypes.register(modEventBus);

@@ -1,4 +1,13 @@
 {
   "itemGroup.merlins_inferno": "Merlin's Inferno",
-  "item.merlins_inferno.grimmorium": "Grimmorium"
+  "item.merlins_inferno.grimmorium": "Grimmorium",
+  "item.merlins_inferno.ironwood_bar": "Ironwood Bar",
+  "item.merlins_inferno.ironwood_sword": "Ironwood Sword",
+  "item.merlins_inferno.ironwood_axe": "Ironwood Axe",
+  "item.merlins_inferno.ironwood_shovel": "Ironwood Shovel",
+  "item.merlins_inferno.ironwood_hoe": "Ironwood Hoe",
+  "item.merlins_inferno.ironwood_helmet": "Ironwood Helmet",
+  "item.merlins_inferno.ironwood_chestplate": "Ironwood Chestplate",
+  "item.merlins_inferno.ironwood_leggings": "Ironwood Leggings",
+  "item.merlins_inferno.ironwood_boots": "Ironwood Boots"
 }
