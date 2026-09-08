@@ -11,6 +11,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
 
+import dev.zsskayr.merlins_inferno.datagen.ModDataGenerators;
 import dev.zsskayr.merlins_inferno.event.DemoniteCombatHandler;
 import dev.zsskayr.merlins_inferno.registry.ModArmorMaterials;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
@@ -28,6 +29,7 @@ public class Merlins_inferno {
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public Merlins_inferno(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(ModDataGenerators::gatherData);
 
         // Each registry class owns its DeferredRegister(s) and hooks itself onto the mod event bus.
         // ArmorMaterials go first since ModItems' armor pieces reference them.

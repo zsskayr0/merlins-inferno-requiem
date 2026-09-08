@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "dev.zsskayr.merlins_inferno.mixin",
+  "mixins": [
+    "OverworldBiomeBuilderMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}
