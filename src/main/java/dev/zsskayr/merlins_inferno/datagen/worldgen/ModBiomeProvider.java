@@ -11,9 +11,11 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
+import dev.zsskayr.merlins_inferno.worldgen.ModPlacedFeatures;
 import dev.zsskayr.merlins_inferno.worldgen.biome.ModBiomes;
 
 /**
@@ -24,14 +26,10 @@ import dev.zsskayr.merlins_inferno.worldgen.biome.ModBiomes;
  * {@code sourceSets.main.resources.srcDir 'src/generated/resources'}).
  * <p>
  * Structured the same way vanilla's {@code OverworldBiomes.oldGrowthTaiga} is (ancient/mossy
- * forest floor, fox/rabbit + the standard hostile set, no tree feature yet) since that's the
- * closest vanilla analogue to "old mystical grove". The turquoise palette comes entirely from
- * {@code BiomeSpecialEffects}' color overrides, not from picking an unusual temperature/downfall.
- * <p>
- * <b>No trees yet:</b> Ashwood/Rowanwood aren't registered blocks yet, so there's no vegetal
- * feature placed here - just the spot marked below for when they exist. When they do, follow
- * Taiga/Spruce's {@code TreeConfiguration} shape (tall trunk, tapering conical foliage layers)
- * rather than a round oak-style canopy, per the design doc.
+ * forest floor, fox/rabbit + the standard hostile set) since that's the closest vanilla analogue
+ * to "old mystical grove". The turquoise palette comes entirely from {@code BiomeSpecialEffects}'
+ * color overrides, not from picking an unusual temperature/downfall. Trees: see
+ * {@code ModTreeProvider} for the actual shapes/placement.
  */
 public final class ModBiomeProvider {
     private ModBiomeProvider() {
@@ -62,9 +60,8 @@ public final class ModBiomeProvider {
         BiomeDefaultFeatures.addFerns(generation);
         BiomeDefaultFeatures.addDefaultOres(generation);
         BiomeDefaultFeatures.addDefaultSoftDisks(generation);
-        // TODO(Ashwood/Rowanwood trees): once those blocks + tree features exist, add the
-        // GenerationStep.Decoration.VEGETAL_DECORATION placed-feature call here (see how
-        // OverworldBiomes.forest()/oldGrowthTaiga() add their tree placements).
+        generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, placedFeatures.getOrThrow(ModPlacedFeatures.ASHWOOD_TREE_PLACED));
+        generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, placedFeatures.getOrThrow(ModPlacedFeatures.ROWANWOOD_TREE_PLACED));
         BiomeDefaultFeatures.addDefaultFlowers(generation);
         BiomeDefaultFeatures.addDefaultMushrooms(generation);
         BiomeDefaultFeatures.addDefaultExtraVegetation(generation);

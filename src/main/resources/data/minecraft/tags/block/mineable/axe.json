@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "merlins_inferno:ashwood_log",
+    "merlins_inferno:ashwood_wood",
+    "merlins_inferno:ashwood_planks",
+    "merlins_inferno:ashwood_stairs",
+    "merlins_inferno:ashwood_slab",
+    "merlins_inferno:ashwood_fence",
+    "merlins_inferno:rowanwood_log"
+  ]
+}

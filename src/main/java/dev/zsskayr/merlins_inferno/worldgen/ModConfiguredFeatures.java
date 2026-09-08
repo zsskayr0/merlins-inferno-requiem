@@ -1,0 +1,24 @@
+package dev.zsskayr.merlins_inferno.worldgen;
+
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+
+import dev.zsskayr.merlins_inferno.Merlins_inferno;
+
+/**
+ * {@link ResourceKey} constants for this mod's {@code ConfiguredFeature}s (tree shapes). Actual
+ * data built in {@code dev.zsskayr.merlins_inferno.datagen.worldgen.ModTreeProvider}.
+ */
+public final class ModConfiguredFeatures {
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ASHWOOD_TREE = key("ashwood_tree");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ROWANWOOD_TREE = key("rowanwood_tree");
+
+    private ModConfiguredFeatures() {
+    }
+
+    private static ResourceKey<ConfiguredFeature<?, ?>> key(String name) {
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, name));
+    }
+}

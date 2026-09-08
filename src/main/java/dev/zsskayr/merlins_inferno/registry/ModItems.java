@@ -6,6 +6,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.TooltipContext;
@@ -116,6 +117,21 @@ public final class ModItems {
     private static void appendHumanDamageTooltip(List<Component> tooltip) {
         tooltip.add(Component.translatable("item.merlins_inferno.demonite_tooltip.humans_bonus").withStyle(ChatFormatting.DARK_RED));
     }
+
+    // --- BlockItems for the Hallowed Grove's two trees (see ModBlocks). ---
+
+    public static final DeferredItem<BlockItem> ASHWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_LOG);
+    public static final DeferredItem<BlockItem> ASHWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_WOOD);
+    public static final DeferredItem<BlockItem> ASHWOOD_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_PLANKS);
+    public static final DeferredItem<BlockItem> ASHWOOD_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_LEAVES);
+    public static final DeferredItem<BlockItem> ASHWOOD_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_SAPLING);
+    public static final DeferredItem<BlockItem> ASHWOOD_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_STAIRS);
+    public static final DeferredItem<BlockItem> ASHWOOD_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_SLAB);
+    public static final DeferredItem<BlockItem> ASHWOOD_FENCE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_FENCE);
+
+    public static final DeferredItem<BlockItem> ROWANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LOG);
+    public static final DeferredItem<BlockItem> ROWANWOOD_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LEAVES);
+    public static final DeferredItem<BlockItem> ROWANWOOD_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_SAPLING);
 
     private ModItems() {
     }
