@@ -82,8 +82,13 @@ public final class ModBiomeProvider {
 
         return new Biome.BiomeBuilder()
                 .hasPrecipitation(true)
-                .temperature(0.0F) // center of the temperate niche the Mixin places this biome in
-                .downfall(0.8F) // humid, matches the same niche
+                // NOTE: this temperature is unrelated to the noise/climate niche the Mixin
+                // places the biome at (that only controls WHERE in the world it generates).
+                // This one controls rain vs. snow/ice - anything below 0.15 freezes, which is
+                // why an earlier 0.0F made it generate as a snowy biome. 0.6F keeps it solidly
+                // temperate/rainy (matches vanilla Birch Forest), for the European/Celtic look.
+                .temperature(0.6F)
+                .downfall(0.8F) // humid, matches the temperate/humid niche the Mixin places this at
                 .specialEffects(effects)
                 .mobSpawnSettings(mobSpawns.build())
                 .generationSettings(generation.build())
