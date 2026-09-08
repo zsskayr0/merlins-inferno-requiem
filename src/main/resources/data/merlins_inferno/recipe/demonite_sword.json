@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "X": {
+      "item": "merlins_inferno:demonite_bar"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "X",
+    "X",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:demonite_sword",
+    "components": {
+      "minecraft:enchantments": {
+        "levels": {
+          "merlins_inferno:bane_of_humanity": 1
+        }
+      }
+    }
+  }
+}

@@ -11,6 +11,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
 
+import dev.zsskayr.merlins_inferno.event.DemoniteCombatHandler;
 import dev.zsskayr.merlins_inferno.registry.ModArmorMaterials;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModCreativeModeTabs;
@@ -38,6 +39,7 @@ public class Merlins_inferno {
 
         // Register ourselves for server and other game events we are interested in.
         NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(new DemoniteCombatHandler());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
