@@ -4,13 +4,11 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.featuresize.TwoLayersFeatureSize;
-import net.minecraft.world.level.levelgen.feature.foliageplacers.BlobFoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.SpruceFoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.StraightTrunkPlacer;
@@ -28,10 +26,13 @@ import dev.zsskayr.merlins_inferno.worldgen.ModPlacedFeatures;
 /**
  * Tree shapes and their natural-generation placement for the Hallowed Grove.
  * <p>
- * Ashwood is a plain, medium blob-canopy tree (same shape family as vanilla Oak/Birch) at
- * forest-like density. Rowanwood follows the Taiga/Spruce shape (tall trunk, tapering conical
- * foliage) per the design doc, scaled up further to actually read as "physically bigger" - a
- * landmark, not just another tree.
+ * Both trees use the Taiga/Spruce shape family (tall trunk, tapering conical foliage) rather than
+ * a round oak-style blob - Ashwood at a smaller, "normal tree" scale, Rowanwood scaled up further
+ * so it reads as "physically bigger", a landmark and not just another tree. Conical canopies also
+ * overlap far less than round ones at the same spacing, which is why Ashwood switched to this
+ * shape too: the earlier blob canopy at forest-like density produced solid, touching treetops
+ * with no gaps (looked like one continuous mass, not a walkable grove) - the fix was both a
+ * smaller/narrower canopy shape and a lower placement density (see {@link #bootstrapPlacedFeatures}).
  * <p>
  * <b>Rowanwood placement is an approximation:</b> the design doc calls for "50% chance to exist
  * per generated instance of the biome", which is a per-biome-patch concept placement modifiers
@@ -49,9 +50,9 @@ public final class ModTreeProvider {
         context.register(ModConfiguredFeatures.ASHWOOD_TREE, new ConfiguredFeature<>(Feature.TREE,
                 new TreeConfiguration.TreeConfigurationBuilder(
                         BlockStateProvider.simple(ModBlocks.ASHWOOD_LOG.get()),
-                        new StraightTrunkPlacer(5, 2, 0),
+                        new StraightTrunkPlacer(5, 2, 1), // vanilla Spruce's own trunk - shorter than Rowanwood's
                         BlockStateProvider.simple(ModBlocks.ASHWOOD_LEAVES.get()),
-                        new BlobFoliagePlacer(ConstantInt.of(2), ConstantInt.of(0), 3),
+                        new SpruceFoliagePlacer(UniformInt.of(1, 2), UniformInt.of(0, 2), UniformInt.of(1, 2)), // narrower cone than Rowanwood's
                         new TwoLayersFeatureSize(1, 0, 1))
                         .ignoreVines()
                         .build()));
@@ -70,9 +71,12 @@ public final class ModTreeProvider {
     public static void bootstrapPlacedFeatures(BootstrapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 
+        // 6 was Flower Forest's own density (one of vanilla's densest) - way too tight for a
+        // walkable "vibe wood" grove, and it's what caused the wall-to-wall touching canopies.
+        // 2 is closer to a normal, walkable forest.
         context.register(ModPlacedFeatures.ASHWOOD_TREE_PLACED,
                 new PlacedFeature(configuredFeatures.getOrThrow(ModConfiguredFeatures.ASHWOOD_TREE),
-                        treePlacement(PlacementUtils.countExtra(6, 0.1F, 1))));
+                        treePlacement(PlacementUtils.countExtra(2, 0.1F, 1))));
 
         context.register(ModPlacedFeatures.ROWANWOOD_TREE_PLACED,
                 new PlacedFeature(configuredFeatures.getOrThrow(ModConfiguredFeatures.ROWANWOOD_TREE),

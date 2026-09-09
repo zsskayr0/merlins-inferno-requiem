@@ -6,6 +6,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FireBlock;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -48,6 +50,22 @@ public class Merlins_inferno {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         LOGGER.info("Merlin's Inferno common setup");
+        event.enqueueWork(Merlins_inferno::registerFlammability);
+    }
+
+    /**
+     * Ashwood behaves like any other wood: it catches fire and lets it spread, same rates as Oak.
+     * Rowanwood is intentionally left out (its Obsidian-tier hardness reads as fire-resistant too).
+     */
+    private static void registerFlammability() {
+        FireBlock fire = (FireBlock) Blocks.FIRE;
+        fire.setFlammable(ModBlocks.ASHWOOD_LOG.get(), 5, 5);
+        fire.setFlammable(ModBlocks.ASHWOOD_WOOD.get(), 5, 5);
+        fire.setFlammable(ModBlocks.ASHWOOD_PLANKS.get(), 5, 20);
+        fire.setFlammable(ModBlocks.ASHWOOD_STAIRS.get(), 5, 20);
+        fire.setFlammable(ModBlocks.ASHWOOD_SLAB.get(), 5, 20);
+        fire.setFlammable(ModBlocks.ASHWOOD_FENCE.get(), 5, 20);
+        fire.setFlammable(ModBlocks.ASHWOOD_LEAVES.get(), 30, 60);
     }
 
     @SubscribeEvent
