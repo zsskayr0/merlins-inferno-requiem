@@ -34,7 +34,8 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.ASHWOOD_LOG.get(), ModBlocks.ASHWOOD_WOOD.get(), ModBlocks.ASHWOOD_PLANKS.get(),
                 ModBlocks.ASHWOOD_LEAVES.get(), ModBlocks.ASHWOOD_SAPLING.get(), ModBlocks.ASHWOOD_STAIRS.get(),
                 ModBlocks.ASHWOOD_SLAB.get(), ModBlocks.ASHWOOD_FENCE.get(),
-                ModBlocks.ROWANWOOD_LOG.get(), ModBlocks.ROWANWOOD_LEAVES.get());
+                ModBlocks.ROWANWOOD_LOG.get(), ModBlocks.ROWANWOOD_LEAVES.get(),
+                ModBlocks.COMPRESSED_NETHERRACK.get(), ModBlocks.HELL_FORGE.get());
     }
 
     @Override
@@ -55,5 +56,8 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         // players farm the landmark tree would be wildly overpowered. Leaves just drop nothing
         // without Silk Touch/Shears (no sapling item to drop instead).
         add(ModBlocks.ROWANWOOD_LEAVES.get(), createSilkTouchOnlyTable(ModBlocks.ROWANWOOD_LEAVES.get()));
+
+        dropSelf(ModBlocks.COMPRESSED_NETHERRACK.get());
+        dropSelf(ModBlocks.HELL_FORGE.get());
     }
 }

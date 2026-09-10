@@ -17,6 +17,8 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.block.HellForgeBlock;
+import dev.zsskayr.merlins_inferno.block.HellForgePartBlock;
 import dev.zsskayr.merlins_inferno.worldgen.ModTreeGrowers;
 
 /**
@@ -117,6 +119,36 @@ public final class ModBlocks {
                     .isRedstoneConductor((state, level, pos) -> false));
     // No Rowanwood sapling on purpose - see ModBlockLootProvider's comment: it'd let players farm
     // a 48x25x39 landmark structure paste from a sapling, wildly overpowered.
+
+    // --- Compressed Netherrack: a Hell Forge ingredient. Just a plain solid block for now, no
+    // special behavior. ---
+    public static final DeferredBlock<Block> COMPRESSED_NETHERRACK = BLOCKS.registerSimpleBlock("compressed_netherrack",
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.NETHER)
+                    .strength(1.0F, 6.0F) // matches vanilla netherrack's blast resistance, a bit tougher to mine
+                    .sound(SoundType.NETHERRACK));
+
+    // --- Hell Forge: see HellForgeBlock's javadoc - block/blockentity exist for now purely to
+    // carry HellForgeModel's oversized (~2.5x2.5x2 block) geometry via a BlockEntityRenderer.
+    // No furnace/crafting-station behavior yet - that's a separate pass once this one (getting
+    // the block itself craftable and rendering) is confirmed working. ---
+    public static final DeferredBlock<HellForgeBlock> HELL_FORGE = BLOCKS.registerBlock("hell_forge",
+            HellForgeBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(50.0F, 1200.0F) // Obsidian-tier blast resistance - meant to feel like a serious, rare structure
+                    .sound(SoundType.NETHERRACK)
+                    .lightLevel(state -> 7) // faint ambient glow, matches the "forge" theme
+                    .noOcclusion()); // its real silhouette (via the BER) doesn't fill the block's own cube, so neighbors shouldn't be culled against it
+
+    // --- Hell Forge part: invisible collision filler placed automatically around HELL_FORGE, see
+    // HellForgePartBlock's javadoc. No item - never placed/obtained by hand. ---
+    public static final DeferredBlock<HellForgePartBlock> HELL_FORGE_PART = BLOCKS.registerBlock("hell_forge_part",
+            HellForgePartBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(50.0F, 1200.0F) // matches HELL_FORGE so every face takes the same effort to break
+                    .sound(SoundType.NETHERRACK)
+                    .noOcclusion()
+                    .noLootTable()); // breaking a part drops via HellForgePartBlock's own logic, not loot tables
 
     private ModBlocks() {
     }

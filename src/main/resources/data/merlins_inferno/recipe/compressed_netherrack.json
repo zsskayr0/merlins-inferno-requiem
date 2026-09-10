@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "N": { "item": "minecraft:netherrack" },
+    "B": { "item": "minecraft:bone_block" }
+  },
+  "pattern": [
+    "NNN",
+    "NBN",
+    "NNN"
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:compressed_netherrack"
+  }
+}
