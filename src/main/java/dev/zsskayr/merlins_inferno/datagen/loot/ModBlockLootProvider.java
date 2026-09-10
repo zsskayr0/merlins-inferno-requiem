@@ -34,7 +34,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.ASHWOOD_LOG.get(), ModBlocks.ASHWOOD_WOOD.get(), ModBlocks.ASHWOOD_PLANKS.get(),
                 ModBlocks.ASHWOOD_LEAVES.get(), ModBlocks.ASHWOOD_SAPLING.get(), ModBlocks.ASHWOOD_STAIRS.get(),
                 ModBlocks.ASHWOOD_SLAB.get(), ModBlocks.ASHWOOD_FENCE.get(),
-                ModBlocks.ROWANWOOD_LOG.get(), ModBlocks.ROWANWOOD_LEAVES.get(), ModBlocks.ROWANWOOD_SAPLING.get());
+                ModBlocks.ROWANWOOD_LOG.get(), ModBlocks.ROWANWOOD_LEAVES.get());
     }
 
     @Override
@@ -50,8 +50,10 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 createLeavesDrops(ModBlocks.ASHWOOD_LEAVES.get(), ModBlocks.ASHWOOD_SAPLING.get(), LEAVES_SAPLING_CHANCES));
 
         dropSelf(ModBlocks.ROWANWOOD_LOG.get()); // see class javadoc - Toque do Druida gating comes later
-        dropSelf(ModBlocks.ROWANWOOD_SAPLING.get());
-        add(ModBlocks.ROWANWOOD_LEAVES.get(),
-                createLeavesDrops(ModBlocks.ROWANWOOD_LEAVES.get(), ModBlocks.ROWANWOOD_SAPLING.get(), LEAVES_SAPLING_CHANCES));
+        // No sapling on purpose: Rowanwood's shape is a 48x25x39 hand-placed structure paste (see
+        // ModTreeProvider), not something a bonemealed sapling could reasonably grow - letting
+        // players farm the landmark tree would be wildly overpowered. Leaves just drop nothing
+        // without Silk Touch/Shears (no sapling item to drop instead).
+        add(ModBlocks.ROWANWOOD_LEAVES.get(), createSilkTouchOnlyTable(ModBlocks.ROWANWOOD_LEAVES.get()));
     }
 }

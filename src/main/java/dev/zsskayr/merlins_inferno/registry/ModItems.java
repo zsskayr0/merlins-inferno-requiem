@@ -16,6 +16,7 @@ import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -40,8 +41,15 @@ public final class ModItems {
     // --- Rowanwood material set: see ModTiers.ROWANWOOD / ModArmorMaterials.ROWANWOOD for the
     // balance rationale (mines like Diamond, hits/blocks like Iron, outlasts both). ---
 
-    // Plain crafting material - no in-world use yet beyond crafting the tools/armor below.
     public static final DeferredItem<Item> ROWANWOOD_BAR = ITEMS.registerSimpleItem("rowanwood_bar", new Item.Properties());
+
+    // How Rowanwood Bar is actually obtained: either essence, surrounded by log/leaves/iron in the
+    // same shape (see data/merlins_inferno/recipe/rowanwood_scrap_from_*.json), crafts into a
+    // Rowanwood Scrap - which then smelts (or blasts) into the bar itself. Plain items, no
+    // in-world behavior of their own.
+    public static final DeferredItem<Item> OTHERWORLD_ESSENCE = ITEMS.registerSimpleItem("otherworld_essence", new Item.Properties());
+    public static final DeferredItem<Item> OVERWORLD_ESSENCE = ITEMS.registerSimpleItem("overworld_essence", new Item.Properties());
+    public static final DeferredItem<Item> ROWANWOOD_SCRAP = ITEMS.registerSimpleItem("rowanwood_scrap", new Item.Properties());
 
     public static final DeferredItem<SwordItem> ROWANWOOD_SWORD = ITEMS.registerItem("rowanwood_sword",
             props -> new SwordItem(ModTiers.ROWANWOOD, props.attributes(SwordItem.createAttributes(ModTiers.ROWANWOOD, 3, -2.4F))));
@@ -131,7 +139,12 @@ public final class ModItems {
 
     public static final DeferredItem<BlockItem> ROWANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LOG);
     public static final DeferredItem<BlockItem> ROWANWOOD_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LEAVES);
-    public static final DeferredItem<BlockItem> ROWANWOOD_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_SAPLING);
+
+    // Testing/admin convenience - the Druid otherwise only ever appears via natural spawning in
+    // the Hallowed Grove (see ModBiomeProvider). Background/highlight colors: mossy forest green
+    // with a warm bark-gold spot pattern, matching the "nature guardian" theme.
+    public static final DeferredItem<DeferredSpawnEggItem> DRUID_SPAWN_EGG = ITEMS.registerItem("druid_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.DRUID, 0x4A6B3D, 0xC9A66B, props));
 
     private ModItems() {
     }

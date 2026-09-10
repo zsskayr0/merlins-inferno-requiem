@@ -17,6 +17,7 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.datagen.client.ModBlockStateProvider;
 import dev.zsskayr.merlins_inferno.datagen.loot.ModBlockLootProvider;
 import dev.zsskayr.merlins_inferno.datagen.worldgen.ModBiomeProvider;
+import dev.zsskayr.merlins_inferno.datagen.worldgen.ModStructureProvider;
 import dev.zsskayr.merlins_inferno.datagen.worldgen.ModTreeProvider;
 
 /**
@@ -34,13 +35,16 @@ public final class ModDataGenerators {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
         // Order mirrors vanilla's own (VanillaRegistries.BUILDER): configured features before
-        // placed features before biomes, since biomes reference placed features which reference
-        // configured features. Cross-registry lookups are lazy either way, but this keeps it
-        // consistent with the vanilla convention.
+        // placed features before biomes before structures before structure sets - each stage
+        // below references the previous one (structures reference the Hallowed Grove biome;
+        // structure sets reference the structure). Cross-registry lookups are lazy either way,
+        // but this keeps it consistent with the vanilla convention.
         RegistrySetBuilder dynamicRegistries = new RegistrySetBuilder()
                 .add(Registries.CONFIGURED_FEATURE, ModTreeProvider::bootstrapConfiguredFeatures)
                 .add(Registries.PLACED_FEATURE, ModTreeProvider::bootstrapPlacedFeatures)
-                .add(Registries.BIOME, ModBiomeProvider::bootstrap);
+                .add(Registries.BIOME, ModBiomeProvider::bootstrap)
+                .add(Registries.STRUCTURE, ModStructureProvider::bootstrapStructures)
+                .add(Registries.STRUCTURE_SET, ModStructureProvider::bootstrapStructureSets);
 
         event.getGenerator().addProvider(event.includeServer(),
                 new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, dynamicRegistries, Set.of(Merlins_inferno.MODID)));

@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cross",
-  "textures": {
-    "cross": "merlins_inferno:block/rowanwood_sapling"
-  }
-}

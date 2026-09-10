@@ -1,71 +1,48 @@
 package dev.zsskayr.merlins_inferno.datagen.worldgen;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
-import net.minecraft.world.level.levelgen.feature.featuresize.TwoLayersFeatureSize;
-import net.minecraft.world.level.levelgen.feature.foliageplacers.SpruceFoliagePlacer;
-import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
-import net.minecraft.world.level.levelgen.feature.trunkplacers.StraightTrunkPlacer;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
-import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import net.minecraft.world.level.levelgen.placement.SurfaceWaterDepthFilter;
 
+import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
+import dev.zsskayr.merlins_inferno.registry.ModFeatures;
 import dev.zsskayr.merlins_inferno.worldgen.ModConfiguredFeatures;
 import dev.zsskayr.merlins_inferno.worldgen.ModPlacedFeatures;
+import dev.zsskayr.merlins_inferno.worldgen.feature.StructurePasteConfiguration;
 
 /**
- * Tree shapes and their natural-generation placement for the Hallowed Grove.
+ * Ashwood's natural-generation shape and placement for the Hallowed Grove - a structure-paste
+ * feature (see {@code StructurePasteFeature}) rather than a procedural trunk/foliage placer,
+ * ported from a friend's structure-based tree pack (spruce shapes, retextured to Ashwood via
+ * block swap).
  * <p>
- * Both trees use the Taiga/Spruce shape family (tall trunk, tapering conical foliage) rather than
- * a round oak-style blob - Ashwood at a smaller, "normal tree" scale, Rowanwood scaled up further
- * so it reads as "physically bigger", a landmark and not just another tree. Conical canopies also
- * overlap far less than round ones at the same spacing, which is why Ashwood switched to this
- * shape too: the earlier blob canopy at forest-like density produced solid, touching treetops
- * with no gaps (looked like one continuous mass, not a walkable grove) - the fix was both a
- * smaller/narrower canopy shape and a lower placement density (see {@link #bootstrapPlacedFeatures}).
- * <p>
- * <b>Rowanwood placement is an approximation:</b> the design doc calls for "50% chance to exist
- * per generated instance of the biome", which is a per-biome-patch concept placement modifiers
- * don't have a native equivalent for (they resolve per-chunk, independently, with no memory of
- * neighboring chunks). {@link RarityFilter#onAverageOnceEvery} below is a per-chunk stand-in
- * tuned to feel sparse/landmark-like; getting the exact "half of patches have one" behavior would
- * need a custom {@code Feature} that reasons about the whole biome region. Revisit after
- * playtesting shows whether this reads as too common/rare.
+ * Rowanwood (the biome's other tree) is NOT here - it's a real {@code Structure} instead of a
+ * decoration Feature, so it's findable with {@code /locate}. See {@code RowanwoodTreeStructure}
+ * and {@code ModStructureProvider}.
  */
 public final class ModTreeProvider {
     private ModTreeProvider() {
     }
 
     public static void bootstrapConfiguredFeatures(BootstrapContext<ConfiguredFeature<?, ?>> context) {
-        context.register(ModConfiguredFeatures.ASHWOOD_TREE, new ConfiguredFeature<>(Feature.TREE,
-                new TreeConfiguration.TreeConfigurationBuilder(
-                        BlockStateProvider.simple(ModBlocks.ASHWOOD_LOG.get()),
-                        new StraightTrunkPlacer(5, 2, 1), // vanilla Spruce's own trunk - shorter than Rowanwood's
-                        BlockStateProvider.simple(ModBlocks.ASHWOOD_LEAVES.get()),
-                        new SpruceFoliagePlacer(UniformInt.of(1, 2), UniformInt.of(0, 2), UniformInt.of(1, 2)), // narrower cone than Rowanwood's
-                        new TwoLayersFeatureSize(1, 0, 1))
-                        .ignoreVines()
-                        .build()));
-
-        context.register(ModConfiguredFeatures.ROWANWOOD_TREE, new ConfiguredFeature<>(Feature.TREE,
-                new TreeConfiguration.TreeConfigurationBuilder(
-                        BlockStateProvider.simple(ModBlocks.ROWANWOOD_LOG.get()),
-                        new StraightTrunkPlacer(8, 3, 2), // taller than vanilla Spruce's (5,2,1) - a landmark, not just a tree
-                        BlockStateProvider.simple(ModBlocks.ROWANWOOD_LEAVES.get()),
-                        new SpruceFoliagePlacer(UniformInt.of(2, 4), UniformInt.of(0, 2), UniformInt.of(1, 2)),
-                        new TwoLayersFeatureSize(2, 0, 2))
-                        .ignoreVines()
-                        .build()));
+        context.register(ModConfiguredFeatures.ASHWOOD_TREE,
+                new ConfiguredFeature<>(ModFeatures.STRUCTURE_PASTE.get(),
+                        new StructurePasteConfiguration(ashwoodStructurePool(), ashwoodBlockSwaps())));
     }
 
     public static void bootstrapPlacedFeatures(BootstrapContext<PlacedFeature> context) {
@@ -77,19 +54,48 @@ public final class ModTreeProvider {
         context.register(ModPlacedFeatures.ASHWOOD_TREE_PLACED,
                 new PlacedFeature(configuredFeatures.getOrThrow(ModConfiguredFeatures.ASHWOOD_TREE),
                         treePlacement(PlacementUtils.countExtra(2, 0.1F, 1))));
-
-        context.register(ModPlacedFeatures.ROWANWOOD_TREE_PLACED,
-                new PlacedFeature(configuredFeatures.getOrThrow(ModConfiguredFeatures.ROWANWOOD_TREE),
-                        treePlacement(RarityFilter.onAverageOnceEvery(32))));
     }
 
     /** Mirrors vanilla's standard "scatter a tree across the chunk" placement chain. */
-    private static java.util.List<PlacementModifier> treePlacement(PlacementModifier countOrRarity) {
-        return java.util.List.of(
+    private static List<PlacementModifier> treePlacement(PlacementModifier countOrRarity) {
+        return List.of(
                 countOrRarity,
                 InSquarePlacement.spread(),
                 SurfaceWaterDepthFilter.forMaxDepth(0),
                 PlacementUtils.HEIGHTMAP_OCEAN_FLOOR,
                 BiomeFilter.biome());
+    }
+
+    /**
+     * The 36 Ashwood tree shapes (3 letters x 3 sizes x 4 baked rotations) under
+     * {@code data/merlins_inferno/structure/ashwood_tree/}, ported from a friend's
+     * structure-based tree pack. The NBT files themselves are untouched vanilla
+     * spruce_log/spruce_wood/spruce_leaves - see {@link #ashwoodBlockSwaps()} for how they end up
+     * as Ashwood in-world.
+     */
+    private static List<ResourceLocation> ashwoodStructurePool() {
+        List<ResourceLocation> structures = new ArrayList<>(36);
+        for (String letter : new String[] {"c", "d", "e"}) {
+            for (int size = 1; size <= 3; size++) {
+                for (String rotationSuffix : new String[] {"", "_r1", "_r2", "_r3"}) {
+                    structures.add(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID,
+                            "ashwood_tree/" + letter + size + rotationSuffix));
+                }
+            }
+        }
+        return structures;
+    }
+
+    /**
+     * Retextures the ported spruce structures to Ashwood at paste time (see
+     * {@code BlockPaletteSwapProcessor}) instead of needing 36 hand-edited NBT files. Works
+     * cleanly because Ashwood's log/wood/leaves share the exact same block-state properties
+     * (axis; distance/persistent) as their vanilla counterparts.
+     */
+    private static Map<Block, Block> ashwoodBlockSwaps() {
+        return Map.of(
+                Blocks.SPRUCE_LOG, ModBlocks.ASHWOOD_LOG.get(),
+                Blocks.SPRUCE_WOOD, ModBlocks.ASHWOOD_WOOD.get(),
+                Blocks.SPRUCE_LEAVES, ModBlocks.ASHWOOD_LEAVES.get());
     }
 }

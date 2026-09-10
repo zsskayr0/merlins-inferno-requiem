@@ -47,12 +47,16 @@ public abstract class OverworldBiomeBuilderMixin {
         }
 
         // Temperate + humid niche - the same band vanilla uses for Forest/Birch Forest/Dark
-        // Forest - spread across near/mid/far inland terrain at moderate erosion (walkable hills,
-        // not mountains/valleys). First-pass tuning: narrow/widen these spans after playtesting
-        // if Hallowed Grove ends up too rare or too common.
+        // Forest - spread across near/mid/far inland terrain. First-pass tuning: narrow/widen
+        // these spans after playtesting if Hallowed Grove ends up too rare or too common.
+        //
+        // Erosion started at -0.2225, vanilla's own boundary between its "hills" and "mountains"
+        // bands - playtesting showed that low end reads as flat-out steep/cliffy, not a walkable
+        // grove. Shifted up to 0.05, vanilla's boundary into its flattest bands, to keep only the
+        // gentle-hills-to-flat range.
         Climate.Parameter temperature = Climate.Parameter.span(-0.15F, 0.2F);
         Climate.Parameter humidity = Climate.Parameter.span(0.3F, 1.0F);
-        Climate.Parameter erosion = Climate.Parameter.span(-0.2225F, 0.45F);
+        Climate.Parameter erosion = Climate.Parameter.span(0.05F, 0.45F);
         Climate.Parameter depth = Climate.Parameter.point(0.0F);
         Climate.Parameter weirdness = Climate.Parameter.span(-1.0F, 1.0F);
 

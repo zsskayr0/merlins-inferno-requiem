@@ -1,7 +1,12 @@
 {
   "itemGroup.merlins_inferno": "Merlin's Inferno",
+  "entity.merlins_inferno.druid": "Druid",
+  "item.merlins_inferno.druid_spawn_egg": "Druid Spawn Egg",
   "item.merlins_inferno.grimmorium": "Grimmorium",
   "item.merlins_inferno.rowanwood_bar": "Rowanwood Bar",
+  "item.merlins_inferno.otherworld_essence": "Otherworld Essence",
+  "item.merlins_inferno.overworld_essence": "Overworld Essence",
+  "item.merlins_inferno.rowanwood_scrap": "Rowanwood Scrap",
   "item.merlins_inferno.rowanwood_sword": "Rowanwood Sword",
   "item.merlins_inferno.rowanwood_axe": "Rowanwood Axe",
   "item.merlins_inferno.rowanwood_pickaxe": "Rowanwood Pickaxe",
@@ -30,6 +35,5 @@
   "block.merlins_inferno.ashwood_slab": "Ashwood Slab",
   "block.merlins_inferno.ashwood_fence": "Ashwood Fence",
   "block.merlins_inferno.rowanwood_log": "Rowanwood Log",
-  "block.merlins_inferno.rowanwood_leaves": "Rowanwood Leaves",
-  "block.merlins_inferno.rowanwood_sapling": "Rowanwood Sapling"
+  "block.merlins_inferno.rowanwood_leaves": "Rowanwood Leaves"
 }
