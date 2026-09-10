@@ -115,13 +115,8 @@ public final class ModBlocks {
                     .ignitedByLava()
                     .pushReaction(PushReaction.DESTROY)
                     .isRedstoneConductor((state, level, pos) -> false));
-    public static final DeferredBlock<SaplingBlock> ROWANWOOD_SAPLING = BLOCKS.registerBlock("rowanwood_sapling",
-            props -> new SaplingBlock(ModTreeGrowers.ROWANWOOD, props), BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.PLANT)
-                    .noCollission()
-                    .randomTicks()
-                    .instabreak()
-                    .sound(SoundType.GRASS));
+    // No Rowanwood sapling on purpose - see ModBlockLootProvider's comment: it'd let players farm
+    // a 48x25x39 landmark structure paste from a sapling, wildly overpowered.
 
     private ModBlocks() {
     }

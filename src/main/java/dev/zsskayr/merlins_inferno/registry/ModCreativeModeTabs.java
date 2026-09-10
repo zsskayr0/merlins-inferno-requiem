@@ -26,7 +26,20 @@ public final class ModCreativeModeTabs {
                     .icon(() -> ModItems.GRIMMORIUM.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.GRIMMORIUM.get());
+                        output.accept(ModItems.ASHWOOD_SAPLING_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_LOG_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_WOOD_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_PLANKS_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_STAIRS_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_SLAB_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_FENCE_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_LEAVES_ITEM.get());
+                        output.accept(ModItems.ROWANWOOD_LOG_ITEM.get());
+                        output.accept(ModItems.ROWANWOOD_LEAVES_ITEM.get());
                         output.accept(ModItems.ROWANWOOD_BAR.get());
+                        output.accept(ModItems.ROWANWOOD_SCRAP.get());
+                        output.accept(ModItems.OTHERWORLD_ESSENCE.get());
+                        output.accept(ModItems.OVERWORLD_ESSENCE.get());
                         output.accept(ModItems.ROWANWOOD_SWORD.get());
                         output.accept(ModItems.ROWANWOOD_AXE.get());
                         output.accept(ModItems.ROWANWOOD_PICKAXE.get());
@@ -42,6 +55,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DEMONITE_PICKAXE.get());
                         output.accept(ModItems.DEMONITE_SHOVEL.get());
                         output.accept(ModItems.DEMONITE_HOE.get());
+                        output.accept(ModItems.DRUID_SPAWN_EGG.get());
                     })
                     .build());
 

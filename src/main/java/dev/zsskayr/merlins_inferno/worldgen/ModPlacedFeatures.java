@@ -14,7 +14,6 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
  */
 public final class ModPlacedFeatures {
     public static final ResourceKey<PlacedFeature> ASHWOOD_TREE_PLACED = key("ashwood_tree_placed");
-    public static final ResourceKey<PlacedFeature> ROWANWOOD_TREE_PLACED = key("rowanwood_tree_placed");
 
     private ModPlacedFeatures() {
     }

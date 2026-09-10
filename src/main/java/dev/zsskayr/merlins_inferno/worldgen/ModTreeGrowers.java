@@ -13,7 +13,10 @@ import net.minecraft.world.level.block.grower.TreeGrower;
  */
 public final class ModTreeGrowers {
     public static final TreeGrower ASHWOOD = new TreeGrower("ashwood", Optional.empty(), Optional.of(ModConfiguredFeatures.ASHWOOD_TREE), Optional.empty());
-    public static final TreeGrower ROWANWOOD = new TreeGrower("rowanwood", Optional.empty(), Optional.of(ModConfiguredFeatures.ROWANWOOD_TREE), Optional.empty());
+
+    // No Rowanwood grower on purpose - no sapling exists for it (see ModBlocks). Its
+    // ConfiguredFeature is still registered and placed naturally (see ModTreeProvider), just never
+    // reachable from a player-planted sapling.
 
     private ModTreeGrowers() {
     }

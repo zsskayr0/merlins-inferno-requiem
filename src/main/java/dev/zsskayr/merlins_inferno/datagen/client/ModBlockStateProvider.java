@@ -33,9 +33,13 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         slabBlock(ModBlocks.ASHWOOD_SLAB.get(), blockTexture(ModBlocks.ASHWOOD_PLANKS.get()), blockTexture(ModBlocks.ASHWOOD_PLANKS.get()));
         itemModels().simpleBlockItem(ModBlocks.ASHWOOD_SLAB.get());
         fenceBlock(ModBlocks.ASHWOOD_FENCE.get(), blockTexture(ModBlocks.ASHWOOD_PLANKS.get()));
-        // fenceBlock() only generates "<name>_post"/"<name>_side" models, no plain "<name>" one -
-        // the post model is what vanilla fence items use as their icon too.
-        itemModels().withExistingParent("ashwood_fence", modLoc("block/ashwood_fence_post"));
+        // fenceBlock() only generates "<name>_post"/"<name>_side" models - vanilla fences don't
+        // use either of those as their item icon (that was the bug: a lone post looks wrong both
+        // in the inventory and in hand). They use a dedicated "<name>_inventory" model built on
+        // vanilla's own "block/fence_inventory" template (post + crossbars, like a fence actually
+        // looks), which datagen has no built-in helper for - hence generating it by hand here.
+        models().singleTexture("ashwood_fence_inventory", mcLoc("block/fence_inventory"), blockTexture(ModBlocks.ASHWOOD_PLANKS.get()));
+        itemModels().withExistingParent("ashwood_fence", modLoc("block/ashwood_fence_inventory"));
 
         // Rowanwood
         logBlock(ModBlocks.ROWANWOOD_LOG.get());

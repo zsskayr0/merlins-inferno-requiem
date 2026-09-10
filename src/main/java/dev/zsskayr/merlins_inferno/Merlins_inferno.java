@@ -19,7 +19,11 @@ import dev.zsskayr.merlins_inferno.registry.ModArmorMaterials;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModCreativeModeTabs;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
+import dev.zsskayr.merlins_inferno.registry.ModFeatures;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
+import dev.zsskayr.merlins_inferno.registry.ModStructurePieceTypes;
+import dev.zsskayr.merlins_inferno.registry.ModStructureProcessorTypes;
+import dev.zsskayr.merlins_inferno.registry.ModStructureTypes;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Merlins_inferno.MODID)
@@ -38,6 +42,10 @@ public class Merlins_inferno {
         ModArmorMaterials.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModStructureProcessorTypes.register(modEventBus);
+        ModFeatures.register(modEventBus);
+        ModStructureTypes.register(modEventBus);
+        ModStructurePieceTypes.register(modEventBus);
         ModEntityTypes.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
 

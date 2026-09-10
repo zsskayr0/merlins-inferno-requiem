@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": { "item": "merlins_inferno:rowanwood_log" },
+    "W": { "item": "merlins_inferno:rowanwood_leaves" },
+    "I": { "item": "minecraft:raw_iron" },
+    "E": { "item": "merlins_inferno:overworld_essence" }
+  },
+  "pattern": [
+    "LWL",
+    "IEI",
+    "LWL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:rowanwood_scrap"
+  }
+}
