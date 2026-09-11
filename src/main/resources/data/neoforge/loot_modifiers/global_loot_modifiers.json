@@ -1,6 +1,8 @@
 {
   "replace": false,
   "entries": [
-    "merlins_inferno:infernal_essence_from_nether_mobs"
+    "merlins_inferno:infernal_essence_from_nether_mobs",
+    "merlins_inferno:lyrium_refinado_from_pillager_loot",
+    "merlins_inferno:fae_essence_from_fairies"
   ]
 }

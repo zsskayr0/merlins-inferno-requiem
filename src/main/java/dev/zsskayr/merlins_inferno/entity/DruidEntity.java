@@ -2,6 +2,7 @@ package dev.zsskayr.merlins_inferno.entity;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -159,5 +160,24 @@ public class DruidEntity extends PathfinderMob {
     /** Which of the 3 skins (0-2) this individual uses - no textures assigned to them yet, see class javadoc. */
     public int getVariant() {
         return this.entityData.get(DATA_VARIANT);
+    }
+
+    private static final String TAG_VARIANT = "Variant";
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putInt(TAG_VARIANT, this.getVariant());
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        // finalizeSpawn (where DATA_VARIANT is normally rolled) only ever runs on initial spawn,
+        // never on load-from-disk - without this, every Druid would silently reset to variant 0
+        // the moment its chunk unloads and reloads.
+        if (compound.contains(TAG_VARIANT)) {
+            this.entityData.set(DATA_VARIANT, compound.getInt(TAG_VARIANT));
+        }
     }
 }

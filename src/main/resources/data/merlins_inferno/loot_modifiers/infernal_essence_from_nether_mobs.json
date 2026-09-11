@@ -2,13 +2,18 @@
   "type": "neoforge:add_table",
   "conditions": [
     {
-      "condition": "minecraft:entity_properties",
-      "entity": "this",
-      "predicate": {
-        "location": {
-          "dimension": "minecraft:the_nether"
-        }
-      }
+      "condition": "minecraft:any_of",
+      "terms": [
+        { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:entities/blaze" },
+        { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:entities/ghast" },
+        { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:entities/magma_cube" },
+        { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:entities/wither_skeleton" },
+        { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:entities/piglin" },
+        { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:entities/piglin_brute" },
+        { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:entities/hoglin" },
+        { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:entities/zoglin" },
+        { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:entities/zombified_piglin" }
+      ]
     }
   ],
   "table": "merlins_inferno:inject/infernal_essence"

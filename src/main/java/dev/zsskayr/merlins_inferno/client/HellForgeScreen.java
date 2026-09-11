@@ -48,17 +48,34 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
 
     private static final int SMILE_WIDTH = 32;
     private static final int SMILE_HEIGHT = 16;
-    private static final int SMILE_X = 68;
-    private static final int SMILE_Y = 25;
+    // Sits in the gap between the input and output slots (x 72-116 is clear) - it used to overlap
+    // the input slot directly (that overlap, the item icon rendering with red/white fragments of
+    // the grin bleeding through next to it, was the "GUI bugado" from the screenshot).
+    private static final int SMILE_X = 79;
+    private static final int SMILE_Y = 26;
 
     private static final int FUEL_SLOT_X = 30;
     private static final int FUEL_SLOT_Y = 28;
+
+    // The furnace texture's own fuel slot (55-74, 52-69) and its smoke-puff decoration above it
+    // (56-75, 34-51) are still baked into TEXTURE at their original spot - since the real fuel
+    // slot moved next to the tank bar, that leftover art needs covering or it just sits there
+    // looking like an inert second slot (the other half of "GUI bugado").
+    private static final int OLD_FUEL_ART_LEFT = 55;
+    private static final int OLD_FUEL_ART_TOP = 34;
+    private static final int OLD_FUEL_ART_RIGHT = 75;
+    private static final int OLD_FUEL_ART_BOTTOM = 70;
 
     private static final int COLOR_PANEL = 0xFFC6C6C6;
     private static final int COLOR_PANEL_BORDER = 0xFF555555;
     private static final int COLOR_TRACK = 0xFF1A1A1A;
     private static final int COLOR_BEVEL_LIGHT = 0xFF6B6B6B;
     private static final int COLOR_BEVEL_DARK = 0xFF000000;
+    // Sampled directly from furnace.png's own slot pixels, so the hand-drawn fuel slot matches a
+    // real one exactly instead of approximating it.
+    private static final int COLOR_SLOT_INTERIOR = 0xFF8B8B8B;
+    private static final int COLOR_SLOT_DARK = 0xFF373737;
+    private static final int COLOR_SLOT_LIGHT = 0xFFFFFFFF;
 
     public HellForgeScreen(HellForgeMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -83,13 +100,21 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         int y = this.topPos;
 
         // Extra title strip above the furnace texture - filled/bordered by hand so the title sits
-        // inside a real panel instead of floating over empty space.
-        guiGraphics.fill(x, y, x + this.imageWidth, y + Y_OFFSET, COLOR_PANEL);
+        // inside a real panel instead of floating over empty space. The fill extends a few pixels
+        // PAST the seam (into where the furnace texture starts) because furnace.png's own top
+        // corners are rounded (a couple of transparent pixels cut into each corner) - without this
+        // overlap, the darkened world behind the GUI peeks through that notch right at the seam,
+        // showing up as a little dark triangle poking into the title bar.
+        guiGraphics.fill(x, y, x + this.imageWidth, y + Y_OFFSET + 4, COLOR_PANEL);
         guiGraphics.fill(x, y, x + this.imageWidth, y + 2, COLOR_PANEL_BORDER);
         guiGraphics.fill(x, y, x + 2, y + Y_OFFSET, COLOR_PANEL_BORDER);
         guiGraphics.fill(x + this.imageWidth - 2, y, x + this.imageWidth, y + Y_OFFSET, COLOR_PANEL_BORDER);
 
         guiGraphics.blit(TEXTURE, x, y + Y_OFFSET, 0, 0, 176, 166);
+
+        // Paint over the furnace texture's own (now unused) fuel slot + smoke decoration.
+        guiGraphics.fill(x + OLD_FUEL_ART_LEFT, y + OLD_FUEL_ART_TOP + Y_OFFSET,
+                x + OLD_FUEL_ART_RIGHT, y + OLD_FUEL_ART_BOTTOM + Y_OFFSET, COLOR_PANEL);
 
         renderFuelSlotFrame(guiGraphics, x + FUEL_SLOT_X, y + FUEL_SLOT_Y + Y_OFFSET);
         renderFuelBar(guiGraphics, x + BAR_X, y + BAR_Y);
@@ -133,21 +158,27 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         guiGraphics.disableScissor();
     }
 
-    /** A stylized 18x18 socket for the fuel slot, which no longer sits over any pre-drawn slot art. */
+    /**
+     * An 18x18 socket for the fuel slot (which no longer sits over any pre-drawn slot art),
+     * matching a real vanilla slot pixel-for-pixel: dark top/left border, white bottom/right
+     * border, mid-gray interior - colors sampled directly from furnace.png's own input slot.
+     */
     private void renderFuelSlotFrame(GuiGraphics guiGraphics, int slotX, int slotY) {
         int left = slotX - 1;
         int top = slotY - 1;
-        guiGraphics.fill(left, top, left + 18, top + 18, 0xFF8B8B8B);
-        guiGraphics.fill(left, top, left + 18, top + 1, COLOR_BEVEL_DARK);
-        guiGraphics.fill(left, top, left + 1, top + 18, COLOR_BEVEL_DARK);
-        guiGraphics.fill(left + 17, top, left + 18, top + 18, COLOR_BEVEL_LIGHT);
-        guiGraphics.fill(left, top + 17, left + 18, top + 18, COLOR_BEVEL_LIGHT);
+        guiGraphics.fill(left, top, left + 18, top + 18, COLOR_SLOT_INTERIOR);
+        guiGraphics.fill(left, top, left + 18, top + 1, COLOR_SLOT_DARK);
+        guiGraphics.fill(left, top, left + 1, top + 18, COLOR_SLOT_DARK);
+        guiGraphics.fill(left + 17, top + 1, left + 18, top + 18, COLOR_SLOT_LIGHT);
+        guiGraphics.fill(left + 1, top + 17, left + 18, top + 18, COLOR_SLOT_LIGHT);
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // No extra this.renderTooltip(...) call here - AbstractContainerScreen.render already ends
+        // with one (that's what draws hovered-slot tooltips); adding another just draws the same
+        // thing twice on top of itself every frame.
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
 
         int barLeft = this.leftPos + BAR_X;
         int barTop = this.topPos + BAR_Y;

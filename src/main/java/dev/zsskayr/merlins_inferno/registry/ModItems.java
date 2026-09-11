@@ -50,8 +50,15 @@ public final class ModItems {
     // same shape (see data/merlins_inferno/recipe/rowanwood_scrap_from_*.json), crafts into a
     // Rowanwood Scrap - which then smelts (or blasts) into the bar itself. Plain items, no
     // in-world behavior of their own.
+    // Otherworld Essence no longer has a crafting use (Fae Essence replaced it in the scrap
+    // recipe, per project decision) - kept registered since it may get a new role later, just with
+    // no obtainment method right now (same situation Fae Essence itself starts in).
     public static final DeferredItem<Item> OTHERWORLD_ESSENCE = ITEMS.registerSimpleItem("otherworld_essence", new Item.Properties());
     public static final DeferredItem<Item> OVERWORLD_ESSENCE = ITEMS.registerSimpleItem("overworld_essence", new Item.Properties());
+    // Dropped by third-party "fairy" mobs at 10% - see ModTags.EntityTypes.FAIRIES and
+    // data/merlins_inferno/loot_modifiers/fae_essence_from_fairies.json (empty tag by default,
+    // since this mod doesn't know which fairy-adding mods are installed).
+    public static final DeferredItem<Item> FAE_ESSENCE = ITEMS.registerSimpleItem("fae_essence", new Item.Properties());
     public static final DeferredItem<Item> ROWANWOOD_SCRAP = ITEMS.registerSimpleItem("rowanwood_scrap", new Item.Properties());
 
     public static final DeferredItem<SwordItem> ROWANWOOD_SWORD = ITEMS.registerItem("rowanwood_sword",
@@ -128,6 +135,96 @@ public final class ModItems {
     private static void appendHumanDamageTooltip(List<Component> tooltip) {
         tooltip.add(Component.translatable("item.merlins_inferno.demonite_tooltip.humans_bonus").withStyle(ChatFormatting.DARK_RED));
     }
+
+    // --- Lyrium/Seraphium material set: see ModTiers.SERAPHIUM / ModArmorMaterials.SERAPHIUM for
+    // the balance rationale (the strongest of the 3 sets). Lyrium's refinement chain (design doc:
+    // "Pilar Angelical") has 5 conceptual stages; only the first 3 have any obtainment/crafting
+    // path wired up yet - Consagrado and Verdadeiro are registered as plain hooks for the
+    // altar/structure content that unlocks them, deliberately out of scope for now. ---
+
+    // Stage 1: mined raw (no ore-block/worldgen wired up yet - obtain via /give or drops added
+    // later, same situation Infernal Essence started in). Its own "weapon" role isn't a separate
+    // item - holding it already triggers Sanctified (see SanctifiedTickHandler) at a level that
+    // includes the Undead damage bonus, which is the whole point of carrying it into a fight.
+    public static final DeferredItem<Item> LYRIUM_BRUTO = ITEMS.registerSimpleItem("lyrium_bruto", new Item.Properties());
+    // Stage 2: smelting Lyrium Bruto (the "processo porco", early-game accessible) gives this -
+    // safe to carry/store (does not trigger Sanctified) and usable in basic potions later.
+    public static final DeferredItem<Item> LYRIUM_IMPURO = ITEMS.registerSimpleItem("lyrium_impuro", new Item.Properties());
+    // Stage 3: the first genuinely useful stage - unlocks the Seraphium Ingot recipe. Obtained via
+    // the Cleric villager trade (LyriumVillagerTrades) or rare pillager-structure loot
+    // (see data/merlins_inferno/loot_modifiers) - no crafting path yet (the brief leaves the
+    // mid-game processing structure/machine as a later decision).
+    public static final DeferredItem<Item> LYRIUM_REFINADO = ITEMS.registerSimpleItem("lyrium_refinado", new Item.Properties());
+    // Stages 4-5: mid/end-game, explicitly out of scope beyond existing as registered items (hooks
+    // for future altar/structure content).
+    public static final DeferredItem<Item> LYRIUM_CONSAGRADO = ITEMS.registerSimpleItem("lyrium_consagrado", new Item.Properties());
+    public static final DeferredItem<Item> LYRIUM_VERDADEIRO = ITEMS.registerSimpleItem("lyrium_verdadeiro", new Item.Properties());
+
+    // Obtainment method is a deliberate TODO per the design doc - registered now so the Seraphium
+    // Ingot recipe isn't blocked on it.
+    public static final DeferredItem<Item> CELESTIAL_ESSENCE = ITEMS.registerSimpleItem("celestial_essence", new Item.Properties());
+
+    public static final DeferredItem<Item> SERAPHIUM_INGOT = ITEMS.registerSimpleItem("seraphium_ingot", new Item.Properties());
+
+    public static final DeferredItem<SwordItem> SERAPHIUM_SWORD = ITEMS.registerItem("seraphium_sword",
+            props -> new SwordItem(ModTiers.SERAPHIUM, props.attributes(SwordItem.createAttributes(ModTiers.SERAPHIUM, 3, -2.4F))) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    appendSeraphiumTooltip(tooltip);
+                }
+            });
+    public static final DeferredItem<AxeItem> SERAPHIUM_AXE = ITEMS.registerItem("seraphium_axe",
+            props -> new AxeItem(ModTiers.SERAPHIUM, props.attributes(AxeItem.createAttributes(ModTiers.SERAPHIUM, 6.0F, -3.0F))) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    appendSeraphiumTooltip(tooltip);
+                }
+            });
+    public static final DeferredItem<ShovelItem> SERAPHIUM_SHOVEL = ITEMS.registerItem("seraphium_shovel",
+            props -> new ShovelItem(ModTiers.SERAPHIUM, props.attributes(ShovelItem.createAttributes(ModTiers.SERAPHIUM, 1.5F, -3.0F))) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    appendSeraphiumTooltip(tooltip);
+                }
+            });
+    public static final DeferredItem<PickaxeItem> SERAPHIUM_PICKAXE = ITEMS.registerItem("seraphium_pickaxe",
+            props -> new PickaxeItem(ModTiers.SERAPHIUM, props.attributes(PickaxeItem.createAttributes(ModTiers.SERAPHIUM, 1.0F, -2.8F))) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    appendSeraphiumTooltip(tooltip);
+                }
+            });
+    public static final DeferredItem<HoeItem> SERAPHIUM_HOE = ITEMS.registerItem("seraphium_hoe",
+            props -> new HoeItem(ModTiers.SERAPHIUM, props.attributes(HoeItem.createAttributes(ModTiers.SERAPHIUM, -2.0F, -1.0F))) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    appendSeraphiumTooltip(tooltip);
+                }
+            });
+
+    /**
+     * Shared tooltip line for every Seraphium tool - Deuteronomy 13:5 (Vulgate), the refrain used
+     * throughout the book for casting out evil: "sic auferes malum de medio tui" ("so shall you
+     * purge the evil from your midst"). See {@code event.SeraphiumCombatHandler} for what the set
+     * actually does in combat.
+     */
+    private static void appendSeraphiumTooltip(List<Component> tooltip) {
+        tooltip.add(Component.translatable("item.merlins_inferno.seraphium_tooltip.latin_verse").withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
+    }
+
+    public static final DeferredItem<ArmorItem> SERAPHIUM_HELMET = ITEMS.registerItem("seraphium_helmet",
+            props -> new ArmorItem(ModArmorMaterials.SERAPHIUM, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(45))));
+    public static final DeferredItem<ArmorItem> SERAPHIUM_CHESTPLATE = ITEMS.registerItem("seraphium_chestplate",
+            props -> new ArmorItem(ModArmorMaterials.SERAPHIUM, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(45))));
+    public static final DeferredItem<ArmorItem> SERAPHIUM_LEGGINGS = ITEMS.registerItem("seraphium_leggings",
+            props -> new ArmorItem(ModArmorMaterials.SERAPHIUM, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(45))));
+    public static final DeferredItem<ArmorItem> SERAPHIUM_BOOTS = ITEMS.registerItem("seraphium_boots",
+            props -> new ArmorItem(ModArmorMaterials.SERAPHIUM, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(45))));
 
     // --- BlockItems for the Hallowed Grove's two trees (see ModBlocks). ---
 

@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_otherworld_essence": {
+    "has_fae_essence": {
       "conditions": {
         "items": [
           {
-            "items": "merlins_inferno:otherworld_essence"
+            "items": "merlins_inferno:fae_essence"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "merlins_inferno:rowanwood_scrap_from_otherworld_essence"
+        "recipe": "merlins_inferno:rowanwood_scrap_from_fae_essence"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_otherworld_essence"
+      "has_fae_essence"
     ]
   ],
   "rewards": {
     "recipes": [
-      "merlins_inferno:rowanwood_scrap_from_otherworld_essence"
+      "merlins_inferno:rowanwood_scrap_from_fae_essence"
     ]
   }
 }

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "group": "lyrium_impuro",
+  "ingredient": { "item": "merlins_inferno:lyrium_bruto" },
+  "result": { "id": "merlins_inferno:lyrium_impuro" }
+}

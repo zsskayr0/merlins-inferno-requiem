@@ -40,6 +40,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.ROWANWOOD_SCRAP.get());
                         output.accept(ModItems.OTHERWORLD_ESSENCE.get());
                         output.accept(ModItems.OVERWORLD_ESSENCE.get());
+                        output.accept(ModItems.FAE_ESSENCE.get());
                         output.accept(ModItems.ROWANWOOD_SWORD.get());
                         output.accept(ModItems.ROWANWOOD_AXE.get());
                         output.accept(ModItems.ROWANWOOD_PICKAXE.get());
@@ -59,6 +60,22 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.INFERNAL_ESSENCE.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_ITEM.get());
+                        output.accept(ModItems.LYRIUM_BRUTO.get());
+                        output.accept(ModItems.LYRIUM_IMPURO.get());
+                        output.accept(ModItems.LYRIUM_REFINADO.get());
+                        output.accept(ModItems.LYRIUM_CONSAGRADO.get());
+                        output.accept(ModItems.LYRIUM_VERDADEIRO.get());
+                        output.accept(ModItems.CELESTIAL_ESSENCE.get());
+                        output.accept(ModItems.SERAPHIUM_INGOT.get());
+                        output.accept(ModItems.SERAPHIUM_SWORD.get());
+                        output.accept(ModItems.SERAPHIUM_AXE.get());
+                        output.accept(ModItems.SERAPHIUM_PICKAXE.get());
+                        output.accept(ModItems.SERAPHIUM_SHOVEL.get());
+                        output.accept(ModItems.SERAPHIUM_HOE.get());
+                        output.accept(ModItems.SERAPHIUM_HELMET.get());
+                        output.accept(ModItems.SERAPHIUM_CHESTPLATE.get());
+                        output.accept(ModItems.SERAPHIUM_LEGGINGS.get());
+                        output.accept(ModItems.SERAPHIUM_BOOTS.get());
                     })
                     .build());
 

@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
@@ -41,7 +42,14 @@ import dev.zsskayr.merlins_inferno.registry.ModBlocks;
  * {@code onRemove} only ever fires for a real state change, so no such check is needed here.
  */
 public class HellForgePartBlock extends Block implements EntityBlock {
-    static final Set<BlockPos> TEARDOWN_IN_PROGRESS = new HashSet<>();
+    /** A {@link BlockPos} alone can't tell two dimensions' identical coordinates apart. */
+    private record LevelPos(ResourceKey<Level> dimension, BlockPos pos) {
+        static LevelPos of(Level level, BlockPos pos) {
+            return new LevelPos(level.dimension(), pos.immutable());
+        }
+    }
+
+    static final Set<LevelPos> TEARDOWN_IN_PROGRESS = new HashSet<>();
 
     /**
      * Positions a creative-mode player is in the middle of breaking. {@code playerWillDestroy}
@@ -49,7 +57,7 @@ public class HellForgePartBlock extends Block implements EntityBlock {
      * the drop logic but no player - this bridges the two so creative breaks give nothing, matching
      * how every normal (loot-table-driven) block already behaves in creative.
      */
-    private static final Set<BlockPos> CREATIVE_BREAK = new HashSet<>();
+    private static final Set<LevelPos> CREATIVE_BREAK = new HashSet<>();
 
     public HellForgePartBlock(Properties properties) {
         super(properties);
@@ -87,14 +95,14 @@ public class HellForgePartBlock extends Block implements EntityBlock {
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (player.isCreative()) {
-            CREATIVE_BREAK.add(pos.immutable());
+            CREATIVE_BREAK.add(LevelPos.of(level, pos));
         }
         return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        boolean creative = CREATIVE_BREAK.remove(pos);
+        boolean creative = CREATIVE_BREAK.remove(LevelPos.of(level, pos));
         if (!level.isClientSide && state.getBlock() != newState.getBlock() && !movedByPiston
                 && level.getBlockEntity(pos) instanceof HellForgePartBlockEntity partBe && partBe.getCorePos() != null) {
             breakFromPart(level, partBe.getCorePos(), pos, creative);
@@ -109,7 +117,8 @@ public class HellForgePartBlock extends Block implements EntityBlock {
      * (post-removal) state, which has no {@code FACING} to compute offsets from.
      */
     public static void removeSurroundingParts(Level level, BlockPos corePos, BlockState coreState) {
-        TEARDOWN_IN_PROGRESS.add(corePos);
+        LevelPos key = LevelPos.of(level, corePos);
+        TEARDOWN_IN_PROGRESS.add(key);
         try {
             for (BlockPos offset : HellForgeBlock.partOffsets(coreState)) {
                 BlockPos pos = corePos.offset(offset);
@@ -118,13 +127,13 @@ public class HellForgePartBlock extends Block implements EntityBlock {
                 }
             }
         } finally {
-            TEARDOWN_IN_PROGRESS.remove(corePos);
+            TEARDOWN_IN_PROGRESS.remove(key);
         }
     }
 
     /** Called from {@link #onRemove} when a part itself is the one being broken. */
     private static void breakFromPart(Level level, BlockPos corePos, BlockPos partPos, boolean creative) {
-        if (TEARDOWN_IN_PROGRESS.contains(corePos)) {
+        if (TEARDOWN_IN_PROGRESS.contains(LevelPos.of(level, corePos))) {
             // Already being torn down by the core's own onRemove - that call is what's responsible
             // for the (single) drop, so don't do anything else here.
             return;

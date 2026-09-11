@@ -1,0 +1,13 @@
+{
+  "type": "neoforge:add_table",
+  "conditions": [
+    {
+      "condition": "minecraft:entity_properties",
+      "entity": "this",
+      "predicate": {
+        "type": "#merlins_inferno:fairies"
+      }
+    }
+  ],
+  "table": "merlins_inferno:inject/fae_essence"
+}

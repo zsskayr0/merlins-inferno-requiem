@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "X": { "item": "merlins_inferno:seraphium_ingot" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "pattern": ["XXX", " S ", " S "],
+  "result": { "count": 1, "id": "merlins_inferno:seraphium_pickaxe" }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:generic",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        { "type": "minecraft:item", "name": "merlins_inferno:lyrium_refinado" }
+      ],
+      "conditions": [
+        { "condition": "minecraft:random_chance", "chance": 0.03 }
+      ]
+    }
+  ]
+}

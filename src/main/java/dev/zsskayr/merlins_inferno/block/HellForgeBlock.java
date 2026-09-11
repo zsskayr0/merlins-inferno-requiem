@@ -9,6 +9,8 @@ import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
@@ -71,7 +73,10 @@ public class HellForgeBlock extends HorizontalDirectionalBlock implements Entity
         BlockPos pos = context.getClickedPos();
         for (BlockPos offset : partOffsets(state)) {
             BlockPos partPos = pos.offset(offset);
-            if (!level.getBlockState(partPos).canBeReplaced(context)) {
+            // Above the world's build height, setBlock silently no-ops later in setPlacedBy -
+            // that would leave the structure's top row (height=1 offsets) with no collision at
+            // all rather than failing the placement outright, so reject it here instead.
+            if (partPos.getY() >= level.getMaxBuildHeight() || !level.getBlockState(partPos).canBeReplaced(context)) {
                 return null;
             }
         }
@@ -94,6 +99,13 @@ public class HellForgeBlock extends HorizontalDirectionalBlock implements Entity
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (state.getBlock() != newState.getBlock() && level instanceof ServerLevel
+                && level.getBlockEntity(pos) instanceof HellForgeBlockEntity hellForge) {
+            // Must happen before super.onRemove() - that call is what actually discards the block
+            // entity (via BlockBehaviour's default onRemove), so the input/fuel/result slots would
+            // otherwise vanish with it instead of spilling like every other container block.
+            Containers.dropContents(level, pos, hellForge);
+        }
         super.onRemove(state, level, pos, newState, movedByPiston);
         if (!level.isClientSide && state.getBlock() != newState.getBlock() && !movedByPiston) {
             // Pass the OLD state directly rather than re-reading level.getBlockState(pos) - by this
