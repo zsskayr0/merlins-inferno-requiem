@@ -5,12 +5,14 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
@@ -44,11 +46,21 @@ import dev.zsskayr.merlins_inferno.registry.ModBlockEntityTypes;
  * fuel lookups and recipe matching - this needs two recipe types, plus the tank behavior above.
  * Recipe-book integration and XP-on-collect are intentionally left out for now (not requested).
  */
-public class HellForgeBlockEntity extends BaseContainerBlockEntity {
+public class HellForgeBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     public static final int INPUT_SLOT = 0;
     public static final int FUEL_SLOT = 1;
     public static final int RESULT_SLOT = 2;
     private static final int SLOT_COUNT = 3;
+
+    // Below only ever pulls the result - without WorldlyContainer, a plain Container lets a hopper
+    // underneath pull from whichever slot it reaches first in index order (0, the input slot),
+    // which was the original bug this fixes. Every other face is a feed face: FUEL_SLOT is tried
+    // first (so a lava bucket/blaze powder lands in the tank feed, not the input), and INPUT_SLOT
+    // second if the item isn't fuel - vanilla's own hopper insertion already walks this array in
+    // order and only advances past a slot once canPlaceItemThroughFace rejects it there, so this
+    // alone gives the "try fuel, then input, else stays in the hopper" fallback chain.
+    private static final int[] SLOTS_FOR_DOWN = new int[]{RESULT_SLOT};
+    private static final int[] SLOTS_FOR_FEED = new int[]{FUEL_SLOT, INPUT_SLOT};
 
     /** How much faster than a normal furnace/blast furnace this cooks - 30% faster. */
     private static final float COOK_TIME_MULTIPLIER = 0.7F;
@@ -240,9 +252,32 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity {
     public boolean canPlaceItem(int slot, ItemStack stack) {
         return switch (slot) {
             case FUEL_SLOT -> getBurnDuration(stack) > 0;
-            case RESULT_SLOT -> false;
-            default -> true;
+            case INPUT_SLOT -> this.level != null && getRecipe(this.level, stack).isPresent();
+            default -> false; // RESULT_SLOT
         };
+    }
+
+    // --- WorldlyContainer (hopper/automation access, restricted by the side it's coming from) ---
+
+    @Override
+    public int[] getSlotsForFace(Direction side) {
+        return side == Direction.DOWN ? SLOTS_FOR_DOWN : SLOTS_FOR_FEED;
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(int index, ItemStack stack, @Nullable Direction direction) {
+        return this.canPlaceItem(index, stack);
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
+        if (index == RESULT_SLOT) {
+            return true;
+        }
+        // The tank absorbs fuel instantly, leaving only a spent bucket behind (see serverTick) -
+        // that empty bucket can be pulled back out, mirroring vanilla's furnace fuel-slot
+        // exception, but unconverted fuel/input itself can't be siphoned back out mid-feed.
+        return index == FUEL_SLOT && stack.is(Items.BUCKET);
     }
 
     // --- MenuProvider / BaseContainerBlockEntity ---

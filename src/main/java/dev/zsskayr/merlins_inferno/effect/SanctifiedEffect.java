@@ -1,12 +1,13 @@
 package dev.zsskayr.merlins_inferno.effect;
 
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
- * "Sanctified" - Lyrium Bruto's touch. See {@code event.SanctifiedTickHandler} for how a player
+ * "Sanctified" - Raw Lyrium's touch. See {@code event.SanctifiedTickHandler} for how a player
  * actually gets this (level scales with where the item sits: inventory, hand, or how long it's
  * been held) and {@code event.SanctifiedCombatHandler} for its combat effects (bonus damage
  * against Undead, and spreading to whoever the holder hits in melee).
@@ -17,8 +18,8 @@ import net.minecraft.world.entity.LivingEntity;
  * behave the same.
  */
 public class SanctifiedEffect extends MobEffect {
-    public SanctifiedEffect(MobEffectCategory category, int color) {
-        super(category, color);
+    public SanctifiedEffect(MobEffectCategory category, int color, ParticleOptions particle) {
+        super(category, color, particle);
     }
 
     @Override

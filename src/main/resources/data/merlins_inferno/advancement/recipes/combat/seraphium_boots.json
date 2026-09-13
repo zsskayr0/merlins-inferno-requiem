@@ -1,10 +1,10 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_seraphium_ingot": {
+    "has_seraphium_bar": {
       "conditions": {
         "items": [
-          { "items": "merlins_inferno:seraphium_ingot" }
+          { "items": "merlins_inferno:seraphium_bar" }
         ]
       },
       "trigger": "minecraft:inventory_changed"
@@ -17,7 +17,7 @@
     }
   },
   "requirements": [
-    [ "has_the_recipe", "has_seraphium_ingot" ]
+    [ "has_the_recipe", "has_seraphium_bar" ]
   ],
   "rewards": {
     "recipes": [ "merlins_inferno:seraphium_boots" ]

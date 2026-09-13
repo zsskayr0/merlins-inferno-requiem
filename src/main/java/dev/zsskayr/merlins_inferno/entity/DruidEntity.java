@@ -3,12 +3,16 @@ package dev.zsskayr.merlins_inferno.entity;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,8 +32,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.ItemCost;
+import net.minecraft.world.item.trading.Merchant;
+import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 
@@ -41,16 +51,27 @@ import dev.zsskayr.merlins_inferno.registry.ModItems;
  * attacking villagers/players). Instead this is a fresh {@link PathfinderMob} that just copies the
  * numbers.
  * <p>
- * Passive/neutral toward the player (no target selector ever picks a {@link Player} - it will
- * never attack back even if hit), but proactively hunts anything tagged
- * {@link EntityTypeTags#UNDEAD} on sight.
+ * Neutral toward the player by default - never attacks first, and (per the design doc, 4.1) never
+ * retaliates either, even if hit; that's a deliberate combat-balance decision left for later, not
+ * an oversight. It does proactively hunt anything tagged {@link EntityTypeTags#UNDEAD} on sight.
  * <p>
- * 3 skin variants (see {@link #getVariant()}), randomized on spawn - no actual textures yet, and
- * no trading, per the current design pass. Only spawns in the Hallowed Grove (see
- * {@code ModBiomeProvider}'s mob spawn list - it's simply never added to any other biome).
+ * 3 skin variants (see {@link #getVariant()}), randomized on spawn - no actual textures yet.
+ * Implements {@link Merchant} directly (rather than extending {@code AbstractVillager}, which
+ * drags in the profession/reputation/leveling system this doesn't need) for a single fixed trade -
+ * emeralds for Otherworld Essence, see {@link #updateTrades()} - closing the loop the design doc
+ * describes: without this trade (or, narratively, killing a Dullahan - not implemented), raw
+ * Rowanwood collected from the tree has no way to become the finished Rowanwood Bar. Only spawns
+ * in the Hallowed Grove (see {@code ModBiomeProvider}'s mob spawn list - it's simply never added
+ * to any other biome); a dedicated grove/sanctuary landmark structure to guarantee a spawn is
+ * recommended but out of scope for now (design doc 4.3).
  */
-public class DruidEntity extends PathfinderMob {
+public class DruidEntity extends PathfinderMob implements Merchant {
     private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(DruidEntity.class, EntityDataSerializers.INT);
+
+    @Nullable
+    private Player tradingPlayer;
+    @Nullable
+    private MerchantOffers offers;
 
     public DruidEntity(EntityType<? extends DruidEntity> type, Level level) {
         super(type, level);
@@ -163,11 +184,19 @@ public class DruidEntity extends PathfinderMob {
     }
 
     private static final String TAG_VARIANT = "Variant";
+    private static final String TAG_OFFERS = "Offers";
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt(TAG_VARIANT, this.getVariant());
+        if (!this.level().isClientSide) {
+            MerchantOffers currentOffers = this.getOffers();
+            if (!currentOffers.isEmpty()) {
+                compound.put(TAG_OFFERS,
+                        MerchantOffers.CODEC.encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), currentOffers).getOrThrow());
+            }
+        }
     }
 
     @Override
@@ -179,5 +208,119 @@ public class DruidEntity extends PathfinderMob {
         if (compound.contains(TAG_VARIANT)) {
             this.entityData.set(DATA_VARIANT, compound.getInt(TAG_VARIANT));
         }
+        if (compound.contains(TAG_OFFERS)) {
+            MerchantOffers.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.get(TAG_OFFERS))
+                    .resultOrPartial(error -> {
+                    })
+                    .ifPresent(loaded -> this.offers = loaded);
+        }
+    }
+
+    // --- Merchant: a single fixed trade, no profession/leveling/reputation system - see class javadoc. ---
+
+    private static final int EMERALD_PRICE = 20;
+    private static final int MAX_USES = 4;
+    private static final int TRADE_XP = 5;
+    private static final float PRICE_MULTIPLIER = 0.05F;
+
+    private void updateTrades() {
+        MerchantOffers currentOffers = this.getOffers();
+        if (currentOffers.isEmpty()) {
+            currentOffers.add(new MerchantOffer(new ItemCost(Items.EMERALD, EMERALD_PRICE),
+                    new ItemStack(ModItems.OTHERWORLD_ESSENCE.get()), MAX_USES, TRADE_XP, PRICE_MULTIPLIER));
+        }
+    }
+
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (this.isAlive() && !this.isTrading() && hand == InteractionHand.MAIN_HAND) {
+            if (!this.level().isClientSide) {
+                if (this.getOffers().isEmpty()) {
+                    return InteractionResult.CONSUME;
+                }
+                this.setTradingPlayer(player);
+                this.openTradingScreen(player, this.getDisplayName(), 1);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+        return super.mobInteract(player, hand);
+    }
+
+    @Override
+    public void setTradingPlayer(@Nullable Player tradingPlayer) {
+        this.tradingPlayer = tradingPlayer;
+    }
+
+    @Nullable
+    @Override
+    public Player getTradingPlayer() {
+        return this.tradingPlayer;
+    }
+
+    public boolean isTrading() {
+        return this.tradingPlayer != null;
+    }
+
+    @Override
+    public MerchantOffers getOffers() {
+        if (this.level().isClientSide) {
+            throw new IllegalStateException("Cannot load Druid offers on the client");
+        }
+        if (this.offers == null) {
+            this.offers = new MerchantOffers();
+            this.updateTrades();
+        }
+        return this.offers;
+    }
+
+    @Override
+    public void overrideOffers(MerchantOffers offers) {
+        // Never called for a non-leveling merchant like this one - vanilla only invokes it when
+        // restocking a Villager's profession-based trade list.
+    }
+
+    @Override
+    public void notifyTrade(MerchantOffer offer) {
+        offer.increaseUses();
+        this.ambientSoundTime = -this.getAmbientSoundInterval();
+    }
+
+    @Override
+    public void notifyTradeUpdated(ItemStack stack) {
+        if (!this.level().isClientSide && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
+            this.ambientSoundTime = -this.getAmbientSoundInterval();
+            this.playSound(stack.isEmpty() ? SoundEvents.VILLAGER_NO : SoundEvents.VILLAGER_YES);
+        }
+    }
+
+    @Override
+    public int getVillagerXp() {
+        return 0;
+    }
+
+    @Override
+    public void overrideXp(int xp) {
+        // No leveling system - see class javadoc.
+    }
+
+    @Override
+    public boolean showProgressBar() {
+        return true;
+    }
+
+    @Override
+    public SoundEvent getNotifyTradeSound() {
+        return SoundEvents.VILLAGER_YES;
+    }
+
+    @Override
+    public boolean isClientSide() {
+        return this.level().isClientSide;
+    }
+
+    @Override
+    public void die(DamageSource cause) {
+        super.die(cause);
+        this.setTradingPlayer(null);
     }
 }

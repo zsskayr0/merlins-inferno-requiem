@@ -93,7 +93,7 @@ public final class ModTiers {
      * Demonite, Seraphium) - strictly above both on every tool stat, same mining level as
      * Demonite/Netherite. Its signature trait (bonus damage vs. Undead, matching Smite's scaling)
      * isn't a tier field - it comes from the Sanctified status effect a player builds up by
-     * carrying Lyrium Bruto (see {@code event.SanctifiedTickHandler}/{@code SanctifiedCombatHandler}),
+     * carrying Raw Lyrium (see {@code event.SanctifiedTickHandler}/{@code SanctifiedCombatHandler}),
      * not from the Seraphium tools themselves.
      */
     public static final Tier SERAPHIUM = new Tier() {
@@ -124,7 +124,7 @@ public final class ModTiers {
 
         @Override
         public Ingredient getRepairIngredient() {
-            return Ingredient.of(ModItems.SERAPHIUM_INGOT.get());
+            return Ingredient.of(ModItems.SERAPHIUM_BAR.get());
         }
     };
 

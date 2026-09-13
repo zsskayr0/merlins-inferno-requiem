@@ -16,9 +16,11 @@ public final class ModEffects {
 
     // Icy white-blue, matching Lyrium's palette. See SanctifiedEffect for the tick logic and
     // event.SanctifiedTickHandler/SanctifiedCombatHandler for how it's applied and what it does
-    // in combat.
+    // in combat. Uses the 3-arg MobEffect constructor so it renders our own custom-textured
+    // particle (client.SanctifiedParticle, from textures/particle/sanct.png) instead of vanilla's
+    // generic recolored ENTITY_EFFECT swirl - a SimpleParticleType doubles as its own ParticleOptions.
     public static final DeferredHolder<MobEffect, SanctifiedEffect> SANCTIFIED = MOB_EFFECTS.register("sanctified",
-            () -> new SanctifiedEffect(MobEffectCategory.HARMFUL, 0xAEE8FF));
+            () -> new SanctifiedEffect(MobEffectCategory.HARMFUL, 0xAEE8FF, ModParticles.SANCTIFIED_TYPE));
 
     private ModEffects() {
     }

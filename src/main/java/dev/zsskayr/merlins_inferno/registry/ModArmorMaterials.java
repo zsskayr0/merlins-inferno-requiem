@@ -62,7 +62,7 @@ public final class ModArmorMaterials {
             }),
             25, // enchantment value, above Iron/Rowanwood's 9
             SoundEvents.ARMOR_EQUIP_DIAMOND,
-            () -> Ingredient.of(ModItems.SERAPHIUM_INGOT.get()),
+            () -> Ingredient.of(ModItems.SERAPHIUM_BAR.get()),
             List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "seraphium"))),
             2.0F, // toughness, above Diamond's
             0.05F // knockback resistance, matching Netherite's

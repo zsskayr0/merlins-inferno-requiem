@@ -20,11 +20,14 @@ import dev.zsskayr.merlins_inferno.registry.ModMenuTypes;
 
 /**
  * The Hell Forge's menu. Slot layout is a custom arrangement (not vanilla furnace's) built around
- * the fuel tank bar: a small feed slot sits right next to the bar it fills, separate from the
- * cook input/output pair - see {@link dev.zsskayr.merlins_inferno.client.HellForgeScreen} for the
- * matching visuals (still drawn over vanilla's furnace panel texture, just repositioned/taller,
- * since no custom GUI art exists yet). No recipe-book integration, unlike vanilla's furnace menus -
- * not requested, and would need its own recipe-book category/tag to work properly anyway.
+ * the fuel tank bar: the feed slot sits ON the tank bar itself, at the orb baked into the middle
+ * of the gauge (between the two halves it fills) - not just visually adjacent, that's genuinely
+ * where the item goes, separate from the cook input/output pair - see
+ * {@link dev.zsskayr.merlins_inferno.client.HellForgeScreen} for the matching visuals (drawn over
+ * the mod's own custom panel art, {@code hell_forge.png}). The player-inventory grid below sits at
+ * vanilla's own standard coordinates - the custom panel's art was drawn to match those exactly, so
+ * no offset/adjustment is needed for it. No recipe-book integration, unlike vanilla's furnace
+ * menus - not requested, and would need its own recipe-book category/tag to work properly anyway.
  */
 public class HellForgeMenu extends AbstractContainerMenu {
     public static final int INPUT_SLOT = 0;
@@ -34,14 +37,6 @@ public class HellForgeMenu extends AbstractContainerMenu {
     private static final int INV_SLOT_END = 30;
     private static final int USE_ROW_SLOT_START = 30;
     private static final int USE_ROW_SLOT_END = 39;
-
-    /**
-     * Extra vertical room added at the top of the panel (over vanilla furnace's 166-tall one) so
-     * the tank bar has space below the title text instead of running straight into it - see
-     * {@link dev.zsskayr.merlins_inferno.client.HellForgeScreen}, which adds this to every
-     * background/bar coordinate to match these slot positions.
-     */
-    public static final int Y_OFFSET = 14;
 
     private final Container container;
     private final ContainerData data;
@@ -63,21 +58,21 @@ public class HellForgeMenu extends AbstractContainerMenu {
 
         // Call order must stay INPUT, FUEL, RESULT - it's what fixes each Slot's position in
         // this.slots (and therefore the `index` quickMoveStack below receives) to match the
-        // INPUT_SLOT/FUEL_SLOT/RESULT_SLOT constants; only the pixel coordinates changed to move
-        // the feed slot next to the tank bar (bar occupies x=8-24, y=8-66 in panel space) instead
-        // of stacked under the input slot like vanilla - it's a quick "pour it in" slot, not part
-        // of the input->output line.
-        this.addSlot(new Slot(container, INPUT_SLOT, 56, 17 + Y_OFFSET));
-        this.addSlot(new FuelSlot(container, FUEL_SLOT, 30, 28 + Y_OFFSET));
-        this.addSlot(new ResultSlot(container, RESULT_SLOT, 116, 35 + Y_OFFSET));
+        // INPUT_SLOT/FUEL_SLOT/RESULT_SLOT constants. INPUT/RESULT match the two sockets flanking
+        // the burn gauge in hell_forge.png; FUEL sits on the orb baked into the middle of the tank
+        // bar itself, between its two halves - not decoration, that's genuinely where the feed
+        // slot lives, so the lava bucket drops right into the gauge it's filling.
+        this.addSlot(new Slot(container, INPUT_SLOT, 48, 50));
+        this.addSlot(new FuelSlot(container, FUEL_SLOT, 79, 20));
+        this.addSlot(new ResultSlot(container, RESULT_SLOT, 110, 50));
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + Y_OFFSET + row * 18));
+                this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
-            this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 142 + Y_OFFSET));
+            this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
         }
 
         this.addDataSlots(data);

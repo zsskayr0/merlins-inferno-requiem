@@ -1,0 +1,11 @@
+{
+  "name": "item.merlins_inferno.grimmorium",
+  "landing_text": "patchouli.merlins_inferno.guide.landing_text",
+  "subtitle": "patchouli.merlins_inferno.guide.subtitle",
+  "version": "0",
+  "use_resource_pack": true,
+  "text_color": "3a1a12",
+  "header_color": "5a0e0e",
+  "use_blocky_font": false,
+  "show_progress": false
+}

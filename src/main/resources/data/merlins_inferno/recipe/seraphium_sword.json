@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "X": { "item": "merlins_inferno:seraphium_ingot" },
+    "X": { "item": "merlins_inferno:seraphium_bar" },
     "S": { "item": "minecraft:stick" }
   },
   "pattern": ["X", "X", "S"],

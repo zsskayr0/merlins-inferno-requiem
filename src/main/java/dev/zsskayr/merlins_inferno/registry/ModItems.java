@@ -24,6 +24,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.item.GrimmoriumItem;
 import dev.zsskayr.merlins_inferno.item.ModTiers;
 
 /**
@@ -37,9 +38,10 @@ import dev.zsskayr.merlins_inferno.item.ModTiers;
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Merlins_inferno.MODID);
 
-    // Starter tome handed out for the future onboarding/tutorial flow. Plain item for now -
-    // no reading/GUI behavior yet, just something to register end-to-end and show in-world.
-    public static final DeferredItem<Item> GRIMMORIUM = ITEMS.registerSimpleItem("grimmorium", new Item.Properties());
+    // The mod's in-game guidebook - see item.GrimmoriumItem for what "using" it does
+    // (data/merlins_inferno/patchouli_books/guide/) and compat.patchouli for why Patchouli being
+    // absent doesn't break this item.
+    public static final DeferredItem<GrimmoriumItem> GRIMMORIUM = ITEMS.registerItem("grimmorium", GrimmoriumItem::new);
 
     // --- Rowanwood material set: see ModTiers.ROWANWOOD / ModArmorMaterials.ROWANWOOD for the
     // balance rationale (mines like Diamond, hits/blocks like Iron, outlasts both). ---
@@ -50,9 +52,8 @@ public final class ModItems {
     // same shape (see data/merlins_inferno/recipe/rowanwood_scrap_from_*.json), crafts into a
     // Rowanwood Scrap - which then smelts (or blasts) into the bar itself. Plain items, no
     // in-world behavior of their own.
-    // Otherworld Essence no longer has a crafting use (Fae Essence replaced it in the scrap
-    // recipe, per project decision) - kept registered since it may get a new role later, just with
-    // no obtainment method right now (same situation Fae Essence itself starts in).
+    // Otherworld Essence's obtainment method: the Druid's trade (see event.DruidTrades) - or,
+    // narratively, defeating a Dullahan at night (that mob doesn't exist yet - out of scope here).
     public static final DeferredItem<Item> OTHERWORLD_ESSENCE = ITEMS.registerSimpleItem("otherworld_essence", new Item.Properties());
     public static final DeferredItem<Item> OVERWORLD_ESSENCE = ITEMS.registerSimpleItem("overworld_essence", new Item.Properties());
     // Dropped by third-party "fairy" mobs at 10% - see ModTags.EntityTypes.FAIRIES and
@@ -86,6 +87,16 @@ public final class ModItems {
     // out below in each tool's tooltip). Tool attack attributes mirror vanilla's actual Netherite
     // tool values 1:1. Every demonite_*.json recipe also crafts its result pre-enchanted with
     // Bane of Humanity I (see data/merlins_inferno/recipe/demonite_*.json's result.components). ---
+
+    // Demonite Debris (ModBlocks) - same mining characteristics as Ancient Debris, a bit more
+    // common (see ModOreProvider).
+    public static final DeferredItem<BlockItem> DEMONITE_DEBRIS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DEMONITE_DEBRIS);
+    // What the debris actually drops (not itself) - see ModBlockLootProvider. Combined with
+    // Infernal Essence + Netherite Scrap into Demonite Scrap
+    // (data/merlins_inferno/recipe/demonite_scrap.json), which the Hell Forge then turns into the
+    // bar below (data/merlins_inferno/recipe/demonite_bar_from_smelting.json).
+    public static final DeferredItem<Item> DEMONITE_RAW = ITEMS.registerSimpleItem("demonite_raw", new Item.Properties());
+    public static final DeferredItem<Item> DEMONITE_SCRAP = ITEMS.registerSimpleItem("demonite_scrap", new Item.Properties());
 
     // Plain crafting material - no in-world use yet beyond crafting the tools below.
     public static final DeferredItem<Item> DEMONITE_BAR = ITEMS.registerSimpleItem("demonite_bar", new Item.Properties());
@@ -138,33 +149,42 @@ public final class ModItems {
 
     // --- Lyrium/Seraphium material set: see ModTiers.SERAPHIUM / ModArmorMaterials.SERAPHIUM for
     // the balance rationale (the strongest of the 3 sets). Lyrium's refinement chain (design doc:
-    // "Pilar Angelical") has 5 conceptual stages; only the first 3 have any obtainment/crafting
-    // path wired up yet - Consagrado and Verdadeiro are registered as plain hooks for the
-    // altar/structure content that unlocks them, deliberately out of scope for now. ---
+    // "Pilar Angelical") has 6 conceptual stages now (Shard added below the original 5, per the
+    // texture set actually provided); only the first 4 have any obtainment/crafting path wired up
+    // yet - Pure and True are registered as plain hooks for the altar/structure content that
+    // unlocks them, deliberately out of scope for now. ---
 
+    // Stage 0: the literal ore fragment, before it's even collected into a "raw" lump - no
+    // ore-block/worldgen or crafting use wired up yet, same starting situation every other stage
+    // below began in.
+    public static final DeferredItem<Item> LYRIUM_SHARD = ITEMS.registerSimpleItem("lyrium_shard", new Item.Properties());
     // Stage 1: mined raw (no ore-block/worldgen wired up yet - obtain via /give or drops added
     // later, same situation Infernal Essence started in). Its own "weapon" role isn't a separate
     // item - holding it already triggers Sanctified (see SanctifiedTickHandler) at a level that
     // includes the Undead damage bonus, which is the whole point of carrying it into a fight.
-    public static final DeferredItem<Item> LYRIUM_BRUTO = ITEMS.registerSimpleItem("lyrium_bruto", new Item.Properties());
-    // Stage 2: smelting Lyrium Bruto (the "processo porco", early-game accessible) gives this -
-    // safe to carry/store (does not trigger Sanctified) and usable in basic potions later.
-    public static final DeferredItem<Item> LYRIUM_IMPURO = ITEMS.registerSimpleItem("lyrium_impuro", new Item.Properties());
-    // Stage 3: the first genuinely useful stage - unlocks the Seraphium Ingot recipe. Obtained via
+    public static final DeferredItem<Item> LYRIUM_RAW = ITEMS.registerSimpleItem("lyrium_raw", new Item.Properties());
+    // Stage 2: smelting raw Lyrium (the "quick and dirty" process, early-game accessible) gives
+    // this - safe to carry/store (does not trigger Sanctified) and usable in basic potions later.
+    public static final DeferredItem<Item> LYRIUM_IMPURE = ITEMS.registerSimpleItem("lyrium_impure", new Item.Properties());
+    // Stage 3: the first genuinely useful stage - unlocks the Seraphium Bar recipe. Obtained via
     // the Cleric villager trade (LyriumVillagerTrades) or rare pillager-structure loot
     // (see data/merlins_inferno/loot_modifiers) - no crafting path yet (the brief leaves the
     // mid-game processing structure/machine as a later decision).
-    public static final DeferredItem<Item> LYRIUM_REFINADO = ITEMS.registerSimpleItem("lyrium_refinado", new Item.Properties());
+    public static final DeferredItem<Item> LYRIUM_REFINED = ITEMS.registerSimpleItem("lyrium_refined", new Item.Properties());
     // Stages 4-5: mid/end-game, explicitly out of scope beyond existing as registered items (hooks
     // for future altar/structure content).
-    public static final DeferredItem<Item> LYRIUM_CONSAGRADO = ITEMS.registerSimpleItem("lyrium_consagrado", new Item.Properties());
-    public static final DeferredItem<Item> LYRIUM_VERDADEIRO = ITEMS.registerSimpleItem("lyrium_verdadeiro", new Item.Properties());
+    public static final DeferredItem<Item> LYRIUM_PURE = ITEMS.registerSimpleItem("lyrium_pure", new Item.Properties());
+    public static final DeferredItem<Item> LYRIUM_TRUE = ITEMS.registerSimpleItem("lyrium_true", new Item.Properties());
 
     // Obtainment method is a deliberate TODO per the design doc - registered now so the Seraphium
-    // Ingot recipe isn't blocked on it.
+    // Scrap recipe isn't blocked on it.
     public static final DeferredItem<Item> CELESTIAL_ESSENCE = ITEMS.registerSimpleItem("celestial_essence", new Item.Properties());
 
-    public static final DeferredItem<Item> SERAPHIUM_INGOT = ITEMS.registerSimpleItem("seraphium_ingot", new Item.Properties());
+    // Mirrors Rowanwood's own 2-stage chain: refined Lyrium + Diamond + Celestial Essence crafts
+    // into this Scrap, which then smelts into the actual Bar (see
+    // data/merlins_inferno/recipe/seraphium_scrap.json / seraphium_bar_from_smelting.json).
+    public static final DeferredItem<Item> SERAPHIUM_SCRAP = ITEMS.registerSimpleItem("seraphium_scrap", new Item.Properties());
+    public static final DeferredItem<Item> SERAPHIUM_BAR = ITEMS.registerSimpleItem("seraphium_bar", new Item.Properties());
 
     public static final DeferredItem<SwordItem> SERAPHIUM_SWORD = ITEMS.registerItem("seraphium_sword",
             props -> new SwordItem(ModTiers.SERAPHIUM, props.attributes(SwordItem.createAttributes(ModTiers.SERAPHIUM, 3, -2.4F))) {

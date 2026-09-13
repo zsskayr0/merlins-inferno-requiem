@@ -3,95 +3,69 @@ package dev.zsskayr.merlins_inferno.client;
 import java.util.List;
 import java.util.Optional;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.InventoryMenu;
 
 import dev.zsskayr.merlins_inferno.menu.HellForgeMenu;
 
 /**
- * Reuses vanilla's furnace GUI for the background/slots (no custom panel art yet), but every
- * progress indicator is custom:
+ * The Hell Forge's own custom panel art ({@code hell_forge.png}), replacing vanilla's furnace
+ * texture entirely. Every progress indicator is custom-drawn on top of it:
  * <ul>
- *     <li>the fuel tank ({@link #renderFuelBar}) - animated lava, clipped to the fuel level, framed
- *     with the user-supplied tick overlay and a bevel border;</li>
- *     <li>the cook-progress indicator ({@link #renderSmile}) - a hand-drawn demonic grin
- *     ({@link #SMILE}) revealed left-to-right instead of vanilla's flame/arrow, styled after the
- *     DragonForge mod's furnace GUI (dragon head icon) but with a grin instead of a dragon.</li>
+ *     <li>the fuel tank ({@link #renderFuelBar}) - a horizontal gauge that grows outward from the
+ *     center orb toward both edges as the tank fills, using the user-supplied
+ *     {@code hell_forge_bar_fill.png} (its own transparent gap/margins already match the panel's
+ *     baked-in track, so an empty tank just shows that dark track underneath, unfilled). That
+ *     center orb isn't decoration - it's the fuel slot's own socket, baked right into the gauge
+ *     it feeds (see {@link HellForgeMenu#FUEL_SLOT}'s coordinates), not off to the side;</li>
+ *     <li>the cook-progress indicator ({@link #renderBurnIcon}) - an 11-frame gauge
+ *     ({@code hell_forge_burn_p0.png}..{@code p10.png}) sitting between the input/output sockets,
+ *     starting gray (p10, idle) and turning a stronger red as a frame approaches p0 (done).</li>
  * </ul>
- * The panel is {@link HellForgeMenu#Y_OFFSET} taller than vanilla's furnace GUI so there's room for
- * a title bar above the slots - that extra strip is filled/bordered by hand in {@link #renderBg}
- * (rather than left blank) so the title reads as part of the panel instead of floating above it,
- * and centered horizontally per the title's actual width.
- * <p>
- * The fuel slot no longer lines up with any pre-drawn slot art in the furnace texture (it moved
- * next to the tank bar - see {@link HellForgeMenu}), so {@link #renderFuelSlotFrame} draws a small
- * stylized socket behind it instead of relying on the background image for that one slot.
+ * The panel already matches vanilla's own standard 176x166 layout for the player-inventory grid
+ * (same {@code 8 + col*18}/{@code 84 + row*18}/{@code 142} coordinates), so unlike the previous
+ * vanilla-furnace-texture version, no extra offset or title strip is needed - the whole GUI is
+ * exactly as tall as the art. The "Hell Forge" title is intentionally not drawn at all (see
+ * {@link #renderLabels}); the panel is meant to be read without one.
  */
 public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/container/furnace.png");
-    private static final ResourceLocation BAR_OVERLAY = ResourceLocation.fromNamespaceAndPath("merlins_inferno", "textures/gui/hell_forge_fuel_bar.png");
-    private static final ResourceLocation SMILE = ResourceLocation.fromNamespaceAndPath("merlins_inferno", "textures/gui/hell_forge_smile.png");
-    private static final ResourceLocation LAVA_STILL = ResourceLocation.withDefaultNamespace("block/lava_still");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("merlins_inferno", "textures/gui/hellforge/hell_forge.png");
+    private static final ResourceLocation BAR_FILL = ResourceLocation.fromNamespaceAndPath("merlins_inferno", "textures/gui/hellforge/hell_forge_bar_fill.png");
+    private static final ResourceLocation[] BURN_FRAMES = new ResourceLocation[11];
+    static {
+        for (int i = 0; i <= 10; i++) {
+            BURN_FRAMES[i] = ResourceLocation.fromNamespaceAndPath("merlins_inferno", "textures/gui/hellforge/hell_forge_burn_p" + i + ".png");
+        }
+    }
 
-    private static final int Y_OFFSET = HellForgeMenu.Y_OFFSET;
+    // hell_forge.png is a 256x256 sheet with the actual 176x166 panel baked into its top-left
+    // corner - same convention as vanilla's own furnace.png.
+    private static final int TEXTURE_SHEET_SIZE = 256;
 
-    private static final int BAR_X = 8;
-    private static final int BAR_Y = 16;
-    private static final int BAR_WIDTH = 16;
-    private static final int BAR_HEIGHT = 58;
+    // Fuel tank bar - hell_forge_bar_fill.png at its native 172x20 size, positioned so its two
+    // colored segments land exactly on the dark track baked into the panel art (sampled by hand
+    // against hell_forge.png: track interior runs from panel x=11-73 and x=100-163, y=24-31).
+    private static final int BAR_X = 2;
+    private static final int BAR_Y = 18;
+    private static final int BAR_TEX_WIDTH = 172;
+    private static final int BAR_TEX_HEIGHT = 20;
+    // Each segment's extent within the bar_fill texture itself (0-indexed, inclusive).
+    private static final int BAR_LEFT_SEG_START = 9;
+    private static final int BAR_LEFT_SEG_END = 70;
+    private static final int BAR_RIGHT_SEG_START = 99;
+    private static final int BAR_RIGHT_SEG_END = 161;
 
-    private static final int SMILE_WIDTH = 32;
-    private static final int SMILE_HEIGHT = 16;
-    // Sits in the gap between the input and output slots (x 72-116 is clear) - it used to overlap
-    // the input slot directly (that overlap, the item icon rendering with red/white fragments of
-    // the grin bleeding through next to it, was the "GUI bugado" from the screenshot).
-    private static final int SMILE_X = 79;
-    private static final int SMILE_Y = 26;
-
-    private static final int FUEL_SLOT_X = 30;
-    private static final int FUEL_SLOT_Y = 28;
-
-    // The furnace texture's own fuel slot (55-74, 52-69) and its smoke-puff decoration above it
-    // (56-75, 34-51) are still baked into TEXTURE at their original spot - since the real fuel
-    // slot moved next to the tank bar, that leftover art needs covering or it just sits there
-    // looking like an inert second slot (the other half of "GUI bugado").
-    private static final int OLD_FUEL_ART_LEFT = 55;
-    private static final int OLD_FUEL_ART_TOP = 34;
-    private static final int OLD_FUEL_ART_RIGHT = 75;
-    private static final int OLD_FUEL_ART_BOTTOM = 70;
-
-    private static final int COLOR_PANEL = 0xFFC6C6C6;
-    private static final int COLOR_PANEL_BORDER = 0xFF555555;
-    private static final int COLOR_TRACK = 0xFF1A1A1A;
-    private static final int COLOR_BEVEL_LIGHT = 0xFF6B6B6B;
-    private static final int COLOR_BEVEL_DARK = 0xFF000000;
-    // Sampled directly from furnace.png's own slot pixels, so the hand-drawn fuel slot matches a
-    // real one exactly instead of approximating it.
-    private static final int COLOR_SLOT_INTERIOR = 0xFF8B8B8B;
-    private static final int COLOR_SLOT_DARK = 0xFF373737;
-    private static final int COLOR_SLOT_LIGHT = 0xFFFFFFFF;
+    // Cook-progress gauge - sits centered between the input/output sockets, same 16x16 size as
+    // every hell_forge_burn_p*.png frame, so it's blit 1:1 with no scaling.
+    private static final int BURN_X = 79;
+    private static final int BURN_Y = 50;
+    private static final int BURN_SIZE = 16;
 
     public HellForgeScreen(HellForgeMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.imageHeight = 166 + Y_OFFSET;
-        this.inventoryLabelY = this.imageHeight - 94;
-        // NOT in the constructor: `this.font` is still null here (Screen only sets it once init()
-        // runs, right before calling this class's own init()) - centering the title needs it, so
-        // this has to happen in init() instead. This is what crashed the whole connection: an NPE
-        // inside a ClientboundOpenScreenPacket handler isn't caught anywhere, so it took the
-        // network thread down with it ("Network Protocol Error").
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-        this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
     }
 
     @Override
@@ -99,78 +73,49 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         int x = this.leftPos;
         int y = this.topPos;
 
-        // Extra title strip above the furnace texture - filled/bordered by hand so the title sits
-        // inside a real panel instead of floating over empty space. The fill extends a few pixels
-        // PAST the seam (into where the furnace texture starts) because furnace.png's own top
-        // corners are rounded (a couple of transparent pixels cut into each corner) - without this
-        // overlap, the darkened world behind the GUI peeks through that notch right at the seam,
-        // showing up as a little dark triangle poking into the title bar.
-        guiGraphics.fill(x, y, x + this.imageWidth, y + Y_OFFSET + 4, COLOR_PANEL);
-        guiGraphics.fill(x, y, x + this.imageWidth, y + 2, COLOR_PANEL_BORDER);
-        guiGraphics.fill(x, y, x + 2, y + Y_OFFSET, COLOR_PANEL_BORDER);
-        guiGraphics.fill(x + this.imageWidth - 2, y, x + this.imageWidth, y + Y_OFFSET, COLOR_PANEL_BORDER);
+        guiGraphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight, TEXTURE_SHEET_SIZE, TEXTURE_SHEET_SIZE);
 
-        guiGraphics.blit(TEXTURE, x, y + Y_OFFSET, 0, 0, 176, 166);
-
-        // Paint over the furnace texture's own (now unused) fuel slot + smoke decoration.
-        guiGraphics.fill(x + OLD_FUEL_ART_LEFT, y + OLD_FUEL_ART_TOP + Y_OFFSET,
-                x + OLD_FUEL_ART_RIGHT, y + OLD_FUEL_ART_BOTTOM + Y_OFFSET, COLOR_PANEL);
-
-        renderFuelSlotFrame(guiGraphics, x + FUEL_SLOT_X, y + FUEL_SLOT_Y + Y_OFFSET);
         renderFuelBar(guiGraphics, x + BAR_X, y + BAR_Y);
-        renderSmile(guiGraphics, x + SMILE_X, y + SMILE_Y + Y_OFFSET);
+        renderBurnIcon(guiGraphics, x + BURN_X, y + BURN_Y);
     }
 
+    /** Grows outward from the center orb toward both edges as {@link HellForgeMenu#getFuelLevel} rises. */
     private void renderFuelBar(GuiGraphics guiGraphics, int barLeft, int barTop) {
-        guiGraphics.fill(barLeft, barTop, barLeft + BAR_WIDTH, barTop + BAR_HEIGHT, COLOR_TRACK);
+        float level = this.menu.getFuelLevel();
+        if (level <= 0.0F) {
+            return;
+        }
 
-        int filled = Math.round(this.menu.getFuelLevel() * BAR_HEIGHT);
-        if (filled > 0) {
-            // Tiled (not stretched) so the lava texture reads as actual lava rather than one
-            // squished-tall image - the scissor rect clips it to just the filled bottom portion,
-            // rising and falling with the tank level.
-            TextureAtlasSprite lava = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(LAVA_STILL);
-            guiGraphics.enableScissor(barLeft, barTop + BAR_HEIGHT - filled, barLeft + BAR_WIDTH, barTop + BAR_HEIGHT);
-            for (int tileY = barTop; tileY < barTop + BAR_HEIGHT; tileY += BAR_WIDTH) {
-                guiGraphics.blit(barLeft, tileY, 0, BAR_WIDTH, BAR_WIDTH, lava);
-            }
+        int leftVisible = Math.round(level * (BAR_LEFT_SEG_END - BAR_LEFT_SEG_START + 1));
+        if (leftVisible > 0) {
+            int clipLeft = barLeft + BAR_LEFT_SEG_END + 1 - leftVisible;
+            int clipRight = barLeft + BAR_LEFT_SEG_END + 1;
+            guiGraphics.enableScissor(clipLeft, barTop, clipRight, barTop + BAR_TEX_HEIGHT);
+            guiGraphics.blit(BAR_FILL, barLeft, barTop, 0, 0, BAR_TEX_WIDTH, BAR_TEX_HEIGHT, BAR_TEX_WIDTH, BAR_TEX_HEIGHT);
             guiGraphics.disableScissor();
         }
 
-        // Tick-mark frame the user supplied, at its native 1:1 pixel size.
-        guiGraphics.blit(BAR_OVERLAY, barLeft, barTop, 0, 0, BAR_WIDTH, BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT);
-
-        // Stylized bevel border around the whole bar: light on top/left, dark on bottom/right.
-        guiGraphics.fill(barLeft - 1, barTop - 1, barLeft + BAR_WIDTH + 1, barTop, COLOR_BEVEL_LIGHT);
-        guiGraphics.fill(barLeft - 1, barTop - 1, barLeft, barTop + BAR_HEIGHT + 1, COLOR_BEVEL_LIGHT);
-        guiGraphics.fill(barLeft + BAR_WIDTH, barTop - 1, barLeft + BAR_WIDTH + 1, barTop + BAR_HEIGHT + 1, COLOR_BEVEL_DARK);
-        guiGraphics.fill(barLeft - 1, barTop + BAR_HEIGHT, barLeft + BAR_WIDTH + 1, barTop + BAR_HEIGHT + 1, COLOR_BEVEL_DARK);
-    }
-
-    /** Reveals the grin left-to-right with cook progress, replacing vanilla's flame/arrow entirely. */
-    private void renderSmile(GuiGraphics guiGraphics, int left, int top) {
-        int visible = Math.round(this.menu.getCookProgress() * SMILE_WIDTH);
-        if (visible <= 0) {
-            return;
+        int rightVisible = Math.round(level * (BAR_RIGHT_SEG_END - BAR_RIGHT_SEG_START + 1));
+        if (rightVisible > 0) {
+            int clipLeft = barLeft + BAR_RIGHT_SEG_START;
+            int clipRight = clipLeft + rightVisible;
+            guiGraphics.enableScissor(clipLeft, barTop, clipRight, barTop + BAR_TEX_HEIGHT);
+            guiGraphics.blit(BAR_FILL, barLeft, barTop, 0, 0, BAR_TEX_WIDTH, BAR_TEX_HEIGHT, BAR_TEX_WIDTH, BAR_TEX_HEIGHT);
+            guiGraphics.disableScissor();
         }
-        guiGraphics.enableScissor(left, top, left + visible, top + SMILE_HEIGHT);
-        guiGraphics.blit(SMILE, left, top, 0, 0, SMILE_WIDTH, SMILE_HEIGHT, SMILE_WIDTH, SMILE_HEIGHT);
-        guiGraphics.disableScissor();
     }
 
-    /**
-     * An 18x18 socket for the fuel slot (which no longer sits over any pre-drawn slot art),
-     * matching a real vanilla slot pixel-for-pixel: dark top/left border, white bottom/right
-     * border, mid-gray interior - colors sampled directly from furnace.png's own input slot.
-     */
-    private void renderFuelSlotFrame(GuiGraphics guiGraphics, int slotX, int slotY) {
-        int left = slotX - 1;
-        int top = slotY - 1;
-        guiGraphics.fill(left, top, left + 18, top + 18, COLOR_SLOT_INTERIOR);
-        guiGraphics.fill(left, top, left + 18, top + 1, COLOR_SLOT_DARK);
-        guiGraphics.fill(left, top, left + 1, top + 18, COLOR_SLOT_DARK);
-        guiGraphics.fill(left + 17, top + 1, left + 18, top + 18, COLOR_SLOT_LIGHT);
-        guiGraphics.fill(left + 1, top + 17, left + 18, top + 18, COLOR_SLOT_LIGHT);
+    /** Idle/no-progress shows p10 (gray); the frame reddens as it counts down to p0 (done). */
+    private void renderBurnIcon(GuiGraphics guiGraphics, int left, int top) {
+        int frame = 10 - Math.round(this.menu.getCookProgress() * 10);
+        frame = Math.max(0, Math.min(10, frame));
+        guiGraphics.blit(BURN_FRAMES[frame], left, top, 0, 0, BURN_SIZE, BURN_SIZE, BURN_SIZE, BURN_SIZE);
+    }
+
+    /** Skips the "Hell Forge" title entirely - the panel's own art carries the GUI, not a label. */
+    @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
     }
 
     @Override
@@ -182,7 +127,7 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
 
         int barLeft = this.leftPos + BAR_X;
         int barTop = this.topPos + BAR_Y;
-        if (mouseX >= barLeft && mouseX < barLeft + BAR_WIDTH && mouseY >= barTop && mouseY < barTop + BAR_HEIGHT) {
+        if (mouseX >= barLeft && mouseX < barLeft + BAR_TEX_WIDTH && mouseY >= barTop && mouseY < barTop + BAR_TEX_HEIGHT) {
             guiGraphics.renderTooltip(this.font,
                     List.of(Component.translatable("gui.merlins_inferno.hell_forge.fuel",
                             this.menu.getStoredFuel(), this.menu.getFuelCapacity())),

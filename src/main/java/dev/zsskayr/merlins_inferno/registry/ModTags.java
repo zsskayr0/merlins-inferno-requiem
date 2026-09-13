@@ -38,6 +38,21 @@ public final class ModTags {
         public static final TagKey<EntityType<?>> FAIRIES = TagKey.create(Registries.ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "fairies"));
 
+        /** "Toque do Druida"'s bonus-loot roster for swords - see {@code event.DruidsTouchHandler}. */
+        public static final TagKey<EntityType<?>> MAGICAL_MOBS = TagKey.create(Registries.ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "magical_mobs"));
+
+        /**
+         * Mundane, entirely non-magical fauna (cows, sheep, wolves, ordinary Overworld critters) -
+         * Rowanwood's intrinsic weak side, see {@code event.RowanwoodCombatHandler}. Deliberately
+         * excludes anything with a magical/supernatural nature even if it looks "ordinary" at a
+         * glance - Piglins (Nether-born), Iron/Snow Golems (magic constructs), the Warden, Endermen,
+         * skeleton horses, and Striders are all left out for that reason. Disjoint from
+         * {@link #MAGICAL_MOBS}, which gets the opposite treatment.
+         */
+        public static final TagKey<EntityType<?>> RIGID_MOBS = TagKey.create(Registries.ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rigid_mobs"));
+
         private EntityTypes() {
         }
     }
@@ -50,6 +65,10 @@ public final class ModTags {
         /** Every Seraphium tool/weapon - see SeraphiumCombatHandler for what this grants. */
         public static final TagKey<Item> SERAPHIUM_TOOLS = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "seraphium_tools"));
+
+        /** Every Rowanwood tool/weapon - see RowanwoodCombatHandler for what this grants. */
+        public static final TagKey<Item> ROWANWOOD_TOOLS = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rowanwood_tools"));
 
         private Items() {
         }
