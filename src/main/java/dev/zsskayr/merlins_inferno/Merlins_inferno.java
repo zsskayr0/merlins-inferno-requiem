@@ -32,6 +32,8 @@ import dev.zsskayr.merlins_inferno.registry.ModFeatures;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 import dev.zsskayr.merlins_inferno.registry.ModMenuTypes;
 import dev.zsskayr.merlins_inferno.registry.ModParticles;
+import dev.zsskayr.merlins_inferno.registry.ModRecipeSerializers;
+import dev.zsskayr.merlins_inferno.registry.ModRecipeTypes;
 import dev.zsskayr.merlins_inferno.registry.ModStructurePieceTypes;
 import dev.zsskayr.merlins_inferno.registry.ModStructureProcessorTypes;
 import dev.zsskayr.merlins_inferno.registry.ModStructureTypes;
@@ -54,6 +56,8 @@ public class Merlins_inferno {
         ModParticles.register(modEventBus);
         ModEffects.register(modEventBus);
         ModAttachments.register(modEventBus);
+        ModRecipeTypes.register(modEventBus);
+        ModRecipeSerializers.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModBlockEntityTypes.register(modEventBus);

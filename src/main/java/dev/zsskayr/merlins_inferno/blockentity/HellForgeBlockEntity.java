@@ -28,12 +28,21 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import dev.zsskayr.merlins_inferno.menu.HellForgeMenu;
 import dev.zsskayr.merlins_inferno.registry.ModBlockEntityTypes;
+import dev.zsskayr.merlins_inferno.registry.ModRecipeTypes;
 
 /**
  * The Hell Forge's block entity - a furnace/blast-furnace hybrid: it accepts either recipe type
- * for its input (checking {@link RecipeType#SMELTING} first, then {@link RecipeType#BLASTING}) and
- * cooks 30% faster than either ({@link #COOK_TIME_MULTIPLIER}). Fuel is restricted to lava buckets
- * and blaze powder ({@link #getBurnDuration}).
+ * for its input (checking {@link ModRecipeTypes#HELL_FORGE_SMELTING} first, then
+ * {@link RecipeType#SMELTING}, then {@link RecipeType#BLASTING}) and cooks 30% faster than any of
+ * them ({@link #COOK_TIME_MULTIPLIER}). Fuel is restricted to lava buckets and blaze powder
+ * ({@link #getBurnDuration}).
+ * <p>
+ * {@code HELL_FORGE_SMELTING} exists specifically for recipes that must NOT also work in a plain
+ * furnace/blast furnace (e.g. Demonite Bar) - vanilla furnaces only ever look up
+ * {@code RecipeType.SMELTING}/{@code BLASTING}/{@code SMOKING}, so a recipe registered under this
+ * mod's own type is invisible to them. Recipes that SHOULD also work in a normal furnace (e.g.
+ * Rowanwood Bar) keep using vanilla's {@code minecraft:smelting} type as before - this block
+ * still honors those too, it just checks its own type first.
  * <p>
  * Unlike a vanilla furnace, fuel doesn't sit in its slot being burned down one item at a time -
  * whatever's placed there is immediately converted into {@link #storedFuel} (a tank, capped at
@@ -125,6 +134,12 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
             return Optional.empty();
         }
         SingleRecipeInput recipeInput = new SingleRecipeInput(input);
+        Optional<RecipeHolder<AbstractCookingRecipe>> hellForgeOnly = level.getRecipeManager()
+                .getRecipeFor(ModRecipeTypes.HELL_FORGE_SMELTING.get(), recipeInput, level)
+                .map(holder -> (RecipeHolder<AbstractCookingRecipe>) (RecipeHolder<?>) holder);
+        if (hellForgeOnly.isPresent()) {
+            return hellForgeOnly;
+        }
         Optional<RecipeHolder<AbstractCookingRecipe>> smelting = level.getRecipeManager()
                 .getRecipeFor(RecipeType.SMELTING, recipeInput, level)
                 .map(holder -> (RecipeHolder<AbstractCookingRecipe>) (RecipeHolder<?>) holder);

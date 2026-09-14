@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "merlins_inferno:demonite_bar_from_smelting"
+        "recipe": "merlins_inferno:demonite_bar_from_hell_forge"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "merlins_inferno:demonite_bar_from_smelting"
+      "merlins_inferno:demonite_bar_from_hell_forge"
     ]
   }
 }
