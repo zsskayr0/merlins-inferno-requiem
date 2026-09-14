@@ -1,0 +1,16 @@
+{
+  "values": [
+    "minecraft:blaze",
+    "minecraft:shulker",
+    "minecraft:guardian",
+    "minecraft:elder_guardian",
+    "minecraft:enderman",
+    "minecraft:endermite",
+    "minecraft:evoker",
+    "minecraft:vex",
+    "minecraft:witch",
+    "minecraft:wither",
+    "minecraft:allay",
+    "minecraft:breeze"
+  ]
+}

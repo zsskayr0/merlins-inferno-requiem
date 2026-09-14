@@ -47,6 +47,27 @@ public final class ModArmorMaterials {
             0.0F  // knockback resistance, matches Iron
     ));
 
+    /**
+     * Design (per project decision): defense values above Diamond's, plus actual toughness/
+     * knockback resistance (Rowanwood has none) - Seraphium is meant to be strictly the best of
+     * the 3 armor sets. Durability multiplier lives in {@link ModItems} like Rowanwood's does.
+     */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> SERAPHIUM = ARMOR_MATERIALS.register("seraphium", () -> new ArmorMaterial(
+            Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                map.put(ArmorItem.Type.BOOTS, 3);
+                map.put(ArmorItem.Type.LEGGINGS, 6);
+                map.put(ArmorItem.Type.CHESTPLATE, 8);
+                map.put(ArmorItem.Type.HELMET, 3);
+                map.put(ArmorItem.Type.BODY, 6);
+            }),
+            25, // enchantment value, above Iron/Rowanwood's 9
+            SoundEvents.ARMOR_EQUIP_DIAMOND,
+            () -> Ingredient.of(ModItems.SERAPHIUM_BAR.get()),
+            List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "seraphium"))),
+            2.0F, // toughness, above Diamond's
+            0.05F // knockback resistance, matching Netherite's
+    ));
+
     private ModArmorMaterials() {
     }
 

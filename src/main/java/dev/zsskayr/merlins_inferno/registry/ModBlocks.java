@@ -17,6 +17,9 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.block.HellForgeBlock;
+import dev.zsskayr.merlins_inferno.block.HellForgePartBlock;
+import dev.zsskayr.merlins_inferno.block.RowanwoodLogBlock;
 import dev.zsskayr.merlins_inferno.worldgen.ModTreeGrowers;
 
 /**
@@ -85,21 +88,19 @@ public final class ModBlocks {
             props -> new FenceBlock(props),
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava());
 
-    // --- Rowanwood: the mystical tree (3.2). No building set - just the tree itself. The log's
-    // hardness matches Obsidian (long break time), but with NO tool-tier requirement (any axe
-    // works, per the doc: "é sobre tempo de quebra, não tool tier mínimo"), so no
-    // requiresCorrectToolForDrops() call here.
-    //
-    // TODO(Toque do Druida): per 3.2's drop rule, this should only drop the raw Rowanwood
-    // material when broken with an axe enchanted with "Toque do Druida" - without it, breaking
-    // should yield only plain wood. That enchantment doesn't exist yet (design doc item 2), so
-    // for now the loot table (see ModBlockLootProvider) just drops the log itself like a normal
-    // tree. Revisit once the enchantment and the raw-material item exist. ---
+    // --- Rowanwood: the mystical tree (3.2). No building set - just the tree itself.
+    // "Bem parrudo" (per project decision): hardness AND blast resistance both match Obsidian, and
+    // - since there's no tool-tier requirement at all, any axe eventually gets through it, per the
+    // doc's "é sobre tempo de quebra, não tool tier mínimo" - see RowanwoodLogBlock, which doubles
+    // that already-Obsidian-matching break time unless the axe has "Toque do Druida". The other
+    // half of the enchant requirement (it drops nothing at all without the enchant) is a loot
+    // table condition, same as vanilla gates ore self-drops behind Silk Touch - see
+    // data/merlins_inferno/loot_table/blocks/rowanwood_log.json. ---
 
-    public static final DeferredBlock<RotatedPillarBlock> ROWANWOOD_LOG = BLOCKS.registerBlock("rowanwood_log",
-            props -> new RotatedPillarBlock(props), BlockBehaviour.Properties.of()
+    public static final DeferredBlock<RowanwoodLogBlock> ROWANWOOD_LOG = BLOCKS.registerBlock("rowanwood_log",
+            RowanwoodLogBlock::new, BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)
-                    .strength(50.0F)
+                    .strength(50.0F, 1200.0F) // matches Obsidian on both hardness and blast resistance
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
     public static final DeferredBlock<LeavesBlock> ROWANWOOD_LEAVES = BLOCKS.registerBlock("rowanwood_leaves",
@@ -117,6 +118,46 @@ public final class ModBlocks {
                     .isRedstoneConductor((state, level, pos) -> false));
     // No Rowanwood sapling on purpose - see ModBlockLootProvider's comment: it'd let players farm
     // a 48x25x39 landmark structure paste from a sapling, wildly overpowered.
+
+    // --- Compressed Netherrack: a Hell Forge ingredient. Just a plain solid block for now, no
+    // special behavior. ---
+    public static final DeferredBlock<Block> COMPRESSED_NETHERRACK = BLOCKS.registerSimpleBlock("compressed_netherrack",
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.NETHER)
+                    .strength(1.0F, 6.0F) // matches vanilla netherrack's blast resistance, a bit tougher to mine
+                    .sound(SoundType.NETHERRACK));
+
+    // --- Demonite Debris: same mining characteristics as Ancient Debris (hardness/blast
+    // resistance/sound/diamond+ tool requirement - see the "needs_diamond_tool" tag overlay and
+    // ModBlockLootProvider), just placed a little more often (see ModOreProvider). ---
+    public static final DeferredBlock<Block> DEMONITE_DEBRIS = BLOCKS.registerSimpleBlock("demonite_debris",
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .requiresCorrectToolForDrops()
+                    .strength(30.0F, 1200.0F)
+                    .sound(SoundType.ANCIENT_DEBRIS));
+
+    // --- Hell Forge: see HellForgeBlock's javadoc - block/blockentity exist for now purely to
+    // carry HellForgeModel's oversized (~2.5x2.5x2 block) geometry via a BlockEntityRenderer.
+    // No furnace/crafting-station behavior yet - that's a separate pass once this one (getting
+    // the block itself craftable and rendering) is confirmed working. ---
+    public static final DeferredBlock<HellForgeBlock> HELL_FORGE = BLOCKS.registerBlock("hell_forge",
+            HellForgeBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(50.0F, 1200.0F) // Obsidian-tier blast resistance - meant to feel like a serious, rare structure
+                    .sound(SoundType.NETHERRACK)
+                    .lightLevel(state -> 7) // faint ambient glow, matches the "forge" theme
+                    .noOcclusion()); // its real silhouette (via the BER) doesn't fill the block's own cube, so neighbors shouldn't be culled against it
+
+    // --- Hell Forge part: invisible collision filler placed automatically around HELL_FORGE, see
+    // HellForgePartBlock's javadoc. No item - never placed/obtained by hand. ---
+    public static final DeferredBlock<HellForgePartBlock> HELL_FORGE_PART = BLOCKS.registerBlock("hell_forge_part",
+            HellForgePartBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(50.0F, 1200.0F) // matches HELL_FORGE so every face takes the same effort to break
+                    .sound(SoundType.NETHERRACK)
+                    .noOcclusion()
+                    .noLootTable()); // breaking a part drops via HellForgePartBlock's own logic, not loot tables
 
     private ModBlocks() {
     }

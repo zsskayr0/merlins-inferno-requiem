@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "merlins_inferno:block/hell_forge" },
+    "facing=south": { "model": "merlins_inferno:block/hell_forge" },
+    "facing=west": { "model": "merlins_inferno:block/hell_forge" },
+    "facing=east": { "model": "merlins_inferno:block/hell_forge" }
+  }
+}

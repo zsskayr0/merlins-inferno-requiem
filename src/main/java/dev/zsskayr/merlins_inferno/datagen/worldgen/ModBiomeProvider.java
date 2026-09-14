@@ -53,7 +53,12 @@ public final class ModBiomeProvider {
         // than a pack of them. This is also the ONLY biome that lists it, which is the entire
         // mechanism keeping it exclusive to the Hallowed Grove (see ModSpawnPlacements - the
         // placement rule itself has no biome restriction).
-        mobSpawns.addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(ModEntityTypes.DRUID.get(), 3, 1, 1));
+        // Weight bumped from 3 to 15 (on par with sheep, the heaviest entry here) - CREATURE-
+        // category mobs mostly spawn once per chunk at generation time and don't despawn, so with
+        // farm animals + fox + rabbit already filling the area's spawn cap first, a weight of 3 out
+        // of ~55 meant the Druid essentially never actually won the roll in practice (confirmed:
+        // never once seen across several fresh test worlds) even though it was wired up correctly.
+        mobSpawns.addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(ModEntityTypes.DRUID.get(), 15, 1, 1));
         BiomeDefaultFeatures.commonSpawns(mobSpawns);
 
         BiomeGenerationSettings.Builder generation = new BiomeGenerationSettings.Builder(placedFeatures, worldCarvers);

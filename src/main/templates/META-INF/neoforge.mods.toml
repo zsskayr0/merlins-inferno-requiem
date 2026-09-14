@@ -72,6 +72,16 @@ versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
+# Patchouli renders the mod's in-game guidebook (data/${mod_id}/patchouli_books/...) - optional
+# since the book is pure data/assets and everything else in the mod works fine without it; players
+# without Patchouli just won't have the guide book available.
+[[dependencies."${mod_id}"]]
+modId = "patchouli"
+type = "optional"
+versionRange = "[1.21.1-90-NEOFORGE,)"
+ordering = "NONE"
+side = "BOTH"
+
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't
 # stop your mod loading on the server for example.

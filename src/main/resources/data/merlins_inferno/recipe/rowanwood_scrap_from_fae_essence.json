@@ -5,7 +5,7 @@
     "L": { "item": "merlins_inferno:rowanwood_log" },
     "W": { "item": "merlins_inferno:rowanwood_leaves" },
     "I": { "item": "minecraft:raw_iron" },
-    "E": { "item": "merlins_inferno:otherworld_essence" }
+    "E": { "item": "merlins_inferno:fae_essence" }
   },
   "pattern": [
     "LWL",

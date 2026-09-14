@@ -88,6 +88,46 @@ public final class ModTiers {
         }
     };
 
+    /**
+     * Design (per project decision): {@code SERAPHIUM} is the top of the 3-pillar trio (Rowanwood,
+     * Demonite, Seraphium) - strictly above both on every tool stat, same mining level as
+     * Demonite/Netherite. Its signature trait (bonus damage vs. Undead, matching Smite's scaling)
+     * isn't a tier field - it comes from the Sanctified status effect a player builds up by
+     * carrying Raw Lyrium (see {@code event.SanctifiedTickHandler}/{@code SanctifiedCombatHandler}),
+     * not from the Seraphium tools themselves.
+     */
+    public static final Tier SERAPHIUM = new Tier() {
+        @Override
+        public int getUses() {
+            return 2500; // above Demonite's 2031
+        }
+
+        @Override
+        public float getSpeed() {
+            return 10.0F; // above Demonite's 9.0
+        }
+
+        @Override
+        public float getAttackDamageBonus() {
+            return 5.0F; // above Demonite's 4.0
+        }
+
+        @Override
+        public TagKey<Block> getIncorrectBlocksForDrops() {
+            return BlockTags.INCORRECT_FOR_NETHERITE_TOOL; // same mining level as Demonite/Netherite
+        }
+
+        @Override
+        public int getEnchantmentValue() {
+            return 28; // above Demonite's 22
+        }
+
+        @Override
+        public Ingredient getRepairIngredient() {
+            return Ingredient.of(ModItems.SERAPHIUM_BAR.get());
+        }
+    };
+
     private ModTiers() {
     }
 }

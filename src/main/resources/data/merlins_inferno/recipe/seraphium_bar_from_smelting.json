@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "group": "seraphium_bar",
+  "ingredient": {
+    "item": "merlins_inferno:seraphium_scrap"
+  },
+  "result": {
+    "id": "merlins_inferno:seraphium_bar"
+  }
+}

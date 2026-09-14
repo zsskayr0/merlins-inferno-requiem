@@ -10,6 +10,8 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
+    // Patchouli's own maven - see the dependencies block below.
+    maven { url 'https://maven.blamejared.com' }
 }
 
 base {
@@ -112,6 +114,14 @@ dependencies {
 
     // Example project dependency using a sister or child project:
     // implementation project(":myproject")
+
+    // Patchouli's API, for the mod's in-game guidebook. Compile-time only against the :api jar
+    // (everything outside vazkii.patchouli.api is implementation detail and can change without
+    // warning) - the full jar is a soft runtime dependency, not bundled, since the book itself is
+    // pure data (data/merlins_inferno/patchouli_books/...) that only needs Patchouli present to
+    // render; it doesn't have to be installed for the rest of the mod to work.
+    compileOnly "vazkii.patchouli:Patchouli:1.21.1-93-NEOFORGE:api"
+    runtimeOnly "vazkii.patchouli:Patchouli:1.21.1-93-NEOFORGE"
 
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html

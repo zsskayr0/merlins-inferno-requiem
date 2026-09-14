@@ -15,12 +15,23 @@ import org.slf4j.Logger;
 
 import dev.zsskayr.merlins_inferno.datagen.ModDataGenerators;
 import dev.zsskayr.merlins_inferno.event.DemoniteCombatHandler;
+import dev.zsskayr.merlins_inferno.event.RowanwoodCombatHandler;
+import dev.zsskayr.merlins_inferno.event.DruidsTouchHandler;
+import dev.zsskayr.merlins_inferno.event.LyriumVillagerTrades;
+import dev.zsskayr.merlins_inferno.event.SanctifiedCombatHandler;
+import dev.zsskayr.merlins_inferno.event.SanctifiedTickHandler;
+import dev.zsskayr.merlins_inferno.event.SeraphiumCombatHandler;
 import dev.zsskayr.merlins_inferno.registry.ModArmorMaterials;
+import dev.zsskayr.merlins_inferno.registry.ModAttachments;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModCreativeModeTabs;
+import dev.zsskayr.merlins_inferno.registry.ModBlockEntityTypes;
+import dev.zsskayr.merlins_inferno.registry.ModEffects;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 import dev.zsskayr.merlins_inferno.registry.ModFeatures;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
+import dev.zsskayr.merlins_inferno.registry.ModMenuTypes;
+import dev.zsskayr.merlins_inferno.registry.ModParticles;
 import dev.zsskayr.merlins_inferno.registry.ModStructurePieceTypes;
 import dev.zsskayr.merlins_inferno.registry.ModStructureProcessorTypes;
 import dev.zsskayr.merlins_inferno.registry.ModStructureTypes;
@@ -40,8 +51,13 @@ public class Merlins_inferno {
         // Each registry class owns its DeferredRegister(s) and hooks itself onto the mod event bus.
         // ArmorMaterials go first since ModItems' armor pieces reference them.
         ModArmorMaterials.register(modEventBus);
+        ModParticles.register(modEventBus);
+        ModEffects.register(modEventBus);
+        ModAttachments.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModBlockEntityTypes.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
         ModStructureProcessorTypes.register(modEventBus);
         ModFeatures.register(modEventBus);
         ModStructureTypes.register(modEventBus);
@@ -52,6 +68,12 @@ public class Merlins_inferno {
         // Register ourselves for server and other game events we are interested in.
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(new DemoniteCombatHandler());
+        NeoForge.EVENT_BUS.register(new RowanwoodCombatHandler());
+        NeoForge.EVENT_BUS.register(new DruidsTouchHandler());
+        NeoForge.EVENT_BUS.register(new SanctifiedTickHandler());
+        NeoForge.EVENT_BUS.register(new SanctifiedCombatHandler());
+        NeoForge.EVENT_BUS.register(new SeraphiumCombatHandler());
+        NeoForge.EVENT_BUS.register(new LyriumVillagerTrades());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
