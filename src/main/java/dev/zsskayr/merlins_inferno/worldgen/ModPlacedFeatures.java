@@ -15,9 +15,6 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 public final class ModPlacedFeatures {
     public static final ResourceKey<PlacedFeature> ASHWOOD_TREE_PLACED = key("ashwood_tree_placed");
 
-    // Demonite Debris ore veins - see ModOreProvider.
-    public static final ResourceKey<PlacedFeature> DEMONITE_DEBRIS_ORE_LARGE_PLACED = key("demonite_debris_ore_large_placed");
-    public static final ResourceKey<PlacedFeature> DEMONITE_DEBRIS_ORE_SMALL_PLACED = key("demonite_debris_ore_small_placed");
 
     private ModPlacedFeatures() {
     }

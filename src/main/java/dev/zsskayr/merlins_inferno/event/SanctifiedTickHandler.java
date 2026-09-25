@@ -27,7 +27,7 @@ import dev.zsskayr.merlins_inferno.registry.ModItems;
  * The continuous-hold counter and the on/off debounce state both live in
  * {@link SanctifiedProgress}, a non-persistent data attachment (see {@code registry.ModAttachments})
  * - first tick-driven, per-item-location status effect in the mod, so this (and the attachment it
- * uses) is new infrastructure rather than a reuse of {@code DemoniteCombatHandler}'s
+ * uses) is new infrastructure rather than a reuse of {@code DemonbloodCombatHandler}'s
  * damage-event-only pattern.
  */
 public final class SanctifiedTickHandler {

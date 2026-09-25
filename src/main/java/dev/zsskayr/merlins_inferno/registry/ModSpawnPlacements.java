@@ -8,6 +8,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 
 /** Natural-spawn placement rules for every custom mob this mod adds. */
 @EventBusSubscriber(modid = Merlins_inferno.MODID)
@@ -22,5 +23,10 @@ public final class ModSpawnPlacements {
         // ever adds ModEntityTypes.DRUID to that one biome's mob spawn list.
         event.register(ModEntityTypes.DRUID.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+
+        // Flying mob: no ground requirement, just open air that isn't above a lava lake. Its
+        // actual biomes (every Nether biome) come from data/.../neoforge/biome_modifier/imp_spawns.json.
+        event.register(ModEntityTypes.IMP.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                ImpEntity::checkImpSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 }

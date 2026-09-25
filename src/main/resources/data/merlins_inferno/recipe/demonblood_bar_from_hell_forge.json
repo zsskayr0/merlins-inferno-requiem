@@ -1,0 +1,13 @@
+{
+  "type": "merlins_inferno:hell_forge_smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "group": "demonblood_bar",
+  "ingredient": {
+    "item": "merlins_inferno:demonblood_scrap"
+  },
+  "result": {
+    "id": "merlins_inferno:demonblood_bar"
+  }
+}

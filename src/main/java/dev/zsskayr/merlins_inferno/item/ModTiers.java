@@ -50,13 +50,13 @@ public final class ModTiers {
     };
 
     /**
-     * Design (per project decision): {@code DEMONITE} mirrors Netherite's stats exactly (uses,
+     * Design (per project decision): {@code DEMONBLOOD} mirrors Netherite's stats exactly (uses,
      * speed, attack damage bonus, mining level, repair item) - its one intrinsic edge is a higher
      * enchantment value. The material's signature trait, +20% damage against "humans" (villagers,
      * pillagers, witches, and their variations), is not a tier field - see
-     * {@code dev.zsskayr.merlins_inferno.event.DemoniteCombatHandler}.
+     * {@code dev.zsskayr.merlins_inferno.event.DemonbloodCombatHandler}.
      */
-    public static final Tier DEMONITE = new Tier() {
+    public static final Tier DEMONBLOOD = new Tier() {
         @Override
         public int getUses() {
             return 2031; // matches Netherite
@@ -84,14 +84,14 @@ public final class ModTiers {
 
         @Override
         public Ingredient getRepairIngredient() {
-            return Ingredient.of(ModItems.DEMONITE_BAR.get());
+            return Ingredient.of(ModItems.DEMONBLOOD_BAR.get());
         }
     };
 
     /**
      * Design (per project decision): {@code SERAPHIUM} is the top of the 3-pillar trio (Rowanwood,
-     * Demonite, Seraphium) - strictly above both on every tool stat, same mining level as
-     * Demonite/Netherite. Its signature trait (bonus damage vs. Undead, matching Smite's scaling)
+     * Demonblood, Seraphium) - strictly above both on every tool stat, same mining level as
+     * Demonblood/Netherite. Its signature trait (bonus damage vs. Undead, matching Smite's scaling)
      * isn't a tier field - it comes from the Sanctified status effect a player builds up by
      * carrying Raw Lyrium (see {@code event.SanctifiedTickHandler}/{@code SanctifiedCombatHandler}),
      * not from the Seraphium tools themselves.
@@ -99,27 +99,27 @@ public final class ModTiers {
     public static final Tier SERAPHIUM = new Tier() {
         @Override
         public int getUses() {
-            return 2500; // above Demonite's 2031
+            return 2500; // above Demonblood's 2031
         }
 
         @Override
         public float getSpeed() {
-            return 10.0F; // above Demonite's 9.0
+            return 10.0F; // above Demonblood's 9.0
         }
 
         @Override
         public float getAttackDamageBonus() {
-            return 5.0F; // above Demonite's 4.0
+            return 5.0F; // above Demonblood's 4.0
         }
 
         @Override
         public TagKey<Block> getIncorrectBlocksForDrops() {
-            return BlockTags.INCORRECT_FOR_NETHERITE_TOOL; // same mining level as Demonite/Netherite
+            return BlockTags.INCORRECT_FOR_NETHERITE_TOOL; // same mining level as Demonblood/Netherite
         }
 
         @Override
         public int getEnchantmentValue() {
-            return 28; // above Demonite's 22
+            return 28; // above Demonblood's 22
         }
 
         @Override

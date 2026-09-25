@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mundane_essence": {
+      "conditions": {
+        "items": [
+          {
+            "items": "merlins_inferno:mundane_essence"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "merlins_inferno:rowanwood_scrap_from_mundane_essence"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mundane_essence"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "merlins_inferno:rowanwood_scrap_from_mundane_essence"
+    ]
+  }
+}

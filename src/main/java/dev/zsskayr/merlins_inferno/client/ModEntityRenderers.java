@@ -28,6 +28,7 @@ public final class ModEntityRenderers {
     @SubscribeEvent
     static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntityTypes.DRUID.get(), DruidRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.IMP.get(), ImpRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.HELL_FORGE.get(), HellForgeBlockEntityRenderer::new);
     }
 

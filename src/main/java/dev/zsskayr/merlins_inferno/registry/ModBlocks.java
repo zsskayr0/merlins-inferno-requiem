@@ -127,16 +127,6 @@ public final class ModBlocks {
                     .strength(1.0F, 6.0F) // matches vanilla netherrack's blast resistance, a bit tougher to mine
                     .sound(SoundType.NETHERRACK));
 
-    // --- Demonite Debris: same mining characteristics as Ancient Debris (hardness/blast
-    // resistance/sound/diamond+ tool requirement - see the "needs_diamond_tool" tag overlay and
-    // ModBlockLootProvider), just placed a little more often (see ModOreProvider). ---
-    public static final DeferredBlock<Block> DEMONITE_DEBRIS = BLOCKS.registerSimpleBlock("demonite_debris",
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_BLACK)
-                    .requiresCorrectToolForDrops()
-                    .strength(30.0F, 1200.0F)
-                    .sound(SoundType.ANCIENT_DEBRIS));
-
     // --- Hell Forge: see HellForgeBlock's javadoc - block/blockentity exist for now purely to
     // carry HellForgeModel's oversized (~2.5x2.5x2 block) geometry via a BlockEntityRenderer.
     // No furnace/crafting-station behavior yet - that's a separate pass once this one (getting

@@ -38,7 +38,7 @@ import dev.zsskayr.merlins_inferno.registry.ModRecipeTypes;
  * ({@link #getBurnDuration}).
  * <p>
  * {@code HELL_FORGE_SMELTING} exists specifically for recipes that must NOT also work in a plain
- * furnace/blast furnace (e.g. Demonite Bar) - vanilla furnaces only ever look up
+ * furnace/blast furnace (e.g. Demonblood Bar) - vanilla furnaces only ever look up
  * {@code RecipeType.SMELTING}/{@code BLASTING}/{@code SMOKING}, so a recipe registered under this
  * mod's own type is invisible to them. Recipes that SHOULD also work in a normal furnace (e.g.
  * Rowanwood Bar) keep using vanilla's {@code minecraft:smelting} type as before - this block

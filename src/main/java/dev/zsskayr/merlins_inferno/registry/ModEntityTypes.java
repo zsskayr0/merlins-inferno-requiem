@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
+import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 
 /**
  * Central registry for every custom {@code EntityType} the mod adds (hostile mobs first,
@@ -32,6 +33,16 @@ public final class ModEntityTypes {
                     .sized(0.6F, 1.95F)
                     .eyeHeight(1.74F)
                     .build(Merlins_inferno.MODID + ":druid"));
+
+    // Small flying demon of the Nether - see ImpEntity. Fire-immune like the rest of the Nether's
+    // residents (lava is only a "hard to recover loot" problem for it, never a death trap).
+    public static final DeferredHolder<EntityType<?>, EntityType<ImpEntity>> IMP = ENTITY_TYPES.register("imp",
+            () -> EntityType.Builder.of(ImpEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 0.8F)
+                    .eyeHeight(0.6F)
+                    .fireImmune()
+                    .clientTrackingRange(8)
+                    .build(Merlins_inferno.MODID + ":imp"));
 
     private ModEntityTypes() {
     }

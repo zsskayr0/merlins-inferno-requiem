@@ -41,8 +41,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.ASHWOOD_LEAVES.get(), ModBlocks.ASHWOOD_SAPLING.get(), ModBlocks.ASHWOOD_STAIRS.get(),
                 ModBlocks.ASHWOOD_SLAB.get(), ModBlocks.ASHWOOD_FENCE.get(),
                 ModBlocks.ROWANWOOD_LEAVES.get(),
-                ModBlocks.COMPRESSED_NETHERRACK.get(), ModBlocks.HELL_FORGE.get(),
-                ModBlocks.DEMONITE_DEBRIS.get());
+                ModBlocks.COMPRESSED_NETHERRACK.get(), ModBlocks.HELL_FORGE.get());
     }
 
     @Override
@@ -68,8 +67,5 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.COMPRESSED_NETHERRACK.get());
         dropSelf(ModBlocks.HELL_FORGE.get());
 
-        // Same drop shape as any modern ore: Fortune-scaled Demonite Raw normally, the debris
-        // block itself with Silk Touch - matches ModItems.DEMONITE_RAW's javadoc.
-        add(ModBlocks.DEMONITE_DEBRIS.get(), createOreDrop(ModBlocks.DEMONITE_DEBRIS.get(), ModItems.DEMONITE_RAW.get()));
     }
 }

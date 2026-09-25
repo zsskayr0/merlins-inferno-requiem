@@ -17,8 +17,8 @@ public final class ModTags {
     public static final class EntityTypes {
         /**
          * "Humans": villagers and their variants, plus the raid/illager cast (pillagers,
-         * vindicators, evokers, illusioners, ravagers, witches) - what Demonite's +20% damage
-         * bonus ({@code DemoniteCombatHandler}) and the "Evil" enchantment both target.
+         * vindicators, evokers, illusioners, ravagers, witches) - what Demonblood's +20% damage
+         * bonus ({@code DemonbloodCombatHandler}) and the "Evil" enchantment both target.
          */
         public static final TagKey<EntityType<?>> HUMANS = TagKey.create(Registries.ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "humans"));
@@ -53,14 +53,25 @@ public final class ModTags {
         public static final TagKey<EntityType<?>> RIGID_MOBS = TagKey.create(Registries.ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rigid_mobs"));
 
+        /**
+         * Demons (the Imp so far; future demons join here): take extra damage from Seraphium
+         * weapons - see {@code event.SeraphiumCombatHandler}.
+         */
+        public static final TagKey<EntityType<?>> DEMON = TagKey.create(Registries.ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demon"));
+
         private EntityTypes() {
         }
     }
 
     public static final class Items {
-        /** Every Demonite tool/weapon - grants the intrinsic +20% damage bonus vs {@link EntityTypes#HUMANS}. */
-        public static final TagKey<Item> DEMONITE_TOOLS = TagKey.create(Registries.ITEM,
-                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demonite_tools"));
+        /** Every Demonblood tool/weapon - grants the intrinsic +20% damage bonus vs {@link EntityTypes#HUMANS}. */
+        public static final TagKey<Item> DEMONBLOOD_TOOLS = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demonblood_tools"));
+
+        /** Every Demonblood armor piece - grants the Demon's Fury trait (see DemonbloodCombatHandler). */
+        public static final TagKey<Item> DEMONBLOOD_ARMOR = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demonblood_armor"));
 
         /** Every Seraphium tool/weapon - see SeraphiumCombatHandler for what this grants. */
         public static final TagKey<Item> SERAPHIUM_TOOLS = TagKey.create(Registries.ITEM,
@@ -69,6 +80,10 @@ public final class ModTags {
         /** Every Rowanwood tool/weapon - see RowanwoodCombatHandler for what this grants. */
         public static final TagKey<Item> ROWANWOOD_TOOLS = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rowanwood_tools"));
+
+        /** Gold materials an Imp will steal from the ground or from a player's hand - see {@code entity.ai.ImpStealGoal}. */
+        public static final TagKey<Item> IMP_STEALABLE = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "imp_stealable"));
 
         private Items() {
         }

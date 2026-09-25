@@ -10,7 +10,7 @@ import dev.zsskayr.merlins_inferno.registry.ModTags;
 
 /**
  * Rowanwood's own intrinsic combat trait - baked into the tool tag
- * ({@link ModTags.Items#ROWANWOOD_TOOLS}), the same way Demonite's anti-"human" bonus and
+ * ({@link ModTags.Items#ROWANWOOD_TOOLS}), the same way Demonblood's anti-"human" bonus and
  * Seraphium's passive/neutral/aggressive split are. A druidic, nature-attuned material: it bites
  * harder against anything magical/otherworldly ({@link ModTags.EntityTypes#MAGICAL_MOBS}), but
  * struggles against mundane, entirely non-magical fauna ({@link ModTags.EntityTypes#RIGID_MOBS}) -

@@ -14,7 +14,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
 
 import dev.zsskayr.merlins_inferno.datagen.ModDataGenerators;
-import dev.zsskayr.merlins_inferno.event.DemoniteCombatHandler;
+import dev.zsskayr.merlins_inferno.event.DemonbloodCombatHandler;
 import dev.zsskayr.merlins_inferno.event.RowanwoodCombatHandler;
 import dev.zsskayr.merlins_inferno.event.DruidsTouchHandler;
 import dev.zsskayr.merlins_inferno.event.LyriumVillagerTrades;
@@ -71,7 +71,7 @@ public class Merlins_inferno {
 
         // Register ourselves for server and other game events we are interested in.
         NeoForge.EVENT_BUS.register(this);
-        NeoForge.EVENT_BUS.register(new DemoniteCombatHandler());
+        NeoForge.EVENT_BUS.register(new DemonbloodCombatHandler());
         NeoForge.EVENT_BUS.register(new RowanwoodCombatHandler());
         NeoForge.EVENT_BUS.register(new DruidsTouchHandler());
         NeoForge.EVENT_BUS.register(new SanctifiedTickHandler());

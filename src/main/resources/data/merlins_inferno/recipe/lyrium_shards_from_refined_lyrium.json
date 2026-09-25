@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "merlins_inferno:lyrium_refined"
+    }
+  ],
+  "result": {
+    "count": 3,
+    "id": "merlins_inferno:lyrium_shard"
+  }
+}

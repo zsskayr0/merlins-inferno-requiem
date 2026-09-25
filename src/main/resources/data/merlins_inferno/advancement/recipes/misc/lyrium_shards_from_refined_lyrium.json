@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_lyrium_refined": {
+      "conditions": {
+        "items": [
+          { "items": "merlins_inferno:lyrium_refined" }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "merlins_inferno:lyrium_shards_from_refined_lyrium"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [ "has_the_recipe", "has_lyrium_refined" ]
+  ],
+  "rewards": {
+    "recipes": [ "merlins_inferno:lyrium_shards_from_refined_lyrium" ]
+  }
+}

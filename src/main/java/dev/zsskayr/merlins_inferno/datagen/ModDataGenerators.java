@@ -17,7 +17,6 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.datagen.client.ModBlockStateProvider;
 import dev.zsskayr.merlins_inferno.datagen.loot.ModBlockLootProvider;
 import dev.zsskayr.merlins_inferno.datagen.worldgen.ModBiomeProvider;
-import dev.zsskayr.merlins_inferno.datagen.worldgen.ModOreProvider;
 import dev.zsskayr.merlins_inferno.datagen.worldgen.ModStructureProvider;
 import dev.zsskayr.merlins_inferno.datagen.worldgen.ModTreeProvider;
 
@@ -40,18 +39,9 @@ public final class ModDataGenerators {
         // below references the previous one (structures reference the Hallowed Grove biome;
         // structure sets reference the structure). Cross-registry lookups are lazy either way,
         // but this keeps it consistent with the vanilla convention.
-        // RegistrySetBuilder only tolerates one .add() per registry key - calling it twice for
-        // the same registry (one per provider) throws "Multiple entries with same key" building
-        // its internal state map, so both providers' bootstrap calls have to share the one slot.
         RegistrySetBuilder dynamicRegistries = new RegistrySetBuilder()
-                .add(Registries.CONFIGURED_FEATURE, context -> {
-                    ModTreeProvider.bootstrapConfiguredFeatures(context);
-                    ModOreProvider.bootstrapConfiguredFeatures(context);
-                })
-                .add(Registries.PLACED_FEATURE, context -> {
-                    ModTreeProvider.bootstrapPlacedFeatures(context);
-                    ModOreProvider.bootstrapPlacedFeatures(context);
-                })
+                .add(Registries.CONFIGURED_FEATURE, ModTreeProvider::bootstrapConfiguredFeatures)
+                .add(Registries.PLACED_FEATURE, ModTreeProvider::bootstrapPlacedFeatures)
                 .add(Registries.BIOME, ModBiomeProvider::bootstrap)
                 .add(Registries.STRUCTURE, ModStructureProvider::bootstrapStructures)
                 .add(Registries.STRUCTURE_SET, ModStructureProvider::bootstrapStructureSets);

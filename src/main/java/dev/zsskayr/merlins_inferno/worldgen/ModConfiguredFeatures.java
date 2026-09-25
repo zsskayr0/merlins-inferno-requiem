@@ -17,9 +17,6 @@ public final class ModConfiguredFeatures {
     // No Rowanwood entry here anymore - it's a real Structure now (see RowanwoodTreeStructure),
     // not a decoration Feature. See ModStructures instead.
 
-    // Demonite Debris ore veins - see ModOreProvider.
-    public static final ResourceKey<ConfiguredFeature<?, ?>> DEMONITE_DEBRIS_ORE_LARGE = key("demonite_debris_ore_large");
-    public static final ResourceKey<ConfiguredFeature<?, ?>> DEMONITE_DEBRIS_ORE_SMALL = key("demonite_debris_ore_small");
 
     private ModConfiguredFeatures() {
     }

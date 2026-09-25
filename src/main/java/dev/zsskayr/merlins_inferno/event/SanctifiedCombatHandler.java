@@ -11,7 +11,7 @@ import dev.zsskayr.merlins_inferno.registry.ModEffects;
 
 /**
  * Sanctified's two combat traits, both keyed off the ATTACKER currently having the effect (not off
- * a weapon/item tag, unlike {@code DemoniteCombatHandler} - Sanctified is a status the attacker
+ * a weapon/item tag, unlike {@code DemonbloodCombatHandler} - Sanctified is a status the attacker
  * carries, so anything they hit with counts, bare fists included):
  * <ul>
  *     <li>bonus damage against {@link EntityTypeTags#UNDEAD}, matching the Smite enchantment's own

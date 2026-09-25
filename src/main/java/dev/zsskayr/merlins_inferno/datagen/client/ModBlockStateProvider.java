@@ -47,11 +47,5 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         simpleBlock(ModBlocks.ROWANWOOD_LEAVES.get());
         itemModels().simpleBlockItem(ModBlocks.ROWANWOOD_LEAVES.get());
 
-        // Demonite Debris - top/bottom vs. side textures, same static look Ancient Debris has (no
-        // axis property to rotate, unlike a log).
-        simpleBlock(ModBlocks.DEMONITE_DEBRIS.get(), models().cubeColumn("demonite_debris",
-                modLoc("block/demonite_debris_side"),
-                modLoc("block/demonite_debris_top")));
-        itemModels().simpleBlockItem(ModBlocks.DEMONITE_DEBRIS.get());
     }
 }

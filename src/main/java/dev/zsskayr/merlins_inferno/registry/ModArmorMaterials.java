@@ -48,6 +48,29 @@ public final class ModArmorMaterials {
     ));
 
     /**
+     * Design (per project decision): Demonblood armor is slightly superior to Netherite in defense
+     * (chestplate 9, leggings 7, total 22 vs 20) with Netherite-equivalent toughness and knockback resistance,
+     * higher enchantability (22 vs 15), and equal durability (multiplier 37).
+     * Worn-armor textures live at {@code textures/models/armor/demonblood_layer_1.png} (and
+     * {@code _layer_2.png} for leggings).
+     */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> DEMONBLOOD = ARMOR_MATERIALS.register("demonblood", () -> new ArmorMaterial(
+            Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                map.put(ArmorItem.Type.BOOTS, 3);
+                map.put(ArmorItem.Type.LEGGINGS, 7);
+                map.put(ArmorItem.Type.CHESTPLATE, 9);
+                map.put(ArmorItem.Type.HELMET, 3);
+                map.put(ArmorItem.Type.BODY, 7);
+            }),
+            22, // enchantment value, matches ModTiers.DEMONBLOOD (Netherite is 15)
+            SoundEvents.ARMOR_EQUIP_NETHERITE,
+            () -> Ingredient.of(ModItems.DEMONBLOOD_BAR.get()),
+            List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demonblood"))),
+            3.0F, // toughness, matches Netherite
+            0.1F  // knockback resistance, matches Netherite
+    ));
+
+    /**
      * Design (per project decision): defense values above Diamond's, plus actual toughness/
      * knockback resistance (Rowanwood has none) - Seraphium is meant to be strictly the best of
      * the 3 armor sets. Durability multiplier lives in {@link ModItems} like Rowanwood's does.

@@ -55,7 +55,7 @@ public final class ModItems {
     // Otherworld Essence's obtainment method: the Druid's trade (see event.DruidTrades) - or,
     // narratively, defeating a Dullahan at night (that mob doesn't exist yet - out of scope here).
     public static final DeferredItem<Item> OTHERWORLD_ESSENCE = ITEMS.registerSimpleItem("otherworld_essence", new Item.Properties());
-    public static final DeferredItem<Item> OVERWORLD_ESSENCE = ITEMS.registerSimpleItem("overworld_essence", new Item.Properties());
+    public static final DeferredItem<Item> MUNDANE_ESSENCE = ITEMS.registerSimpleItem("mundane_essence", new Item.Properties());
     // Dropped by third-party "fairy" mobs at 10% - see ModTags.EntityTypes.FAIRIES and
     // data/merlins_inferno/loot_modifiers/fae_essence_from_fairies.json (empty tag by default,
     // since this mod doesn't know which fairy-adding mods are installed).
@@ -82,59 +82,58 @@ public final class ModItems {
     public static final DeferredItem<ArmorItem> ROWANWOOD_BOOTS = ITEMS.registerItem("rowanwood_boots",
             props -> new ArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(40))));
 
-    // --- Demonite material set: see ModTiers.DEMONITE for the balance rationale (Netherite's
-    // stats, higher enchantability, +10% damage vs "humans" via DemoniteCombatHandler - called
+    // --- Demonblood material set: see ModTiers.DEMONBLOOD for the balance rationale (Netherite's
+    // stats, higher enchantability, +10% damage vs "humans" via DemonbloodCombatHandler - called
     // out below in each tool's tooltip). Tool attack attributes mirror vanilla's actual Netherite
-    // tool values 1:1. Every demonite_*.json recipe also crafts its result pre-enchanted with
-    // Bane of Humanity I (see data/merlins_inferno/recipe/demonite_*.json's result.components). ---
+    // tool values 1:1. Every demonblood_*.json recipe also crafts its result pre-enchanted with
+    // Bane of Humanity I (see data/merlins_inferno/recipe/demonblood_*.json's result.components). ---
 
-    // Demonite Debris (ModBlocks) - same mining characteristics as Ancient Debris, a bit more
-    // common (see ModOreProvider).
-    public static final DeferredItem<BlockItem> DEMONITE_DEBRIS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DEMONITE_DEBRIS);
-    // What the debris actually drops (not itself) - see ModBlockLootProvider. Combined with
-    // Infernal Essence + Netherite Scrap into Demonite Scrap
-    // (data/merlins_inferno/recipe/demonite_scrap.json), which the Hell Forge then turns into the
-    // bar below (data/merlins_inferno/recipe/demonite_bar_from_smelting.json).
-    public static final DeferredItem<Item> DEMONITE_RAW = ITEMS.registerSimpleItem("demonite_raw", new Item.Properties());
-    public static final DeferredItem<Item> DEMONITE_SCRAP = ITEMS.registerSimpleItem("demonite_scrap", new Item.Properties());
+    // Dropped by Imps (see data/merlins_inferno/loot_table/entities/imp.json). Combined with
+    // Infernal Essence + Netherite Scrap into Demonblood Scrap
+    // (data/merlins_inferno/recipe/demonblood_scrap.json), which the Hell Forge then turns into the
+    // bar below (data/merlins_inferno/recipe/demonblood_bar_from_hell_forge.json).
+    public static final DeferredItem<Item> DEMON_BLOOD = ITEMS.registerSimpleItem("demon_blood", new Item.Properties().fireResistant());
+    public static final DeferredItem<Item> INFERNAL_SINEW = ITEMS.registerSimpleItem("infernal_sinew", new Item.Properties().fireResistant());
+    public static final DeferredItem<Item> WITHERED_BONE = ITEMS.registerSimpleItem("withered_bone", new Item.Properties().fireResistant());
+    public static final DeferredItem<Item> DEMONBLOOD_SCRAP = ITEMS.registerSimpleItem("demonblood_scrap", new Item.Properties().fireResistant());
 
     // Plain crafting material - no in-world use yet beyond crafting the tools below.
-    public static final DeferredItem<Item> DEMONITE_BAR = ITEMS.registerSimpleItem("demonite_bar", new Item.Properties());
+    public static final DeferredItem<Item> DEMONBLOOD_BAR = ITEMS.registerSimpleItem("demonblood_bar", new Item.Properties().fireResistant());
 
-    public static final DeferredItem<SwordItem> DEMONITE_SWORD = ITEMS.registerItem("demonite_sword",
-            props -> new SwordItem(ModTiers.DEMONITE, props.attributes(SwordItem.createAttributes(ModTiers.DEMONITE, 3, -2.4F))) {
+    public static final DeferredItem<SwordItem> DEMONBLOOD_SWORD = ITEMS.registerItem("demonblood_sword",
+            props -> new SwordItem(ModTiers.DEMONBLOOD, props.fireResistant().attributes(SwordItem.createAttributes(ModTiers.DEMONBLOOD, 3, -2.4F))) {
                 @Override
                 public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
                     super.appendHoverText(stack, context, tooltip, flag);
                     appendHumanDamageTooltip(tooltip);
                 }
             });
-    public static final DeferredItem<AxeItem> DEMONITE_AXE = ITEMS.registerItem("demonite_axe",
-            props -> new AxeItem(ModTiers.DEMONITE, props.attributes(AxeItem.createAttributes(ModTiers.DEMONITE, 5.0F, -3.0F))) {
+    public static final DeferredItem<AxeItem> DEMONBLOOD_AXE = ITEMS.registerItem("demonblood_axe",
+            props -> new AxeItem(ModTiers.DEMONBLOOD, props.fireResistant().attributes(AxeItem.createAttributes(ModTiers.DEMONBLOOD, 5.0F, -3.0F))) {
                 @Override
                 public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
                     super.appendHoverText(stack, context, tooltip, flag);
                     appendHumanDamageTooltip(tooltip);
                 }
             });
-    public static final DeferredItem<ShovelItem> DEMONITE_SHOVEL = ITEMS.registerItem("demonite_shovel",
-            props -> new ShovelItem(ModTiers.DEMONITE, props.attributes(ShovelItem.createAttributes(ModTiers.DEMONITE, 1.5F, -3.0F))) {
+    public static final DeferredItem<ShovelItem> DEMONBLOOD_SHOVEL = ITEMS.registerItem("demonblood_shovel",
+            props -> new ShovelItem(ModTiers.DEMONBLOOD, props.fireResistant().attributes(ShovelItem.createAttributes(ModTiers.DEMONBLOOD, 1.5F, -3.0F))) {
                 @Override
                 public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
                     super.appendHoverText(stack, context, tooltip, flag);
                     appendHumanDamageTooltip(tooltip);
                 }
             });
-    public static final DeferredItem<PickaxeItem> DEMONITE_PICKAXE = ITEMS.registerItem("demonite_pickaxe",
-            props -> new PickaxeItem(ModTiers.DEMONITE, props.attributes(PickaxeItem.createAttributes(ModTiers.DEMONITE, 1.0F, -2.8F))) {
+    public static final DeferredItem<PickaxeItem> DEMONBLOOD_PICKAXE = ITEMS.registerItem("demonblood_pickaxe",
+            props -> new PickaxeItem(ModTiers.DEMONBLOOD, props.fireResistant().attributes(PickaxeItem.createAttributes(ModTiers.DEMONBLOOD, 1.0F, -2.8F))) {
                 @Override
                 public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
                     super.appendHoverText(stack, context, tooltip, flag);
                     appendHumanDamageTooltip(tooltip);
                 }
             });
-    public static final DeferredItem<HoeItem> DEMONITE_HOE = ITEMS.registerItem("demonite_hoe",
-            props -> new HoeItem(ModTiers.DEMONITE, props.attributes(HoeItem.createAttributes(ModTiers.DEMONITE, -4.0F, 0.0F))) {
+    public static final DeferredItem<HoeItem> DEMONBLOOD_HOE = ITEMS.registerItem("demonblood_hoe",
+            props -> new HoeItem(ModTiers.DEMONBLOOD, props.fireResistant().attributes(HoeItem.createAttributes(ModTiers.DEMONBLOOD, -4.0F, 0.0F))) {
                 @Override
                 public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
                     super.appendHoverText(stack, context, tooltip, flag);
@@ -142,9 +141,47 @@ public final class ModItems {
                 }
             });
 
-    /** Shared tooltip line for every Demonite tool - see {@code DemoniteCombatHandler}. */
+    public static final DeferredItem<ArmorItem> DEMONBLOOD_HELMET = ITEMS.registerItem("demonblood_helmet",
+            props -> new ArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(37)).fireResistant()) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    appendDemonFuryTooltip(tooltip);
+                }
+            });
+    public static final DeferredItem<ArmorItem> DEMONBLOOD_CHESTPLATE = ITEMS.registerItem("demonblood_chestplate",
+            props -> new ArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(37)).fireResistant()) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    appendDemonFuryTooltip(tooltip);
+                }
+            });
+    public static final DeferredItem<ArmorItem> DEMONBLOOD_LEGGINGS = ITEMS.registerItem("demonblood_leggings",
+            props -> new ArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(37)).fireResistant()) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    appendDemonFuryTooltip(tooltip);
+                }
+            });
+    public static final DeferredItem<ArmorItem> DEMONBLOOD_BOOTS = ITEMS.registerItem("demonblood_boots",
+            props -> new ArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(37)).fireResistant()) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    appendDemonFuryTooltip(tooltip);
+                }
+            });
+
+    /** Shared tooltip line for every Demonblood tool - see {@code DemonbloodCombatHandler}. */
     private static void appendHumanDamageTooltip(List<Component> tooltip) {
-        tooltip.add(Component.translatable("item.merlins_inferno.demonite_tooltip.humans_bonus").withStyle(ChatFormatting.DARK_RED));
+        tooltip.add(Component.translatable("item.merlins_inferno.demonblood_tooltip.humans_bonus").withStyle(ChatFormatting.DARK_RED));
+    }
+
+    /** Shared tooltip line for every Demonblood armor piece - see {@code DemonbloodCombatHandler}. */
+    private static void appendDemonFuryTooltip(List<Component> tooltip) {
+        tooltip.add(Component.translatable("item.merlins_inferno.demonblood_armor_tooltip.demon_fury").withStyle(ChatFormatting.DARK_RED));
     }
 
     // --- Lyrium/Seraphium material set: see ModTiers.SERAPHIUM / ModArmorMaterials.SERAPHIUM for
@@ -154,10 +191,10 @@ public final class ModItems {
     // yet - Pure and True are registered as plain hooks for the altar/structure content that
     // unlocks them, deliberately out of scope for now. ---
 
-    // Stage 0: the literal ore fragment, before it's even collected into a "raw" lump - no
-    // ore-block/worldgen or crafting use wired up yet, same starting situation every other stage
-    // below began in.
+    // Stage 0: the literal ore fragment. Refined Lyrium can be split into three shards, which are
+    // combined with an iron nugget to make the Lyrium Rod used by Seraphium tools.
     public static final DeferredItem<Item> LYRIUM_SHARD = ITEMS.registerSimpleItem("lyrium_shard", new Item.Properties());
+    public static final DeferredItem<Item> LYRIUM_ROD = ITEMS.registerSimpleItem("lyrium_rod", new Item.Properties());
     // Stage 1: mined raw (no ore-block/worldgen wired up yet - obtain via /give or drops added
     // later, same situation Infernal Essence started in). Its own "weapon" role isn't a separate
     // item - holding it already triggers Sanctified (see SanctifiedTickHandler) at a level that
@@ -270,6 +307,8 @@ public final class ModItems {
     // Testing/admin convenience - the Druid otherwise only ever appears via natural spawning in
     // the Hallowed Grove (see ModBiomeProvider). Background/highlight colors: mossy forest green
     // with a warm bark-gold spot pattern, matching the "nature guardian" theme.
+    public static final DeferredItem<DeferredSpawnEggItem> IMP_SPAWN_EGG = ITEMS.registerItem("imp_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.IMP, 0xA8231B, 0xF2C230, props));
     public static final DeferredItem<DeferredSpawnEggItem> DRUID_SPAWN_EGG = ITEMS.registerItem("druid_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.DRUID, 0x4A6B3D, 0xC9A66B, props));
 

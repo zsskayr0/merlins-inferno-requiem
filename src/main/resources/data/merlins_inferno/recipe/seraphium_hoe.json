@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "X": { "item": "merlins_inferno:seraphium_bar" },
-    "S": { "item": "minecraft:stick" }
+    "S": { "item": "merlins_inferno:lyrium_rod" }
   },
   "pattern": ["XX", " S", " S"],
   "result": { "count": 1, "id": "merlins_inferno:seraphium_hoe" }
