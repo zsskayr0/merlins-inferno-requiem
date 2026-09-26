@@ -3,7 +3,7 @@
   "biomes": "#minecraft:is_nether",
   "spawners": {
     "type": "merlins_inferno:imp",
-    "weight": 40,
+    "weight": 25,
     "minCount": 2,
     "maxCount": 4
   }

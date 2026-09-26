@@ -153,7 +153,14 @@ public class ImpEntity extends Monster implements GeoEntity {
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
-    /** Open air, not above a lava lake (recovering loot from one would be a pure punishment). */
+    /** Natural spawns must be within this many blocks of a solid surface (wall, floor or ceiling). */
+    private static final int SURFACE_SPAWN_RADIUS = 3;
+
+    /**
+     * Open air near a surface (so imps spread along walls and ledges instead of clouding the middle
+     * of big caverns and flooding the monster cap), and not above a lava lake (recovering loot
+     * from one would be a pure punishment).
+     */
     public static boolean checkImpSpawnRules(EntityType<ImpEntity> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         if (level.getDifficulty() == Difficulty.PEACEFUL) {
             return false;
@@ -161,7 +168,17 @@ public class ImpEntity extends Monster implements GeoEntity {
         if (spawnType == MobSpawnType.SPAWNER) {
             return true;
         }
-        return level.getBlockState(pos).isAir() && !isOverLava(level, pos);
+        return level.getBlockState(pos).isAir() && isNearSurface(level, pos) && !isOverLava(level, pos);
+    }
+
+    private static boolean isNearSurface(LevelAccessor level, BlockPos pos) {
+        for (BlockPos check : BlockPos.betweenClosed(pos.offset(-SURFACE_SPAWN_RADIUS, -SURFACE_SPAWN_RADIUS, -SURFACE_SPAWN_RADIUS),
+                pos.offset(SURFACE_SPAWN_RADIUS, SURFACE_SPAWN_RADIUS, SURFACE_SPAWN_RADIUS))) {
+            if (!level.getBlockState(check).getCollisionShape(level, check).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isOverLava(LevelAccessor level, BlockPos pos) {
