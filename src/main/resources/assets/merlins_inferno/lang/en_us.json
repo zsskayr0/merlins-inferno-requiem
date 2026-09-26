@@ -113,5 +113,8 @@
   "block.merlins_inferno.ashwood_sign": "Ashwood Sign",
   "block.merlins_inferno.ashwood_wall_sign": "Ashwood Wall Sign",
   "block.merlins_inferno.ashwood_hanging_sign": "Ashwood Hanging Sign",
-  "block.merlins_inferno.ashwood_wall_hanging_sign": "Ashwood Wall Hanging Sign"
+  "block.merlins_inferno.ashwood_wall_hanging_sign": "Ashwood Wall Hanging Sign",
+  "entity.merlins_inferno.dullahan": "Dullahan",
+  "item.merlins_inferno.dullahan_spawn_egg": "Dullahan Spawn Egg",
+  "tag.item.merlins_inferno.dullahan_repellent": "Dullahan Repellent (Gold)"
 }

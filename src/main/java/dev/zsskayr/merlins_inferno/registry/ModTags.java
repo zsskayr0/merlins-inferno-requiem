@@ -93,6 +93,14 @@ public final class ModTags {
         public static final TagKey<Item> IMP_STEALABLE = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "imp_stealable"));
 
+        /**
+         * What the Dullahan flees from in the legend: an item of this tag lying near it is eaten and
+         * paralyzes it (see {@code entity.DullahanEntity}). Gold ingots by default - other mods can
+         * add their own "gold-like" items.
+         */
+        public static final TagKey<Item> DULLAHAN_REPELLENT = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "dullahan_repellent"));
+
         private Items() {
         }
     }

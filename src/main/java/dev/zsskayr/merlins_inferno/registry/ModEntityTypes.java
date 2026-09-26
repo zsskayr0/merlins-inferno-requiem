@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
+import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
 import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 
 /**
@@ -43,6 +44,15 @@ public final class ModEntityTypes {
                     .fireImmune()
                     .clientTrackingRange(8)
                     .build(Merlins_inferno.MODID + ":imp"));
+
+    // The Hallowed Grove's night miniboss - see DullahanEntity. Taller than a player (the model is
+    // also drawn 1.2x); no fireImmune/bigger tracking range needed, it's an overworld melee mob.
+    public static final DeferredHolder<EntityType<?>, EntityType<DullahanEntity>> DULLAHAN = ENTITY_TYPES.register("dullahan",
+            () -> EntityType.Builder.of(DullahanEntity::new, MobCategory.MONSTER)
+                    .sized(0.7F, 2.3F)
+                    .eyeHeight(2.0F)
+                    .clientTrackingRange(10)
+                    .build(Merlins_inferno.MODID + ":dullahan"));
 
     private ModEntityTypes() {
     }

@@ -28,6 +28,7 @@ public final class ModEntityRenderers {
     @SubscribeEvent
     static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(DruidModel.LAYER_LOCATION, DruidModel::createBodyLayer);
+        event.registerLayerDefinition(DullahanModel.LAYER_LOCATION, DullahanModel::createBodyLayer);
         event.registerLayerDefinition(HellForgeModel.LAYER_LOCATION, HellForgeModel::createBodyLayer);
     }
 
@@ -35,6 +36,7 @@ public final class ModEntityRenderers {
     static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntityTypes.DRUID.get(), DruidRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.IMP.get(), ImpRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.DULLAHAN.get(), DullahanRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.HELL_FORGE.get(), HellForgeBlockEntityRenderer::new);
     }
 
