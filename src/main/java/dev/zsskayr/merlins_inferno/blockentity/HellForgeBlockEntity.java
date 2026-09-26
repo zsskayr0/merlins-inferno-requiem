@@ -19,10 +19,15 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.BlastingRecipe;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
+import dev.zsskayr.merlins_inferno.recipe.HellForgeRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -129,26 +134,28 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         }
     }
 
-    private static Optional<RecipeHolder<AbstractCookingRecipe>> getRecipe(Level level, ItemStack input) {
+    // One cached lookup per recipe type, like vanilla's furnaces keep: each remembers the last recipe
+    // that matched and tries it first, so an unchanged input costs a single match() instead of a
+    // scan of every recipe of the type on every call.
+    private final RecipeManager.CachedCheck<SingleRecipeInput, HellForgeRecipe> forgeCheck =
+            RecipeManager.createCheck(ModRecipeTypes.HELL_FORGE_SMELTING.get());
+    private final RecipeManager.CachedCheck<SingleRecipeInput, SmeltingRecipe> smeltingCheck = RecipeManager.createCheck(RecipeType.SMELTING);
+    private final RecipeManager.CachedCheck<SingleRecipeInput, BlastingRecipe> blastingCheck = RecipeManager.createCheck(RecipeType.BLASTING);
+
+    @SuppressWarnings("unchecked")
+    private Optional<RecipeHolder<AbstractCookingRecipe>> getRecipe(Level level, ItemStack input) {
         if (input.isEmpty()) {
             return Optional.empty();
         }
         SingleRecipeInput recipeInput = new SingleRecipeInput(input);
-        Optional<RecipeHolder<AbstractCookingRecipe>> hellForgeOnly = level.getRecipeManager()
-                .getRecipeFor(ModRecipeTypes.HELL_FORGE_SMELTING.get(), recipeInput, level)
-                .map(holder -> (RecipeHolder<AbstractCookingRecipe>) (RecipeHolder<?>) holder);
-        if (hellForgeOnly.isPresent()) {
-            return hellForgeOnly;
+        Optional<? extends RecipeHolder<? extends AbstractCookingRecipe>> found = this.forgeCheck.getRecipeFor(recipeInput, level);
+        if (found.isEmpty()) {
+            found = this.smeltingCheck.getRecipeFor(recipeInput, level);
         }
-        Optional<RecipeHolder<AbstractCookingRecipe>> smelting = level.getRecipeManager()
-                .getRecipeFor(RecipeType.SMELTING, recipeInput, level)
-                .map(holder -> (RecipeHolder<AbstractCookingRecipe>) (RecipeHolder<?>) holder);
-        if (smelting.isPresent()) {
-            return smelting;
+        if (found.isEmpty()) {
+            found = this.blastingCheck.getRecipeFor(recipeInput, level);
         }
-        return level.getRecipeManager()
-                .getRecipeFor(RecipeType.BLASTING, recipeInput, level)
-                .map(holder -> (RecipeHolder<AbstractCookingRecipe>) (RecipeHolder<?>) holder);
+        return found.map(holder -> (RecipeHolder<AbstractCookingRecipe>) holder);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, HellForgeBlockEntity blockEntity) {
@@ -161,16 +168,24 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         int fuelValue = getBurnDuration(fuel);
         if (fuelValue > 0 && blockEntity.storedFuel + fuelValue <= FUEL_CAPACITY) {
             blockEntity.storedFuel += fuelValue;
-            if (fuel.hasCraftingRemainingItem()) {
-                blockEntity.items.set(FUEL_SLOT, fuel.getCraftingRemainingItem());
-            } else {
-                fuel.shrink(1);
+            ItemStack remainder = fuel.hasCraftingRemainingItem() ? fuel.getCraftingRemainingItem() : ItemStack.EMPTY;
+            fuel.shrink(1);
+            if (!remainder.isEmpty()) {
+                ejectRemainder(level, pos, blockEntity, remainder);
             }
             dirty = true;
         }
 
+        // No fuel and nothing half-cooked: no recipe can progress, so skip the lookup entirely.
+        if (blockEntity.storedFuel <= 0 && blockEntity.cookingProgress <= 0) {
+            if (dirty) {
+                setChanged(level, pos, state);
+            }
+            return;
+        }
+
         ItemStack input = blockEntity.items.get(INPUT_SLOT);
-        RecipeHolder<AbstractCookingRecipe> recipe = input.isEmpty() ? null : getRecipe(level, input).orElse(null);
+        RecipeHolder<AbstractCookingRecipe> recipe = input.isEmpty() ? null : blockEntity.getRecipe(level, input).orElse(null);
         boolean canBurn = canBurn(recipe, blockEntity.items, blockEntity.getMaxStackSize(), level);
 
         if (canBurn && blockEntity.storedFuel > 0) {
@@ -192,11 +207,31 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         }
     }
 
+    /**
+     * Where a spent container (the empty bucket a lava bucket leaves behind) goes. It used to sit
+     * in the fuel slot, where no hopper could reach it (only the result slot is exposed on the
+     * bottom face) and the next bucket could never be fed in - automation stalled after one
+     * bucket. Now it's moved to the result slot if that has room, or dropped next to the block.
+     */
+    private static void ejectRemainder(Level level, BlockPos pos, HellForgeBlockEntity blockEntity, ItemStack remainder) {
+        ItemStack output = blockEntity.items.get(RESULT_SLOT);
+        if (output.isEmpty()) {
+            blockEntity.items.set(RESULT_SLOT, remainder);
+        } else if (ItemStack.isSameItemSameComponents(output, remainder)
+                && output.getCount() + remainder.getCount() <= output.getMaxStackSize()) {
+            output.grow(remainder.getCount());
+        } else {
+            Block.popResource(level, pos.above(), remainder);
+        }
+    }
+
     private static boolean canBurn(@Nullable RecipeHolder<AbstractCookingRecipe> recipe, NonNullList<ItemStack> items, int maxStackSize, Level level) {
         if (items.get(INPUT_SLOT).isEmpty() || recipe == null) {
             return false;
         }
-        ItemStack result = recipe.value().assemble(new SingleRecipeInput(items.get(INPUT_SLOT)), level.registryAccess());
+        // getResultItem hands back the recipe's own stack (no per-tick copy like assemble); cooking
+        // recipes have a fixed result, and this stack is only read here.
+        ItemStack result = recipe.value().getResultItem(level.registryAccess());
         if (result.isEmpty()) {
             return false;
         }
@@ -257,7 +292,7 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         boolean sameItemStacked = !stack.isEmpty() && ItemStack.isSameItemSameComponents(existing, stack);
         super.setItem(slot, stack);
         if (slot == INPUT_SLOT && !sameItemStacked && this.level != null) {
-            this.cookingTotalTime = getTotalCookTime(getRecipe(this.level, stack).orElse(null));
+            this.cookingTotalTime = getTotalCookTime(this.getRecipe(this.level, stack).orElse(null));
             this.cookingProgress = 0;
             this.setChanged();
         }
@@ -267,7 +302,7 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
     public boolean canPlaceItem(int slot, ItemStack stack) {
         return switch (slot) {
             case FUEL_SLOT -> getBurnDuration(stack) > 0;
-            case INPUT_SLOT -> this.level != null && getRecipe(this.level, stack).isPresent();
+            case INPUT_SLOT -> this.level != null && this.getRecipe(this.level, stack).isPresent();
             default -> false; // RESULT_SLOT
         };
     }

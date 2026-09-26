@@ -4,10 +4,12 @@ import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 import dev.zsskayr.merlins_inferno.registry.ModEffects;
+import dev.zsskayr.merlins_inferno.registry.ModTags;
 
 /**
  * Sanctified's two combat traits, both keyed off the ATTACKER currently having the effect (not off
@@ -19,6 +21,10 @@ import dev.zsskayr.merlins_inferno.registry.ModEffects;
  *     <li>contagion - a melee hit (not a projectile/indirect source) copies the attacker's current
  *     Sanctified instance onto the victim.</li>
  * </ul>
+ * Both are player-only: a mob that merely got Sanctified (say, from a Seraphium weapon) must NOT
+ * hand it back to the player who inflicted it - that made every such fight an endless ping-pong
+ * until someone died. A mob type only takes part when explicitly listed in
+ * {@link ModTags.EntityTypes#SANCTIFIED_CARRIERS} (empty by default).
  */
 public final class SanctifiedCombatHandler {
     private static final float UNDEAD_DAMAGE_PER_LEVEL = 2.5F; // matches vanilla Smite
@@ -27,6 +33,10 @@ public final class SanctifiedCombatHandler {
     public void onIncomingDamage(LivingIncomingDamageEvent event) {
         Entity sourceEntity = event.getSource().getEntity();
         if (!(sourceEntity instanceof LivingEntity attacker)) {
+            return;
+        }
+
+        if (!canUseSanctified(attacker)) {
             return;
         }
 
@@ -44,5 +54,10 @@ public final class SanctifiedCombatHandler {
         if (event.getSource().getDirectEntity() == sourceEntity) {
             event.getEntity().addEffect(new MobEffectInstance(sanctified));
         }
+    }
+
+    /** Players always; mobs only when a data pack (or this mod) opts their type in. */
+    public static boolean canUseSanctified(LivingEntity attacker) {
+        return attacker instanceof Player || attacker.getType().is(ModTags.EntityTypes.SANCTIFIED_CARRIERS);
     }
 }

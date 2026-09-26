@@ -1,15 +1,29 @@
 package dev.zsskayr.merlins_inferno.registry;
 
+import java.util.function.Supplier;
+
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.CeilingHangingSignBlock;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.StandingSignBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.WallHangingSignBlock;
+import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
@@ -18,6 +32,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.block.HellForgeBlock;
+import dev.zsskayr.merlins_inferno.block.LyriumBlock;
+import dev.zsskayr.merlins_inferno.block.LyriumClusterBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgePartBlock;
 import dev.zsskayr.merlins_inferno.block.RowanwoodLogBlock;
 import dev.zsskayr.merlins_inferno.worldgen.ModTreeGrowers;
@@ -88,12 +104,69 @@ public final class ModBlocks {
             props -> new FenceBlock(props),
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava());
 
+    // --- Rest of Ashwood's building set (design doc, 3.1): stripped variants, fence gate, door,
+    // trapdoor, pressure plate, button and both kinds of sign. Wall signs have no item of their
+    // own and drop the standing sign's (see wallSignProperties). Doors/signs need a
+    // BlockSetType/WoodType - see ModWoodTypes. ---
+
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_ASHWOOD_LOG = BLOCKS.registerBlock("stripped_ashwood_log",
+            props -> new RotatedPillarBlock(props), BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.0F)
+                    .sound(SoundType.WOOD)
+                    .ignitedByLava());
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_ASHWOOD_WOOD = BLOCKS.registerBlock("stripped_ashwood_wood",
+            props -> new RotatedPillarBlock(props), BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.0F)
+                    .sound(SoundType.WOOD)
+                    .ignitedByLava());
+    public static final DeferredBlock<FenceGateBlock> ASHWOOD_FENCE_GATE = BLOCKS.registerBlock("ashwood_fence_gate",
+            props -> new FenceGateBlock(ModWoodTypes.ASHWOOD, props),
+            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).forceSolidOn().instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava());
+    public static final DeferredBlock<DoorBlock> ASHWOOD_DOOR = BLOCKS.registerBlock("ashwood_door",
+            props -> new DoorBlock(ModWoodTypes.ASHWOOD_SET, props),
+            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS)
+                    .strength(3.0F).sound(SoundType.WOOD).noOcclusion().ignitedByLava().pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<TrapDoorBlock> ASHWOOD_TRAPDOOR = BLOCKS.registerBlock("ashwood_trapdoor",
+            props -> new TrapDoorBlock(ModWoodTypes.ASHWOOD_SET, props),
+            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS)
+                    .strength(3.0F).sound(SoundType.WOOD).noOcclusion().ignitedByLava()
+                    .isValidSpawn((state, level, pos, type) -> false));
+    public static final DeferredBlock<PressurePlateBlock> ASHWOOD_PRESSURE_PLATE = BLOCKS.registerBlock("ashwood_pressure_plate",
+            props -> new PressurePlateBlock(ModWoodTypes.ASHWOOD_SET, props),
+            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).forceSolidOn().instrument(NoteBlockInstrument.BASS)
+                    .noCollission().strength(0.5F).sound(SoundType.WOOD).ignitedByLava().pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<ButtonBlock> ASHWOOD_BUTTON = BLOCKS.registerBlock("ashwood_button",
+            props -> new ButtonBlock(ModWoodTypes.ASHWOOD_SET, 30, props),
+            BlockBehaviour.Properties.of().noCollission().strength(0.5F).sound(SoundType.WOOD).pushReaction(PushReaction.DESTROY));
+
+    public static final DeferredBlock<StandingSignBlock> ASHWOOD_SIGN = BLOCKS.registerBlock("ashwood_sign",
+            props -> new StandingSignBlock(ModWoodTypes.ASHWOOD, props), signProperties());
+    public static final DeferredBlock<WallSignBlock> ASHWOOD_WALL_SIGN = BLOCKS.registerBlock("ashwood_wall_sign",
+            props -> new WallSignBlock(ModWoodTypes.ASHWOOD, props), wallSignProperties(ASHWOOD_SIGN));
+    public static final DeferredBlock<CeilingHangingSignBlock> ASHWOOD_HANGING_SIGN = BLOCKS.registerBlock("ashwood_hanging_sign",
+            props -> new CeilingHangingSignBlock(ModWoodTypes.ASHWOOD, props), signProperties());
+    public static final DeferredBlock<WallHangingSignBlock> ASHWOOD_WALL_HANGING_SIGN = BLOCKS.registerBlock("ashwood_wall_hanging_sign",
+            props -> new WallHangingSignBlock(ModWoodTypes.ASHWOOD, props), wallSignProperties(ASHWOOD_HANGING_SIGN));
+
+    private static BlockBehaviour.Properties signProperties() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).forceSolidOn().instrument(NoteBlockInstrument.BASS)
+                .noCollission().strength(1.0F).sound(SoundType.WOOD).ignitedByLava();
+    }
+
+    /** A wall sign has no item of its own - it breaks into the standing sign's item (same loot table). */
+    private static BlockBehaviour.Properties wallSignProperties(Supplier<? extends Block> standingSign) {
+        return signProperties().lootFrom(standingSign);
+    }
+
     // --- Rowanwood: the mystical tree (3.2). No building set - just the tree itself.
     // "Bem parrudo" (per project decision): hardness AND blast resistance both match Obsidian, and
     // - since there's no tool-tier requirement at all, any axe eventually gets through it, per the
     // doc's "é sobre tempo de quebra, não tool tier mínimo" - see RowanwoodLogBlock, which doubles
     // that already-Obsidian-matching break time unless the axe has "Toque do Druida". The other
-    // half of the enchant requirement (it drops nothing at all without the enchant) is a loot
+    // half of the enchant requirement (without the enchant it drops plain Ashwood) is a loot
     // table condition, same as vanilla gates ore self-drops behind Silk Touch - see
     // data/merlins_inferno/loot_table/blocks/rowanwood_log.json. ---
 
@@ -126,6 +199,23 @@ public final class ModBlocks {
                     .mapColor(MapColor.NETHER)
                     .strength(1.0F, 6.0F) // matches vanilla netherrack's blast resistance, a bit tougher to mine
                     .sound(SoundType.NETHERRACK));
+
+    // --- Lyrium (celestial): where Raw Lyrium comes from. Formed like amethyst (a geode lined with
+    // Lyrium Block and studded with Lyrium Clusters) and as rare emerald-style ores in mountains -
+    // see datagen.worldgen.ModLyriumProvider. Mined stats copy the emerald/amethyst equivalents. ---
+    public static final DeferredBlock<DropExperienceBlock> LYRIUM_ORE = BLOCKS.registerBlock("lyrium_ore",
+            props -> new DropExperienceBlock(UniformInt.of(3, 7), props), BlockBehaviour.Properties.ofFullCopy(Blocks.EMERALD_ORE));
+    public static final DeferredBlock<DropExperienceBlock> DEEPSLATE_LYRIUM_ORE = BLOCKS.registerBlock("deepslate_lyrium_ore",
+            props -> new DropExperienceBlock(UniformInt.of(3, 7), props), BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_EMERALD_ORE));
+    // The geode blocks blaze at the maximum light level and sanctify undead/demons around them
+    // (random ticks - see block.LyriumRadiance) - but only the world's own blocks: see LyriumBlock#PLACED.
+    // The lining is immovable for pistons so a natural block can't be shoved into a base.
+    // Deliberately no budding variant: a geode is finite.
+    public static final DeferredBlock<LyriumBlock> LYRIUM_BLOCK = BLOCKS.registerBlock("lyrium_block",
+            LyriumBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK).lightLevel(state -> 15).pushReaction(PushReaction.BLOCK));
+    // Same shape/size as an amethyst cluster (height 7, offset 3), drops Raw Lyrium - see its loot table.
+    public static final DeferredBlock<LyriumClusterBlock> LYRIUM_CLUSTER = BLOCKS.registerBlock("lyrium_cluster",
+            props -> new LyriumClusterBlock(7.0F, 3.0F, props), BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_CLUSTER).lightLevel(state -> 15));
 
     // --- Hell Forge: see HellForgeBlock's javadoc - block/blockentity exist for now purely to
     // carry HellForgeModel's oversized (~2.5x2.5x2 block) geometry via a BlockEntityRenderer.

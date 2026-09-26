@@ -82,8 +82,9 @@ public final class SanctifiedTickHandler {
         }
 
         if (!progress.active) {
-            if (player.hasEffect(ModEffects.SANCTIFIED)) {
+            if (progress.appliedByLyrium) {
                 player.removeEffect(ModEffects.SANCTIFIED);
+                progress.appliedByLyrium = false;
             }
             return;
         }
@@ -92,6 +93,7 @@ public final class SanctifiedTickHandler {
         MobEffectInstance current = player.getEffect(ModEffects.SANCTIFIED);
         if (current == null || current.getAmplifier() != amplifier || current.getDuration() < REFRESH_DURATION / 2) {
             player.addEffect(new MobEffectInstance(ModEffects.SANCTIFIED, REFRESH_DURATION, amplifier, false, true, true));
+            progress.appliedByLyrium = true;
         }
     }
 

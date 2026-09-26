@@ -3,7 +3,6 @@ plugins {
     id 'maven-publish'
     id 'idea'
     id 'net.neoforged.moddev' version '2.0.146'
-    id 'org.jetbrains.kotlin.jvm'
 }
 
 version = mod_version
@@ -65,6 +64,10 @@ neoForge {
 
         data {
             data()
+
+            // Own game directory: the data run must not load whatever client-only mods sit in run/mods
+            // (Mouse Tweaks etc. crash it during mod construction).
+            gameDirectory = project.file('run-data')
 
             // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
             // gameDirectory = project.file('run-data')
@@ -131,7 +134,6 @@ dependencies {
     runtimeOnly "vazkii.patchouli:Patchouli:1.21.1-93-NEOFORGE"
     // GeckoLib: the Imp's animated model (assets/merlins_inferno/geo + animations).
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:4.8.4"
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
 
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
@@ -184,7 +186,4 @@ idea {
         downloadSources = true
         downloadJavadoc = true
     }
-}
-kotlin {
-    jvmToolchain(21)
 }

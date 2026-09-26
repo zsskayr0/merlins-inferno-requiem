@@ -40,7 +40,7 @@ public final class ModTiers {
 
         @Override
         public int getEnchantmentValue() {
-            return 25; // matches Gold
+            return 22; // matches Gold's tool enchantability (design doc)
         }
 
         @Override
@@ -52,7 +52,7 @@ public final class ModTiers {
     /**
      * Design (per project decision): {@code DEMONBLOOD} mirrors Netherite's stats exactly (uses,
      * speed, attack damage bonus, mining level, repair item) - its one intrinsic edge is a higher
-     * enchantment value. The material's signature trait, +20% damage against "humans" (villagers,
+     * enchantment value. The material's signature trait, +10% damage against "humans" (villagers,
      * pillagers, witches, and their variations), is not a tier field - see
      * {@code dev.zsskayr.merlins_inferno.event.DemonbloodCombatHandler}.
      */

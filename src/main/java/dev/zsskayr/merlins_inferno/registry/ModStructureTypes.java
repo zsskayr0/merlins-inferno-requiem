@@ -7,6 +7,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.worldgen.structure.DruidSanctuaryStructure;
 import dev.zsskayr.merlins_inferno.worldgen.structure.RowanwoodTreeStructure;
 
 /**
@@ -22,6 +23,9 @@ public final class ModStructureTypes {
 
     public static final DeferredHolder<StructureType<?>, StructureType<RowanwoodTreeStructure>> ROWANWOOD_TREE =
             STRUCTURE_TYPES.register("rowanwood_tree", () -> () -> RowanwoodTreeStructure.CODEC);
+
+    public static final DeferredHolder<StructureType<?>, StructureType<DruidSanctuaryStructure>> DRUID_SANCTUARY =
+            STRUCTURE_TYPES.register("druid_sanctuary", () -> () -> DruidSanctuaryStructure.CODEC);
 
     private ModStructureTypes() {
     }

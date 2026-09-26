@@ -1,11 +1,16 @@
 package dev.zsskayr.merlins_inferno.datagen.client;
 
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
+import dev.zsskayr.merlins_inferno.registry.ModItems;
 
 /**
  * Blockstates + block/item models for every block this mod adds, except the two saplings
@@ -41,11 +46,70 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         models().singleTexture("ashwood_fence_inventory", mcLoc("block/fence_inventory"), blockTexture(ModBlocks.ASHWOOD_PLANKS.get()));
         itemModels().withExistingParent("ashwood_fence", modLoc("block/ashwood_fence_inventory"));
 
+        registerAshwoodWoodwork();
+        registerLyrium();
+
         // Rowanwood
         logBlock(ModBlocks.ROWANWOOD_LOG.get());
         itemModels().simpleBlockItem(ModBlocks.ROWANWOOD_LOG.get());
         simpleBlock(ModBlocks.ROWANWOOD_LEAVES.get());
         itemModels().simpleBlockItem(ModBlocks.ROWANWOOD_LEAVES.get());
 
+    }
+
+    /** Ore, deepslate ore, lining block and the directional crystal cluster. */
+    private void registerLyrium() {
+        simpleBlock(ModBlocks.LYRIUM_ORE.get());
+        itemModels().simpleBlockItem(ModBlocks.LYRIUM_ORE.get());
+        simpleBlock(ModBlocks.DEEPSLATE_LYRIUM_ORE.get());
+        itemModels().simpleBlockItem(ModBlocks.DEEPSLATE_LYRIUM_ORE.get());
+        simpleBlock(ModBlocks.LYRIUM_BLOCK.get());
+        itemModels().simpleBlockItem(ModBlocks.LYRIUM_BLOCK.get());
+
+        // Same cross-shaped, cutout model + facing rotations as vanilla's amethyst cluster.
+        ResourceLocation clusterTexture = modLoc("block/lyrium_cluster");
+        ModelFile cluster = models().cross("lyrium_cluster", clusterTexture).renderType("cutout");
+        directionalBlock(ModBlocks.LYRIUM_CLUSTER.get(), cluster);
+        itemModels().withExistingParent("lyrium_cluster", "item/generated").texture("layer0", clusterTexture);
+    }
+
+    /** Stripped variants, gate, door, trapdoor, plate, button and both signs (design doc, 3.1). */
+    private void registerAshwoodWoodwork() {
+        ResourceLocation planks = blockTexture(ModBlocks.ASHWOOD_PLANKS.get());
+
+        logBlock(ModBlocks.STRIPPED_ASHWOOD_LOG.get());
+        itemModels().simpleBlockItem(ModBlocks.STRIPPED_ASHWOOD_LOG.get());
+        ResourceLocation strippedSide = blockTexture(ModBlocks.STRIPPED_ASHWOOD_LOG.get());
+        axisBlock(ModBlocks.STRIPPED_ASHWOOD_WOOD.get(), strippedSide, strippedSide);
+        itemModels().simpleBlockItem(ModBlocks.STRIPPED_ASHWOOD_WOOD.get());
+
+        fenceGateBlock(ModBlocks.ASHWOOD_FENCE_GATE.get(), planks);
+        itemModels().withExistingParent("ashwood_fence_gate", modLoc("block/ashwood_fence_gate"));
+
+        doorBlockWithRenderType(ModBlocks.ASHWOOD_DOOR.get(), modLoc("block/ashwood_door_bottom"), modLoc("block/ashwood_door_top"), "cutout");
+        itemModels().basicItem(ModItems.ASHWOOD_DOOR_ITEM.get());
+
+        trapdoorBlockWithRenderType(ModBlocks.ASHWOOD_TRAPDOOR.get(), modLoc("block/ashwood_trapdoor"), true, "cutout");
+        itemModels().withExistingParent("ashwood_trapdoor", modLoc("block/ashwood_trapdoor_bottom"));
+
+        pressurePlateBlock(ModBlocks.ASHWOOD_PRESSURE_PLATE.get(), planks);
+        itemModels().withExistingParent("ashwood_pressure_plate", modLoc("block/ashwood_pressure_plate"));
+
+        buttonBlock(ModBlocks.ASHWOOD_BUTTON.get(), planks);
+        models().singleTexture("ashwood_button_inventory", mcLoc("block/button_inventory"), planks);
+        itemModels().withExistingParent("ashwood_button", modLoc("block/ashwood_button_inventory"));
+
+        // Signs render through a block entity renderer - the block models only carry the particle texture.
+        signBlock(ModBlocks.ASHWOOD_SIGN.get(), ModBlocks.ASHWOOD_WALL_SIGN.get(), models().sign("ashwood_sign", planks));
+        itemModels().basicItem(ModItems.ASHWOOD_SIGN_ITEM.get());
+
+        ModelFile hangingSign = models().getBuilder("ashwood_hanging_sign").texture("particle", strippedSide);
+        anyState(ModBlocks.ASHWOOD_HANGING_SIGN.get(), hangingSign);
+        anyState(ModBlocks.ASHWOOD_WALL_HANGING_SIGN.get(), hangingSign);
+        itemModels().basicItem(ModItems.ASHWOOD_HANGING_SIGN_ITEM.get());
+    }
+
+    private void anyState(Block block, ModelFile model) {
+        getVariantBuilder(block).forAllStates(state -> ConfiguredModel.builder().modelFile(model).build());
     }
 }

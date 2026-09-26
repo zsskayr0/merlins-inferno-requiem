@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/button",
+  "textures": {
+    "texture": "merlins_inferno:block/ashwood_planks"
+  }
+}

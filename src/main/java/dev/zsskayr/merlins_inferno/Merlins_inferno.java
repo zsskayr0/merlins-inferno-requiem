@@ -95,6 +95,9 @@ public class Merlins_inferno {
         FireBlock fire = (FireBlock) Blocks.FIRE;
         fire.setFlammable(ModBlocks.ASHWOOD_LOG.get(), 5, 5);
         fire.setFlammable(ModBlocks.ASHWOOD_WOOD.get(), 5, 5);
+        fire.setFlammable(ModBlocks.STRIPPED_ASHWOOD_LOG.get(), 5, 5);
+        fire.setFlammable(ModBlocks.STRIPPED_ASHWOOD_WOOD.get(), 5, 5);
+        fire.setFlammable(ModBlocks.ASHWOOD_FENCE_GATE.get(), 5, 20);
         fire.setFlammable(ModBlocks.ASHWOOD_PLANKS.get(), 5, 20);
         fire.setFlammable(ModBlocks.ASHWOOD_STAIRS.get(), 5, 20);
         fire.setFlammable(ModBlocks.ASHWOOD_SLAB.get(), 5, 20);

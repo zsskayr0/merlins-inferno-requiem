@@ -6,6 +6,7 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
+import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
 import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 
 /** Registers the default {@code AttributeSupplier} for every custom {@code LivingEntity} this mod adds. */
@@ -18,5 +19,6 @@ public final class ModEntityAttributes {
     static void onEntityAttributeCreation(EntityAttributeCreationEvent event) {
         event.put(ModEntityTypes.DRUID.get(), DruidEntity.createAttributes().build());
         event.put(ModEntityTypes.IMP.get(), ImpEntity.createAttributes().build());
+        event.put(ModEntityTypes.DULLAHAN.get(), DullahanEntity.createAttributes().build());
     }
 }

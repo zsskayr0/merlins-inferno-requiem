@@ -17,7 +17,7 @@ public final class ModTags {
     public static final class EntityTypes {
         /**
          * "Humans": villagers and their variants, plus the raid/illager cast (pillagers,
-         * vindicators, evokers, illusioners, ravagers, witches) - what Demonblood's +20% damage
+         * vindicators, evokers, illusioners, ravagers, witches) - what Demonblood's +10% damage
          * bonus ({@code DemonbloodCombatHandler}) and the "Evil" enchantment both target.
          */
         public static final TagKey<EntityType<?>> HUMANS = TagKey.create(Registries.ENTITY_TYPE,
@@ -60,12 +60,20 @@ public final class ModTags {
         public static final TagKey<EntityType<?>> DEMON = TagKey.create(Registries.ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demon"));
 
+        /**
+         * Mobs allowed to spread Sanctified by melee when they carry it (see
+         * {@code event.SanctifiedCombatHandler}). Empty by default: a mob holding Sanctified
+         * doesn't infect players unless it's explicitly listed here.
+         */
+        public static final TagKey<EntityType<?>> SANCTIFIED_CARRIERS = TagKey.create(Registries.ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "sanctified_carriers"));
+
         private EntityTypes() {
         }
     }
 
     public static final class Items {
-        /** Every Demonblood tool/weapon - grants the intrinsic +20% damage bonus vs {@link EntityTypes#HUMANS}. */
+        /** Every Demonblood tool/weapon - grants the intrinsic +10% damage bonus vs {@link EntityTypes#HUMANS}. */
         public static final TagKey<Item> DEMONBLOOD_TOOLS = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demonblood_tools"));
 
@@ -84,6 +92,14 @@ public final class ModTags {
         /** Gold materials an Imp will steal from the ground or from a player's hand - see {@code entity.ai.ImpStealGoal}. */
         public static final TagKey<Item> IMP_STEALABLE = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "imp_stealable"));
+
+        /**
+         * What the Dullahan flees from in the legend: an item of this tag lying near it is eaten and
+         * paralyzes it (see {@code entity.DullahanEntity}). Gold ingots by default - other mods can
+         * add their own "gold-like" items.
+         */
+        public static final TagKey<Item> DULLAHAN_REPELLENT = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "dullahan_repellent"));
 
         private Items() {
         }

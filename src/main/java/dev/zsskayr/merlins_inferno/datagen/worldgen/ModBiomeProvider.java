@@ -60,6 +60,10 @@ public final class ModBiomeProvider {
         // never once seen across several fresh test worlds) even though it was wired up correctly.
         mobSpawns.addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(ModEntityTypes.DRUID.get(), 15, 1, 1));
         BiomeDefaultFeatures.commonSpawns(mobSpawns);
+        // The night miniboss. Weight 5 against the ~500 of the vanilla monster set makes it a rare
+        // roll; the spawn rule (night, this biome, none within 128 blocks) and the entity's own
+        // dawn/leave-the-biome despawn do the rest - see DullahanEntity.
+        mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(ModEntityTypes.DULLAHAN.get(), 5, 1, 1));
 
         BiomeGenerationSettings.Builder generation = new BiomeGenerationSettings.Builder(placedFeatures, worldCarvers);
         BiomeDefaultFeatures.addDefaultCarversAndLakes(generation);

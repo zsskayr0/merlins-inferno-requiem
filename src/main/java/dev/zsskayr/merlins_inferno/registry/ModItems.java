@@ -8,12 +8,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.HangingSignItem;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.SignItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.TooltipFlag;
@@ -52,8 +54,13 @@ public final class ModItems {
     // same shape (see data/merlins_inferno/recipe/rowanwood_scrap_from_*.json), crafts into a
     // Rowanwood Scrap - which then smelts (or blasts) into the bar itself. Plain items, no
     // in-world behavior of their own.
-    // Otherworld Essence's obtainment method: the Druid's trade (see event.DruidTrades) - or,
-    // narratively, defeating a Dullahan at night (that mob doesn't exist yet - out of scope here).
+    // The three essences (design decision):
+    //  - Mundane Essence: early game, obtained from the Druids (DruidEntity#updateTrades - it's
+    //    what they hand over, not a currency the player pays them with).
+    //  - Fae Essence: dropped by the Dullahan (not implemented yet); see below.
+    //  - Mundane and Fae both craft the Rowanwood Scrap (data/.../recipe/rowanwood_scrap_from_*.json).
+    //  - Otherworld Essence: something far more mystical, reserved for mid game and beyond - kept
+    //    registered but deliberately has no source or recipe yet.
     public static final DeferredItem<Item> OTHERWORLD_ESSENCE = ITEMS.registerSimpleItem("otherworld_essence", new Item.Properties());
     public static final DeferredItem<Item> MUNDANE_ESSENCE = ITEMS.registerSimpleItem("mundane_essence", new Item.Properties());
     // Dropped by third-party "fairy" mobs at 10% - see ModTags.EntityTypes.FAIRIES and
@@ -256,7 +263,7 @@ public final class ModItems {
                 }
             });
     public static final DeferredItem<HoeItem> SERAPHIUM_HOE = ITEMS.registerItem("seraphium_hoe",
-            props -> new HoeItem(ModTiers.SERAPHIUM, props.attributes(HoeItem.createAttributes(ModTiers.SERAPHIUM, -2.0F, -1.0F))) {
+            props -> new HoeItem(ModTiers.SERAPHIUM, props.attributes(HoeItem.createAttributes(ModTiers.SERAPHIUM, -5.0F, 0.0F))) {
                 @Override
                 public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
                     super.appendHoverText(stack, context, tooltip, flag);
@@ -294,8 +301,27 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> ASHWOOD_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_SLAB);
     public static final DeferredItem<BlockItem> ASHWOOD_FENCE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_FENCE);
 
+    public static final DeferredItem<BlockItem> STRIPPED_ASHWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.STRIPPED_ASHWOOD_LOG);
+    public static final DeferredItem<BlockItem> STRIPPED_ASHWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.STRIPPED_ASHWOOD_WOOD);
+    public static final DeferredItem<BlockItem> ASHWOOD_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_FENCE_GATE);
+    public static final DeferredItem<BlockItem> ASHWOOD_DOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_DOOR);
+    public static final DeferredItem<BlockItem> ASHWOOD_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_TRAPDOOR);
+    public static final DeferredItem<BlockItem> ASHWOOD_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_PRESSURE_PLATE);
+    public static final DeferredItem<BlockItem> ASHWOOD_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_BUTTON);
+    // Signs place either the standing or the wall block depending on the clicked face, and stack to 16 like vanilla's.
+    public static final DeferredItem<SignItem> ASHWOOD_SIGN_ITEM = ITEMS.registerItem("ashwood_sign",
+            props -> new SignItem(props.stacksTo(16), ModBlocks.ASHWOOD_SIGN.get(), ModBlocks.ASHWOOD_WALL_SIGN.get()));
+    public static final DeferredItem<HangingSignItem> ASHWOOD_HANGING_SIGN_ITEM = ITEMS.registerItem("ashwood_hanging_sign",
+            props -> new HangingSignItem(ModBlocks.ASHWOOD_HANGING_SIGN.get(), ModBlocks.ASHWOOD_WALL_HANGING_SIGN.get(), props.stacksTo(16)));
+
     public static final DeferredItem<BlockItem> ROWANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LOG);
     public static final DeferredItem<BlockItem> ROWANWOOD_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LEAVES);
+
+    // --- Lyrium ore / geode blocks (see ModBlocks). Ore and cluster drop Raw Lyrium. ---
+    public static final DeferredItem<BlockItem> LYRIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LYRIUM_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_LYRIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DEEPSLATE_LYRIUM_ORE);
+    public static final DeferredItem<BlockItem> LYRIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LYRIUM_BLOCK);
+    public static final DeferredItem<BlockItem> LYRIUM_CLUSTER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LYRIUM_CLUSTER);
 
     // --- Hell Forge ingredients + the block itself (see ModBlocks). ---
 
@@ -309,6 +335,8 @@ public final class ModItems {
     // with a warm bark-gold spot pattern, matching the "nature guardian" theme.
     public static final DeferredItem<DeferredSpawnEggItem> IMP_SPAWN_EGG = ITEMS.registerItem("imp_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.IMP, 0xA8231B, 0xF2C230, props));
+    public static final DeferredItem<DeferredSpawnEggItem> DULLAHAN_SPAWN_EGG = ITEMS.registerItem("dullahan_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.DULLAHAN, 0x1B1F2B, 0xD8D2BC, props));
     public static final DeferredItem<DeferredSpawnEggItem> DRUID_SPAWN_EGG = ITEMS.registerItem("druid_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.DRUID, 0x4A6B3D, 0xC9A66B, props));
 

@@ -1,0 +1,16 @@
+{
+  "name": "patchouli.merlins_inferno.entry.pillars.name",
+  "icon": "merlins_inferno:grimmorium",
+  "category": "merlins_inferno:getting_started",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.pillars.page1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.pillars.page2"
+    }
+  ]
+}

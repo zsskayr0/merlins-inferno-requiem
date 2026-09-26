@@ -1,0 +1,18 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "exclusion_zone": {
+      "chunk_count": 5,
+      "other_set": "merlins_inferno:rowanwood_tree"
+    },
+    "salt": 1146246473,
+    "separation": 4,
+    "spacing": 10
+  },
+  "structures": [
+    {
+      "structure": "merlins_inferno:druid_sanctuary",
+      "weight": 1
+    }
+  ]
+}

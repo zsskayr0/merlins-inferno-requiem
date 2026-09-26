@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 
 import dev.zsskayr.merlins_inferno.blockentity.HellForgeBlockEntity;
 import dev.zsskayr.merlins_inferno.registry.ModMenuTypes;
+import dev.zsskayr.merlins_inferno.registry.ModRecipeTypes;
 
 /**
  * The Hell Forge's menu. Slot layout is a custom arrangement (not vanilla furnace's) built around
@@ -158,7 +159,10 @@ public class HellForgeMenu extends AbstractContainerMenu {
 
     private boolean canSmelt(ItemStack stack) {
         SingleRecipeInput input = new SingleRecipeInput(stack);
-        return this.level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, input, this.level).isPresent()
+        // Same lookup order as HellForgeBlockEntity#getRecipe - the forge-exclusive type first,
+        // otherwise Demonblood Scrap (which no furnace recipe covers) would never quick-move in.
+        return this.level.getRecipeManager().getRecipeFor(ModRecipeTypes.HELL_FORGE_SMELTING.get(), input, this.level).isPresent()
+                || this.level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, input, this.level).isPresent()
                 || this.level.getRecipeManager().getRecipeFor(RecipeType.BLASTING, input, this.level).isPresent();
     }
 

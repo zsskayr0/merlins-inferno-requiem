@@ -1,0 +1,21 @@
+{
+  "name": "patchouli.merlins_inferno.entry.demonblood.name",
+  "icon": "merlins_inferno:demonblood_bar",
+  "category": "merlins_inferno:infernal_road",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:crafting",
+      "recipe": "merlins_inferno:demonblood_scrap",
+      "text": "patchouli.merlins_inferno.entry.demonblood.page1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.demonblood.page2"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.demonblood.page3"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "merlins_inferno:block/rowanwood_log_top",
+    "side": "merlins_inferno:block/rowanwood_log"
+  }
+}

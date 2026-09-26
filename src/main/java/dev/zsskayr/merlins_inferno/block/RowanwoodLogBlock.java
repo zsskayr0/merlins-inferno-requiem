@@ -16,8 +16,8 @@ import dev.zsskayr.merlins_inferno.registry.ModEnchantments;
  * purely about break TIME - there's no tool-tier requirement at all (any axe eventually gets
  * through it), matching the design doc's "é sobre tempo de quebra, não tool tier mínimo".
  * <p>
- * The other half of the enchant requirement - that it doesn't drop anything at all without the
- * enchant - is a loot table condition instead (see
+ * The other half of the enchant requirement - that it only drops a plain Ashwood log instead of
+ * Rowanwood without the enchant - is a loot table condition instead (see
  * {@code data/merlins_inferno/loot_table/blocks/rowanwood_log.json}), the same way vanilla gates
  * ore self-drops behind Silk Touch.
  */

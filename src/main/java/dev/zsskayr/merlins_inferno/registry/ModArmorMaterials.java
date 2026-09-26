@@ -39,7 +39,7 @@ public final class ModArmorMaterials {
                 map.put(ArmorItem.Type.HELMET, 2);
                 map.put(ArmorItem.Type.BODY, 5);
             }),
-            9, // enchantment value, matches Iron
+            25, // enchantment value, matches Gold's armor enchantability (design doc: Gold-level enchantability)
             SoundEvents.ARMOR_EQUIP_IRON,
             () -> Ingredient.of(ModItems.ROWANWOOD_BAR.get()),
             List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rowanwood"))),
@@ -71,24 +71,24 @@ public final class ModArmorMaterials {
     ));
 
     /**
-     * Design (per project decision): defense values above Diamond's, plus actual toughness/
-     * knockback resistance (Rowanwood has none) - Seraphium is meant to be strictly the best of
-     * the 3 armor sets. Durability multiplier lives in {@link ModItems} like Rowanwood's does.
+     * Design (per project decision): Seraphium is meant to be strictly the best of the 3 armor
+     * sets - 24 total defense (4/9/7/4) vs Demonblood's 22, toughness 4 vs 3, same knockback
+     * resistance. (It used to be Diamond's exact 20 with toughness 2, i.e. weaker than Demonblood.) Durability multiplier lives in {@link ModItems} like Rowanwood's does.
      */
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> SERAPHIUM = ARMOR_MATERIALS.register("seraphium", () -> new ArmorMaterial(
             Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-                map.put(ArmorItem.Type.BOOTS, 3);
-                map.put(ArmorItem.Type.LEGGINGS, 6);
-                map.put(ArmorItem.Type.CHESTPLATE, 8);
-                map.put(ArmorItem.Type.HELMET, 3);
-                map.put(ArmorItem.Type.BODY, 6);
+                map.put(ArmorItem.Type.BOOTS, 4);
+                map.put(ArmorItem.Type.LEGGINGS, 7);
+                map.put(ArmorItem.Type.CHESTPLATE, 9);
+                map.put(ArmorItem.Type.HELMET, 4);
+                map.put(ArmorItem.Type.BODY, 7);
             }),
             25, // enchantment value, above Iron/Rowanwood's 9
             SoundEvents.ARMOR_EQUIP_DIAMOND,
             () -> Ingredient.of(ModItems.SERAPHIUM_BAR.get()),
             List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "seraphium"))),
-            2.0F, // toughness, above Diamond's
-            0.05F // knockback resistance, matching Netherite's
+            4.0F, // toughness, above Demonblood's/Netherite's 3
+            0.1F  // knockback resistance, matches Netherite/Demonblood
     ));
 
     private ModArmorMaterials() {

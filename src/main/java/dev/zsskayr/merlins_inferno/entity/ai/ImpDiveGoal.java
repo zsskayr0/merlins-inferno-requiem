@@ -28,6 +28,7 @@ public class ImpDiveGoal extends Goal {
     public static final int MAX_SIMULTANEOUS_DIVERS = 2;
     private static final int STAGGER_TICKS = 15;
     private static final double SEARCH_RANGE = 24.0;
+    private static final int SCAN_INTERVAL_TICKS = 4;
     private static final TargetingConditions TARGETING = TargetingConditions.forCombat().range(SEARCH_RANGE);
 
     private final ImpEntity imp;
@@ -37,6 +38,7 @@ public class ImpDiveGoal extends Goal {
     private int ticks;
     private boolean hit;
     private boolean finished;
+    private int scanDelay;
     private double lastDistance;
     @Nullable
     private Vec3 holdSpot;
@@ -53,10 +55,16 @@ public class ImpDiveGoal extends Goal {
         if (!this.imp.isCourageous() || !this.imp.isAvailableFighter() || this.imp.getDiveCooldown() > 0 || this.imp.getHesitateTicks() > 0) {
             return false;
         }
-        if (this.imp.countOtherDivers(SEARCH_RANGE) >= MAX_SIMULTANEOUS_DIVERS) {
+        // The pack scan is an entity query: only every few ticks, not on each evaluation.
+        if (--this.scanDelay > 0) {
             return false;
         }
-        if (this.imp.level().getGameTime() - this.imp.latestOtherDiveStart(SEARCH_RANGE) < STAGGER_TICKS) {
+        this.scanDelay = SCAN_INTERVAL_TICKS;
+        ImpEntity.DiveScan pack = this.imp.scanOtherDivers(SEARCH_RANGE);
+        if (pack.divers() >= MAX_SIMULTANEOUS_DIVERS) {
+            return false;
+        }
+        if (this.imp.level().getGameTime() - pack.latestStart() < STAGGER_TICKS) {
             return false;
         }
         this.target = this.imp.level().getNearestPlayer(TARGETING, this.imp);

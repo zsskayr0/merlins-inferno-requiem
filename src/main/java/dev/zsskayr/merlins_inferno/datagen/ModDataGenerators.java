@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -17,6 +18,7 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.datagen.client.ModBlockStateProvider;
 import dev.zsskayr.merlins_inferno.datagen.loot.ModBlockLootProvider;
 import dev.zsskayr.merlins_inferno.datagen.worldgen.ModBiomeProvider;
+import dev.zsskayr.merlins_inferno.datagen.worldgen.ModLyriumProvider;
 import dev.zsskayr.merlins_inferno.datagen.worldgen.ModStructureProvider;
 import dev.zsskayr.merlins_inferno.datagen.worldgen.ModTreeProvider;
 
@@ -40,11 +42,19 @@ public final class ModDataGenerators {
         // structure sets reference the structure). Cross-registry lookups are lazy either way,
         // but this keeps it consistent with the vanilla convention.
         RegistrySetBuilder dynamicRegistries = new RegistrySetBuilder()
-                .add(Registries.CONFIGURED_FEATURE, ModTreeProvider::bootstrapConfiguredFeatures)
-                .add(Registries.PLACED_FEATURE, ModTreeProvider::bootstrapPlacedFeatures)
+                .add(Registries.CONFIGURED_FEATURE, context -> {
+                    ModTreeProvider.bootstrapConfiguredFeatures(context);
+                    ModLyriumProvider.bootstrapConfiguredFeatures(context);
+                })
+                .add(Registries.PLACED_FEATURE, context -> {
+                    ModTreeProvider.bootstrapPlacedFeatures(context);
+                    ModLyriumProvider.bootstrapPlacedFeatures(context);
+                })
                 .add(Registries.BIOME, ModBiomeProvider::bootstrap)
                 .add(Registries.STRUCTURE, ModStructureProvider::bootstrapStructures)
-                .add(Registries.STRUCTURE_SET, ModStructureProvider::bootstrapStructureSets);
+                .add(Registries.STRUCTURE_SET, ModStructureProvider::bootstrapStructureSets)
+                // Last: the modifiers look up both the biomes' tags and the placed features above.
+                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ModLyriumProvider::bootstrapBiomeModifiers);
 
         event.getGenerator().addProvider(event.includeServer(),
                 new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, dynamicRegistries, Set.of(Merlins_inferno.MODID)));

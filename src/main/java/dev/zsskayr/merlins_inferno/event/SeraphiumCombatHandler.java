@@ -47,6 +47,11 @@ public final class SeraphiumCombatHandler {
         if (!weapon.is(ModTags.Items.SERAPHIUM_TOOLS)) {
             return;
         }
+        // Player-only, like the rest of Sanctified's offence - a mob wielding a Seraphium weapon
+        // must not sanctify the player unless its type is explicitly listed (see SanctifiedCombatHandler).
+        if (!SanctifiedCombatHandler.canUseSanctified(attacker)) {
+            return;
+        }
 
         LivingEntity victim = event.getEntity();
         boolean isUndead = victim.getType().is(EntityTypeTags.UNDEAD);

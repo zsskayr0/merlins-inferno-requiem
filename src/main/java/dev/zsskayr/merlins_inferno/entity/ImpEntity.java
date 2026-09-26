@@ -4,6 +4,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -52,7 +53,6 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
@@ -106,10 +106,16 @@ public class ImpEntity extends Monster implements GeoEntity {
     public static final int STATE_DIVING = 2;
     private static final EntityDataAccessor<Integer> DATA_STATE = SynchedEntityData.defineId(ImpEntity.class, EntityDataSerializers.INT);
 
-    private static final RawAnimation FLY_ANIMATION = RawAnimation.begin().thenLoop("animation.imp.fly");
     private static final RawAnimation IDLE_ANIMATION = RawAnimation.begin().thenLoop("animation.imp.idle");
     private static final RawAnimation ATTACK_ANIMATION = RawAnimation.begin().thenPlay("animation.imp.attack");
+    private static final RawAnimation AIR_ATTACK_ANIMATION = RawAnimation.begin().thenPlay("animation.imp.air_attack");
     private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
+
+    // Client visual state. Debounce changes once per entity tick, not once per rendered frame.
+    private String movementAnimationState;
+    private String pendingMovementAnimationState;
+    private int pendingMovementAnimationTick;
+    private RawAnimation movementAnimation = IDLE_ANIMATION;
 
     // --- server-side behaviour state ---
     private boolean courageous;
@@ -171,11 +177,20 @@ public class ImpEntity extends Monster implements GeoEntity {
         return level.getBlockState(pos).isAir() && isNearSurface(level, pos) && !isOverLava(level, pos);
     }
 
+    /**
+     * Within {@link #SURFACE_SPAWN_RADIUS} blocks of a solid surface, checked along the six axes
+     * only (18 lookups) - the full 7x7x7 cube it used to scan (343) ran on every natural spawn
+     * attempt in the Nether. A surface that's only diagonally near is missed, which merely makes
+     * the spawn a touch pickier.
+     */
     private static boolean isNearSurface(LevelAccessor level, BlockPos pos) {
-        for (BlockPos check : BlockPos.betweenClosed(pos.offset(-SURFACE_SPAWN_RADIUS, -SURFACE_SPAWN_RADIUS, -SURFACE_SPAWN_RADIUS),
-                pos.offset(SURFACE_SPAWN_RADIUS, SURFACE_SPAWN_RADIUS, SURFACE_SPAWN_RADIUS))) {
-            if (!level.getBlockState(check).getCollisionShape(level, check).isEmpty()) {
-                return true;
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (Direction direction : Direction.values()) {
+            for (int step = 1; step <= SURFACE_SPAWN_RADIUS; step++) {
+                cursor.setWithOffset(pos, direction.getStepX() * step, direction.getStepY() * step, direction.getStepZ() * step);
+                if (!level.getBlockState(cursor).getCollisionShape(level, cursor).isEmpty()) {
+                    return true;
+                }
             }
         }
         return false;
@@ -356,11 +371,20 @@ public class ImpEntity extends Monster implements GeoEntity {
         boolean was = this.courageous;
         int count = 0;
         if (this.isAvailableFighter()) {
+            count = 1; // itself
             double radiusSqr = GROUP_RADIUS * GROUP_RADIUS;
+            // Cheap filter in the query; the line-of-sight raycast runs per candidate and stops as
+            // soon as the pack is big enough, instead of testing every neighbour every time.
             List<ImpEntity> nearby = this.level().getEntitiesOfClass(ImpEntity.class, this.getBoundingBox().inflate(GROUP_RADIUS),
-                    other -> other.isAvailableFighter() && (other == this
-                            || (this.distanceToSqr(other) <= radiusSqr && this.hasLineOfSight(other))));
-            count = nearby.size();
+                    other -> other != this && other.isAvailableFighter());
+            for (ImpEntity other : nearby) {
+                if (count >= COURAGE_GROUP_SIZE) {
+                    break;
+                }
+                if (this.distanceToSqr(other) <= radiusSqr && this.hasLineOfSight(other)) {
+                    count++;
+                }
+            }
         }
         this.courageous = count >= COURAGE_GROUP_SIZE;
         if (was && !this.courageous) {
@@ -484,31 +508,60 @@ public class ImpEntity extends Monster implements GeoEntity {
         this.fleeThreat = threat;
     }
 
-    /** Number of other imps currently in the approach phase of a dive (prepare/charge), within {@code radius}. */
-    public int countOtherDivers(double radius) {
-        int count = 0;
-        for (ImpEntity other : this.level().getEntitiesOfClass(ImpEntity.class, this.getBoundingBox().inflate(radius),
-                other -> other != this && other.diving)) {
-            count++;
-        }
-        return count;
-    }
-
-    /** Game tick of the most recent dive start among the other imps near this one (or a very old tick). */
-    public long latestOtherDiveStart(double radius) {
-        long latest = Long.MIN_VALUE / 2;
-        for (ImpEntity other : this.level().getEntitiesOfClass(ImpEntity.class, this.getBoundingBox().inflate(radius), other -> other != this)) {
-            latest = Math.max(latest, other.lastDiveStartTick);
-        }
-        return latest;
+    /** What the dive goal needs to know about the pack, from a single scan. */
+    public record DiveScan(int divers, long latestStart) {
     }
 
     /**
+     * How many other imps are in the approach phase of a dive (prepare/charge) within {@code radius},
+     * and the game tick of the most recent dive start among the other imps there (or a very old
+     * tick) - one entity query for both (they used to be two, run every couple of ticks).
+     */
+    public DiveScan scanOtherDivers(double radius) {
+        int divers = 0;
+        long latest = Long.MIN_VALUE / 2;
+        for (ImpEntity other : this.level().getEntitiesOfClass(ImpEntity.class, this.getBoundingBox().inflate(radius), other -> other != this)) {
+            if (other.diving) {
+                divers++;
+            }
+            latest = Math.max(latest, other.lastDiveStartTick);
+        }
+        return new DiveScan(divers, latest);
+    }
+
+
+
+    /** The widest range any goal asks {@link #findThreat} about (ImpFleeGoal's URGENT_RANGE). */
+    private static final double THREAT_SCAN_RANGE = 16.0;
+    /** How long a threat scan is trusted; a hit on the imp invalidates it at once (see {@link #hurt}). */
+    private static final int THREAT_CACHE_TICKS = 5;
+    @Nullable
+    private LivingEntity cachedThreat;
+    private int threatScanTick = -100;
+
+    /**
      * The nearest thing this imp has reason to run from: a player, a mob that has it as an attack
-     * target (an angry piglin), or whoever last hurt it.
+     * target (an angry piglin), or whoever last hurt it - within {@code range} (at most
+     * {@link #THREAT_SCAN_RANGE}).
+     * <p>
+     * The scan (a player lookup plus an entity query with brain lookups) used to run on every call,
+     * and several goals call this every tick or two per imp. It now runs once every
+     * {@link #THREAT_CACHE_TICKS} ticks for the widest range; because it keeps only the NEAREST
+     * threat, answering a smaller range is exact: if the nearest one is out of range, none is in.
      */
     @Nullable
     public LivingEntity findThreat(double range) {
+        if (this.tickCount - this.threatScanTick >= THREAT_CACHE_TICKS
+                || (this.cachedThreat != null && !this.cachedThreat.isAlive())) {
+            this.cachedThreat = this.scanThreat(THREAT_SCAN_RANGE);
+            this.threatScanTick = this.tickCount;
+        }
+        LivingEntity threat = this.cachedThreat;
+        return threat != null && this.distanceToSqr(threat) <= range * range ? threat : null;
+    }
+
+    @Nullable
+    private LivingEntity scanThreat(double range) {
         LivingEntity best = null;
         double bestDistance = range * range;
         Player player = this.level().getNearestPlayer(this.getX(), this.getY(), this.getZ(), range, EntitySelector.NO_CREATIVE_OR_SPECTATOR);
@@ -578,6 +631,9 @@ public class ImpEntity extends Monster implements GeoEntity {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         boolean hurt = super.hurt(source, amount);
+        if (hurt) {
+            this.threatScanTick = -100; // rescan next call: the attacker may be the new nearest threat
+        }
         if (hurt && !this.level().isClientSide && this.isAlive()) {
             // Any blow from another entity makes it let go of stolen loot - and it doesn't try again.
             if (this.isCarrying() && (source.getEntity() != null || source.getDirectEntity() != null)) {
@@ -640,18 +696,51 @@ public class ImpEntity extends Monster implements GeoEntity {
     }
 
     // ------------------------------------------------------------------------------------------
-    // GeckoLib animation: a looping "move" controller (fly while moving, idle while hovering) and
-    // a trigger-only "attack" controller for the one-shot swipe (dive, lunge, cornered strike).
+    // One controller owns the whole pose, including attacks, so two controllers cannot fight
+    // over the wings/body. GeckoLib blends arbitrary phases into authored transition clips.
     // ------------------------------------------------------------------------------------------
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "move", 4, state -> {
-            boolean moving = state.isMoving() || Math.abs(this.getY() - this.yOld) > 0.02 || this.getDeltaMovement().lengthSqr() > 0.004;
-            return state.setAndContinue(moving ? FLY_ANIMATION : IDLE_ANIMATION);
-        }));
-        controllers.add(new AnimationController<>(this, "attack", 0, state -> PlayState.STOP)
-                .triggerableAnim("attack", ATTACK_ANIMATION));
+            boolean wasMoving = "walk".equals(this.movementAnimationState) || "fly".equals(this.movementAnimationState);
+            // Hysteresis keeps hovering jitter from repeatedly restarting flight transitions.
+            double threshold = wasMoving ? 0.0016 : 0.004;
+            boolean airborne = !this.onGround();
+            double speedSquared = airborne ? this.getDeltaMovement().lengthSqr()
+                    : this.getDeltaMovement().horizontalDistanceSqr();
+            double dx = this.getX() - this.xOld;
+            double dy = airborne ? this.getY() - this.yOld : 0;
+            double dz = this.getZ() - this.zOld;
+            boolean moving = Math.max(speedSquared, dx * dx + dy * dy + dz * dz) > threshold;
+            String desired = airborne ? (moving ? "fly" : "hover") : (moving ? "walk" : "idle");
+            RawAnimation previous = state.getController().getCurrentRawAnimation();
+            boolean recoveringFromAttack = ATTACK_ANIMATION.equals(previous) || AIR_ATTACK_ANIMATION.equals(previous);
+
+            if (this.movementAnimationState == null || recoveringFromAttack) {
+                // A new observer starts at the current pose; an attack returns to the actual
+                // movement state without replaying an old takeoff/landing sequence.
+                this.movementAnimationState = desired;
+                this.pendingMovementAnimationState = desired;
+                this.pendingMovementAnimationTick = this.tickCount;
+                this.movementAnimation = RawAnimation.begin().thenLoop("animation.imp." + desired);
+            } else if (!desired.equals(this.movementAnimationState)) {
+                if (!desired.equals(this.pendingMovementAnimationState)) {
+                    this.pendingMovementAnimationState = desired;
+                    this.pendingMovementAnimationTick = this.tickCount;
+                } else if (this.tickCount - this.pendingMovementAnimationTick >= 3) {
+                    this.movementAnimation = RawAnimation.begin()
+                            .thenPlay("animation.imp." + this.movementAnimationState + "_to_" + desired)
+                            .thenLoop("animation.imp." + desired);
+                    this.movementAnimationState = desired;
+                }
+            } else {
+                this.pendingMovementAnimationState = desired;
+                this.pendingMovementAnimationTick = this.tickCount;
+            }
+            return state.setAndContinue(this.movementAnimation);
+        }).triggerableAnim("attack", ATTACK_ANIMATION)
+                .triggerableAnim("air_attack", AIR_ATTACK_ANIMATION));
     }
 
     @Override
@@ -662,7 +751,7 @@ public class ImpEntity extends Monster implements GeoEntity {
     /** Server-side: plays the one-shot attack animation on every tracking client. */
     public void playAttackAnimation() {
         if (!this.level().isClientSide) {
-            this.triggerAnim("attack", "attack");
+            this.triggerAnim("move", this.onGround() ? "attack" : "air_attack");
         }
     }
 
