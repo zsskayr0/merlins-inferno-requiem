@@ -38,6 +38,14 @@ public class DullahanSteedEntity extends SkeletonHorse {
     /** Ticks a riderless steed lingers before it fades (2s). */
     private static final int ORPHAN_FADE_TICKS = 40;
 
+    /**
+     * Movement speed attribute, and the multiplier the chase goal asks for. A mounted Dullahan moves at exactly the
+     * steed's speed, so THIS is how fast the boss is. It was 0.3 x 1.25 = 0.375 (faster than a sprinting player could
+     * comfortably kite); now 0.2 x 1.0. Tune these two.
+     */
+    public static final double MOVEMENT_SPEED = 0.2;
+    private static final double CHASE_SPEED_MODIFIER = 1.0;
+
     private int orphanTicks;
 
     public DullahanSteedEntity(EntityType<? extends DullahanSteedEntity> type, Level level) {
@@ -47,7 +55,7 @@ public class DullahanSteedEntity extends SkeletonHorse {
     public static AttributeSupplier.Builder createAttributes() {
         return AbstractHorse.createBaseHorseAttributes()
                 .add(Attributes.MAX_HEALTH, 40.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.3)
+                .add(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
@@ -102,7 +110,7 @@ public class DullahanSteedEntity extends SkeletonHorse {
             LivingEntity target = this.target();
             if (target != null) {
                 DullahanSteedEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
-                DullahanSteedEntity.this.getNavigation().moveTo(target, 1.25);
+                DullahanSteedEntity.this.getNavigation().moveTo(target, CHASE_SPEED_MODIFIER);
             }
         }
 

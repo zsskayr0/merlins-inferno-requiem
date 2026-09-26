@@ -82,6 +82,9 @@ public class DullahanEntity extends Monster implements GeoEntity {
     public static final double ATTACK_DAMAGE = 15.0;
 
     public static final int PARALYSIS_TICKS = 120;
+
+    /** On foot (its steed died, or it spawned without one) - see DullahanSteedEntity#MOVEMENT_SPEED for the mounted pace. */
+    public static final double MOVEMENT_SPEED = 0.22;
     private static final int REPELLENT_COOLDOWN_TICKS = 240;
     private static final double REPELLENT_RANGE = 6.0;
     public static final float PARALYZED_DAMAGE_MULTIPLIER = 1.5F;
@@ -116,7 +119,7 @@ public class DullahanEntity extends Monster implements GeoEntity {
     /** Horizontal speed (blocks per tick, squared) above which it counts as moving / running. */
     private static final double WALK_SPEED_SQR = 0.002;
     private static final double WALK_HYSTERESIS_SQR = 0.0007;
-    private static final double RUN_SPEED_SQR = 0.06;
+    private static final double RUN_SPEED_SQR = 0.035; // a chase on foot still reads as running at the slower pace
 
     private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
     // Client-side visual state, debounced once per entity tick (not per rendered frame) like the Imp's.
@@ -144,7 +147,7 @@ public class DullahanEntity extends Monster implements GeoEntity {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH)
                 .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
-                .add(Attributes.MOVEMENT_SPEED, 0.3)
+                .add(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.5)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
