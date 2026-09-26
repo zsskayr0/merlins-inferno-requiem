@@ -1,0 +1,23 @@
+{
+  "name": "patchouli.merlins_inferno.entry.ashwood.name",
+  "icon": "merlins_inferno:ashwood_planks",
+  "category": "merlins_inferno:druid_road",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.ashwood.page1"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "merlins_inferno:ashwood_planks",
+      "recipe2": "merlins_inferno:ashwood_door"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "merlins_inferno:ashwood_sign",
+      "recipe2": "merlins_inferno:ashwood_hanging_sign",
+      "text": "patchouli.merlins_inferno.entry.ashwood.page3"
+    }
+  ]
+}

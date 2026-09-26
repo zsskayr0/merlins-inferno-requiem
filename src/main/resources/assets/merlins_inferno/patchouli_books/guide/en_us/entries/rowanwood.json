@@ -1,0 +1,31 @@
+{
+  "name": "patchouli.merlins_inferno.entry.rowanwood.name",
+  "icon": "merlins_inferno:rowanwood_bar",
+  "category": "merlins_inferno:druid_road",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.rowanwood.page1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.rowanwood.page2"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "merlins_inferno:rowanwood_scrap_from_mundane_essence",
+      "recipe2": "merlins_inferno:rowanwood_scrap_from_fae_essence",
+      "text": "patchouli.merlins_inferno.entry.rowanwood.page3"
+    },
+    {
+      "type": "patchouli:smelting",
+      "recipe": "merlins_inferno:rowanwood_bar_from_smelting",
+      "text": "patchouli.merlins_inferno.entry.rowanwood.page4"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.rowanwood.page5"
+    }
+  ]
+}
