@@ -1,0 +1,48 @@
+{
+  "type": "merlins_inferno:structure_paste",
+  "config": {
+    "block_swaps": {
+      "minecraft:spruce_leaves": "merlins_inferno:ashwood_leaves",
+      "minecraft:spruce_log": "merlins_inferno:ashwood_log",
+      "minecraft:spruce_wood": "merlins_inferno:ashwood_wood"
+    },
+    "structures": [
+      "merlins_inferno:ashwood_tree/c1",
+      "merlins_inferno:ashwood_tree/c1_r1",
+      "merlins_inferno:ashwood_tree/c1_r2",
+      "merlins_inferno:ashwood_tree/c1_r3",
+      "merlins_inferno:ashwood_tree/c2",
+      "merlins_inferno:ashwood_tree/c2_r1",
+      "merlins_inferno:ashwood_tree/c2_r2",
+      "merlins_inferno:ashwood_tree/c2_r3",
+      "merlins_inferno:ashwood_tree/c3",
+      "merlins_inferno:ashwood_tree/c3_r1",
+      "merlins_inferno:ashwood_tree/c3_r2",
+      "merlins_inferno:ashwood_tree/c3_r3",
+      "merlins_inferno:ashwood_tree/d1",
+      "merlins_inferno:ashwood_tree/d1_r1",
+      "merlins_inferno:ashwood_tree/d1_r2",
+      "merlins_inferno:ashwood_tree/d1_r3",
+      "merlins_inferno:ashwood_tree/d2",
+      "merlins_inferno:ashwood_tree/d2_r1",
+      "merlins_inferno:ashwood_tree/d2_r2",
+      "merlins_inferno:ashwood_tree/d2_r3",
+      "merlins_inferno:ashwood_tree/d3",
+      "merlins_inferno:ashwood_tree/d3_r1",
+      "merlins_inferno:ashwood_tree/d3_r2",
+      "merlins_inferno:ashwood_tree/d3_r3",
+      "merlins_inferno:ashwood_tree/e1",
+      "merlins_inferno:ashwood_tree/e1_r1",
+      "merlins_inferno:ashwood_tree/e1_r2",
+      "merlins_inferno:ashwood_tree/e1_r3",
+      "merlins_inferno:ashwood_tree/e2",
+      "merlins_inferno:ashwood_tree/e2_r1",
+      "merlins_inferno:ashwood_tree/e2_r2",
+      "merlins_inferno:ashwood_tree/e2_r3",
+      "merlins_inferno:ashwood_tree/e3",
+      "merlins_inferno:ashwood_tree/e3_r1",
+      "merlins_inferno:ashwood_tree/e3_r2",
+      "merlins_inferno:ashwood_tree/e3_r3"
+    ]
+  }
+}

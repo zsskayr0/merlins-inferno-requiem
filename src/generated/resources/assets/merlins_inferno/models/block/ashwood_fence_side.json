@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/fence_side",
+  "textures": {
+    "texture": "merlins_inferno:block/ashwood_planks"
+  }
+}
