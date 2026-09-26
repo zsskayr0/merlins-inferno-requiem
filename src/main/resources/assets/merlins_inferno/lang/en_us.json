@@ -212,5 +212,17 @@
   "message.merlins_inferno.vigil_altar.cooldown": "The altar is still cold. Return in %s minute(s).",
   "message.merlins_inferno.vigil_altar.invoked": "The vigil begins.",
   "message.merlins_inferno.penitent.toll": "The Great Bell tolls (%1$s/%2$s)...",
-  "message.merlins_inferno.penitent.fury": "The bell shatters! The Penitent is furious."
+  "message.merlins_inferno.penitent.fury": "The bell shatters! The Penitent is furious.",
+  "entity.merlins_inferno.starved": "Starved",
+  "item.merlins_inferno.starved_spawn_egg": "Starved Spawn Egg",
+  "patchouli.merlins_inferno.entry.starved.name": "The Starved",
+  "patchouli.merlins_inferno.entry.starved.page1": "$(bold)The Starved$()$(br2)A demon that never finished forming, stuck in a hunger that cannot be sated. Where the Imp is small and craven, the Starved is large, four-legged and relentless. It lurks alone in the deep, dark reaches of the Nether.",
+  "patchouli.merlins_inferno.entry.starved.page2": "It never flees, and if it loses you it walks to where it last saw you. Every few seconds it goes without landing a hit, its $(bold)Hunger$() grows: it becomes faster and hits harder. Land a bite and it feeds - hunger resets and it heals.",
+  "patchouli.merlins_inferno.entry.starved.page3": "Once truly hungry it winds up a charge - roaring in place before it dashes in a straight line. Step aside. Finish the fight quickly.$(br2)It drops $(bold)Demon Blood$() (70%) and sometimes $(bold)Infernal Sinew$() (12%).",
+  "subtitles.merlins_inferno.entity.starved.ambient": "Starved breathes",
+  "subtitles.merlins_inferno.entity.starved.notice": "Starved roars",
+  "subtitles.merlins_inferno.entity.starved.hunger": "Starved growls",
+  "subtitles.merlins_inferno.entity.starved.step": "Starved steps",
+  "subtitles.merlins_inferno.entity.starved.attack": "Starved claws",
+  "subtitles.merlins_inferno.entity.starved.charge": "Starved charges"
 }

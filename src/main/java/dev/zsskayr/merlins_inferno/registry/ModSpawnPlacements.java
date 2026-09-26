@@ -10,6 +10,7 @@ import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
 import dev.zsskayr.merlins_inferno.entity.ImpEntity;
+import dev.zsskayr.merlins_inferno.entity.StarvedEntity;
 
 /** Natural-spawn placement rules for every custom mob this mod adds. */
 @EventBusSubscriber(modid = Merlins_inferno.MODID)
@@ -29,6 +30,10 @@ public final class ModSpawnPlacements {
         // actual biomes (every Nether biome) come from data/.../neoforge/biome_modifier/imp_spawns.json.
         event.register(ModEntityTypes.IMP.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 ImpEntity::checkImpSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+
+        // Rare, solitary, deep-and-dark Nether miniboss; biomes come from biome_modifier/starved_spawns.json.
+        event.register(ModEntityTypes.STARVED.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                StarvedEntity::checkStarvedSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
         // Night-only, Hallowed-Grove-only, one at a time - the rule itself carries all three (the
         // biome's spawn list just makes it a rare entry, see ModBiomeProvider).

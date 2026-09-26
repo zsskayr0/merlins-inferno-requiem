@@ -338,6 +338,8 @@ public final class ModItems {
     // with a warm bark-gold spot pattern, matching the "nature guardian" theme.
     public static final DeferredItem<DeferredSpawnEggItem> IMP_SPAWN_EGG = ITEMS.registerItem("imp_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.IMP, 0xA8231B, 0xF2C230, props));
+    public static final DeferredItem<DeferredSpawnEggItem> STARVED_SPAWN_EGG = ITEMS.registerItem("starved_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.STARVED, 0x2A1A16, 0xFF5A1F, props));
     public static final DeferredItem<DeferredSpawnEggItem> DULLAHAN_SPAWN_EGG = ITEMS.registerItem("dullahan_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.DULLAHAN, 0x1B1F2B, 0xD8D2BC, props));
     public static final DeferredItem<DeferredSpawnEggItem> PENITENT_SPAWN_EGG = ITEMS.registerItem("penitent_spawn_egg",

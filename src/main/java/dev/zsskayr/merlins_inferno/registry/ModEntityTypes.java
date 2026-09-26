@@ -12,6 +12,7 @@ import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanSteedEntity;
 import dev.zsskayr.merlins_inferno.entity.PenitentEntity;
+import dev.zsskayr.merlins_inferno.entity.StarvedEntity;
 import dev.zsskayr.merlins_inferno.entity.WorshipperEntity;
 import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 
@@ -47,6 +48,15 @@ public final class ModEntityTypes {
                     .fireImmune()
                     .clientTrackingRange(8)
                     .build(Merlins_inferno.MODID + ":imp"));
+
+    // Four-legged Nether miniboss - see StarvedEntity. ~1.75 blocks at the shoulders in the model.
+    public static final DeferredHolder<EntityType<?>, EntityType<StarvedEntity>> STARVED = ENTITY_TYPES.register("starved",
+            () -> EntityType.Builder.of(StarvedEntity::new, MobCategory.MONSTER)
+                    .sized(1.6F, 2.0F)
+                    .eyeHeight(1.75F)
+                    .fireImmune()
+                    .clientTrackingRange(10)
+                    .build(Merlins_inferno.MODID + ":starved"));
 
     // The Hallowed Grove's night miniboss - see DullahanEntity. 0.75 x 2.3 matches the model (2.295 blocks tall
     // on foot). ridingOffset lowers it onto the saddle: its hips sit 0.875 above its feet and the mounted clips

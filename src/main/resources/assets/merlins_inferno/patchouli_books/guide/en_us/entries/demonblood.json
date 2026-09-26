@@ -2,7 +2,7 @@
   "name": "patchouli.merlins_inferno.entry.demonblood.name",
   "icon": "merlins_inferno:demonblood_bar",
   "category": "merlins_inferno:infernal_road",
-  "sortnum": 3,
+  "sortnum": 4,
   "pages": [
     {
       "type": "patchouli:crafting",

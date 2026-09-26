@@ -212,5 +212,17 @@
   "message.merlins_inferno.vigil_altar.cooldown": "O altar ainda está frio. Volte em %s minuto(s).",
   "message.merlins_inferno.vigil_altar.invoked": "A vigília começa.",
   "message.merlins_inferno.penitent.toll": "O Grande Sino toca (%1$s/%2$s)...",
-  "message.merlins_inferno.penitent.fury": "O sino se despedaça! O Penitente está furioso."
+  "message.merlins_inferno.penitent.fury": "O sino se despedaça! O Penitente está furioso.",
+  "entity.merlins_inferno.starved": "Faminto",
+  "item.merlins_inferno.starved_spawn_egg": "Ovo Gerador de Faminto",
+  "patchouli.merlins_inferno.entry.starved.name": "O Faminto",
+  "patchouli.merlins_inferno.entry.starved.page1": "$(bold)O Faminto$()$(br2)Um demônio que nunca chegou a se formar por completo, preso numa fome que nunca se sacia. Onde o Imp é pequeno e covarde, o Faminto é grande, quadrúpede e implacável. Ele espreita sozinho nas regiões profundas e escuras do Nether.",
+  "patchouli.merlins_inferno.entry.starved.page2": "Ele nunca foge, e se perder você de vista vai até onde o viu pela última vez. A cada poucos segundos sem acertar um golpe, sua $(bold)Fome$() cresce: ele fica mais rápido e bate mais forte. Se acertar, ele se alimenta - a fome zera e ele recupera vida.",
+  "patchouli.merlins_inferno.entry.starved.page3": "Com fome de verdade, ele prepara uma investida - ruge parado antes de correr em linha reta. Desvie. Termine a luta rápido.$(br2)Dropa $(bold)Demon Blood$() (70%) e às vezes $(bold)Infernal Sinew$() (12%).",
+  "subtitles.merlins_inferno.entity.starved.ambient": "Faminto respira",
+  "subtitles.merlins_inferno.entity.starved.notice": "Faminto ruge",
+  "subtitles.merlins_inferno.entity.starved.hunger": "Faminto rosna",
+  "subtitles.merlins_inferno.entity.starved.step": "Faminto anda",
+  "subtitles.merlins_inferno.entity.starved.attack": "Faminto ataca com garras",
+  "subtitles.merlins_inferno.entity.starved.charge": "Faminto investe"
 }

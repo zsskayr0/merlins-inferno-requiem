@@ -81,6 +81,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DEMONBLOOD_BOOTS.get());
                         output.accept(ModItems.DRUID_SPAWN_EGG.get());
                         output.accept(ModItems.IMP_SPAWN_EGG.get());
+                        output.accept(ModItems.STARVED_SPAWN_EGG.get());
                         output.accept(ModItems.DULLAHAN_SPAWN_EGG.get());
                         output.accept(ModItems.PENITENT_SPAWN_EGG.get());
                         output.accept(ModItems.WORSHIPPER_SPAWN_EGG.get());
