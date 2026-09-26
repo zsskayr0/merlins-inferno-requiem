@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
+import dev.zsskayr.merlins_inferno.entity.DullahanSteedEntity;
 import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 
 /**
@@ -45,14 +46,26 @@ public final class ModEntityTypes {
                     .clientTrackingRange(8)
                     .build(Merlins_inferno.MODID + ":imp"));
 
-    // The Hallowed Grove's night miniboss - see DullahanEntity. Taller than a player (the model is
-    // also drawn 1.2x); no fireImmune/bigger tracking range needed, it's an overworld melee mob.
+    // The Hallowed Grove's night miniboss - see DullahanEntity. 0.75 x 2.3 matches the model (2.295 blocks tall
+    // on foot). ridingOffset lowers it onto the saddle: its hips sit 0.875 above its feet and the mounted clips
+    // only bend the legs, so without -0.8 it would float ~0.8 above the seat (seat point 1.32 on the steed).
     public static final DeferredHolder<EntityType<?>, EntityType<DullahanEntity>> DULLAHAN = ENTITY_TYPES.register("dullahan",
             () -> EntityType.Builder.of(DullahanEntity::new, MobCategory.MONSTER)
-                    .sized(0.7F, 2.3F)
+                    .sized(0.75F, 2.3F)
                     .eyeHeight(2.0F)
+                    .ridingOffset(-0.8F)
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":dullahan"));
+
+    // The Dullahan's mount - vanilla skeleton-horse size, own type so its AI can be replaced (see the class).
+    // MISC: it never counts against a mob cap and never spawns on its own.
+    public static final DeferredHolder<EntityType<?>, EntityType<DullahanSteedEntity>> DULLAHAN_STEED = ENTITY_TYPES.register("dullahan_steed",
+            () -> EntityType.Builder.of(DullahanSteedEntity::new, MobCategory.MISC)
+                    .sized(1.3964844F, 1.6F)
+                    .eyeHeight(1.52F)
+                    .passengerAttachments(1.31875F)
+                    .clientTrackingRange(10)
+                    .build(Merlins_inferno.MODID + ":dullahan_steed"));
 
     private ModEntityTypes() {
     }

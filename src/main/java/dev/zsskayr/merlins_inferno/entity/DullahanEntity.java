@@ -1,6 +1,7 @@
 package dev.zsskayr.merlins_inferno.entity;
 
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -42,6 +43,14 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
+import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 import dev.zsskayr.merlins_inferno.registry.ModTags;
 import dev.zsskayr.merlins_inferno.worldgen.biome.ModBiomes;
 
@@ -62,9 +71,12 @@ import dev.zsskayr.merlins_inferno.worldgen.biome.ModBiomes;
  *     takes {@link #PARALYZED_DAMAGE_MULTIPLIER}x damage - a tactical window, never required. A
  *     cooldown stops it being chain-locked.</li>
  *     <li><b>Loot:</b> 2-3 Fae Essence (data/merlins_inferno/loot_table/entities/dullahan.json).</li>
+ *     <li><b>Mount:</b> it always spawns riding a {@link DullahanSteedEntity}, which does the steering while
+ *     it fights from the saddle; without a steed (killed, or already gone) it fights on foot.</li>
  * </ul>
+ * Animated with GeckoLib ({@code geo/dullahan.geo.json}, {@code animations/dullahan.animation.json}).
  */
-public class DullahanEntity extends Monster {
+public class DullahanEntity extends Monster implements GeoEntity {
     /** Half a Warden's 500 health / 30 melee damage - the doc's baseline, adjustable in playtesting. */
     public static final double MAX_HEALTH = 250.0;
     public static final double ATTACK_DAMAGE = 15.0;
@@ -86,8 +98,36 @@ public class DullahanEntity extends Monster {
 
     private static final EntityDataAccessor<Boolean> DATA_PARALYZED = SynchedEntityData.defineId(DullahanEntity.class, EntityDataSerializers.BOOLEAN);
 
+    /** The death clip is 1.8 s; the body lingers a little past it so the last pose is held before it vanishes. */
+    private static final int DEATH_ANIMATION_TICKS = 40;
+    /** Minimum gap between flinches, so a flurry of hits doesn't make it twitch constantly. */
+    private static final int HURT_ANIMATION_COOLDOWN = 15;
+
+    private static final RawAnimation ATTACK_SLASH = RawAnimation.begin().thenPlay("animation.dullahan.attack_slash");
+    private static final RawAnimation ATTACK_OVERHEAD = RawAnimation.begin().thenPlay("animation.dullahan.attack_overhead");
+    private static final RawAnimation MOUNTED_ATTACK = RawAnimation.begin().thenPlay("animation.dullahan.mounted_attack");
+    private static final RawAnimation HURT_ANIMATION = RawAnimation.begin().thenPlay("animation.dullahan.hurt");
+    private static final RawAnimation DEATH_ANIMATION = RawAnimation.begin().thenPlayAndHold("animation.dullahan.death");
+    /** The one-shot transition clips the model ships with: "from_to_to" plays once before the destination loop. */
+    private static final Set<String> TRANSITIONS = Set.of("idle_to_walk", "walk_to_idle", "walk_to_run", "run_to_walk",
+            "idle_to_mounted_idle", "mounted_idle_to_idle", "idle_to_paralyzed", "paralyzed_to_idle",
+            "mounted_idle_to_mounted_walk", "mounted_walk_to_mounted_idle",
+            "mounted_idle_to_mounted_paralyzed", "mounted_paralyzed_to_mounted_idle");
+    /** Horizontal speed (blocks per tick, squared) above which it counts as moving / running. */
+    private static final double WALK_SPEED_SQR = 0.002;
+    private static final double WALK_HYSTERESIS_SQR = 0.0007;
+    private static final double RUN_SPEED_SQR = 0.06;
+
+    private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
+    // Client-side visual state, debounced once per entity tick (not per rendered frame) like the Imp's.
+    private String animationState;
+    private String pendingAnimationState;
+    private int pendingAnimationTick;
+    private RawAnimation loopAnimation = RawAnimation.begin().thenLoop("animation.dullahan.idle");
+    private int lastHurtAnimationTick = -100;
+
     private final ServerBossEvent bossEvent = new ServerBossEvent(Component.translatable("entity.merlins_inferno.dullahan"),
-            BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
+            BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
 
     /** Whether the night/biome rule governs this one (natural spawns only). Persisted. */
     private boolean bound;
@@ -139,7 +179,24 @@ public class DullahanEntity extends Monster {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
             @Nullable SpawnGroupData spawnGroupData) {
         this.bound = spawnType == MobSpawnType.NATURAL;
-        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+        SpawnGroupData result = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+        this.mountSteed(level, difficulty);
+        return result;
+    }
+
+    /**
+     * Same order vanilla uses for a chicken jockey: the rider is told to ride the mount and the mount is
+     * added to the world here; the spawner then adds the rider (and any passengers) itself.
+     */
+    private void mountSteed(ServerLevelAccessor level, DifficultyInstance difficulty) {
+        DullahanSteedEntity steed = ModEntityTypes.DULLAHAN_STEED.get().create(level.getLevel());
+        if (steed == null) {
+            return;
+        }
+        steed.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+        steed.finalizeSpawn(level, difficulty, MobSpawnType.MOB_SUMMONED, null);
+        this.startRiding(steed);
+        level.addFreshEntity(steed);
     }
 
     @Override
@@ -168,7 +225,11 @@ public class DullahanEntity extends Monster {
                     40, this.getBbWidth() / 2.0, this.getBbHeight() / 3.0, this.getBbWidth() / 2.0, 0.02);
             serverLevel.playSound(null, this.blockPosition(), SoundEvents.WITHER_SKELETON_DEATH, SoundSource.HOSTILE, 1.0F, 0.6F);
         }
+        Entity steed = this.getVehicle();
         this.discard();
+        if (steed != null) {
+            steed.discard();
+        }
     }
 
     // ------------------------------------------------------------------------------------------
@@ -195,6 +256,9 @@ public class DullahanEntity extends Monster {
     @Override
     public boolean doHurtTarget(Entity target) {
         this.level().playSound(null, this.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.HOSTILE, 1.0F, 0.6F);
+        if (!this.level().isClientSide) {
+            this.triggerAnim("move", this.isPassenger() ? "mounted_attack" : (this.random.nextBoolean() ? "attack_slash" : "attack_overhead"));
+        }
         return super.doHurtTarget(target);
     }
 
@@ -278,7 +342,23 @@ public class DullahanEntity extends Monster {
         if (this.isParalyzed() && !this.level().isClientSide) {
             amount *= PARALYZED_DAMAGE_MULTIPLIER;
         }
-        return super.hurt(source, amount);
+        boolean hurt = super.hurt(source, amount);
+        if (hurt && !this.level().isClientSide && this.isAlive() && !this.isParalyzed()
+                && this.tickCount - this.lastHurtAnimationTick >= HURT_ANIMATION_COOLDOWN) {
+            this.lastHurtAnimationTick = this.tickCount;
+            this.triggerAnim("move", "hurt");
+        }
+        return hurt;
+    }
+
+    /** Lingers for the whole death clip instead of vanilla's 20 ticks (and never tips over - see the renderer). */
+    @Override
+    protected void tickDeath() {
+        ++this.deathTime;
+        if (this.deathTime >= DEATH_ANIMATION_TICKS && !this.level().isClientSide() && !this.isRemoved()) {
+            this.level().broadcastEntityEvent(this, (byte) 60);
+            this.remove(Entity.RemovalReason.KILLED);
+        }
     }
 
     // ------------------------------------------------------------------------------------------
@@ -324,6 +404,82 @@ public class DullahanEntity extends Monster {
         this.paralysisTicks = compound.getInt("Paralysis");
         this.repellentCooldown = compound.getInt("RepellentCooldown");
         this.entityData.set(DATA_PARALYZED, this.paralysisTicks > 0);
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // GeckoLib animation: ONE controller owns the whole pose (loops, transitions, attacks, hurt), like the
+    // Imp's, so two controllers never fight over the same bones. Attacks and the flinch are triggered from
+    // the server; the loop state is derived on the client from what the entity is doing.
+    // ------------------------------------------------------------------------------------------
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "move", 4, state -> {
+            if (this.isDeadOrDying()) {
+                return state.setAndContinue(DEATH_ANIMATION);
+            }
+            String desired = this.desiredAnimationState();
+            RawAnimation previous = state.getController().getCurrentRawAnimation();
+            boolean recovering = ATTACK_SLASH.equals(previous) || ATTACK_OVERHEAD.equals(previous)
+                    || MOUNTED_ATTACK.equals(previous) || HURT_ANIMATION.equals(previous);
+
+            if (this.animationState == null || recovering) {
+                // A new observer, or an action just ended: resume at the actual state without replaying a transition.
+                this.animationState = desired;
+                this.pendingAnimationState = desired;
+                this.pendingAnimationTick = this.tickCount;
+                this.loopAnimation = RawAnimation.begin().thenLoop("animation.dullahan." + desired);
+            } else if (!desired.equals(this.animationState)) {
+                if (!desired.equals(this.pendingAnimationState)) {
+                    this.pendingAnimationState = desired;
+                    this.pendingAnimationTick = this.tickCount;
+                } else if (this.tickCount - this.pendingAnimationTick >= 3) {
+                    String transition = this.animationState + "_to_" + desired;
+                    RawAnimation next = RawAnimation.begin();
+                    if (TRANSITIONS.contains(transition)) {
+                        next = next.thenPlay("animation.dullahan." + transition);
+                    }
+                    this.loopAnimation = next.thenLoop("animation.dullahan." + desired);
+                    this.animationState = desired;
+                }
+            } else {
+                this.pendingAnimationState = desired;
+                this.pendingAnimationTick = this.tickCount;
+            }
+            return state.setAndContinue(this.loopAnimation);
+        }).triggerableAnim("attack_slash", ATTACK_SLASH)
+                .triggerableAnim("attack_overhead", ATTACK_OVERHEAD)
+                .triggerableAnim("mounted_attack", MOUNTED_ATTACK)
+                .triggerableAnim("hurt", HURT_ANIMATION));
+    }
+
+    /** idle / walk / run on foot, mounted_idle / mounted_walk in the saddle, paralyzed (or mounted_paralyzed) when struck by gold. */
+    private String desiredAnimationState() {
+        Entity vehicle = this.getVehicle();
+        boolean mounted = vehicle != null;
+        if (this.isParalyzed()) {
+            return mounted ? "mounted_paralyzed" : "paralyzed";
+        }
+        // Position change per tick works on the client too (remote entities carry no reliable velocity).
+        Entity mover = mounted ? vehicle : this;
+        double dx = mover.getX() - mover.xOld;
+        double dz = mover.getZ() - mover.zOld;
+        double speedSqr = dx * dx + dz * dz;
+        boolean wasMoving = this.animationState != null && (this.animationState.equals("walk") || this.animationState.equals("run")
+                || this.animationState.equals("mounted_walk"));
+        boolean moving = speedSqr > (wasMoving ? WALK_HYSTERESIS_SQR : WALK_SPEED_SQR);
+        if (mounted) {
+            return moving ? "mounted_walk" : "mounted_idle";
+        }
+        if (!moving) {
+            return "idle";
+        }
+        return speedSqr > RUN_SPEED_SQR ? "run" : "walk";
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.animationCache;
     }
 
     // ------------------------------------------------------------------------------------------
