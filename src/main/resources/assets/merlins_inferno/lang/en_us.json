@@ -144,7 +144,7 @@
   "patchouli.merlins_inferno.entry.rowanwood.page4": "Mundane Essence comes from the Druids; Fae Essence from the Dullahan.",
   "patchouli.merlins_inferno.entry.rowanwood.page5": "Rowanwood gear mines like Diamond but hits like Iron, with Gold's enchantability and more durability than Diamond.$(br2)It bites harder against magical creatures (+30%), and struggles against plain animals (-30%).",
   "patchouli.merlins_inferno.entry.druid.name": "The Druid",
-  "patchouli.merlins_inferno.entry.druid.page1": "$(bold)The Druid$()$(br2)A guardian spirit of the Grove. Peaceful: he won't attack you, even if struck. He does hunt the undead on sight.",
+  "patchouli.merlins_inferno.entry.druid.page1": "$(bold)The Druid$()$(br2)A guardian spirit of the Grove. Peaceful: he won't attack you, even if struck. He hunts the undead on sight - all but the Dullahan, from whom he flees.",
   "patchouli.merlins_inferno.entry.druid.page2": "Trade with him: $(bold)20 emeralds$() for a $(bold)Mundane Essence$(), the catalyst that turns raw Rowanwood into a set.$(br2)His trade wears out, but refills every day.",
   "patchouli.merlins_inferno.entry.dullahan.name": "The Dullahan",
   "patchouli.merlins_inferno.entry.dullahan.page1": "$(bold)The Dullahan$()$(br2)A headless knight who rides the Grove at night on a spectral black steed, his head under one arm and a spine for a whip. Strong - half a Warden - and his whip outreaches a sword. Kill the horse and he fights on foot.",

@@ -144,7 +144,7 @@
   "patchouli.merlins_inferno.entry.rowanwood.page4": "A Mundane Essence vem dos Druidas; a Fae Essence, do Dullahan.",
   "patchouli.merlins_inferno.entry.rowanwood.page5": "O equipamento de Rowanwood minera como Diamante mas bate como Ferro, com o encantamento do Ouro e mais durabilidade que o Diamante.$(br2)Ele morde mais forte contra criaturas mágicas (+30%) e sofre contra animais comuns (-30%).",
   "patchouli.merlins_inferno.entry.druid.name": "O Druida",
-  "patchouli.merlins_inferno.entry.druid.page1": "$(bold)O Druida$()$(br2)Um espírito guardião do Grove. Pacífico: não ataca você, mesmo que seja golpeado. Ele caça mortos-vivos à vista.",
+  "patchouli.merlins_inferno.entry.druid.page1": "$(bold)O Druida$()$(br2)Um espírito guardião do Grove. Pacífico: não ataca você, mesmo que seja golpeado. Ele caça mortos-vivos à vista - todos menos o Dullahan, de quem ele foge.",
   "patchouli.merlins_inferno.entry.druid.page2": "Negocie com ele: $(bold)20 esmeraldas$() por uma $(bold)Mundane Essence$(), o catalisador que transforma o Rowanwood bruto em um set.$(br2)A troca se esgota, mas se renova todo dia.",
   "patchouli.merlins_inferno.entry.dullahan.name": "O Dullahan",
   "patchouli.merlins_inferno.entry.dullahan.page1": "$(bold)O Dullahan$()$(br2)Um cavaleiro sem cabeça que cavalga pelo Grove à noite num corcel espectral negro, com a cabeça debaixo do braço e uma espinha como chicote. Forte - metade de um Warden - e seu chicote alcança mais que uma espada. Mate o cavalo e ele luta a pé.",

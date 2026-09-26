@@ -24,6 +24,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -56,7 +57,8 @@ import dev.zsskayr.merlins_inferno.registry.ModItems;
  * <p>
  * Neutral toward the player by default - never attacks first, and (per the design doc, 4.1) never
  * retaliates either, even if hit; that's a deliberate combat-balance decision left for later, not
- * an oversight. It does proactively hunt anything tagged {@link EntityTypeTags#UNDEAD} on sight.
+ * an oversight. It does proactively hunt anything tagged {@link EntityTypeTags#UNDEAD} on sight -
+ * except the {@link DullahanEntity}, which is far too strong for it: it flees from that one.
  * <p>
  * 3 skin variants (see {@link #getVariant()}), randomized on spawn - no actual textures yet.
  * Implements {@link Merchant} directly (rather than extending {@code AbstractVillager}, which
@@ -100,17 +102,21 @@ public class DruidEntity extends PathfinderMob implements Merchant {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new StandStillWhileTradingGoal());
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
+        // Flees the Dullahan (which shares the Grove and now counts as undead - see below): a Druid
+        // has 20 health against its 15 damage, so hunting it would be suicide. Priority 2, after the
+        // trade stand-still, so a customer isn't left with a Druid running off mid-trade.
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, DullahanEntity.class, 20.0F, 1.0, 1.3));
+        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0, false));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
         // No player-targeting goal on purpose - this mob is passive toward players and never
         // retaliates, even if attacked (no HurtByTargetGoal either). It only ever proactively
-        // goes after undead mobs.
+        // goes after undead mobs - every one except the Dullahan, which it runs from instead.
         this.targetSelector.addGoal(1,
                 new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false,
-                        livingEntity -> livingEntity.getType().is(EntityTypeTags.UNDEAD)));
+                        livingEntity -> livingEntity.getType().is(EntityTypeTags.UNDEAD) && !(livingEntity instanceof DullahanEntity)));
     }
 
     @Nullable
