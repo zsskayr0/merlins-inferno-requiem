@@ -13,6 +13,7 @@
     "minecraft:polar_bear",
     "minecraft:spider",
     "minecraft:wolf",
-    "minecraft:zombified_piglin"
+    "minecraft:zombified_piglin",
+    "merlins_inferno:worshipper"
   ]
 }

@@ -48,6 +48,7 @@ public final class ModBlockStateProvider extends BlockStateProvider {
 
         registerAshwoodWoodwork();
         registerLyrium();
+        registerVigilShrine();
 
         // Rowanwood
         logBlock(ModBlocks.ROWANWOOD_LOG.get());
@@ -71,6 +72,15 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         ModelFile cluster = models().cross("lyrium_cluster", clusterTexture).renderType("cutout");
         directionalBlock(ModBlocks.LYRIUM_CLUSTER.get(), cluster);
         itemModels().withExistingParent("lyrium_cluster", "item/generated").texture("layer0", clusterTexture);
+    }
+
+    /** The Vigil Shrine's altar (vanilla chiselled-quartz look) and its gold crystal (the Lyrium cluster's model). */
+    private void registerVigilShrine() {
+        ModelFile altar = models().cubeColumn("vigil_altar",
+                ResourceLocation.withDefaultNamespace("block/chiseled_quartz_block"),
+                ResourceLocation.withDefaultNamespace("block/chiseled_quartz_block_top"));
+        simpleBlock(ModBlocks.VIGIL_ALTAR.get(), altar);
+        itemModels().withExistingParent("vigil_altar", modLoc("block/vigil_altar"));
     }
 
     /** Stripped variants, gate, door, trapdoor, plate, button and both signs (design doc, 3.1). */

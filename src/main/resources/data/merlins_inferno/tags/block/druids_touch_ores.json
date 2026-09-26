@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#c:ores/redstone",
+    "#c:ores/lapis",
+    "#c:ores/emerald",
+    "minecraft:glowstone"
+  ]
+}

@@ -9,6 +9,9 @@ import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanSteedEntity;
 import dev.zsskayr.merlins_inferno.entity.ImpEntity;
+import dev.zsskayr.merlins_inferno.entity.PenitentEntity;
+import dev.zsskayr.merlins_inferno.entity.StarvedEntity;
+import dev.zsskayr.merlins_inferno.entity.WorshipperEntity;
 
 /** Registers the default {@code AttributeSupplier} for every custom {@code LivingEntity} this mod adds. */
 @EventBusSubscriber(modid = Merlins_inferno.MODID)
@@ -20,7 +23,10 @@ public final class ModEntityAttributes {
     static void onEntityAttributeCreation(EntityAttributeCreationEvent event) {
         event.put(ModEntityTypes.DRUID.get(), DruidEntity.createAttributes().build());
         event.put(ModEntityTypes.IMP.get(), ImpEntity.createAttributes().build());
+        event.put(ModEntityTypes.STARVED.get(), StarvedEntity.createAttributes().build());
         event.put(ModEntityTypes.DULLAHAN.get(), DullahanEntity.createAttributes().build());
         event.put(ModEntityTypes.DULLAHAN_STEED.get(), DullahanSteedEntity.createAttributes().build());
+        event.put(ModEntityTypes.PENITENT.get(), PenitentEntity.createAttributes().build());
+        event.put(ModEntityTypes.WORSHIPPER.get(), WorshipperEntity.createAttributes().build());
     }
 }

@@ -33,6 +33,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.block.HellForgeBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumBlock;
+import dev.zsskayr.merlins_inferno.block.VigilAltarBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumClusterBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgePartBlock;
 import dev.zsskayr.merlins_inferno.block.RowanwoodLogBlock;
@@ -216,6 +217,12 @@ public final class ModBlocks {
     // Same shape/size as an amethyst cluster (height 7, offset 3), drops Raw Lyrium - see its loot table.
     public static final DeferredBlock<LyriumClusterBlock> LYRIUM_CLUSTER = BLOCKS.registerBlock("lyrium_cluster",
             props -> new LyriumClusterBlock(7.0F, 3.0F, props), BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_CLUSTER).lightLevel(state -> 15));
+
+    // --- Vigil Church (the Penitent's). The altar holds the church's state, so it can't be broken in survival and
+    // drops nothing. The Great Bell that empowers the Penitent is built from vanilla blocks (see GreatBell). ---
+    public static final DeferredBlock<VigilAltarBlock> VIGIL_ALTAR = BLOCKS.registerBlock("vigil_altar",
+            VigilAltarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CHISELED_QUARTZ_BLOCK).strength(-1.0F, 3600000.0F)
+                    .noLootTable().lightLevel(state -> 8).pushReaction(PushReaction.BLOCK));
 
     // --- Hell Forge: see HellForgeBlock's javadoc - block/blockentity exist for now purely to
     // carry HellForgeModel's oversized (~2.5x2.5x2 block) geometry via a BlockEntityRenderer.

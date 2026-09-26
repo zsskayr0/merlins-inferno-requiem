@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.worldgen.structure.DruidSanctuaryStructure;
 import dev.zsskayr.merlins_inferno.worldgen.structure.RowanwoodTreeStructure;
+import dev.zsskayr.merlins_inferno.worldgen.structure.VigilShrineStructure;
 
 /**
  * Custom {@code StructureType}s this mod adds (code-registered, unlike {@code Structure}s
@@ -26,6 +27,9 @@ public final class ModStructureTypes {
 
     public static final DeferredHolder<StructureType<?>, StructureType<DruidSanctuaryStructure>> DRUID_SANCTUARY =
             STRUCTURE_TYPES.register("druid_sanctuary", () -> () -> DruidSanctuaryStructure.CODEC);
+
+    public static final DeferredHolder<StructureType<?>, StructureType<VigilShrineStructure>> VIGIL_SHRINE =
+            STRUCTURE_TYPES.register("vigil_shrine", () -> () -> VigilShrineStructure.CODEC);
 
     private ModStructureTypes() {
     }

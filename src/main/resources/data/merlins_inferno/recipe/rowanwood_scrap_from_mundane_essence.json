@@ -4,7 +4,7 @@
   "key": {
     "L": { "item": "merlins_inferno:rowanwood_log" },
     "W": { "item": "merlins_inferno:rowanwood_leaves" },
-    "I": { "item": "minecraft:raw_iron" },
+    "I": { "tag": "c:raw_materials/iron" },
     "E": { "item": "merlins_inferno:mundane_essence" }
   },
   "pattern": [

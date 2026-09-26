@@ -67,6 +67,7 @@ public class Merlins_inferno {
         ModStructureTypes.register(modEventBus);
         ModStructurePieceTypes.register(modEventBus);
         ModEntityTypes.register(modEventBus);
+        dev.zsskayr.merlins_inferno.registry.ModSounds.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.

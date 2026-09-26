@@ -23,7 +23,7 @@ public final class ModEnchantments {
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "bane_of_humanity"));
     public static final ResourceKey<Enchantment> EVIL = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "evil"));
-    /** See {@code data/merlins_inferno/enchantment/druids_touch.json} for the anvil-cost/loot-source design; the actual per-tool effects are split across loot table overrides and {@code event.DruidsTouchHandler}. */
+    /** See {@code data/merlins_inferno/enchantment/druids_touch.json} for the anvil-cost/loot-source design; the actual per-tool effects are split across block/loot data (see the Rowanwood log loot table) and {@code event.DruidsTouchHandler}. */
     public static final ResourceKey<Enchantment> DRUIDS_TOUCH = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "druids_touch"));
 

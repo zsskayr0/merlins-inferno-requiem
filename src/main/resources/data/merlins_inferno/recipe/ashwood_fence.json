@@ -3,7 +3,7 @@
   "category": "building",
   "key": {
     "W": { "item": "merlins_inferno:ashwood_planks" },
-    "#": { "item": "minecraft:stick" }
+    "#": { "tag": "c:rods/wooden" }
   },
   "pattern": [
     "W#W",

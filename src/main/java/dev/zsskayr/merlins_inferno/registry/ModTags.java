@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 
@@ -69,6 +70,19 @@ public final class ModTags {
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "sanctified_carriers"));
 
         private EntityTypes() {
+        }
+    }
+
+    public static final class Blocks {
+        /**
+         * Ores a "Toque do Druida" tool gives extra drops from - redstone, lapis, emerald (via the
+         * shared {@code c:ores/*} tags, so other mods' ores count) and glowstone. See
+         * {@code event.DruidsTouchHandler}.
+         */
+        public static final TagKey<Block> DRUIDS_TOUCH_ORES = TagKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "druids_touch_ores"));
+
+        private Blocks() {
         }
     }
 
