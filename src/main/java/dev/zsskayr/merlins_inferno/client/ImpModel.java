@@ -13,7 +13,7 @@ import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 
 /**
  * The Imp's GeckoLib model: geometry {@code geo/imp.geo.json}, animations
- * {@code animations/imp.animation.json} (idle / walk / fly / attack), texture
+ * {@code animations/imp.animation.json} (ground/air loops, transitions and attacks), texture
  * {@code textures/entity/imp/imp.png}. Bone names are the Portuguese ones from the Blockbench
  * source ({@code cabeca}, {@code braco_direito}, ...).
  */

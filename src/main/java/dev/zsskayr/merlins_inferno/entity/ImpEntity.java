@@ -52,7 +52,6 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
@@ -106,10 +105,16 @@ public class ImpEntity extends Monster implements GeoEntity {
     public static final int STATE_DIVING = 2;
     private static final EntityDataAccessor<Integer> DATA_STATE = SynchedEntityData.defineId(ImpEntity.class, EntityDataSerializers.INT);
 
-    private static final RawAnimation FLY_ANIMATION = RawAnimation.begin().thenLoop("animation.imp.fly");
     private static final RawAnimation IDLE_ANIMATION = RawAnimation.begin().thenLoop("animation.imp.idle");
     private static final RawAnimation ATTACK_ANIMATION = RawAnimation.begin().thenPlay("animation.imp.attack");
+    private static final RawAnimation AIR_ATTACK_ANIMATION = RawAnimation.begin().thenPlay("animation.imp.air_attack");
     private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
+
+    // Client visual state. Debounce changes once per entity tick, not once per rendered frame.
+    private String movementAnimationState;
+    private String pendingMovementAnimationState;
+    private int pendingMovementAnimationTick;
+    private RawAnimation movementAnimation = IDLE_ANIMATION;
 
     // --- server-side behaviour state ---
     private boolean courageous;
@@ -640,18 +645,51 @@ public class ImpEntity extends Monster implements GeoEntity {
     }
 
     // ------------------------------------------------------------------------------------------
-    // GeckoLib animation: a looping "move" controller (fly while moving, idle while hovering) and
-    // a trigger-only "attack" controller for the one-shot swipe (dive, lunge, cornered strike).
+    // One controller owns the whole pose, including attacks, so two controllers cannot fight
+    // over the wings/body. GeckoLib blends arbitrary phases into authored transition clips.
     // ------------------------------------------------------------------------------------------
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "move", 4, state -> {
-            boolean moving = state.isMoving() || Math.abs(this.getY() - this.yOld) > 0.02 || this.getDeltaMovement().lengthSqr() > 0.004;
-            return state.setAndContinue(moving ? FLY_ANIMATION : IDLE_ANIMATION);
-        }));
-        controllers.add(new AnimationController<>(this, "attack", 0, state -> PlayState.STOP)
-                .triggerableAnim("attack", ATTACK_ANIMATION));
+            boolean wasMoving = "walk".equals(this.movementAnimationState) || "fly".equals(this.movementAnimationState);
+            // Hysteresis keeps hovering jitter from repeatedly restarting flight transitions.
+            double threshold = wasMoving ? 0.0016 : 0.004;
+            boolean airborne = !this.onGround();
+            double speedSquared = airborne ? this.getDeltaMovement().lengthSqr()
+                    : this.getDeltaMovement().horizontalDistanceSqr();
+            double dx = this.getX() - this.xOld;
+            double dy = airborne ? this.getY() - this.yOld : 0;
+            double dz = this.getZ() - this.zOld;
+            boolean moving = Math.max(speedSquared, dx * dx + dy * dy + dz * dz) > threshold;
+            String desired = airborne ? (moving ? "fly" : "hover") : (moving ? "walk" : "idle");
+            RawAnimation previous = state.getController().getCurrentRawAnimation();
+            boolean recoveringFromAttack = ATTACK_ANIMATION.equals(previous) || AIR_ATTACK_ANIMATION.equals(previous);
+
+            if (this.movementAnimationState == null || recoveringFromAttack) {
+                // A new observer starts at the current pose; an attack returns to the actual
+                // movement state without replaying an old takeoff/landing sequence.
+                this.movementAnimationState = desired;
+                this.pendingMovementAnimationState = desired;
+                this.pendingMovementAnimationTick = this.tickCount;
+                this.movementAnimation = RawAnimation.begin().thenLoop("animation.imp." + desired);
+            } else if (!desired.equals(this.movementAnimationState)) {
+                if (!desired.equals(this.pendingMovementAnimationState)) {
+                    this.pendingMovementAnimationState = desired;
+                    this.pendingMovementAnimationTick = this.tickCount;
+                } else if (this.tickCount - this.pendingMovementAnimationTick >= 3) {
+                    this.movementAnimation = RawAnimation.begin()
+                            .thenPlay("animation.imp." + this.movementAnimationState + "_to_" + desired)
+                            .thenLoop("animation.imp." + desired);
+                    this.movementAnimationState = desired;
+                }
+            } else {
+                this.pendingMovementAnimationState = desired;
+                this.pendingMovementAnimationTick = this.tickCount;
+            }
+            return state.setAndContinue(this.movementAnimation);
+        }).triggerableAnim("attack", ATTACK_ANIMATION)
+                .triggerableAnim("air_attack", AIR_ATTACK_ANIMATION));
     }
 
     @Override
@@ -662,7 +700,7 @@ public class ImpEntity extends Monster implements GeoEntity {
     /** Server-side: plays the one-shot attack animation on every tracking client. */
     public void playAttackAnimation() {
         if (!this.level().isClientSide) {
-            this.triggerAnim("attack", "attack");
+            this.triggerAnim("move", this.onGround() ? "attack" : "air_attack");
         }
     }
 
