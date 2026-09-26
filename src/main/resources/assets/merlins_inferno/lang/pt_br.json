@@ -144,10 +144,10 @@
   "patchouli.merlins_inferno.entry.rowanwood.page4": "A Mundane Essence vem dos Druidas; a Fae Essence, do Dullahan.",
   "patchouli.merlins_inferno.entry.rowanwood.page5": "O equipamento de Rowanwood minera como Diamante mas bate como Ferro, com o encantamento do Ouro e mais durabilidade que o Diamante.$(br2)Ele morde mais forte contra criaturas mágicas (+30%) e sofre contra animais comuns (-30%).",
   "patchouli.merlins_inferno.entry.druid.name": "O Druida",
-  "patchouli.merlins_inferno.entry.druid.page1": "$(bold)O Druida$()$(br2)Um espírito guardião do Grove. Pacífico: não ataca você, mesmo que seja golpeado. Ele caça mortos-vivos à vista.",
+  "patchouli.merlins_inferno.entry.druid.page1": "$(bold)O Druida$()$(br2)Um espírito guardião do Grove. Pacífico: não ataca você, mesmo que seja golpeado. Ele caça mortos-vivos à vista - todos menos o Dullahan, de quem ele foge.",
   "patchouli.merlins_inferno.entry.druid.page2": "Negocie com ele: $(bold)20 esmeraldas$() por uma $(bold)Mundane Essence$(), o catalisador que transforma o Rowanwood bruto em um set.$(br2)A troca se esgota, mas se renova todo dia.",
   "patchouli.merlins_inferno.entry.dullahan.name": "O Dullahan",
-  "patchouli.merlins_inferno.entry.dullahan.page1": "$(bold)O Dullahan$()$(br2)Um cavaleiro sem cabeça que caminha pelo Grove à noite, com a cabeça debaixo do braço e uma espinha como chicote. Forte - metade de um Warden - e seu chicote alcança mais que uma espada.",
+  "patchouli.merlins_inferno.entry.dullahan.page1": "$(bold)O Dullahan$()$(br2)Um cavaleiro sem cabeça que cavalga pelo Grove à noite num corcel espectral negro, com a cabeça debaixo do braço e uma espinha como chicote. Forte - metade de um Warden - e seu chicote alcança mais que uma espada. Mate o cavalo e ele luta a pé.",
   "patchouli.merlins_inferno.entry.dullahan.page2": "$(bold)Ele teme o ouro.$()$(br2)Solte uma barra de ouro perto dele e ele congela por alguns segundos, recebendo dano extra. Não é obrigatório para vencer - mas é o jeito esperto.",
   "patchouli.merlins_inferno.entry.dullahan.page3": "Derrotado, ele deixa 2-3 $(bold)Fae Essence$() - que, como a Mundane Essence, transforma o Rowanwood em um set.",
   "patchouli.merlins_inferno.entry.druids_touch.name": "Toque do Druida",
@@ -182,5 +182,6 @@
   "patchouli.merlins_inferno.entry.seraphium.name": "Seraphium",
   "patchouli.merlins_inferno.entry.seraphium.page1": "4 Diamantes, 4 Lyrium Refinado e 1 Celestial Essence rendem 3 sucatas.",
   "patchouli.merlins_inferno.entry.seraphium.page3": "$(bold)Celestial Essence$()$(br2)Este grimório não registra nenhuma fonte para ela. Algo angelical deve guardá-la - e ainda não se revelou.",
-  "patchouli.merlins_inferno.entry.seraphium.page4": "O Seraphium é o mais forte dos três sets. Cada golpe deixa o alvo Sanctified (nível II contra mortos-vivos).$(br2)Dano: demônios x1,5, mobs hostis x1,3, neutros x0,75, pacíficos x0,5. Sua ira é feita para o mal."
+  "patchouli.merlins_inferno.entry.seraphium.page4": "O Seraphium é o mais forte dos três sets. Cada golpe deixa o alvo Sanctified (nível II contra mortos-vivos).$(br2)Dano: demônios x1,5, mobs hostis x1,3, neutros x0,75, pacíficos x0,5. Sua ira é feita para o mal.",
+  "entity.merlins_inferno.dullahan_steed": "Montaria do Dullahan"
 }

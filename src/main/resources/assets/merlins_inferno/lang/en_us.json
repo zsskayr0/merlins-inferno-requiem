@@ -144,10 +144,10 @@
   "patchouli.merlins_inferno.entry.rowanwood.page4": "Mundane Essence comes from the Druids; Fae Essence from the Dullahan.",
   "patchouli.merlins_inferno.entry.rowanwood.page5": "Rowanwood gear mines like Diamond but hits like Iron, with Gold's enchantability and more durability than Diamond.$(br2)It bites harder against magical creatures (+30%), and struggles against plain animals (-30%).",
   "patchouli.merlins_inferno.entry.druid.name": "The Druid",
-  "patchouli.merlins_inferno.entry.druid.page1": "$(bold)The Druid$()$(br2)A guardian spirit of the Grove. Peaceful: he won't attack you, even if struck. He does hunt the undead on sight.",
+  "patchouli.merlins_inferno.entry.druid.page1": "$(bold)The Druid$()$(br2)A guardian spirit of the Grove. Peaceful: he won't attack you, even if struck. He hunts the undead on sight - all but the Dullahan, from whom he flees.",
   "patchouli.merlins_inferno.entry.druid.page2": "Trade with him: $(bold)20 emeralds$() for a $(bold)Mundane Essence$(), the catalyst that turns raw Rowanwood into a set.$(br2)His trade wears out, but refills every day.",
   "patchouli.merlins_inferno.entry.dullahan.name": "The Dullahan",
-  "patchouli.merlins_inferno.entry.dullahan.page1": "$(bold)The Dullahan$()$(br2)A headless knight who walks the Grove at night, his head under one arm and a spine for a whip. Strong - half a Warden - and his whip outreaches a sword.",
+  "patchouli.merlins_inferno.entry.dullahan.page1": "$(bold)The Dullahan$()$(br2)A headless knight who rides the Grove at night on a spectral black steed, his head under one arm and a spine for a whip. Strong - half a Warden - and his whip outreaches a sword. Kill the horse and he fights on foot.",
   "patchouli.merlins_inferno.entry.dullahan.page2": "$(bold)He fears gold.$()$(br2)Drop a gold ingot near him and he freezes for a few seconds, taking extra damage. It isn't required to win - but it is the smart way.",
   "patchouli.merlins_inferno.entry.dullahan.page3": "Slain, he leaves 2-3 $(bold)Fae Essence$() - which, like Mundane Essence, turns Rowanwood into a set.",
   "patchouli.merlins_inferno.entry.druids_touch.name": "Druid's Touch",
@@ -182,5 +182,6 @@
   "patchouli.merlins_inferno.entry.seraphium.name": "Seraphium",
   "patchouli.merlins_inferno.entry.seraphium.page1": "4 Diamonds, 4 Refined Lyrium and 1 Celestial Essence make 3 scraps.",
   "patchouli.merlins_inferno.entry.seraphium.page3": "$(bold)Celestial Essence$()$(br2)This grimoire records no source for it. Something angelic must guard it - and it has not yet shown itself.",
-  "patchouli.merlins_inferno.entry.seraphium.page4": "Seraphium is the strongest of the three sets. Every blow Sanctifies its target (level II against undead).$(br2)Damage: demons x1.5, hostile mobs x1.3, neutral x0.75, peaceful x0.5. Its wrath is meant for evil."
+  "patchouli.merlins_inferno.entry.seraphium.page4": "Seraphium is the strongest of the three sets. Every blow Sanctifies its target (level II against undead).$(br2)Damage: demons x1.5, hostile mobs x1.3, neutral x0.75, peaceful x0.5. Its wrath is meant for evil.",
+  "entity.merlins_inferno.dullahan_steed": "Dullahan's Steed"
 }
