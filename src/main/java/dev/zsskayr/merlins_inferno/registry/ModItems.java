@@ -8,12 +8,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.HangingSignItem;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.SignItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.TooltipFlag;
@@ -298,6 +300,19 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> ASHWOOD_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_STAIRS);
     public static final DeferredItem<BlockItem> ASHWOOD_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_SLAB);
     public static final DeferredItem<BlockItem> ASHWOOD_FENCE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_FENCE);
+
+    public static final DeferredItem<BlockItem> STRIPPED_ASHWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.STRIPPED_ASHWOOD_LOG);
+    public static final DeferredItem<BlockItem> STRIPPED_ASHWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.STRIPPED_ASHWOOD_WOOD);
+    public static final DeferredItem<BlockItem> ASHWOOD_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_FENCE_GATE);
+    public static final DeferredItem<BlockItem> ASHWOOD_DOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_DOOR);
+    public static final DeferredItem<BlockItem> ASHWOOD_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_TRAPDOOR);
+    public static final DeferredItem<BlockItem> ASHWOOD_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_PRESSURE_PLATE);
+    public static final DeferredItem<BlockItem> ASHWOOD_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_BUTTON);
+    // Signs place either the standing or the wall block depending on the clicked face, and stack to 16 like vanilla's.
+    public static final DeferredItem<SignItem> ASHWOOD_SIGN_ITEM = ITEMS.registerItem("ashwood_sign",
+            props -> new SignItem(props.stacksTo(16), ModBlocks.ASHWOOD_SIGN.get(), ModBlocks.ASHWOOD_WALL_SIGN.get()));
+    public static final DeferredItem<HangingSignItem> ASHWOOD_HANGING_SIGN_ITEM = ITEMS.registerItem("ashwood_hanging_sign",
+            props -> new HangingSignItem(ModBlocks.ASHWOOD_HANGING_SIGN.get(), ModBlocks.ASHWOOD_WALL_HANGING_SIGN.get(), props.stacksTo(16)));
 
     public static final DeferredItem<BlockItem> ROWANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LOG);
     public static final DeferredItem<BlockItem> ROWANWOOD_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LEAVES);

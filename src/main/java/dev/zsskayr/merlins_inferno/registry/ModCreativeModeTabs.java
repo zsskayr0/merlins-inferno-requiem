@@ -39,6 +39,15 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.ASHWOOD_STAIRS_ITEM.get());
                         output.accept(ModItems.ASHWOOD_SLAB_ITEM.get());
                         output.accept(ModItems.ASHWOOD_FENCE_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_FENCE_GATE_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_DOOR_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_TRAPDOOR_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_PRESSURE_PLATE_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_BUTTON_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_SIGN_ITEM.get());
+                        output.accept(ModItems.ASHWOOD_HANGING_SIGN_ITEM.get());
+                        output.accept(ModItems.STRIPPED_ASHWOOD_LOG_ITEM.get());
+                        output.accept(ModItems.STRIPPED_ASHWOOD_WOOD_ITEM.get());
                         output.accept(ModItems.ASHWOOD_LEAVES_ITEM.get());
                         output.accept(ModItems.ROWANWOOD_LOG_ITEM.get());
                         output.accept(ModItems.ROWANWOOD_LEAVES_ITEM.get());

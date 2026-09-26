@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_stripped_ashwood_log": {
+      "conditions": {
+        "items": [
+          {
+            "items": "merlins_inferno:stripped_ashwood_log"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "merlins_inferno:ashwood_hanging_sign"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_stripped_ashwood_log"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "merlins_inferno:ashwood_hanging_sign"
+    ]
+  }
+}

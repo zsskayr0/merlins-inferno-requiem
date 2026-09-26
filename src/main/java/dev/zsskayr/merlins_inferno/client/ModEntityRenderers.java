@@ -1,8 +1,10 @@
 package dev.zsskayr.merlins_inferno.client;
 
 import net.minecraft.client.RecipeBookCategories;
+import net.minecraft.client.renderer.Sheets;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
@@ -15,6 +17,7 @@ import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 import dev.zsskayr.merlins_inferno.registry.ModMenuTypes;
 import dev.zsskayr.merlins_inferno.registry.ModParticles;
 import dev.zsskayr.merlins_inferno.registry.ModRecipeTypes;
+import dev.zsskayr.merlins_inferno.registry.ModWoodTypes;
 
 /** Client-only: model layers + renderers for every custom entity/block entity this mod adds. */
 @EventBusSubscriber(modid = Merlins_inferno.MODID, value = Dist.CLIENT)
@@ -52,5 +55,11 @@ public final class ModEntityRenderers {
     @SubscribeEvent
     static void onRegisterRecipeBookCategories(RegisterRecipeBookCategoriesEvent event) {
         event.registerRecipeCategoryFinder(ModRecipeTypes.HELL_FORGE_SMELTING.get(), holder -> RecipeBookCategories.FURNACE_MISC);
+    }
+
+    /** Adds Ashwood's sign textures to the sign atlas; {@code Sheets.addWoodType} isn't thread-safe, hence enqueueWork. */
+    @SubscribeEvent
+    static void onClientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> Sheets.addWoodType(ModWoodTypes.ASHWOOD));
     }
 }

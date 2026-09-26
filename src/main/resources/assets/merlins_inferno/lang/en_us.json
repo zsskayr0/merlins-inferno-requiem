@@ -102,5 +102,16 @@
   "tag.item.merlins_inferno.demonblood_tools": "Demonblood Tools",
   "tag.item.merlins_inferno.imp_stealable": "Imp Stealable Gold",
   "tag.item.merlins_inferno.rowanwood_tools": "Rowanwood Tools",
-  "tag.item.merlins_inferno.seraphium_tools": "Seraphium Tools"
+  "tag.item.merlins_inferno.seraphium_tools": "Seraphium Tools",
+  "block.merlins_inferno.stripped_ashwood_log": "Stripped Ashwood Log",
+  "block.merlins_inferno.stripped_ashwood_wood": "Stripped Ashwood Wood",
+  "block.merlins_inferno.ashwood_fence_gate": "Ashwood Fence Gate",
+  "block.merlins_inferno.ashwood_door": "Ashwood Door",
+  "block.merlins_inferno.ashwood_trapdoor": "Ashwood Trapdoor",
+  "block.merlins_inferno.ashwood_pressure_plate": "Ashwood Pressure Plate",
+  "block.merlins_inferno.ashwood_button": "Ashwood Button",
+  "block.merlins_inferno.ashwood_sign": "Ashwood Sign",
+  "block.merlins_inferno.ashwood_wall_sign": "Ashwood Wall Sign",
+  "block.merlins_inferno.ashwood_hanging_sign": "Ashwood Hanging Sign",
+  "block.merlins_inferno.ashwood_wall_hanging_sign": "Ashwood Wall Hanging Sign"
 }

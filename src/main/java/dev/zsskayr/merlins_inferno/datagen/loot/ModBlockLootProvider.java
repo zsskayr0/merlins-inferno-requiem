@@ -40,6 +40,9 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.ASHWOOD_LOG.get(), ModBlocks.ASHWOOD_WOOD.get(), ModBlocks.ASHWOOD_PLANKS.get(),
                 ModBlocks.ASHWOOD_LEAVES.get(), ModBlocks.ASHWOOD_SAPLING.get(), ModBlocks.ASHWOOD_STAIRS.get(),
                 ModBlocks.ASHWOOD_SLAB.get(), ModBlocks.ASHWOOD_FENCE.get(),
+                ModBlocks.STRIPPED_ASHWOOD_LOG.get(), ModBlocks.STRIPPED_ASHWOOD_WOOD.get(), ModBlocks.ASHWOOD_FENCE_GATE.get(),
+                ModBlocks.ASHWOOD_DOOR.get(), ModBlocks.ASHWOOD_TRAPDOOR.get(), ModBlocks.ASHWOOD_PRESSURE_PLATE.get(),
+                ModBlocks.ASHWOOD_BUTTON.get(), ModBlocks.ASHWOOD_SIGN.get(), ModBlocks.ASHWOOD_HANGING_SIGN.get(),
                 ModBlocks.ROWANWOOD_LEAVES.get(),
                 ModBlocks.COMPRESSED_NETHERRACK.get(), ModBlocks.HELL_FORGE.get());
     }
@@ -53,6 +56,16 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.ASHWOOD_STAIRS.get());
         dropSelf(ModBlocks.ASHWOOD_SLAB.get());
         dropSelf(ModBlocks.ASHWOOD_FENCE.get());
+        dropSelf(ModBlocks.STRIPPED_ASHWOOD_LOG.get());
+        dropSelf(ModBlocks.STRIPPED_ASHWOOD_WOOD.get());
+        dropSelf(ModBlocks.ASHWOOD_FENCE_GATE.get());
+        add(ModBlocks.ASHWOOD_DOOR.get(), createDoorTable(ModBlocks.ASHWOOD_DOOR.get()));
+        dropSelf(ModBlocks.ASHWOOD_TRAPDOOR.get());
+        dropSelf(ModBlocks.ASHWOOD_PRESSURE_PLATE.get());
+        dropSelf(ModBlocks.ASHWOOD_BUTTON.get());
+        // The wall variants drop through these (see ModBlocks#wallSignProperties).
+        dropSelf(ModBlocks.ASHWOOD_SIGN.get());
+        dropSelf(ModBlocks.ASHWOOD_HANGING_SIGN.get());
         add(ModBlocks.ASHWOOD_LEAVES.get(),
                 createLeavesDrops(ModBlocks.ASHWOOD_LEAVES.get(), ModBlocks.ASHWOOD_SAPLING.get(), LEAVES_SAPLING_CHANCES));
 

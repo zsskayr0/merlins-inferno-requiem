@@ -3,6 +3,10 @@
   "values": [
     "merlins_inferno:compressed_netherrack",
     "merlins_inferno:hell_forge",
-    "merlins_inferno:hell_forge_part"
+    "merlins_inferno:hell_forge_part",
+    "merlins_inferno:lyrium_ore",
+    "merlins_inferno:deepslate_lyrium_ore",
+    "merlins_inferno:lyrium_block",
+    "merlins_inferno:lyrium_cluster"
   ]
 }

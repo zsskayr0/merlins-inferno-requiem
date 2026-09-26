@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "merlins_inferno:block/stripped_ashwood_log_top",
+    "side": "merlins_inferno:block/stripped_ashwood_log"
+  }
+}

@@ -102,5 +102,16 @@
   "tag.item.merlins_inferno.demonblood_tools": "Ferramentas de Demonblood",
   "tag.item.merlins_inferno.imp_stealable": "Ouro Roubável por Imps",
   "tag.item.merlins_inferno.rowanwood_tools": "Ferramentas de Rowanwood",
-  "tag.item.merlins_inferno.seraphium_tools": "Ferramentas de Seraphium"
+  "tag.item.merlins_inferno.seraphium_tools": "Ferramentas de Seraphium",
+  "block.merlins_inferno.stripped_ashwood_log": "Tronco de Ashwood Sem Casca",
+  "block.merlins_inferno.stripped_ashwood_wood": "Madeira de Ashwood Sem Casca",
+  "block.merlins_inferno.ashwood_fence_gate": "Portão de Ashwood",
+  "block.merlins_inferno.ashwood_door": "Porta de Ashwood",
+  "block.merlins_inferno.ashwood_trapdoor": "Alçapão de Ashwood",
+  "block.merlins_inferno.ashwood_pressure_plate": "Placa de Pressão de Ashwood",
+  "block.merlins_inferno.ashwood_button": "Botão de Ashwood",
+  "block.merlins_inferno.ashwood_sign": "Placa de Ashwood",
+  "block.merlins_inferno.ashwood_wall_sign": "Placa de Parede de Ashwood",
+  "block.merlins_inferno.ashwood_hanging_sign": "Placa Suspensa de Ashwood",
+  "block.merlins_inferno.ashwood_wall_hanging_sign": "Placa Suspensa de Parede de Ashwood"
 }

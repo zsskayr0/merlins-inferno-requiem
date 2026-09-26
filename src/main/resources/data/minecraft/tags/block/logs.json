@@ -3,6 +3,8 @@
   "values": [
     "merlins_inferno:ashwood_log",
     "merlins_inferno:ashwood_wood",
-    "merlins_inferno:rowanwood_log"
+    "merlins_inferno:rowanwood_log",
+    "merlins_inferno:stripped_ashwood_log",
+    "merlins_inferno:stripped_ashwood_wood"
   ]
 }
