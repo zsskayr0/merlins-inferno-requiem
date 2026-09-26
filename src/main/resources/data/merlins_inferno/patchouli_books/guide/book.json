@@ -4,6 +4,7 @@
   "subtitle": "patchouli.merlins_inferno.guide.subtitle",
   "version": "0",
   "use_resource_pack": true,
+  "i18n": true,
   "text_color": "3a1a12",
   "header_color": "5a0e0e",
   "use_blocky_font": false,
