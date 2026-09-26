@@ -317,6 +317,12 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> ROWANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LOG);
     public static final DeferredItem<BlockItem> ROWANWOOD_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LEAVES);
 
+    // --- Lyrium ore / geode blocks (see ModBlocks). Ore and cluster drop Raw Lyrium. ---
+    public static final DeferredItem<BlockItem> LYRIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LYRIUM_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_LYRIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DEEPSLATE_LYRIUM_ORE);
+    public static final DeferredItem<BlockItem> LYRIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LYRIUM_BLOCK);
+    public static final DeferredItem<BlockItem> LYRIUM_CLUSTER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LYRIUM_CLUSTER);
+
     // --- Hell Forge ingredients + the block itself (see ModBlocks). ---
 
     // Dropped by Nether mobs at a modest rarity - see data/merlins_inferno/loot_modifiers.

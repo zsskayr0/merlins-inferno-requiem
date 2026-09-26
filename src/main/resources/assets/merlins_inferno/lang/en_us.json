@@ -116,5 +116,9 @@
   "block.merlins_inferno.ashwood_wall_hanging_sign": "Ashwood Wall Hanging Sign",
   "entity.merlins_inferno.dullahan": "Dullahan",
   "item.merlins_inferno.dullahan_spawn_egg": "Dullahan Spawn Egg",
-  "tag.item.merlins_inferno.dullahan_repellent": "Dullahan Repellent (Gold)"
+  "tag.item.merlins_inferno.dullahan_repellent": "Dullahan Repellent (Gold)",
+  "block.merlins_inferno.lyrium_ore": "Lyrium Ore",
+  "block.merlins_inferno.deepslate_lyrium_ore": "Deepslate Lyrium Ore",
+  "block.merlins_inferno.lyrium_block": "Block of Lyrium",
+  "block.merlins_inferno.lyrium_cluster": "Lyrium Cluster"
 }

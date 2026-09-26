@@ -85,6 +85,10 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.INFERNAL_ESSENCE.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_ITEM.get());
+                        output.accept(ModItems.LYRIUM_ORE_ITEM.get());
+                        output.accept(ModItems.DEEPSLATE_LYRIUM_ORE_ITEM.get());
+                        output.accept(ModItems.LYRIUM_BLOCK_ITEM.get());
+                        output.accept(ModItems.LYRIUM_CLUSTER_ITEM.get());
                         output.accept(ModItems.LYRIUM_SHARD.get());
                         output.accept(ModItems.LYRIUM_ROD.get());
                         output.accept(ModItems.LYRIUM_RAW.get());

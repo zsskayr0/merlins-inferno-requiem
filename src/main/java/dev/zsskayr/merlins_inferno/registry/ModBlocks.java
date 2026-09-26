@@ -32,6 +32,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.block.HellForgeBlock;
+import dev.zsskayr.merlins_inferno.block.LyriumBlock;
+import dev.zsskayr.merlins_inferno.block.LyriumClusterBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgePartBlock;
 import dev.zsskayr.merlins_inferno.block.RowanwoodLogBlock;
 import dev.zsskayr.merlins_inferno.worldgen.ModTreeGrowers;
@@ -197,6 +199,23 @@ public final class ModBlocks {
                     .mapColor(MapColor.NETHER)
                     .strength(1.0F, 6.0F) // matches vanilla netherrack's blast resistance, a bit tougher to mine
                     .sound(SoundType.NETHERRACK));
+
+    // --- Lyrium (celestial): where Raw Lyrium comes from. Formed like amethyst (a geode lined with
+    // Lyrium Block and studded with Lyrium Clusters) and as rare emerald-style ores in mountains -
+    // see datagen.worldgen.ModLyriumProvider. Mined stats copy the emerald/amethyst equivalents. ---
+    public static final DeferredBlock<DropExperienceBlock> LYRIUM_ORE = BLOCKS.registerBlock("lyrium_ore",
+            props -> new DropExperienceBlock(UniformInt.of(3, 7), props), BlockBehaviour.Properties.ofFullCopy(Blocks.EMERALD_ORE));
+    public static final DeferredBlock<DropExperienceBlock> DEEPSLATE_LYRIUM_ORE = BLOCKS.registerBlock("deepslate_lyrium_ore",
+            props -> new DropExperienceBlock(UniformInt.of(3, 7), props), BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_EMERALD_ORE));
+    // The geode blocks blaze at the maximum light level and sanctify undead/demons around them
+    // (random ticks - see block.LyriumRadiance) - but only the world's own blocks: see LyriumBlock#PLACED.
+    // The lining is immovable for pistons so a natural block can't be shoved into a base.
+    // Deliberately no budding variant: a geode is finite.
+    public static final DeferredBlock<LyriumBlock> LYRIUM_BLOCK = BLOCKS.registerBlock("lyrium_block",
+            LyriumBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK).lightLevel(state -> 15).pushReaction(PushReaction.BLOCK));
+    // Same shape/size as an amethyst cluster (height 7, offset 3), drops Raw Lyrium - see its loot table.
+    public static final DeferredBlock<LyriumClusterBlock> LYRIUM_CLUSTER = BLOCKS.registerBlock("lyrium_cluster",
+            props -> new LyriumClusterBlock(7.0F, 3.0F, props), BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_CLUSTER).lightLevel(state -> 15));
 
     // --- Hell Forge: see HellForgeBlock's javadoc - block/blockentity exist for now purely to
     // carry HellForgeModel's oversized (~2.5x2.5x2 block) geometry via a BlockEntityRenderer.

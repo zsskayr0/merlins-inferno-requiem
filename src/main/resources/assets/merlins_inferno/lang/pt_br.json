@@ -116,5 +116,9 @@
   "block.merlins_inferno.ashwood_wall_hanging_sign": "Placa Suspensa de Parede de Ashwood",
   "entity.merlins_inferno.dullahan": "Dullahan",
   "item.merlins_inferno.dullahan_spawn_egg": "Ovo Gerador de Dullahan",
-  "tag.item.merlins_inferno.dullahan_repellent": "Repelente de Dullahan (Ouro)"
+  "tag.item.merlins_inferno.dullahan_repellent": "Repelente de Dullahan (Ouro)",
+  "block.merlins_inferno.lyrium_ore": "Minério de Lyrium",
+  "block.merlins_inferno.deepslate_lyrium_ore": "Minério de Lyrium de Ardósia",
+  "block.merlins_inferno.lyrium_block": "Bloco de Lyrium",
+  "block.merlins_inferno.lyrium_cluster": "Aglomerado de Lyrium"
 }

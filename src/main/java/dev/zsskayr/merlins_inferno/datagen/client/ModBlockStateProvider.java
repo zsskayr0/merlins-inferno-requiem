@@ -47,6 +47,7 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         itemModels().withExistingParent("ashwood_fence", modLoc("block/ashwood_fence_inventory"));
 
         registerAshwoodWoodwork();
+        registerLyrium();
 
         // Rowanwood
         logBlock(ModBlocks.ROWANWOOD_LOG.get());
@@ -54,6 +55,22 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         simpleBlock(ModBlocks.ROWANWOOD_LEAVES.get());
         itemModels().simpleBlockItem(ModBlocks.ROWANWOOD_LEAVES.get());
 
+    }
+
+    /** Ore, deepslate ore, lining block and the directional crystal cluster. */
+    private void registerLyrium() {
+        simpleBlock(ModBlocks.LYRIUM_ORE.get());
+        itemModels().simpleBlockItem(ModBlocks.LYRIUM_ORE.get());
+        simpleBlock(ModBlocks.DEEPSLATE_LYRIUM_ORE.get());
+        itemModels().simpleBlockItem(ModBlocks.DEEPSLATE_LYRIUM_ORE.get());
+        simpleBlock(ModBlocks.LYRIUM_BLOCK.get());
+        itemModels().simpleBlockItem(ModBlocks.LYRIUM_BLOCK.get());
+
+        // Same cross-shaped, cutout model + facing rotations as vanilla's amethyst cluster.
+        ResourceLocation clusterTexture = modLoc("block/lyrium_cluster");
+        ModelFile cluster = models().cross("lyrium_cluster", clusterTexture).renderType("cutout");
+        directionalBlock(ModBlocks.LYRIUM_CLUSTER.get(), cluster);
+        itemModels().withExistingParent("lyrium_cluster", "item/generated").texture("layer0", clusterTexture);
     }
 
     /** Stripped variants, gate, door, trapdoor, plate, button and both signs (design doc, 3.1). */
