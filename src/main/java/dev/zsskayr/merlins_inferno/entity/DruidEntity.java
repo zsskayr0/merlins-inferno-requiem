@@ -1,5 +1,7 @@
 package dev.zsskayr.merlins_inferno.entity;
 
+import java.util.EnumSet;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
@@ -23,6 +25,7 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -96,6 +99,7 @@ public class DruidEntity extends PathfinderMob implements Merchant {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new StandStillWhileTradingGoal());
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -190,6 +194,7 @@ public class DruidEntity extends PathfinderMob implements Merchant {
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt(TAG_VARIANT, this.getVariant());
+        compound.putLong(TAG_LAST_RESTOCK_DAY, this.lastRestockDay);
         if (!this.level().isClientSide) {
             MerchantOffers currentOffers = this.getOffers();
             if (!currentOffers.isEmpty()) {
@@ -208,11 +213,84 @@ public class DruidEntity extends PathfinderMob implements Merchant {
         if (compound.contains(TAG_VARIANT)) {
             this.entityData.set(DATA_VARIANT, compound.getInt(TAG_VARIANT));
         }
+        if (compound.contains(TAG_LAST_RESTOCK_DAY)) {
+            this.lastRestockDay = compound.getLong(TAG_LAST_RESTOCK_DAY);
+        }
         if (compound.contains(TAG_OFFERS)) {
             MerchantOffers.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.get(TAG_OFFERS))
                     .resultOrPartial(error -> {
                     })
                     .ifPresent(loaded -> this.offers = loaded);
+        }
+    }
+
+    // --- Daily restock: the trade's uses come back once per in-game day (design decision - a
+    // Druid is a renewable source of Mundane Essence, not a one-shot). Vanilla's Villager does
+    // this through its profession/work-station system, which this mob deliberately doesn't have. ---
+
+    private static final long TICKS_PER_DAY = 24000L;
+    private static final String TAG_LAST_RESTOCK_DAY = "LastRestockDay";
+    private long lastRestockDay = Long.MIN_VALUE;
+
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        if (this.tickCount % 100 == 0 && this.offers != null) {
+            long day = this.level().getDayTime() / TICKS_PER_DAY;
+            if (this.lastRestockDay == Long.MIN_VALUE) {
+                this.lastRestockDay = day;
+            } else if (day > this.lastRestockDay) {
+                this.lastRestockDay = day;
+                // Never mid-trade: the open screen already holds a reference to these offers.
+                if (!this.isTrading()) {
+                    for (MerchantOffer offer : this.offers) {
+                        offer.resetUses();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Plays the part of vanilla's TradeWithPlayerGoal/LookAtTradingPlayerGoal, which are tied to
+     * AbstractVillager: stands still and faces the customer, and ends the trade when the player
+     * walks off (MerchantMenu itself never checks distance, so without this a player could keep
+     * trading from across the map while the Druid wandered away).
+     */
+    private class StandStillWhileTradingGoal extends Goal {
+        private static final double MAX_TRADE_DISTANCE_SQR = 64.0;
+
+        StandStillWhileTradingGoal() {
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            return DruidEntity.this.isAlive() && DruidEntity.this.tradingPlayer != null;
+        }
+
+        @Override
+        public void start() {
+            DruidEntity.this.getNavigation().stop();
+        }
+
+        @Override
+        public void tick() {
+            Player customer = DruidEntity.this.tradingPlayer;
+            if (customer == null) {
+                return;
+            }
+            if (!customer.isAlive() || DruidEntity.this.distanceToSqr(customer) > MAX_TRADE_DISTANCE_SQR) {
+                customer.closeContainer();
+                DruidEntity.this.setTradingPlayer(null);
+                return;
+            }
+            DruidEntity.this.getLookControl().setLookAt(customer);
+        }
+
+        @Override
+        public void stop() {
+            // The menu clears the trading player itself when the screen closes.
         }
     }
 
@@ -227,7 +305,7 @@ public class DruidEntity extends PathfinderMob implements Merchant {
         MerchantOffers currentOffers = this.getOffers();
         if (currentOffers.isEmpty()) {
             currentOffers.add(new MerchantOffer(new ItemCost(Items.EMERALD, EMERALD_PRICE),
-                    new ItemStack(ModItems.OTHERWORLD_ESSENCE.get()), MAX_USES, TRADE_XP, PRICE_MULTIPLIER));
+                    new ItemStack(ModItems.MUNDANE_ESSENCE.get()), MAX_USES, TRADE_XP, PRICE_MULTIPLIER));
         }
     }
 

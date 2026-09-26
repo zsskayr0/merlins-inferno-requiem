@@ -97,5 +97,10 @@
   "advancements.merlins_inferno.obtain_rowanwood_armor.title": "Até que o Bosque Venha",
   "advancements.merlins_inferno.obtain_rowanwood_armor.description": "«Não temas, até que o bosque de Birnam venha a Dunsinane.» Obtenha um conjunto completo de Armadura de Rowanwood.",
   "advancements.merlins_inferno.obtain_seraphium_armor.title": "A Armadura de Deus",
-  "advancements.merlins_inferno.obtain_seraphium_armor.description": "«Revesti-vos de toda a armadura de Deus, para poderdes resistir.» Obtenha um conjunto completo de Armadura de Seraphium."
+  "advancements.merlins_inferno.obtain_seraphium_armor.description": "«Revesti-vos de toda a armadura de Deus, para poderdes resistir.» Obtenha um conjunto completo de Armadura de Seraphium.",
+  "tag.item.merlins_inferno.demonblood_armor": "Armadura de Demonblood",
+  "tag.item.merlins_inferno.demonblood_tools": "Ferramentas de Demonblood",
+  "tag.item.merlins_inferno.imp_stealable": "Ouro Roubável por Imps",
+  "tag.item.merlins_inferno.rowanwood_tools": "Ferramentas de Rowanwood",
+  "tag.item.merlins_inferno.seraphium_tools": "Ferramentas de Seraphium"
 }

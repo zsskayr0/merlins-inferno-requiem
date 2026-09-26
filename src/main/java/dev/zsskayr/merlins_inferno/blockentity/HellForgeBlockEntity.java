@@ -23,6 +23,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -161,10 +162,10 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         int fuelValue = getBurnDuration(fuel);
         if (fuelValue > 0 && blockEntity.storedFuel + fuelValue <= FUEL_CAPACITY) {
             blockEntity.storedFuel += fuelValue;
-            if (fuel.hasCraftingRemainingItem()) {
-                blockEntity.items.set(FUEL_SLOT, fuel.getCraftingRemainingItem());
-            } else {
-                fuel.shrink(1);
+            ItemStack remainder = fuel.hasCraftingRemainingItem() ? fuel.getCraftingRemainingItem() : ItemStack.EMPTY;
+            fuel.shrink(1);
+            if (!remainder.isEmpty()) {
+                ejectRemainder(level, pos, blockEntity, remainder);
             }
             dirty = true;
         }
@@ -189,6 +190,24 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
 
         if (dirty) {
             setChanged(level, pos, state);
+        }
+    }
+
+    /**
+     * Where a spent container (the empty bucket a lava bucket leaves behind) goes. It used to sit
+     * in the fuel slot, where no hopper could reach it (only the result slot is exposed on the
+     * bottom face) and the next bucket could never be fed in - automation stalled after one
+     * bucket. Now it's moved to the result slot if that has room, or dropped next to the block.
+     */
+    private static void ejectRemainder(Level level, BlockPos pos, HellForgeBlockEntity blockEntity, ItemStack remainder) {
+        ItemStack output = blockEntity.items.get(RESULT_SLOT);
+        if (output.isEmpty()) {
+            blockEntity.items.set(RESULT_SLOT, remainder);
+        } else if (ItemStack.isSameItemSameComponents(output, remainder)
+                && output.getCount() + remainder.getCount() <= output.getMaxStackSize()) {
+            output.grow(remainder.getCount());
+        } else {
+            Block.popResource(level, pos.above(), remainder);
         }
     }
 

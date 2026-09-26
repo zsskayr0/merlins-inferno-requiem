@@ -93,7 +93,7 @@ public final class ModBlocks {
     // - since there's no tool-tier requirement at all, any axe eventually gets through it, per the
     // doc's "é sobre tempo de quebra, não tool tier mínimo" - see RowanwoodLogBlock, which doubles
     // that already-Obsidian-matching break time unless the axe has "Toque do Druida". The other
-    // half of the enchant requirement (it drops nothing at all without the enchant) is a loot
+    // half of the enchant requirement (without the enchant it drops plain Ashwood) is a loot
     // table condition, same as vanilla gates ore self-drops behind Silk Touch - see
     // data/merlins_inferno/loot_table/blocks/rowanwood_log.json. ---
 

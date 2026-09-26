@@ -17,4 +17,12 @@ public class SanctifiedProgress {
 
     /** Ticks of continuous NO contact since the last time Sanctified was on - the "turning off" grace period. */
     public int ticksSinceContactLost;
+
+    /**
+     * Whether the Sanctified instance currently on the player was put there by
+     * {@code SanctifiedTickHandler} (i.e. by carrying Raw Lyrium). Lets the handler clear only its
+     * own effect - one inflicted by a Seraphium weapon or by another Sanctified holder's melee hit
+     * belongs to whoever applied it and must run its course.
+     */
+    public boolean appliedByLyrium;
 }

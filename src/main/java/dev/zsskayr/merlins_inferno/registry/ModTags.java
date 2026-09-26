@@ -17,7 +17,7 @@ public final class ModTags {
     public static final class EntityTypes {
         /**
          * "Humans": villagers and their variants, plus the raid/illager cast (pillagers,
-         * vindicators, evokers, illusioners, ravagers, witches) - what Demonblood's +20% damage
+         * vindicators, evokers, illusioners, ravagers, witches) - what Demonblood's +10% damage
          * bonus ({@code DemonbloodCombatHandler}) and the "Evil" enchantment both target.
          */
         public static final TagKey<EntityType<?>> HUMANS = TagKey.create(Registries.ENTITY_TYPE,
@@ -65,7 +65,7 @@ public final class ModTags {
     }
 
     public static final class Items {
-        /** Every Demonblood tool/weapon - grants the intrinsic +20% damage bonus vs {@link EntityTypes#HUMANS}. */
+        /** Every Demonblood tool/weapon - grants the intrinsic +10% damage bonus vs {@link EntityTypes#HUMANS}. */
         public static final TagKey<Item> DEMONBLOOD_TOOLS = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demonblood_tools"));
 

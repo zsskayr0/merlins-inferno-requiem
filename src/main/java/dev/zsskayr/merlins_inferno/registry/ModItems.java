@@ -52,8 +52,13 @@ public final class ModItems {
     // same shape (see data/merlins_inferno/recipe/rowanwood_scrap_from_*.json), crafts into a
     // Rowanwood Scrap - which then smelts (or blasts) into the bar itself. Plain items, no
     // in-world behavior of their own.
-    // Otherworld Essence's obtainment method: the Druid's trade (see event.DruidTrades) - or,
-    // narratively, defeating a Dullahan at night (that mob doesn't exist yet - out of scope here).
+    // The three essences (design decision):
+    //  - Mundane Essence: early game, obtained from the Druids (DruidEntity#updateTrades - it's
+    //    what they hand over, not a currency the player pays them with).
+    //  - Fae Essence: dropped by the Dullahan (not implemented yet); see below.
+    //  - Mundane and Fae both craft the Rowanwood Scrap (data/.../recipe/rowanwood_scrap_from_*.json).
+    //  - Otherworld Essence: something far more mystical, reserved for mid game and beyond - kept
+    //    registered but deliberately has no source or recipe yet.
     public static final DeferredItem<Item> OTHERWORLD_ESSENCE = ITEMS.registerSimpleItem("otherworld_essence", new Item.Properties());
     public static final DeferredItem<Item> MUNDANE_ESSENCE = ITEMS.registerSimpleItem("mundane_essence", new Item.Properties());
     // Dropped by third-party "fairy" mobs at 10% - see ModTags.EntityTypes.FAIRIES and
@@ -256,7 +261,7 @@ public final class ModItems {
                 }
             });
     public static final DeferredItem<HoeItem> SERAPHIUM_HOE = ITEMS.registerItem("seraphium_hoe",
-            props -> new HoeItem(ModTiers.SERAPHIUM, props.attributes(HoeItem.createAttributes(ModTiers.SERAPHIUM, -2.0F, -1.0F))) {
+            props -> new HoeItem(ModTiers.SERAPHIUM, props.attributes(HoeItem.createAttributes(ModTiers.SERAPHIUM, -5.0F, 0.0F))) {
                 @Override
                 public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
                     super.appendHoverText(stack, context, tooltip, flag);

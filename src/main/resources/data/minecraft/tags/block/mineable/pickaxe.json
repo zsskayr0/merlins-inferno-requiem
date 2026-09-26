@@ -1,4 +1,8 @@
 {
   "replace": false,
-  "values": []
+  "values": [
+    "merlins_inferno:compressed_netherrack",
+    "merlins_inferno:hell_forge",
+    "merlins_inferno:hell_forge_part"
+  ]
 }
