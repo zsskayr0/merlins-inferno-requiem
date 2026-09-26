@@ -1,0 +1,20 @@
+{
+  "name": "patchouli.merlins_inferno.entry.penitent.name",
+  "icon": "merlins_inferno:penitent_spawn_egg",
+  "category": "merlins_inferno:angelical_road",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.penitent.page1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.penitent.page2"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.penitent.page3"
+    }
+  ]
+}

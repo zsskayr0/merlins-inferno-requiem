@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.blockentity.HellForgeBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.HellForgePartBlockEntity;
+import dev.zsskayr.merlins_inferno.blockentity.VigilAltarBlockEntity;
 
 /** Central registry for every {@code BlockEntityType} this mod adds. */
 public final class ModBlockEntityTypes {
@@ -19,6 +20,9 @@ public final class ModBlockEntityTypes {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HellForgePartBlockEntity>> HELL_FORGE_PART = BLOCK_ENTITY_TYPES.register("hell_forge_part",
             () -> BlockEntityType.Builder.of(HellForgePartBlockEntity::new, ModBlocks.HELL_FORGE_PART.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<VigilAltarBlockEntity>> VIGIL_ALTAR = BLOCK_ENTITY_TYPES.register("vigil_altar",
+            () -> BlockEntityType.Builder.of(VigilAltarBlockEntity::new, ModBlocks.VIGIL_ALTAR.get()).build(null));
 
     private ModBlockEntityTypes() {
     }

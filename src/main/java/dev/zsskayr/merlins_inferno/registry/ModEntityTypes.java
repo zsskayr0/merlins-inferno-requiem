@@ -11,6 +11,8 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanSteedEntity;
+import dev.zsskayr.merlins_inferno.entity.PenitentEntity;
+import dev.zsskayr.merlins_inferno.entity.WorshipperEntity;
 import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 
 /**
@@ -66,6 +68,22 @@ public final class ModEntityTypes {
                     .passengerAttachments(1.31875F)
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":dullahan_steed"));
+
+    // The Angelical miniboss (see PenitentEntity) and the shrine's neutral congregation. Neither spawns naturally:
+    // the shrine structure places them, and the altar re-summons the Penitent.
+    public static final DeferredHolder<EntityType<?>, EntityType<PenitentEntity>> PENITENT = ENTITY_TYPES.register("penitent",
+            () -> EntityType.Builder.of(PenitentEntity::new, MobCategory.MONSTER)
+                    .sized(0.7F, 2.1F)
+                    .eyeHeight(1.85F)
+                    .clientTrackingRange(10)
+                    .build(Merlins_inferno.MODID + ":penitent"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<WorshipperEntity>> WORSHIPPER = ENTITY_TYPES.register("worshipper",
+            () -> EntityType.Builder.of(WorshipperEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.95F)
+                    .eyeHeight(1.74F)
+                    .clientTrackingRange(8)
+                    .build(Merlins_inferno.MODID + ":worshipper"));
 
     private ModEntityTypes() {
     }

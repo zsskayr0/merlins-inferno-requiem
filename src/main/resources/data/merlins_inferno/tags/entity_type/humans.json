@@ -3,6 +3,7 @@
     "minecraft:villager",
     "minecraft:wandering_trader",
     "minecraft:zombie_villager",
-    "#minecraft:raiders"
+    "#minecraft:raiders",
+    "merlins_inferno:worshipper"
   ]
 }

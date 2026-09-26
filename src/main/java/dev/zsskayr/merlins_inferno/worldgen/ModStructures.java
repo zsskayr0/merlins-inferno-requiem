@@ -14,6 +14,7 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 public final class ModStructures {
     public static final ResourceKey<Structure> ROWANWOOD_TREE = key("rowanwood_tree");
     public static final ResourceKey<Structure> DRUID_SANCTUARY = key("druid_sanctuary");
+    public static final ResourceKey<Structure> VIGIL_SHRINE = key("vigil_shrine");
 
     private ModStructures() {
     }

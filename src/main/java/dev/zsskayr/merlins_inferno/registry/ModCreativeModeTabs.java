@@ -82,6 +82,9 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DRUID_SPAWN_EGG.get());
                         output.accept(ModItems.IMP_SPAWN_EGG.get());
                         output.accept(ModItems.DULLAHAN_SPAWN_EGG.get());
+                        output.accept(ModItems.PENITENT_SPAWN_EGG.get());
+                        output.accept(ModItems.WORSHIPPER_SPAWN_EGG.get());
+                        output.accept(ModItems.VIGIL_ALTAR_ITEM.get());
                         output.accept(ModItems.INFERNAL_ESSENCE.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_ITEM.get());

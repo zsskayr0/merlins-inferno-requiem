@@ -323,6 +323,9 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> LYRIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LYRIUM_BLOCK);
     public static final DeferredItem<BlockItem> LYRIUM_CLUSTER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LYRIUM_CLUSTER);
 
+    // --- Vigil Shrine blocks (creative/admin only in practice: the altar is unbreakable). ---
+    public static final DeferredItem<BlockItem> VIGIL_ALTAR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.VIGIL_ALTAR);
+
     // --- Hell Forge ingredients + the block itself (see ModBlocks). ---
 
     // Dropped by Nether mobs at a modest rarity - see data/merlins_inferno/loot_modifiers.
@@ -337,6 +340,10 @@ public final class ModItems {
             props -> new DeferredSpawnEggItem(ModEntityTypes.IMP, 0xA8231B, 0xF2C230, props));
     public static final DeferredItem<DeferredSpawnEggItem> DULLAHAN_SPAWN_EGG = ITEMS.registerItem("dullahan_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.DULLAHAN, 0x1B1F2B, 0xD8D2BC, props));
+    public static final DeferredItem<DeferredSpawnEggItem> PENITENT_SPAWN_EGG = ITEMS.registerItem("penitent_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.PENITENT, 0xD9D2BC, 0x6FE3F5, props));
+    public static final DeferredItem<DeferredSpawnEggItem> WORSHIPPER_SPAWN_EGG = ITEMS.registerItem("worshipper_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.WORSHIPPER, 0x6B5A48, 0xE8D9A8, props));
     public static final DeferredItem<DeferredSpawnEggItem> DRUID_SPAWN_EGG = ITEMS.registerItem("druid_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.DRUID, 0x4A6B3D, 0xC9A66B, props));
 

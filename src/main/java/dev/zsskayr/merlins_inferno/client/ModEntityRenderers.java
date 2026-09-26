@@ -37,6 +37,8 @@ public final class ModEntityRenderers {
         event.registerEntityRenderer(ModEntityTypes.IMP.get(), ImpRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.DULLAHAN.get(), DullahanRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.DULLAHAN_STEED.get(), DullahanSteedRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.PENITENT.get(), PenitentRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.WORSHIPPER.get(), WorshipperRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.HELL_FORGE.get(), HellForgeBlockEntityRenderer::new);
     }
 
