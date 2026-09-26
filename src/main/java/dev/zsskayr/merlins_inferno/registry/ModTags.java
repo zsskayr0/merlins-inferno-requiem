@@ -60,6 +60,14 @@ public final class ModTags {
         public static final TagKey<EntityType<?>> DEMON = TagKey.create(Registries.ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demon"));
 
+        /**
+         * Mobs allowed to spread Sanctified by melee when they carry it (see
+         * {@code event.SanctifiedCombatHandler}). Empty by default: a mob holding Sanctified
+         * doesn't infect players unless it's explicitly listed here.
+         */
+        public static final TagKey<EntityType<?>> SANCTIFIED_CARRIERS = TagKey.create(Registries.ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "sanctified_carriers"));
+
         private EntityTypes() {
         }
     }
