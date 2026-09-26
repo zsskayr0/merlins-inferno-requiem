@@ -3,9 +3,7 @@
   "category": "redstone",
   "group": "wooden_fence_gate",
   "key": {
-    "#": {
-      "item": "minecraft:stick"
-    },
+    "#": { "tag": "c:rods/wooden" },
     "W": {
       "item": "merlins_inferno:ashwood_planks"
     }

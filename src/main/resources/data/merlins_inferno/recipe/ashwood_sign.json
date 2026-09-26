@@ -6,9 +6,7 @@
     "#": {
       "item": "merlins_inferno:ashwood_planks"
     },
-    "X": {
-      "item": "minecraft:stick"
-    }
+    "X": { "tag": "c:rods/wooden" }
   },
   "pattern": [
     "###",
