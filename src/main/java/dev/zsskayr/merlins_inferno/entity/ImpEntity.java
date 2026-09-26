@@ -4,6 +4,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -176,11 +177,20 @@ public class ImpEntity extends Monster implements GeoEntity {
         return level.getBlockState(pos).isAir() && isNearSurface(level, pos) && !isOverLava(level, pos);
     }
 
+    /**
+     * Within {@link #SURFACE_SPAWN_RADIUS} blocks of a solid surface, checked along the six axes
+     * only (18 lookups) - the full 7x7x7 cube it used to scan (343) ran on every natural spawn
+     * attempt in the Nether. A surface that's only diagonally near is missed, which merely makes
+     * the spawn a touch pickier.
+     */
     private static boolean isNearSurface(LevelAccessor level, BlockPos pos) {
-        for (BlockPos check : BlockPos.betweenClosed(pos.offset(-SURFACE_SPAWN_RADIUS, -SURFACE_SPAWN_RADIUS, -SURFACE_SPAWN_RADIUS),
-                pos.offset(SURFACE_SPAWN_RADIUS, SURFACE_SPAWN_RADIUS, SURFACE_SPAWN_RADIUS))) {
-            if (!level.getBlockState(check).getCollisionShape(level, check).isEmpty()) {
-                return true;
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (Direction direction : Direction.values()) {
+            for (int step = 1; step <= SURFACE_SPAWN_RADIUS; step++) {
+                cursor.setWithOffset(pos, direction.getStepX() * step, direction.getStepY() * step, direction.getStepZ() * step);
+                if (!level.getBlockState(cursor).getCollisionShape(level, cursor).isEmpty()) {
+                    return true;
+                }
             }
         }
         return false;
@@ -361,11 +371,20 @@ public class ImpEntity extends Monster implements GeoEntity {
         boolean was = this.courageous;
         int count = 0;
         if (this.isAvailableFighter()) {
+            count = 1; // itself
             double radiusSqr = GROUP_RADIUS * GROUP_RADIUS;
+            // Cheap filter in the query; the line-of-sight raycast runs per candidate and stops as
+            // soon as the pack is big enough, instead of testing every neighbour every time.
             List<ImpEntity> nearby = this.level().getEntitiesOfClass(ImpEntity.class, this.getBoundingBox().inflate(GROUP_RADIUS),
-                    other -> other.isAvailableFighter() && (other == this
-                            || (this.distanceToSqr(other) <= radiusSqr && this.hasLineOfSight(other))));
-            count = nearby.size();
+                    other -> other != this && other.isAvailableFighter());
+            for (ImpEntity other : nearby) {
+                if (count >= COURAGE_GROUP_SIZE) {
+                    break;
+                }
+                if (this.distanceToSqr(other) <= radiusSqr && this.hasLineOfSight(other)) {
+                    count++;
+                }
+            }
         }
         this.courageous = count >= COURAGE_GROUP_SIZE;
         if (was && !this.courageous) {
@@ -489,31 +508,60 @@ public class ImpEntity extends Monster implements GeoEntity {
         this.fleeThreat = threat;
     }
 
-    /** Number of other imps currently in the approach phase of a dive (prepare/charge), within {@code radius}. */
-    public int countOtherDivers(double radius) {
-        int count = 0;
-        for (ImpEntity other : this.level().getEntitiesOfClass(ImpEntity.class, this.getBoundingBox().inflate(radius),
-                other -> other != this && other.diving)) {
-            count++;
-        }
-        return count;
-    }
-
-    /** Game tick of the most recent dive start among the other imps near this one (or a very old tick). */
-    public long latestOtherDiveStart(double radius) {
-        long latest = Long.MIN_VALUE / 2;
-        for (ImpEntity other : this.level().getEntitiesOfClass(ImpEntity.class, this.getBoundingBox().inflate(radius), other -> other != this)) {
-            latest = Math.max(latest, other.lastDiveStartTick);
-        }
-        return latest;
+    /** What the dive goal needs to know about the pack, from a single scan. */
+    public record DiveScan(int divers, long latestStart) {
     }
 
     /**
+     * How many other imps are in the approach phase of a dive (prepare/charge) within {@code radius},
+     * and the game tick of the most recent dive start among the other imps there (or a very old
+     * tick) - one entity query for both (they used to be two, run every couple of ticks).
+     */
+    public DiveScan scanOtherDivers(double radius) {
+        int divers = 0;
+        long latest = Long.MIN_VALUE / 2;
+        for (ImpEntity other : this.level().getEntitiesOfClass(ImpEntity.class, this.getBoundingBox().inflate(radius), other -> other != this)) {
+            if (other.diving) {
+                divers++;
+            }
+            latest = Math.max(latest, other.lastDiveStartTick);
+        }
+        return new DiveScan(divers, latest);
+    }
+
+
+
+    /** The widest range any goal asks {@link #findThreat} about (ImpFleeGoal's URGENT_RANGE). */
+    private static final double THREAT_SCAN_RANGE = 16.0;
+    /** How long a threat scan is trusted; a hit on the imp invalidates it at once (see {@link #hurt}). */
+    private static final int THREAT_CACHE_TICKS = 5;
+    @Nullable
+    private LivingEntity cachedThreat;
+    private int threatScanTick = -100;
+
+    /**
      * The nearest thing this imp has reason to run from: a player, a mob that has it as an attack
-     * target (an angry piglin), or whoever last hurt it.
+     * target (an angry piglin), or whoever last hurt it - within {@code range} (at most
+     * {@link #THREAT_SCAN_RANGE}).
+     * <p>
+     * The scan (a player lookup plus an entity query with brain lookups) used to run on every call,
+     * and several goals call this every tick or two per imp. It now runs once every
+     * {@link #THREAT_CACHE_TICKS} ticks for the widest range; because it keeps only the NEAREST
+     * threat, answering a smaller range is exact: if the nearest one is out of range, none is in.
      */
     @Nullable
     public LivingEntity findThreat(double range) {
+        if (this.tickCount - this.threatScanTick >= THREAT_CACHE_TICKS
+                || (this.cachedThreat != null && !this.cachedThreat.isAlive())) {
+            this.cachedThreat = this.scanThreat(THREAT_SCAN_RANGE);
+            this.threatScanTick = this.tickCount;
+        }
+        LivingEntity threat = this.cachedThreat;
+        return threat != null && this.distanceToSqr(threat) <= range * range ? threat : null;
+    }
+
+    @Nullable
+    private LivingEntity scanThreat(double range) {
         LivingEntity best = null;
         double bestDistance = range * range;
         Player player = this.level().getNearestPlayer(this.getX(), this.getY(), this.getZ(), range, EntitySelector.NO_CREATIVE_OR_SPECTATOR);
@@ -583,6 +631,9 @@ public class ImpEntity extends Monster implements GeoEntity {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         boolean hurt = super.hurt(source, amount);
+        if (hurt) {
+            this.threatScanTick = -100; // rescan next call: the attacker may be the new nearest threat
+        }
         if (hurt && !this.level().isClientSide && this.isAlive()) {
             // Any blow from another entity makes it let go of stolen loot - and it doesn't try again.
             if (this.isCarrying() && (source.getEntity() != null || source.getDirectEntity() != null)) {
