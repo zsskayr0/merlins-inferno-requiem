@@ -18,6 +18,8 @@ import dev.zsskayr.merlins_inferno.event.DemonbloodCombatHandler;
 import dev.zsskayr.merlins_inferno.event.RowanwoodCombatHandler;
 import dev.zsskayr.merlins_inferno.event.DruidsTouchHandler;
 import dev.zsskayr.merlins_inferno.event.LyriumVillagerTrades;
+import dev.zsskayr.merlins_inferno.event.MarkOfDebtHandler;
+import dev.zsskayr.merlins_inferno.event.PandoraHandler;
 import dev.zsskayr.merlins_inferno.event.SanctifiedCombatHandler;
 import dev.zsskayr.merlins_inferno.event.SanctifiedTickHandler;
 import dev.zsskayr.merlins_inferno.event.SeraphiumCombatHandler;
@@ -79,6 +81,8 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new SanctifiedCombatHandler());
         NeoForge.EVENT_BUS.register(new SeraphiumCombatHandler());
         NeoForge.EVENT_BUS.register(new LyriumVillagerTrades());
+        NeoForge.EVENT_BUS.register(new MarkOfDebtHandler());
+        NeoForge.EVENT_BUS.register(new PandoraHandler());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }

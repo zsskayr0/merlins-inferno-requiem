@@ -7,6 +7,9 @@
     "merlins_inferno:lyrium_ore",
     "merlins_inferno:deepslate_lyrium_ore",
     "merlins_inferno:lyrium_block",
-    "merlins_inferno:lyrium_cluster"
+    "merlins_inferno:lyrium_cluster",
+    "merlins_inferno:compressed_netherrack_stairs",
+    "merlins_inferno:compressed_netherrack_slab",
+    "merlins_inferno:compressed_netherrack_wall"
   ]
 }

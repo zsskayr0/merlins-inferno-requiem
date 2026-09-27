@@ -8,12 +8,15 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.entity.AndrasEntity;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanSteedEntity;
-import dev.zsskayr.merlins_inferno.entity.PenitentEntity;
+import dev.zsskayr.merlins_inferno.entity.EliasEntity;
+import dev.zsskayr.merlins_inferno.entity.OstaraEntity;
+import dev.zsskayr.merlins_inferno.entity.SacredPriestEntity;
 import dev.zsskayr.merlins_inferno.entity.StarvedEntity;
-import dev.zsskayr.merlins_inferno.entity.WorshipperEntity;
+import dev.zsskayr.merlins_inferno.entity.SacredCultistEntity;
 import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 
 /**
@@ -79,21 +82,46 @@ public final class ModEntityTypes {
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":dullahan_steed"));
 
-    // The Angelical miniboss (see PenitentEntity) and the shrine's neutral congregation. Neither spawns naturally:
-    // the shrine structure places them, and the altar re-summons the Penitent.
-    public static final DeferredHolder<EntityType<?>, EntityType<PenitentEntity>> PENITENT = ENTITY_TYPES.register("penitent",
-            () -> EntityType.Builder.of(PenitentEntity::new, MobCategory.MONSTER)
+    // The Angelical Circle 1 boss (see EliasEntity), the church's Sacred Priest guardian and its neutral
+    // congregation. Elias never spawns on his own: the altar wakes him once the Priest has fallen. The Priest is
+    // placed by the church structure; cultists also wander the world rarely (biome modifier).
+    public static final DeferredHolder<EntityType<?>, EntityType<EliasEntity>> ELIAS = ENTITY_TYPES.register("elias",
+            () -> EntityType.Builder.of(EliasEntity::new, MobCategory.MONSTER)
                     .sized(0.7F, 2.1F)
                     .eyeHeight(1.85F)
                     .clientTrackingRange(10)
-                    .build(Merlins_inferno.MODID + ":penitent"));
+                    .build(Merlins_inferno.MODID + ":elias"));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<WorshipperEntity>> WORSHIPPER = ENTITY_TYPES.register("worshipper",
-            () -> EntityType.Builder.of(WorshipperEntity::new, MobCategory.CREATURE)
+    public static final DeferredHolder<EntityType<?>, EntityType<SacredCultistEntity>> SACRED_CULTIST = ENTITY_TYPES.register("sacred_cultist",
+            () -> EntityType.Builder.of(SacredCultistEntity::new, MobCategory.CREATURE)
                     .sized(0.6F, 1.95F)
                     .eyeHeight(1.74F)
                     .clientTrackingRange(8)
-                    .build(Merlins_inferno.MODID + ":worshipper"));
+                    .build(Merlins_inferno.MODID + ":sacred_cultist"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SacredPriestEntity>> SACRED_PRIEST = ENTITY_TYPES.register("sacred_priest",
+            () -> EntityType.Builder.of(SacredPriestEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.95F)
+                    .eyeHeight(1.74F)
+                    .clientTrackingRange(10)
+                    .build(Merlins_inferno.MODID + ":sacred_priest"));
+
+    // Infernal Circle 1 boss - see AndrasEntity. Fire-immune, like the rest of the Nether's residents.
+    public static final DeferredHolder<EntityType<?>, EntityType<AndrasEntity>> ANDRAS = ENTITY_TYPES.register("andras",
+            () -> EntityType.Builder.of(AndrasEntity::new, MobCategory.MONSTER)
+                    .sized(0.8F, 2.4F)
+                    .eyeHeight(2.1F)
+                    .fireImmune()
+                    .clientTrackingRange(10)
+                    .build(Merlins_inferno.MODID + ":andras"));
+
+    // Mundane (Druidic) Circle 1 boss - see OstaraEntity.
+    public static final DeferredHolder<EntityType<?>, EntityType<OstaraEntity>> OSTARA = ENTITY_TYPES.register("ostara",
+            () -> EntityType.Builder.of(OstaraEntity::new, MobCategory.MONSTER)
+                    .sized(0.7F, 2.2F)
+                    .eyeHeight(1.95F)
+                    .clientTrackingRange(10)
+                    .build(Merlins_inferno.MODID + ":ostara"));
 
     private ModEntityTypes() {
     }

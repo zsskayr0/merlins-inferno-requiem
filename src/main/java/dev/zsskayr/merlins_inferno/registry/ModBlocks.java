@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.WallHangingSignBlock;
 import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -33,7 +34,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.block.HellForgeBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumBlock;
-import dev.zsskayr.merlins_inferno.block.VigilAltarBlock;
+import dev.zsskayr.merlins_inferno.block.SacredAltarBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumClusterBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgePartBlock;
 import dev.zsskayr.merlins_inferno.block.RowanwoodLogBlock;
@@ -193,13 +194,25 @@ public final class ModBlocks {
     // No Rowanwood sapling on purpose - see ModBlockLootProvider's comment: it'd let players farm
     // a 48x25x39 landmark structure paste from a sapling, wildly overpowered.
 
-    // --- Compressed Netherrack: a Hell Forge ingredient. Just a plain solid block for now, no
-    // special behavior. ---
-    public static final DeferredBlock<Block> COMPRESSED_NETHERRACK = BLOCKS.registerSimpleBlock("compressed_netherrack",
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.NETHER)
-                    .strength(1.0F, 6.0F) // matches vanilla netherrack's blast resistance, a bit tougher to mine
-                    .sound(SoundType.NETHERRACK));
+    // --- Compressed Netherrack: a Hell Forge ingredient and, with its building set (stairs, slab,
+    // wall, button, pressure plate), a build block. Blast resistance matches Obsidian (1200) so it
+    // holds up against explosions; hardness stays low enough to mine comfortably. ---
+    public static final DeferredBlock<Block> COMPRESSED_NETHERRACK = BLOCKS.registerBlock("compressed_netherrack",
+            Block::new, compressedNetherrackProperties());
+    public static final DeferredBlock<StairBlock> COMPRESSED_NETHERRACK_STAIRS = BLOCKS.registerBlock("compressed_netherrack_stairs",
+            props -> new StairBlock(COMPRESSED_NETHERRACK.get().defaultBlockState(), props), compressedNetherrackProperties());
+    public static final DeferredBlock<SlabBlock> COMPRESSED_NETHERRACK_SLAB = BLOCKS.registerBlock("compressed_netherrack_slab",
+            SlabBlock::new, compressedNetherrackProperties());
+    public static final DeferredBlock<WallBlock> COMPRESSED_NETHERRACK_WALL = BLOCKS.registerBlock("compressed_netherrack_wall",
+            WallBlock::new, compressedNetherrackProperties().forceSolidOn());
+
+    private static BlockBehaviour.Properties compressedNetherrackProperties() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.NETHER)
+                .instrument(NoteBlockInstrument.BASEDRUM)
+                .strength(2.0F, 1200.0F)
+                .sound(SoundType.NETHERRACK);
+    }
 
     // --- Lyrium (celestial): where Raw Lyrium comes from. Formed like amethyst (a geode lined with
     // Lyrium Block and studded with Lyrium Clusters) and as rare emerald-style ores in mountains -
@@ -218,10 +231,10 @@ public final class ModBlocks {
     public static final DeferredBlock<LyriumClusterBlock> LYRIUM_CLUSTER = BLOCKS.registerBlock("lyrium_cluster",
             props -> new LyriumClusterBlock(7.0F, 3.0F, props), BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_CLUSTER).lightLevel(state -> 15));
 
-    // --- Vigil Church (the Penitent's). The altar holds the church's state, so it can't be broken in survival and
-    // drops nothing. The Great Bell that empowers the Penitent is built from vanilla blocks (see GreatBell). ---
-    public static final DeferredBlock<VigilAltarBlock> VIGIL_ALTAR = BLOCKS.registerBlock("vigil_altar",
-            VigilAltarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CHISELED_QUARTZ_BLOCK).strength(-1.0F, 3600000.0F)
+    // --- Sacred Church (Elias's). The altar holds the church's state, so it can't be broken in survival and
+    // drops nothing. The Great Bell that empowers Elias is built from vanilla blocks (see GreatBell). ---
+    public static final DeferredBlock<SacredAltarBlock> SACRED_ALTAR = BLOCKS.registerBlock("sacred_altar",
+            SacredAltarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CHISELED_QUARTZ_BLOCK).strength(-1.0F, 3600000.0F)
                     .noLootTable().lightLevel(state -> 8).pushReaction(PushReaction.BLOCK));
 
     // --- Hell Forge: see HellForgeBlock's javadoc - block/blockentity exist for now purely to

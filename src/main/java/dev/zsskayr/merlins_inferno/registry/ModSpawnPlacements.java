@@ -8,8 +8,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.entity.AndrasEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
 import dev.zsskayr.merlins_inferno.entity.ImpEntity;
+import dev.zsskayr.merlins_inferno.entity.OstaraEntity;
 import dev.zsskayr.merlins_inferno.entity.StarvedEntity;
 
 /** Natural-spawn placement rules for every custom mob this mod adds. */
@@ -39,5 +41,16 @@ public final class ModSpawnPlacements {
         // biome's spawn list just makes it a rare entry, see ModBiomeProvider).
         event.register(ModEntityTypes.DULLAHAN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 DullahanEntity::checkDullahanSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+
+        // Andras: rare and solitary in the Nether (biomes from biome_modifier/andras_spawns.json). Ostara: rare,
+        // daytime, Hallowed Grove only (spawn list in ModBiomeProvider, the rule itself does the rest).
+        event.register(ModEntityTypes.ANDRAS.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                AndrasEntity::checkAndrasSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(ModEntityTypes.OSTARA.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                OstaraEntity::checkOstaraSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+
+        // Sacred Cultists also wander the world (biome_modifier/sacred_cultist_spawns.json); the church places its own.
+        event.register(ModEntityTypes.SACRED_CULTIST.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 }

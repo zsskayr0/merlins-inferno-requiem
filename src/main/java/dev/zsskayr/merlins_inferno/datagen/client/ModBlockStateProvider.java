@@ -48,7 +48,8 @@ public final class ModBlockStateProvider extends BlockStateProvider {
 
         registerAshwoodWoodwork();
         registerLyrium();
-        registerVigilShrine();
+        registerSacredChurch();
+        registerCompressedNetherrack();
 
         // Rowanwood
         logBlock(ModBlocks.ROWANWOOD_LOG.get());
@@ -56,6 +57,25 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         simpleBlock(ModBlocks.ROWANWOOD_LEAVES.get());
         itemModels().simpleBlockItem(ModBlocks.ROWANWOOD_LEAVES.get());
 
+    }
+
+    /**
+     * The set around Compressed Netherrack. The plain block's blockstate/model are hand-written
+     * (its texture is named {@code netherrack_compressed}), so the double slab reuses that model
+     * and every other model points at the same texture.
+     */
+    private void registerCompressedNetherrack() {
+        ResourceLocation texture = modLoc("block/netherrack_compressed");
+        ModelFile full = models().getExistingFile(modLoc("block/compressed_netherrack"));
+
+        stairsBlock(ModBlocks.COMPRESSED_NETHERRACK_STAIRS.get(), texture);
+        itemModels().simpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_STAIRS.get());
+        slabBlock(ModBlocks.COMPRESSED_NETHERRACK_SLAB.get(), models().slab("compressed_netherrack_slab", texture, texture, texture),
+                models().slabTop("compressed_netherrack_slab_top", texture, texture, texture), full);
+        itemModels().simpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_SLAB.get());
+        wallBlock(ModBlocks.COMPRESSED_NETHERRACK_WALL.get(), texture);
+        models().singleTexture("compressed_netherrack_wall_inventory", mcLoc("block/wall_inventory"), "wall", texture);
+        itemModels().withExistingParent("compressed_netherrack_wall", modLoc("block/compressed_netherrack_wall_inventory"));
     }
 
     /** Ore, deepslate ore, lining block and the directional crystal cluster. */
@@ -74,13 +94,13 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         itemModels().withExistingParent("lyrium_cluster", "item/generated").texture("layer0", clusterTexture);
     }
 
-    /** The Vigil Shrine's altar (vanilla chiselled-quartz look) and its gold crystal (the Lyrium cluster's model). */
-    private void registerVigilShrine() {
-        ModelFile altar = models().cubeColumn("vigil_altar",
+    /** The Sacred Church's altar (vanilla chiselled-quartz look) and its gold crystal (the Lyrium cluster's model). */
+    private void registerSacredChurch() {
+        ModelFile altar = models().cubeColumn("sacred_altar",
                 ResourceLocation.withDefaultNamespace("block/chiseled_quartz_block"),
                 ResourceLocation.withDefaultNamespace("block/chiseled_quartz_block_top"));
-        simpleBlock(ModBlocks.VIGIL_ALTAR.get(), altar);
-        itemModels().withExistingParent("vigil_altar", modLoc("block/vigil_altar"));
+        simpleBlock(ModBlocks.SACRED_ALTAR.get(), altar);
+        itemModels().withExistingParent("sacred_altar", modLoc("block/sacred_altar"));
     }
 
     /** Stripped variants, gate, door, trapdoor, plate, button and both signs (design doc, 3.1). */

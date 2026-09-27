@@ -1,0 +1,20 @@
+{
+  "name": "patchouli.merlins_inferno.entry.elias.name",
+  "icon": "merlins_inferno:elias_spawn_egg",
+  "category": "merlins_inferno:angelical_road",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.elias.page1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.elias.page2"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.elias.page3"
+    }
+  ]
+}
