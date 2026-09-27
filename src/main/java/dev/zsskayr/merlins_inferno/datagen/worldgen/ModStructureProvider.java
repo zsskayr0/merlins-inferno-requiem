@@ -21,7 +21,7 @@ import dev.zsskayr.merlins_inferno.worldgen.ModStructures;
 import dev.zsskayr.merlins_inferno.worldgen.biome.ModBiomes;
 import dev.zsskayr.merlins_inferno.worldgen.structure.DruidSanctuaryStructure;
 import dev.zsskayr.merlins_inferno.worldgen.structure.RowanwoodTreeStructure;
-import dev.zsskayr.merlins_inferno.worldgen.structure.VigilShrineStructure;
+import dev.zsskayr.merlins_inferno.worldgen.structure.SacredChurchStructure;
 
 /**
  * Rowanwood's landmark tree as a real {@code Structure} + {@code StructureSet} (see
@@ -45,8 +45,8 @@ public final class ModStructureProvider {
         context.register(ModStructures.DRUID_SANCTUARY,
                 new DruidSanctuaryStructure(new Structure.StructureSettings(HolderSet.direct(biomes.getOrThrow(ModBiomes.HALLOWED_GROVE)))));
         // The Angelical shrine keeps to the mountains, like the Lyrium geodes it is tied to.
-        context.register(ModStructures.VIGIL_SHRINE,
-                new VigilShrineStructure(new Structure.StructureSettings(biomes.getOrThrow(BiomeTags.IS_MOUNTAIN))));
+        context.register(ModStructures.SACRED_CHURCH,
+                new SacredChurchStructure(new Structure.StructureSettings(biomes.getOrThrow(BiomeTags.IS_MOUNTAIN))));
     }
 
     public static void bootstrapStructureSets(BootstrapContext<StructureSet> context) {
@@ -65,9 +65,9 @@ public final class ModStructureProvider {
                         new RandomSpreadStructurePlacement(Vec3i.ZERO, StructurePlacement.FrequencyReductionMethod.DEFAULT, 1.0F, 0x44525549,
                                 Optional.of(new StructurePlacement.ExclusionZone(rowanwoodTrees, 5)), 10, 4, RandomSpreadType.LINEAR))); // salt: "DRUI"
 
-        // The Vigil Shrine: a rare landmark (spacing 40 / separation 16 chunks, in mountain biomes only).
-        context.register(ModStructureSets.VIGIL_SHRINE,
-                new StructureSet(structures.getOrThrow(ModStructures.VIGIL_SHRINE),
+        // The Sacred Church: a rare landmark (spacing 40 / separation 16 chunks, in mountain biomes only).
+        context.register(ModStructureSets.SACRED_CHURCH,
+                new StructureSet(structures.getOrThrow(ModStructures.SACRED_CHURCH),
                         new RandomSpreadStructurePlacement(40, 16, RandomSpreadType.LINEAR, 0x5649474C))); // salt: "VIGL"
     }
 }

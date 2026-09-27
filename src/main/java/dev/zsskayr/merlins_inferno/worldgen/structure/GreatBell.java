@@ -17,9 +17,9 @@ import net.minecraft.world.level.block.state.properties.BellAttachType;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 /**
- * The Vigil Church's Great Bell: a vanilla bell (the heart, at {@code center}) inside a five-block-tall shell of
+ * The Sacred Church's Great Bell: a vanilla bell (the heart, at {@code center}) inside a five-block-tall shell of
  * oxidized copper - a crown, a shouldered body and a flared rim - hung from the vault on a chain.
- * The Penitent tolls it ({@link #ring}) and its breaking ({@link #shatter}) ends his vigil's first phase.
+ * Elias tolls it ({@link #ring}) and its breaking ({@link #shatter}) ends his vigil's first phase.
  */
 public final class GreatBell {
     private static final BlockState BODY = Blocks.WAXED_OXIDIZED_COPPER.defaultBlockState();

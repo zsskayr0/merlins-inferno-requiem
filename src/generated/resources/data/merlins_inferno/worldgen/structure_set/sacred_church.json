@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 1447642956,
+    "separation": 16,
+    "spacing": 40
+  },
+  "structures": [
+    {
+      "structure": "merlins_inferno:sacred_church",
+      "weight": 1
+    }
+  ]
+}

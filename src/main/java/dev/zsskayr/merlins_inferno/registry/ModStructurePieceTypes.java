@@ -9,7 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.worldgen.structure.DruidSanctuaryPiece;
 import dev.zsskayr.merlins_inferno.worldgen.structure.RowanwoodTreePiece;
-import dev.zsskayr.merlins_inferno.worldgen.structure.VigilShrinePiece;
+import dev.zsskayr.merlins_inferno.worldgen.structure.SacredChurchPiece;
 
 /** Custom {@code StructurePieceType}s this mod adds. */
 public final class ModStructurePieceTypes {
@@ -22,8 +22,8 @@ public final class ModStructurePieceTypes {
     public static final DeferredHolder<StructurePieceType, StructurePieceType> DRUID_SANCTUARY = STRUCTURE_PIECE_TYPES.register("druid_sanctuary",
             () -> (StructurePieceType) (context, tag) -> new DruidSanctuaryPiece(tag));
 
-    public static final DeferredHolder<StructurePieceType, StructurePieceType> VIGIL_SHRINE = STRUCTURE_PIECE_TYPES.register("vigil_shrine",
-            () -> (StructurePieceType.StructureTemplateType) VigilShrinePiece::new);
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> SACRED_CHURCH = STRUCTURE_PIECE_TYPES.register("sacred_church",
+            () -> (StructurePieceType.StructureTemplateType) SacredChurchPiece::new);
 
     private ModStructurePieceTypes() {
     }

@@ -83,11 +83,23 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.IMP_SPAWN_EGG.get());
                         output.accept(ModItems.STARVED_SPAWN_EGG.get());
                         output.accept(ModItems.DULLAHAN_SPAWN_EGG.get());
-                        output.accept(ModItems.PENITENT_SPAWN_EGG.get());
-                        output.accept(ModItems.WORSHIPPER_SPAWN_EGG.get());
-                        output.accept(ModItems.VIGIL_ALTAR_ITEM.get());
+                        output.accept(ModItems.ELIAS_SPAWN_EGG.get());
+                        output.accept(ModItems.SACRED_CULTIST_SPAWN_EGG.get());
+                        output.accept(ModItems.SACRED_PRIEST_SPAWN_EGG.get());
+                        output.accept(ModItems.ANDRAS_SPAWN_EGG.get());
+                        output.accept(ModItems.OSTARA_SPAWN_EGG.get());
+                        output.accept(ModItems.BOOK_OF_CONTRACTS.get());
+                        output.accept(ModItems.EVES_SECRET.get());
+                        output.accept(ModItems.FLAME_OF_GOD.get());
+                        output.accept(ModItems.PANDORA_BOX.get());
+                        output.accept(ModItems.OBLIVION_KEY.get());
+                        output.accept(ModItems.PURGATORY_KEY.get());
+                        output.accept(ModItems.SACRED_ALTAR_ITEM.get());
                         output.accept(ModItems.INFERNAL_ESSENCE.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_ITEM.get());
+                        output.accept(ModItems.COMPRESSED_NETHERRACK_STAIRS_ITEM.get());
+                        output.accept(ModItems.COMPRESSED_NETHERRACK_SLAB_ITEM.get());
+                        output.accept(ModItems.COMPRESSED_NETHERRACK_WALL_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_ITEM.get());
                         output.accept(ModItems.LYRIUM_ORE_ITEM.get());
                         output.accept(ModItems.DEEPSLATE_LYRIUM_ORE_ITEM.get());
@@ -118,6 +130,7 @@ public final class ModCreativeModeTabs {
                         HolderLookup.RegistryLookup<Enchantment> enchantments = parameters.holders().lookupOrThrow(Registries.ENCHANTMENT);
                         acceptEnchantedBook(output, enchantments, ModEnchantments.BANE_OF_HUMANITY, 5);
                         acceptEnchantedBook(output, enchantments, ModEnchantments.EVIL, 5);
+                        acceptEnchantedBook(output, enchantments, ModEnchantments.HOLY, 1);
                         acceptEnchantedBook(output, enchantments, ModEnchantments.DRUIDS_TOUCH, 1);
                     })
                     .build());

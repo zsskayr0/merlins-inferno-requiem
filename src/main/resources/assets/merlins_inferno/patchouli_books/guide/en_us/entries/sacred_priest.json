@@ -1,0 +1,12 @@
+{
+  "name": "patchouli.merlins_inferno.entry.sacred_priest.name",
+  "icon": "merlins_inferno:sacred_priest_spawn_egg",
+  "category": "merlins_inferno:angelical_road",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.sacred_priest.page1"
+    }
+  ]
+}

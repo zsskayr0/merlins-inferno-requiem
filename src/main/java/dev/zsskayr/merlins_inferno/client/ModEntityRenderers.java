@@ -15,6 +15,7 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.registry.ModBlockEntityTypes;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 import dev.zsskayr.merlins_inferno.registry.ModMenuTypes;
+import dev.zsskayr.merlins_inferno.menu.PandoraBoxMenu;
 import dev.zsskayr.merlins_inferno.registry.ModParticles;
 import dev.zsskayr.merlins_inferno.registry.ModRecipeTypes;
 import dev.zsskayr.merlins_inferno.registry.ModWoodTypes;
@@ -38,14 +39,18 @@ public final class ModEntityRenderers {
         event.registerEntityRenderer(ModEntityTypes.STARVED.get(), StarvedRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.DULLAHAN.get(), DullahanRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.DULLAHAN_STEED.get(), DullahanSteedRenderer::new);
-        event.registerEntityRenderer(ModEntityTypes.PENITENT.get(), PenitentRenderer::new);
-        event.registerEntityRenderer(ModEntityTypes.WORSHIPPER.get(), WorshipperRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.ELIAS.get(), EliasRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.SACRED_CULTIST.get(), SacredCultistRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.SACRED_PRIEST.get(), ctx -> new PlaceholderHumanoidRenderer<>(ctx, "sacred_priest", 1.05F));
+        event.registerEntityRenderer(ModEntityTypes.ANDRAS.get(), ctx -> new PlaceholderHumanoidRenderer<>(ctx, "andras", 1.25F));
+        event.registerEntityRenderer(ModEntityTypes.OSTARA.get(), ctx -> new PlaceholderHumanoidRenderer<>(ctx, "ostara", 1.1F));
         event.registerBlockEntityRenderer(ModBlockEntityTypes.HELL_FORGE.get(), HellForgeBlockEntityRenderer::new);
     }
 
     @SubscribeEvent
     static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.HELL_FORGE.get(), HellForgeScreen::new);
+        event.register(ModMenuTypes.PANDORA_BOX.get(), PandoraBoxScreen::new);
     }
 
     @SubscribeEvent

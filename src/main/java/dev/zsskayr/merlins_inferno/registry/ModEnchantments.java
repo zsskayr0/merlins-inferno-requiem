@@ -23,6 +23,11 @@ public final class ModEnchantments {
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "bane_of_humanity"));
     public static final ResourceKey<Enchantment> EVIL = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "evil"));
+    /** Evil's Angelical mirror - see {@code event.HolyCombatHandler} for the actual percentage effects (this
+     * enchantment's own JSON, like {@code druids_touch}, carries no vanilla effect - the bonus is per-target-type
+     * percentage, which vanilla's additive enchantment effect system can't express). */
+    public static final ResourceKey<Enchantment> HOLY = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "holy"));
     /** See {@code data/merlins_inferno/enchantment/druids_touch.json} for the anvil-cost/loot-source design; the actual per-tool effects are split across block/loot data (see the Rowanwood log loot table) and {@code event.DruidsTouchHandler}. */
     public static final ResourceKey<Enchantment> DRUIDS_TOUCH = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "druids_touch"));
@@ -32,8 +37,17 @@ public final class ModEnchantments {
 
     /** Resolves and checks {@link #DRUIDS_TOUCH}'s level on a stack in one call - 0 if absent. */
     public static int getDruidsTouchLevel(Level level, ItemStack stack) {
+        return getLevel(level, stack, DRUIDS_TOUCH);
+    }
+
+    /** Resolves and checks {@link #HOLY}'s level on a stack in one call - 0 if absent. */
+    public static int getHolyLevel(Level level, ItemStack stack) {
+        return getLevel(level, stack, HOLY);
+    }
+
+    private static int getLevel(Level level, ItemStack stack, ResourceKey<Enchantment> key) {
         HolderLookup.RegistryLookup<Enchantment> registry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-        Holder<Enchantment> holder = registry.get(DRUIDS_TOUCH).orElse(null);
+        Holder<Enchantment> holder = registry.get(key).orElse(null);
         return holder == null ? 0 : stack.getEnchantmentLevel(holder);
     }
 }

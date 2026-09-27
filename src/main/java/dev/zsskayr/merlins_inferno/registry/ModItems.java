@@ -14,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.SignItem;
 import net.minecraft.world.item.SwordItem;
@@ -27,6 +28,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.item.GrimmoriumItem;
+import dev.zsskayr.merlins_inferno.item.PandoraBoxItem;
+import dev.zsskayr.merlins_inferno.item.PortalKeyItem;
 import dev.zsskayr.merlins_inferno.item.ModTiers;
 
 /**
@@ -323,14 +326,17 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> LYRIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LYRIUM_BLOCK);
     public static final DeferredItem<BlockItem> LYRIUM_CLUSTER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LYRIUM_CLUSTER);
 
-    // --- Vigil Shrine blocks (creative/admin only in practice: the altar is unbreakable). ---
-    public static final DeferredItem<BlockItem> VIGIL_ALTAR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.VIGIL_ALTAR);
+    // --- Sacred Church blocks (creative/admin only in practice: the altar is unbreakable). ---
+    public static final DeferredItem<BlockItem> SACRED_ALTAR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SACRED_ALTAR);
 
     // --- Hell Forge ingredients + the block itself (see ModBlocks). ---
 
     // Dropped by Nether mobs at a modest rarity - see data/merlins_inferno/loot_modifiers.
     public static final DeferredItem<Item> INFERNAL_ESSENCE = ITEMS.registerSimpleItem("infernal_essence", new Item.Properties());
     public static final DeferredItem<BlockItem> COMPRESSED_NETHERRACK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK);
+    public static final DeferredItem<BlockItem> COMPRESSED_NETHERRACK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_STAIRS);
+    public static final DeferredItem<BlockItem> COMPRESSED_NETHERRACK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_SLAB);
+    public static final DeferredItem<BlockItem> COMPRESSED_NETHERRACK_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_WALL);
     public static final DeferredItem<BlockItem> HELL_FORGE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE);
 
     // Testing/admin convenience - the Druid otherwise only ever appears via natural spawning in
@@ -342,12 +348,36 @@ public final class ModItems {
             props -> new DeferredSpawnEggItem(ModEntityTypes.STARVED, 0x2A1A16, 0xFF5A1F, props));
     public static final DeferredItem<DeferredSpawnEggItem> DULLAHAN_SPAWN_EGG = ITEMS.registerItem("dullahan_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.DULLAHAN, 0x1B1F2B, 0xD8D2BC, props));
-    public static final DeferredItem<DeferredSpawnEggItem> PENITENT_SPAWN_EGG = ITEMS.registerItem("penitent_spawn_egg",
-            props -> new DeferredSpawnEggItem(ModEntityTypes.PENITENT, 0xD9D2BC, 0x6FE3F5, props));
-    public static final DeferredItem<DeferredSpawnEggItem> WORSHIPPER_SPAWN_EGG = ITEMS.registerItem("worshipper_spawn_egg",
-            props -> new DeferredSpawnEggItem(ModEntityTypes.WORSHIPPER, 0x6B5A48, 0xE8D9A8, props));
+    public static final DeferredItem<DeferredSpawnEggItem> ELIAS_SPAWN_EGG = ITEMS.registerItem("elias_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.ELIAS, 0xD9D2BC, 0x6FE3F5, props));
+    public static final DeferredItem<DeferredSpawnEggItem> SACRED_CULTIST_SPAWN_EGG = ITEMS.registerItem("sacred_cultist_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.SACRED_CULTIST, 0x6B5A48, 0xE8D9A8, props));
+    public static final DeferredItem<DeferredSpawnEggItem> SACRED_PRIEST_SPAWN_EGG = ITEMS.registerItem("sacred_priest_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.SACRED_PRIEST, 0xF2EEDC, 0xC9A227, props));
+    public static final DeferredItem<DeferredSpawnEggItem> ANDRAS_SPAWN_EGG = ITEMS.registerItem("andras_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.ANDRAS, 0x5A0E0E, 0xC9A227, props));
+    public static final DeferredItem<DeferredSpawnEggItem> OSTARA_SPAWN_EGG = ITEMS.registerItem("ostara_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.OSTARA, 0x5FA85F, 0xF2B8D0, props));
     public static final DeferredItem<DeferredSpawnEggItem> DRUID_SPAWN_EGG = ITEMS.registerItem("druid_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.DRUID, 0x4A6B3D, 0xC9A66B, props));
+
+    // --- Circle 1 -> 2: the three boss key items (one per route) and the Pandora Box they are offered to.
+    // Andras drops the Book of Contracts, Ostara Eve's Secret, Elias the Flame of God. Placed with the
+    // Nether Star in the Pandora Box (see menu.PandoraBoxMenu). ---
+    public static final DeferredItem<Item> BOOK_OF_CONTRACTS = ITEMS.registerSimpleItem("book_of_contracts",
+            new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
+    public static final DeferredItem<Item> EVES_SECRET = ITEMS.registerSimpleItem("eves_secret",
+            new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
+    public static final DeferredItem<Item> FLAME_OF_GOD = ITEMS.registerSimpleItem("flame_of_god",
+            new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
+    // Found in the Sacred Church's chest. Survives death (see event.PandoraHandler).
+    public static final DeferredItem<PandoraBoxItem> PANDORA_BOX = ITEMS.registerItem("pandora_box",
+            props -> new PandoraBoxItem(props.stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+    // Forged in the opened Pandora Box (Circle 2 only). Their portals are future content (Circle 2 dimensions).
+    public static final DeferredItem<PortalKeyItem> OBLIVION_KEY = ITEMS.registerItem("oblivion_key",
+            props -> new PortalKeyItem(props.stacksTo(1).rarity(Rarity.RARE).fireResistant(), "oblivion"));
+    public static final DeferredItem<PortalKeyItem> PURGATORY_KEY = ITEMS.registerItem("purgatory_key",
+            props -> new PortalKeyItem(props.stacksTo(1).rarity(Rarity.RARE).fireResistant(), "purgatory"));
 
     // --- Debug-only tooling. No recipe, never added to the creative tab (see
     // ModCreativeModeTabs) - /give merlins_inferno:debug_cursed-nullifier is the only way to get

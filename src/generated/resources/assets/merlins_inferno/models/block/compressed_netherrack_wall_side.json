@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_wall_side",
+  "textures": {
+    "wall": "merlins_inferno:block/netherrack_compressed"
+  }
+}
