@@ -57,6 +57,8 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         simpleBlock(ModBlocks.ROWANWOOD_LEAVES.get());
         itemModels().simpleBlockItem(ModBlocks.ROWANWOOD_LEAVES.get());
 
+        simpleBlock(ModBlocks.CORRUPTED_OBSIDIAN.get());
+        itemModels().simpleBlockItem(ModBlocks.CORRUPTED_OBSIDIAN.get());
     }
 
     /**

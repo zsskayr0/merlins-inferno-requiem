@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.worldgen.structure.DruidSanctuaryStructure;
+import dev.zsskayr.merlins_inferno.worldgen.structure.InfernalCitadelStructure;
 import dev.zsskayr.merlins_inferno.worldgen.structure.RowanwoodTreeStructure;
 import dev.zsskayr.merlins_inferno.worldgen.structure.SacredChurchStructure;
 
@@ -30,6 +31,9 @@ public final class ModStructureTypes {
 
     public static final DeferredHolder<StructureType<?>, StructureType<SacredChurchStructure>> SACRED_CHURCH =
             STRUCTURE_TYPES.register("sacred_church", () -> () -> SacredChurchStructure.CODEC);
+
+    public static final DeferredHolder<StructureType<?>, StructureType<InfernalCitadelStructure>> INFERNAL_CITADEL =
+            STRUCTURE_TYPES.register("infernal_citadel", () -> () -> InfernalCitadelStructure.CODEC);
 
     private ModStructureTypes() {
     }

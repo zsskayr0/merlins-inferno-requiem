@@ -328,6 +328,7 @@ public final class ModItems {
 
     // --- Sacred Church blocks (creative/admin only in practice: the altar is unbreakable). ---
     public static final DeferredItem<BlockItem> SACRED_ALTAR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SACRED_ALTAR);
+    public static final DeferredItem<BlockItem> CORRUPTED_OBSIDIAN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CORRUPTED_OBSIDIAN);
 
     // --- Hell Forge ingredients + the block itself (see ModBlocks). ---
 

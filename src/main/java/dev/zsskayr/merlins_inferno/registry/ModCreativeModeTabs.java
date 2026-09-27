@@ -95,6 +95,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.OBLIVION_KEY.get());
                         output.accept(ModItems.PURGATORY_KEY.get());
                         output.accept(ModItems.SACRED_ALTAR_ITEM.get());
+                        output.accept(ModItems.CORRUPTED_OBSIDIAN_ITEM.get());
                         output.accept(ModItems.INFERNAL_ESSENCE.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_ITEM.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_STAIRS_ITEM.get());

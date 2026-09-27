@@ -1,0 +1,16 @@
+{
+  "name": "patchouli.merlins_inferno.entry.infernal_citadel.name",
+  "icon": "merlins_inferno:corrupted_obsidian",
+  "category": "merlins_inferno:infernal_road",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.infernal_citadel.page1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.infernal_citadel.page2"
+    }
+  ]
+}

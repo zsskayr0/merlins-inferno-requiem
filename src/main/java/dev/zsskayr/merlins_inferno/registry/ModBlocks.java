@@ -259,6 +259,13 @@ public final class ModBlocks {
                     .noOcclusion()
                     .noLootTable()); // breaking a part drops via HellForgePartBlock's own logic, not loot tables
 
+    // --- Corrupted Obsidian: crying obsidian's demonic cousin, red instead of purple. Andras' Citadel's boss room
+    // uses it for its portal frame - decorative only for now (the Purgatory dimension it's meant to open onto is
+    // future content), so it's just Obsidian's own stats with Crying Obsidian's light level, no special behaviour
+    // yet. Not craftable - only found generated. ---
+    public static final DeferredBlock<Block> CORRUPTED_OBSIDIAN = BLOCKS.registerBlock("corrupted_obsidian",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CRYING_OBSIDIAN));
+
     private ModBlocks() {
     }
 
