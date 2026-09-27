@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "merlins_inferno:block/void_block"
+    }
+  }
+}

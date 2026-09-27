@@ -329,6 +329,8 @@ public final class ModItems {
     // --- Sacred Church blocks (creative/admin only in practice: the altar is unbreakable). ---
     public static final DeferredItem<BlockItem> SACRED_ALTAR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SACRED_ALTAR);
     public static final DeferredItem<BlockItem> CORRUPTED_OBSIDIAN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CORRUPTED_OBSIDIAN);
+    public static final DeferredItem<BlockItem> PETRIFIED_SKULL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PETRIFIED_SKULL);
+    public static final DeferredItem<BlockItem> VOID_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.VOID_BLOCK);
 
     // --- Hell Forge ingredients + the block itself (see ModBlocks). ---
 
@@ -359,6 +361,8 @@ public final class ModItems {
             props -> new DeferredSpawnEggItem(ModEntityTypes.ANDRAS, 0x5A0E0E, 0xC9A227, props));
     public static final DeferredItem<DeferredSpawnEggItem> OSTARA_SPAWN_EGG = ITEMS.registerItem("ostara_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.OSTARA, 0x5FA85F, 0xF2B8D0, props));
+    public static final DeferredItem<DeferredSpawnEggItem> GHOST_SPAWN_EGG = ITEMS.registerItem("ghost_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.GHOST, 0xC9D9E8, 0xFFFFFF, props));
     public static final DeferredItem<DeferredSpawnEggItem> DRUID_SPAWN_EGG = ITEMS.registerItem("druid_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.DRUID, 0x4A6B3D, 0xC9A66B, props));
 

@@ -48,7 +48,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.COMPRESSED_NETHERRACK_SLAB.get(), ModBlocks.COMPRESSED_NETHERRACK_WALL.get(),
                 ModBlocks.HELL_FORGE.get(),
                 ModBlocks.LYRIUM_ORE.get(), ModBlocks.DEEPSLATE_LYRIUM_ORE.get(), ModBlocks.LYRIUM_BLOCK.get(),
-                ModBlocks.CORRUPTED_OBSIDIAN.get());
+                ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.VOID_BLOCK.get());
         // lyrium_cluster is hand-authored (data/merlins_inferno/loot_table/blocks/lyrium_cluster.json).
     }
 
@@ -87,6 +87,8 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         add(ModBlocks.COMPRESSED_NETHERRACK_SLAB.get(), createSlabItemTable(ModBlocks.COMPRESSED_NETHERRACK_SLAB.get()));
         dropSelf(ModBlocks.COMPRESSED_NETHERRACK_WALL.get());
         dropSelf(ModBlocks.CORRUPTED_OBSIDIAN.get());
+        dropSelf(ModBlocks.PETRIFIED_SKULL.get());
+        dropSelf(ModBlocks.VOID_BLOCK.get());
         // Ores drop Raw Lyrium (with Fortune) or themselves under Silk Touch, like emerald ore.
         add(ModBlocks.LYRIUM_ORE.get(), createOreDrop(ModBlocks.LYRIUM_ORE.get(), ModItems.LYRIUM_RAW.get()));
         add(ModBlocks.DEEPSLATE_LYRIUM_ORE.get(), createOreDrop(ModBlocks.DEEPSLATE_LYRIUM_ORE.get(), ModItems.LYRIUM_RAW.get()));

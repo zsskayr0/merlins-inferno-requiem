@@ -10,6 +10,9 @@
     "merlins_inferno:lyrium_cluster",
     "merlins_inferno:compressed_netherrack_stairs",
     "merlins_inferno:compressed_netherrack_slab",
-    "merlins_inferno:compressed_netherrack_wall"
+    "merlins_inferno:compressed_netherrack_wall",
+    "merlins_inferno:corrupted_obsidian",
+    "merlins_inferno:petrified_skull",
+    "merlins_inferno:void_block"
   ]
 }

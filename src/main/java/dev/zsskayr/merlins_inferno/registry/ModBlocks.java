@@ -32,6 +32,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.block.CorruptedObsidianBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgeBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumBlock;
 import dev.zsskayr.merlins_inferno.block.SacredAltarBlock;
@@ -261,10 +262,22 @@ public final class ModBlocks {
 
     // --- Corrupted Obsidian: crying obsidian's demonic cousin, red instead of purple. Andras' Citadel's boss room
     // uses it for its portal frame - decorative only for now (the Purgatory dimension it's meant to open onto is
-    // future content), so it's just Obsidian's own stats with Crying Obsidian's light level, no special behaviour
-    // yet. Not craftable - only found generated. ---
-    public static final DeferredBlock<Block> CORRUPTED_OBSIDIAN = BLOCKS.registerBlock("corrupted_obsidian",
-            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CRYING_OBSIDIAN));
+    // future content). Unbreakable in Circle 1 (see CorruptedObsidianBlock); from Circle 2 on it's minable, at
+    // 3x Obsidian's hardness and gated behind a tool tier above Netherite that doesn't exist yet (see
+    // data/minecraft/tags/block/incorrect_for_netherite_tool.json). Not craftable - only found generated. ---
+    public static final DeferredBlock<CorruptedObsidianBlock> CORRUPTED_OBSIDIAN = BLOCKS.registerBlock("corrupted_obsidian",
+            CorruptedObsidianBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CRYING_OBSIDIAN)
+                    .strength(CorruptedObsidianBlock.HARDNESS, 1200.0F).requiresCorrectToolForDrops());
+
+    // --- Petrified Skull: crafted from Wither Skulls, Withered Bone and Compressed Netherrack. Obsidian's own
+    // hardness/blast resistance ("a resistência de obsidian"), nothing else special yet. ---
+    public static final DeferredBlock<Block> PETRIFIED_SKULL = BLOCKS.registerBlock("petrified_skull",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN));
+
+    // --- Void Block: crafted from Petrified Skull, Rowanwood, Lyrium and Otherworld Essence (see the recipe).
+    // No special behaviour yet - a material/decoration block for now, same as Petrified Skull. ---
+    public static final DeferredBlock<Block> VOID_BLOCK = BLOCKS.registerBlock("void_block",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN));
 
     private ModBlocks() {
     }

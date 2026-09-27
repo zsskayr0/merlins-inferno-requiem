@@ -59,6 +59,12 @@ public final class ModBlockStateProvider extends BlockStateProvider {
 
         simpleBlock(ModBlocks.CORRUPTED_OBSIDIAN.get());
         itemModels().simpleBlockItem(ModBlocks.CORRUPTED_OBSIDIAN.get());
+
+        simpleBlock(ModBlocks.PETRIFIED_SKULL.get());
+        itemModels().simpleBlockItem(ModBlocks.PETRIFIED_SKULL.get());
+
+        simpleBlock(ModBlocks.VOID_BLOCK.get());
+        itemModels().simpleBlockItem(ModBlocks.VOID_BLOCK.get());
     }
 
     /**

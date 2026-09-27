@@ -44,6 +44,7 @@ public final class ModEntityRenderers {
         event.registerEntityRenderer(ModEntityTypes.SACRED_PRIEST.get(), ctx -> new PlaceholderHumanoidRenderer<>(ctx, "sacred_priest", 1.05F));
         event.registerEntityRenderer(ModEntityTypes.ANDRAS.get(), ctx -> new PlaceholderHumanoidRenderer<>(ctx, "andras", 1.25F));
         event.registerEntityRenderer(ModEntityTypes.OSTARA.get(), ctx -> new PlaceholderHumanoidRenderer<>(ctx, "ostara", 1.1F));
+        event.registerEntityRenderer(ModEntityTypes.GHOST.get(), ctx -> new PlaceholderHumanoidRenderer<>(ctx, "ghost", 1.0F));
         event.registerBlockEntityRenderer(ModBlockEntityTypes.HELL_FORGE.get(), HellForgeBlockEntityRenderer::new);
     }
 

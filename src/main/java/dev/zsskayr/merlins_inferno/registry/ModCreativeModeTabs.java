@@ -88,6 +88,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.SACRED_PRIEST_SPAWN_EGG.get());
                         output.accept(ModItems.ANDRAS_SPAWN_EGG.get());
                         output.accept(ModItems.OSTARA_SPAWN_EGG.get());
+                        output.accept(ModItems.GHOST_SPAWN_EGG.get());
                         output.accept(ModItems.BOOK_OF_CONTRACTS.get());
                         output.accept(ModItems.EVES_SECRET.get());
                         output.accept(ModItems.FLAME_OF_GOD.get());
@@ -96,6 +97,8 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.PURGATORY_KEY.get());
                         output.accept(ModItems.SACRED_ALTAR_ITEM.get());
                         output.accept(ModItems.CORRUPTED_OBSIDIAN_ITEM.get());
+                        output.accept(ModItems.PETRIFIED_SKULL_ITEM.get());
+                        output.accept(ModItems.VOID_BLOCK_ITEM.get());
                         output.accept(ModItems.INFERNAL_ESSENCE.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_ITEM.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_STAIRS_ITEM.get());

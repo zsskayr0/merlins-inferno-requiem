@@ -12,6 +12,7 @@ import dev.zsskayr.merlins_inferno.entity.AndrasEntity;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanSteedEntity;
+import dev.zsskayr.merlins_inferno.entity.GhostEntity;
 import dev.zsskayr.merlins_inferno.entity.EliasEntity;
 import dev.zsskayr.merlins_inferno.entity.OstaraEntity;
 import dev.zsskayr.merlins_inferno.entity.SacredPriestEntity;
@@ -122,6 +123,16 @@ public final class ModEntityTypes {
                     .eyeHeight(1.95F)
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":ostara"));
+
+    // A harmless Otherworld spirit - night only, and only once the nearest player has reached Circle 2
+    // (see GhostEntity::checkGhostSpawnRules). The only source of Otherworld Essence.
+    public static final DeferredHolder<EntityType<?>, EntityType<GhostEntity>> GHOST = ENTITY_TYPES.register("ghost",
+            () -> EntityType.Builder.of(GhostEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.8F)
+                    .eyeHeight(1.6F)
+                    .fireImmune()
+                    .clientTrackingRange(8)
+                    .build(Merlins_inferno.MODID + ":ghost"));
 
     private ModEntityTypes() {
     }

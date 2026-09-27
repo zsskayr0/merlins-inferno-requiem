@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "minecraft:wither_skeleton_skull"
+    },
+    "B": {
+      "item": "merlins_inferno:withered_bone"
+    },
+    "N": {
+      "item": "merlins_inferno:compressed_netherrack"
+    }
+  },
+  "pattern": [
+    "BSB",
+    "SNS",
+    "BSB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:petrified_skull"
+  }
+}
