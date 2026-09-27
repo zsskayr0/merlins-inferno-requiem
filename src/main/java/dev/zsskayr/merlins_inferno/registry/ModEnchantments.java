@@ -23,9 +23,15 @@ public final class ModEnchantments {
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "bane_of_humanity"));
     public static final ResourceKey<Enchantment> EVIL = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "evil"));
-    /** Evil's Angelical mirror - see {@code event.HolyCombatHandler} for the actual percentage effects (this
-     * enchantment's own JSON, like {@code druids_touch}, carries no vanilla effect - the bonus is per-target-type
-     * percentage, which vanilla's additive enchantment effect system can't express). */
+    /**
+     * Evil's Angelical mirror - flat, per-level damage bonuses/penalties by target type, same shape as
+     * {@code evil.json}/{@code bane_of_humanity.json} (see {@code data/merlins_inferno/enchantment/holy.json}
+     * for the actual per-tier numbers; {@code event.HolyCombatHandler} only covers the one tier - a generic
+     * bonus against aggressive mobs - that has no tag to hang a vanilla effect off). Deliberately absent from
+     * {@code minecraft:in_enchanting_table}/{@code on_random_loot}/{@code tradeable}: it's found only in a
+     * Sacred Church's chest or bought from a Cleric with Lyrium (see {@code loot_table/chests/sacred_church.json}
+     * and {@code event.LyriumVillagerTrades}), never at the enchanting table.
+     */
     public static final ResourceKey<Enchantment> HOLY = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "holy"));
     /** See {@code data/merlins_inferno/enchantment/druids_touch.json} for the anvil-cost/loot-source design; the actual per-tool effects are split across block/loot data (see the Rowanwood log loot table) and {@code event.DruidsTouchHandler}. */

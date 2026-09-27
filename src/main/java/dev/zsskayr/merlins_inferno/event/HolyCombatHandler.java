@@ -12,27 +12,23 @@ import dev.zsskayr.merlins_inferno.registry.ModEnchantments;
 import dev.zsskayr.merlins_inferno.registry.ModTags;
 
 /**
- * "Holy" - the Angelical mirror of "Evil" (which had no counterpart on that side). A weapon enchanted with it
- * deals percentage damage bonuses/penalties by what it strikes, most reward going to what actually deserves a
- * righteous blade and least to anything that didn't pick the fight:
- * <ul>
- *     <li>+30% against {@link ModTags.EntityTypes#DEMON}s (checked first: several are also {@link Monster}s,
- *     and this takes priority over the generic aggressive bonus below);</li>
- *     <li>+20% against the Undead (checked next, same reason: zombies/skeletons are {@link Monster}s too);</li>
- *     <li>-20% against {@link ModTags.EntityTypes#PASSIVE_MOBS};</li>
- *     <li>-10% against {@link ModTags.EntityTypes#NEUTRAL_MOBS};</li>
- *     <li>+10% against anything else aggressive (a {@link Monster} not already claimed by a rule above).</li>
- * </ul>
- * Unlike Evil/Bane of Humanity, this can't be expressed as vanilla's additive enchantment effect (it's a
- * percentage, not a flat bonus) - see {@code holy.json}, which carries no vanilla effect at all, same as
- * {@code druids_touch}. Single level only (see the same file).
+ * "Holy"'s one tier that vanilla's data-driven enchantment effects can't express: a bonus against
+ * aggressive mobs in general, not just the specific tagged rosters ({@code holy.json} already covers
+ * {@link ModTags.EntityTypes#DEMON}, the Undead, {@link ModTags.EntityTypes#NEUTRAL_MOBS} and
+ * {@link ModTags.EntityTypes#PASSIVE_MOBS} entirely through vanilla's own effect system - no event
+ * needed for those). There is no tag - vanilla or NeoForge's {@code c:} conventions - that enumerates
+ * "every hostile mob", modded ones included; the one thing that reliably does is the {@link Monster}
+ * base class every hostile mob (vanilla or modded) conventionally extends, and that can only be
+ * checked from code.
+ * <p>
+ * Kept deliberately minimal for performance: one enchantment-level lookup and up to four tag checks,
+ * only on a hit landed with a Holy weapon, only ever adding the flat, level-scaled bonus below when
+ * none of {@code holy.json}'s own tiers already fired (checked in the same order, so nothing here can
+ * double-count a demon or an undead that also happens to be a {@link Monster}).
  */
 public final class HolyCombatHandler {
-    private static final float DEMON_DAMAGE_MULTIPLIER = 1.3F;
-    private static final float UNDEAD_DAMAGE_MULTIPLIER = 1.2F;
-    private static final float AGGRESSIVE_DAMAGE_MULTIPLIER = 1.1F;
-    private static final float NEUTRAL_DAMAGE_MULTIPLIER = 0.9F;
-    private static final float PASSIVE_DAMAGE_MULTIPLIER = 0.8F;
+    private static final float BASE_BONUS = 1.0F;
+    private static final float BONUS_PER_LEVEL_ABOVE_FIRST = 0.5F;
 
     @SubscribeEvent
     public void onIncomingDamage(LivingIncomingDamageEvent event) {
@@ -41,22 +37,17 @@ public final class HolyCombatHandler {
             return;
         }
 
-        ItemStack weapon = attacker.getMainHandItem();
-        if (ModEnchantments.getHolyLevel(attacker.level(), weapon) <= 0) {
-            return;
+        LivingEntity victim = event.getEntity();
+        if (!(victim instanceof Monster) || victim.getType().is(ModTags.EntityTypes.DEMON)
+                || victim.getType().is(EntityTypeTags.UNDEAD) || victim.getType().is(ModTags.EntityTypes.NEUTRAL_MOBS)
+                || victim.getType().is(ModTags.EntityTypes.PASSIVE_MOBS)) {
+            return; // not aggressive, or already handled by holy.json's own tagged tiers
         }
 
-        LivingEntity victim = event.getEntity();
-        if (victim.getType().is(ModTags.EntityTypes.DEMON)) {
-            event.setAmount(event.getAmount() * DEMON_DAMAGE_MULTIPLIER);
-        } else if (victim.getType().is(EntityTypeTags.UNDEAD)) {
-            event.setAmount(event.getAmount() * UNDEAD_DAMAGE_MULTIPLIER);
-        } else if (victim.getType().is(ModTags.EntityTypes.PASSIVE_MOBS)) {
-            event.setAmount(event.getAmount() * PASSIVE_DAMAGE_MULTIPLIER);
-        } else if (victim.getType().is(ModTags.EntityTypes.NEUTRAL_MOBS)) {
-            event.setAmount(event.getAmount() * NEUTRAL_DAMAGE_MULTIPLIER);
-        } else if (victim instanceof Monster) {
-            event.setAmount(event.getAmount() * AGGRESSIVE_DAMAGE_MULTIPLIER);
+        ItemStack weapon = attacker.getMainHandItem();
+        int level = ModEnchantments.getHolyLevel(attacker.level(), weapon);
+        if (level > 0) {
+            event.setAmount(event.getAmount() + BASE_BONUS + BONUS_PER_LEVEL_ABOVE_FIRST * (level - 1));
         }
     }
 }
