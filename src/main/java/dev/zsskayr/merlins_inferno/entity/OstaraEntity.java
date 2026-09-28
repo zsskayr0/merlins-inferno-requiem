@@ -59,6 +59,8 @@ public class OstaraEntity extends Monster {
     private static final float BLOOM_ALLY_HEAL = 20.0F;
     private static final float BLOOM_SELF_HEAL = 8.0F;
     private static final double SOLITARY_RADIUS = 256.0;
+    /** Fraction of otherwise-valid natural spawn attempts that succeed. */
+    private static final float NATURAL_SPAWN_CHANCE = 0.1F;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(Component.translatable("entity.merlins_inferno.ostara"),
             BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
@@ -88,6 +90,10 @@ public class OstaraEntity extends Monster {
             return true;
         }
         if (level.dayTime() % 24000L >= 12000L || !level.getBiome(pos).is(ModBiomes.HALLOWED_GROVE)) {
+            return false;
+        }
+        // By day she is the grove's only monster, so without this gate she wins nearly every spawn attempt.
+        if (random.nextFloat() >= NATURAL_SPAWN_CHANCE) {
             return false;
         }
         if (!level.getBlockState(pos.below()).isValidSpawn(level, pos.below(), type)

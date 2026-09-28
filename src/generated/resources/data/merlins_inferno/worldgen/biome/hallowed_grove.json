@@ -206,7 +206,7 @@
         "type": "merlins_inferno:ostara",
         "maxCount": 1,
         "minCount": 1,
-        "weight": 2
+        "weight": 1
       }
     ],
     "underground_water_creature": [
