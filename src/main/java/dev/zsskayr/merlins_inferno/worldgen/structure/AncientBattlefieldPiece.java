@@ -92,7 +92,7 @@ public class AncientBattlefieldPiece extends TemplateStructurePiece {
         this.spawnAndras(level, chunkBox);
     }
 
-    /** Andras himself, spawned once - guaranteed, unlike his rare roaming spawn elsewhere in the Nether. */
+    /** Andras himself, spawned once, and the only place he ever appears naturally. */
     private void spawnAndras(WorldGenLevel level, BoundingBox chunkBox) {
         BlockPos p = this.templatePosition.offset(ANDRAS_X, ANDRAS_Y, ANDRAS_Z);
         if (this.spawned || !chunkBox.isInside(p)) {
