@@ -1,5 +1,5 @@
 {
-  "type": "merlins_inferno:infernal_citadel",
+  "type": "merlins_inferno:ancient_battlefield",
   "biomes": "#minecraft:is_nether",
   "spawn_overrides": {},
   "step": "surface_structures"

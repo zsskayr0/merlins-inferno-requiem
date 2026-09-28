@@ -104,6 +104,14 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.COMPRESSED_NETHERRACK_STAIRS_ITEM.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_SLAB_ITEM.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_WALL_ITEM.get());
+                        output.accept(ModItems.FLESH_BLOCK_ITEM.get());
+                        output.accept(ModItems.FLESH_SLAB_ITEM.get());
+                        output.accept(ModItems.FLESH_CARPET_ITEM.get());
+                        output.accept(ModItems.RED_CHAIN_ITEM.get());
+                        output.accept(ModItems.BLACK_NYLIUM_ITEM.get());
+                        output.accept(ModItems.TALL_CRIMSON_ROOTS_ITEM.get());
+                        output.accept(ModItems.TALL_BLACK_GRASS_ITEM.get());
+                        output.accept(ModItems.LUST_FLOWER_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_ITEM.get());
                         output.accept(ModItems.LYRIUM_ORE_ITEM.get());
                         output.accept(ModItems.DEEPSLATE_LYRIUM_ORE_ITEM.get());

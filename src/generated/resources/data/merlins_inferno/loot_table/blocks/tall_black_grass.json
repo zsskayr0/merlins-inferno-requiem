@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "merlins_inferno:tall_black_grass",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "half": "lower"
+              }
+            }
+          ],
+          "name": "merlins_inferno:tall_black_grass"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "merlins_inferno:blocks/tall_black_grass"
+}

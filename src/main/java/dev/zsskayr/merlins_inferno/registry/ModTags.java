@@ -39,6 +39,14 @@ public final class ModTags {
         public static final TagKey<EntityType<?>> FAIRIES = TagKey.create(Registries.ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "fairies"));
 
+        /**
+         * Bosses whose loot appears in a chest when they die, instead of dropping on the ground - see
+         * {@code event.BossRewardChestHandler}. Other mods' bosses can join with their own
+         * {@code <namespace>:chests/boss/<entity>} loot table.
+         */
+        public static final TagKey<EntityType<?>> REWARD_CHEST_BOSSES = TagKey.create(Registries.ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "reward_chest_bosses"));
+
         /** "Toque do Druida"'s bonus-loot roster for swords - see {@code event.DruidsTouchHandler}. */
         public static final TagKey<EntityType<?>> MAGICAL_MOBS = TagKey.create(Registries.ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "magical_mobs"));

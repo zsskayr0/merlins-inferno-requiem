@@ -15,7 +15,7 @@ public final class ModStructures {
     public static final ResourceKey<Structure> ROWANWOOD_TREE = key("rowanwood_tree");
     public static final ResourceKey<Structure> DRUID_SANCTUARY = key("druid_sanctuary");
     public static final ResourceKey<Structure> SACRED_CHURCH = key("sacred_church");
-    public static final ResourceKey<Structure> INFERNAL_CITADEL = key("infernal_citadel");
+    public static final ResourceKey<Structure> ANCIENT_BATTLEFIELD = key("ancient_battlefield");
 
     private ModStructures() {
     }

@@ -2,12 +2,12 @@
   "placement": {
     "type": "minecraft:random_spread",
     "salt": 1095648338,
-    "separation": 16,
-    "spacing": 40
+    "separation": 10,
+    "spacing": 32
   },
   "structures": [
     {
-      "structure": "merlins_inferno:infernal_citadel",
+      "structure": "merlins_inferno:ancient_battlefield",
       "weight": 1
     }
   ]

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "merlins_inferno:block/flesh_slab"
+    },
+    "type=double": {
+      "model": "merlins_inferno:block/flesh_block"
+    },
+    "type=top": {
+      "model": "merlins_inferno:block/flesh_slab_top"
+    }
+  }
+}

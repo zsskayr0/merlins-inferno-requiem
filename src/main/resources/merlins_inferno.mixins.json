@@ -2,7 +2,8 @@
   "required": true,
   "package": "dev.zsskayr.merlins_inferno.mixin",
   "mixins": [
-    "OverworldBiomeBuilderMixin"
+    "OverworldBiomeBuilderMixin",
+    "WitherRoseBlockMixin"
   ],
   "client": [],
   "injectors": {

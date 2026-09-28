@@ -235,9 +235,9 @@
   "patchouli.merlins_inferno.entry.andras.name": "Andras, o Demônio Esquecido",
   "patchouli.merlins_inferno.entry.andras.page1": "$(bold)Andras, o Demônio Esquecido$()$(br2)Um demônio menor, feitor do Nether: convoca Imps ao seu lado e trata o Faminto como ferramenta. Raro e solitário - será preciso procurá-lo pelo Nether.",
   "patchouli.merlins_inferno.entry.andras.page2": "Cada golpe dele marca você com a $(bold)Marca da Dívida$(): mais dano recebido enquanto durar. Derrotado, deixa o $(bold)Livro dos Contratos$() - uma chave da Caixa de Pandora.",
-  "patchouli.merlins_inferno.entry.infernal_citadel.name": "A Cidadela de Andras",
-  "patchouli.merlins_inferno.entry.infernal_citadel.page1": "$(bold)A Cidadela de Andras$()$(br2)Uma fortaleza gótica flutuando sobre o mar de lava do Nether, sustentada por pilares próprios. Imps e Famintos guardam seus salões; um Cofre perto do topo guarda baús tão ricos quanto os de um Bastião.",
-  "patchouli.merlins_inferno.entry.infernal_citadel.page2": "No topo, o próprio Andras espera diante de um portal de $(bold)Obsidiana Corrompida$() - ainda escuro e adormecido.",
+  "patchouli.merlins_inferno.entry.ancient_battlefield.name": "O Campo de Batalha Ancestral",
+  "patchouli.merlins_inferno.entry.ancient_battlefield.page1": "$(bold)O Campo de Batalha Ancestral$()$(br2)Uma ilha flutuante no Nether onde uma guerra esquecida foi travada - carne, crânios e escombros ao redor de um círculo ritual. Imps e Famintos ainda se erguem das ruínas, e os escombros escondem baús com espólios de fortaleza.",
+  "patchouli.merlins_inferno.entry.ancient_battlefield.page2": "Andras espera sobre a cúpula de vidro, sob uma $(bold)espada$() gigante. Seu núcleo é de Obsidiana Corrompida: um portal que a chave dele abrirá. Sob a cúpula, uma cripta selada guarda o maior tesouro - e um poço de lava.",
   "entity.merlins_inferno.ostara": "Ostara, a Divindade da Primavera",
   "item.merlins_inferno.ostara_spawn_egg": "Ovo de Spawn de Ostara",
   "patchouli.merlins_inferno.entry.ostara.name": "Ostara, a Divindade da Primavera",
@@ -283,5 +283,13 @@
   "subtitles.merlins_inferno.entity.starved.hunger": "Faminto rosna",
   "subtitles.merlins_inferno.entity.starved.step": "Faminto anda",
   "subtitles.merlins_inferno.entity.starved.attack": "Faminto ataca com garras",
-  "subtitles.merlins_inferno.entity.starved.charge": "Faminto investe"
+  "subtitles.merlins_inferno.entity.starved.charge": "Faminto investe",
+  "block.merlins_inferno.flesh_block": "Bloco de Carne",
+  "block.merlins_inferno.flesh_slab": "Laje de Carne",
+  "block.merlins_inferno.flesh_carpet": "Tapete de Carne",
+  "block.merlins_inferno.red_chain": "Corrente Vermelha",
+  "block.merlins_inferno.black_nylium": "Nylium Negro",
+  "block.merlins_inferno.tall_crimson_roots": "Raízes Carmesim Altas",
+  "block.merlins_inferno.tall_black_grass": "Grama Negra Alta",
+  "block.merlins_inferno.lust_flower": "Flor da Luxúria"
 }

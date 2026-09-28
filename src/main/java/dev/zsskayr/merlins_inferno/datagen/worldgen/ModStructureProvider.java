@@ -20,7 +20,7 @@ import dev.zsskayr.merlins_inferno.worldgen.ModStructureSets;
 import dev.zsskayr.merlins_inferno.worldgen.ModStructures;
 import dev.zsskayr.merlins_inferno.worldgen.biome.ModBiomes;
 import dev.zsskayr.merlins_inferno.worldgen.structure.DruidSanctuaryStructure;
-import dev.zsskayr.merlins_inferno.worldgen.structure.InfernalCitadelStructure;
+import dev.zsskayr.merlins_inferno.worldgen.structure.AncientBattlefieldStructure;
 import dev.zsskayr.merlins_inferno.worldgen.structure.RowanwoodTreeStructure;
 import dev.zsskayr.merlins_inferno.worldgen.structure.SacredChurchStructure;
 
@@ -48,9 +48,9 @@ public final class ModStructureProvider {
         // The Angelical shrine keeps to the mountains, like the Lyrium geodes it is tied to.
         context.register(ModStructures.SACRED_CHURCH,
                 new SacredChurchStructure(new Structure.StructureSettings(biomes.getOrThrow(BiomeTags.IS_MOUNTAIN))));
-        // Andras' Citadel: any Nether biome - it floats at a fixed height regardless (see the structure's own javadoc).
-        context.register(ModStructures.INFERNAL_CITADEL,
-                new InfernalCitadelStructure(new Structure.StructureSettings(biomes.getOrThrow(BiomeTags.IS_NETHER))));
+        // Andras' Ancient Battlefield: any Nether biome - it floats at a fixed height regardless (see the structure's own javadoc).
+        context.register(ModStructures.ANCIENT_BATTLEFIELD,
+                new AncientBattlefieldStructure(new Structure.StructureSettings(biomes.getOrThrow(BiomeTags.IS_NETHER))));
     }
 
     public static void bootstrapStructureSets(BootstrapContext<StructureSet> context) {
@@ -74,9 +74,9 @@ public final class ModStructureProvider {
                 new StructureSet(structures.getOrThrow(ModStructures.SACRED_CHURCH),
                         new RandomSpreadStructurePlacement(40, 16, RandomSpreadType.LINEAR, 0x5649474C))); // salt: "VIGL"
 
-        // Andras' Citadel: as rare as the Sacred Church, in the Nether (spacing 40 / separation 16 chunks).
-        context.register(ModStructureSets.INFERNAL_CITADEL,
-                new StructureSet(structures.getOrThrow(ModStructures.INFERNAL_CITADEL),
-                        new RandomSpreadStructurePlacement(40, 16, RandomSpreadType.LINEAR, 0x414E4452))); // salt: "ANDR"
+        // Andras' Ancient Battlefield: a little more common than the Sacred Church (spacing 32 / separation 10 chunks); only where a lava sea can hold it.
+        context.register(ModStructureSets.ANCIENT_BATTLEFIELD,
+                new StructureSet(structures.getOrThrow(ModStructures.ANCIENT_BATTLEFIELD),
+                        new RandomSpreadStructurePlacement(32, 10, RandomSpreadType.LINEAR, 0x414E4452))); // salt: "ANDR"
     }
 }

@@ -7,6 +7,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoublePlantBlock;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
@@ -48,7 +51,10 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.COMPRESSED_NETHERRACK_SLAB.get(), ModBlocks.COMPRESSED_NETHERRACK_WALL.get(),
                 ModBlocks.HELL_FORGE.get(),
                 ModBlocks.LYRIUM_ORE.get(), ModBlocks.DEEPSLATE_LYRIUM_ORE.get(), ModBlocks.LYRIUM_BLOCK.get(),
-                ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.VOID_BLOCK.get());
+                ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.VOID_BLOCK.get(),
+                ModBlocks.FLESH_BLOCK.get(), ModBlocks.FLESH_SLAB.get(), ModBlocks.FLESH_CARPET.get(), ModBlocks.RED_CHAIN.get(),
+                ModBlocks.BLACK_NYLIUM.get(), ModBlocks.TALL_CRIMSON_ROOTS.get(), ModBlocks.TALL_BLACK_GRASS.get(),
+                ModBlocks.LUST_FLOWER.get());
         // lyrium_cluster is hand-authored (data/merlins_inferno/loot_table/blocks/lyrium_cluster.json).
     }
 
@@ -89,6 +95,16 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.CORRUPTED_OBSIDIAN.get());
         dropSelf(ModBlocks.PETRIFIED_SKULL.get());
         dropSelf(ModBlocks.VOID_BLOCK.get());
+        dropSelf(ModBlocks.FLESH_BLOCK.get());
+        add(ModBlocks.FLESH_SLAB.get(), createSlabItemTable(ModBlocks.FLESH_SLAB.get()));
+        dropSelf(ModBlocks.FLESH_CARPET.get());
+        dropSelf(ModBlocks.RED_CHAIN.get());
+        dropSelf(ModBlocks.LUST_FLOWER.get());
+        // Like crimson nylium: netherrack unless Silk Touch.
+        add(ModBlocks.BLACK_NYLIUM.get(), createSingleItemTableWithSilkTouch(ModBlocks.BLACK_NYLIUM.get(), Blocks.NETHERRACK));
+        // Only the lower half drops, so a plant isn't refunded twice.
+        add(ModBlocks.TALL_CRIMSON_ROOTS.get(), createSinglePropConditionTable(ModBlocks.TALL_CRIMSON_ROOTS.get(), DoublePlantBlock.HALF, DoubleBlockHalf.LOWER));
+        add(ModBlocks.TALL_BLACK_GRASS.get(), createSinglePropConditionTable(ModBlocks.TALL_BLACK_GRASS.get(), DoublePlantBlock.HALF, DoubleBlockHalf.LOWER));
         // Ores drop Raw Lyrium (with Fortune) or themselves under Silk Touch, like emerald ore.
         add(ModBlocks.LYRIUM_ORE.get(), createOreDrop(ModBlocks.LYRIUM_ORE.get(), ModItems.LYRIUM_RAW.get()));
         add(ModBlocks.DEEPSLATE_LYRIUM_ORE.get(), createOreDrop(ModBlocks.DEEPSLATE_LYRIUM_ORE.get(), ModItems.LYRIUM_RAW.get()));

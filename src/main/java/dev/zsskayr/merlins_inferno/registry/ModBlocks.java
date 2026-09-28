@@ -3,10 +3,13 @@ package dev.zsskayr.merlins_inferno.registry;
 import java.util.function.Supplier;
 
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.CarpetBlock;
 import net.minecraft.world.level.block.CeilingHangingSignBlock;
+import net.minecraft.world.level.block.ChainBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.FenceBlock;
@@ -32,9 +35,12 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.block.BlackNyliumBlock;
 import dev.zsskayr.merlins_inferno.block.CorruptedObsidianBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgeBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumBlock;
+import dev.zsskayr.merlins_inferno.block.NetherDoublePlantBlock;
+import dev.zsskayr.merlins_inferno.block.NetherFlowerBlock;
 import dev.zsskayr.merlins_inferno.block.SacredAltarBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumClusterBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgePartBlock;
@@ -260,7 +266,7 @@ public final class ModBlocks {
                     .noOcclusion()
                     .noLootTable()); // breaking a part drops via HellForgePartBlock's own logic, not loot tables
 
-    // --- Corrupted Obsidian: crying obsidian's demonic cousin, red instead of purple. Andras' Citadel's boss room
+    // --- Corrupted Obsidian: crying obsidian's demonic cousin, red instead of purple. Andras' Ancient Battlefield's boss room
     // uses it for its portal frame - decorative only for now (the Purgatory dimension it's meant to open onto is
     // future content). Unbreakable in Circle 1 (see CorruptedObsidianBlock); from Circle 2 on it's minable, at
     // 3x Obsidian's hardness and gated behind a tool tier above Netherite that doesn't exist yet (see
@@ -278,6 +284,67 @@ public final class ModBlocks {
     // No special behaviour yet - a material/decoration block for now, same as Petrified Skull. ---
     public static final DeferredBlock<Block> VOID_BLOCK = BLOCKS.registerBlock("void_block",
             Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN));
+
+    // --- Flesh: Netherrack-like, the Nether's answer to Moss Block (slab and carpet included). Not craftable -
+    // only found in the world; the slab/carpet recipes go from and back to the block. ---
+    public static final DeferredBlock<Block> FLESH_BLOCK = BLOCKS.registerBlock("flesh_block",
+            Block::new, fleshProperties());
+    public static final DeferredBlock<SlabBlock> FLESH_SLAB = BLOCKS.registerBlock("flesh_slab",
+            SlabBlock::new, fleshProperties());
+    public static final DeferredBlock<CarpetBlock> FLESH_CARPET = BLOCKS.registerBlock("flesh_carpet",
+            CarpetBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
+                    .strength(0.1F)
+                    .sound(SoundType.NETHERRACK)
+                    .pushReaction(PushReaction.DESTROY));
+
+    private static BlockBehaviour.Properties fleshProperties() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.COLOR_RED)
+                .instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops()
+                .strength(0.4F)
+                .sound(SoundType.NETHERRACK);
+    }
+
+    // Chain dyed with Nether Wart - same behaviour as the vanilla one.
+    public static final DeferredBlock<ChainBlock> RED_CHAIN = BLOCKS.registerBlock("red_chain",
+            ChainBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CHAIN));
+
+    // --- Black nylium, the third nylium: joins the minecraft:nylium tag (roots/fungi grow on it, see
+    // NetherPlants) and grows this mod's own plants under bonemeal. ---
+    public static final DeferredBlock<BlackNyliumBlock> BLACK_NYLIUM = BLOCKS.registerBlock("black_nylium",
+            BlackNyliumBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .strength(0.4F)
+                    .sound(SoundType.NYLIUM)
+                    .randomTicks());
+
+    public static final DeferredBlock<NetherDoublePlantBlock> TALL_CRIMSON_ROOTS = BLOCKS.registerBlock("tall_crimson_roots",
+            NetherDoublePlantBlock::new, netherPlantProperties(MapColor.COLOR_RED));
+    public static final DeferredBlock<NetherDoublePlantBlock> TALL_BLACK_GRASS = BLOCKS.registerBlock("tall_black_grass",
+            NetherDoublePlantBlock::new, netherPlantProperties(MapColor.COLOR_BLACK));
+    public static final DeferredBlock<NetherFlowerBlock> LUST_FLOWER = BLOCKS.registerBlock("lust_flower",
+            props -> new NetherFlowerBlock(MobEffects.DAMAGE_BOOST, 6.0F, props), BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .offsetType(BlockBehaviour.OffsetType.XZ)
+                    .pushReaction(PushReaction.DESTROY));
+
+    private static BlockBehaviour.Properties netherPlantProperties(MapColor color) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(color)
+                .replaceable()
+                .noCollission()
+                .instabreak()
+                .sound(SoundType.ROOTS)
+                .offsetType(BlockBehaviour.OffsetType.XZ)
+                .pushReaction(PushReaction.DESTROY);
+    }
 
     private ModBlocks() {
     }
