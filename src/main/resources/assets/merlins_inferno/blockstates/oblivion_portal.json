@@ -1,0 +1,92 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "axis": "x"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/oblivion_portal_ns"
+      }
+    },
+    {
+      "when": {
+        "axis": "z"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/oblivion_portal_ew"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "edge_right": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/oblivion_portal_ns_edge_minx"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "edge_left": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/oblivion_portal_ns_edge_maxx"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "edge_up": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/oblivion_portal_ns_edge_up"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "edge_down": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/oblivion_portal_ns_edge_down"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "edge_right": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/oblivion_portal_ew_edge_maxz"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "edge_left": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/oblivion_portal_ew_edge_minz"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "edge_up": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/oblivion_portal_ew_edge_up"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "edge_down": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/oblivion_portal_ew_edge_down"
+      }
+    }
+  ]
+}

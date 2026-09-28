@@ -33,6 +33,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.item.AntidoteItem;
 import dev.zsskayr.merlins_inferno.item.GrimmoriumItem;
+import dev.zsskayr.merlins_inferno.item.OblivionKeyItem;
 import dev.zsskayr.merlins_inferno.item.PandoraBoxItem;
 import dev.zsskayr.merlins_inferno.item.PortalKeyItem;
 import dev.zsskayr.merlins_inferno.item.ModTiers;
@@ -403,8 +404,8 @@ public final class ModItems {
     public static final DeferredItem<PandoraBoxItem> PANDORA_BOX = ITEMS.registerItem("pandora_box",
             props -> new PandoraBoxItem(props.stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
     // Forged in the opened Pandora Box (Circle 2 only). Their portals are future content (Circle 2 dimensions).
-    public static final DeferredItem<PortalKeyItem> OBLIVION_KEY = ITEMS.registerItem("oblivion_key",
-            props -> new PortalKeyItem(props.stacksTo(1).rarity(Rarity.RARE).fireResistant(), "oblivion"));
+    public static final DeferredItem<OblivionKeyItem> OBLIVION_KEY = ITEMS.registerItem("oblivion_key",
+            props -> new OblivionKeyItem(props.durability(3).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredItem<PortalKeyItem> PURGATORY_KEY = ITEMS.registerItem("purgatory_key",
             props -> new PortalKeyItem(props.stacksTo(1).rarity(Rarity.RARE).fireResistant(), "purgatory"));
 

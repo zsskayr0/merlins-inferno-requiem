@@ -1,0 +1,45 @@
+{
+  "textures": {
+    "particle": "merlins_inferno:block/oblivion_portal",
+    "l": "merlins_inferno:block/oblivion_portal_edge_l",
+    "r": "merlins_inferno:block/oblivion_portal_edge_r",
+    "t": "merlins_inferno:block/oblivion_portal_edge_t",
+    "b": "merlins_inferno:block/oblivion_portal_edge_b"
+  },
+  "render_type": "minecraft:translucent",
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        5.99
+      ],
+      "to": [
+        16,
+        16,
+        10.01
+      ],
+      "shade": false,
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#r"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#l"
+        }
+      }
+    }
+  ]
+}

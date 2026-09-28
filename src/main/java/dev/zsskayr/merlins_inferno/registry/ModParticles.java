@@ -27,6 +27,11 @@ public final class ModParticles {
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> SANCTIFIED = PARTICLE_TYPES.register("sanctified",
             () -> SANCTIFIED_TYPE);
 
+    // Oblivion portal runes: drawn with the enchanting-table glyph particle class (see client.ModEntityRenderers),
+    // in dark, desaturated glyph textures (assets/.../particles/oblivion_rune.json).
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> OBLIVION_RUNE = PARTICLE_TYPES.register("oblivion_rune",
+            () -> new SimpleParticleType(false));
+
     private ModParticles() {
     }
 
