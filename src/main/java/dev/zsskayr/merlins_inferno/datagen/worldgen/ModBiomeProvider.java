@@ -45,7 +45,9 @@ public final class ModBiomeProvider {
     }
 
     private static Biome hallowedGrove(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
-        MobSpawnSettings.Builder mobSpawns = new MobSpawnSettings.Builder();
+        // Default is 0.1: only one chunk in ten rolls its creatures at generation, which left loose Druids
+        // (weight 15 of ~55) practically never seen. 0.5 makes wandering Druids a real part of the grove.
+        MobSpawnSettings.Builder mobSpawns = new MobSpawnSettings.Builder().creatureGenerationProbability(0.5F);
         BiomeDefaultFeatures.farmAnimals(mobSpawns);
         mobSpawns.addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(EntityType.FOX, 8, 2, 4));
         mobSpawns.addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(EntityType.RABBIT, 4, 2, 3));

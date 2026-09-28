@@ -98,6 +98,12 @@ public class DruidEntity extends PathfinderMob implements Merchant {
         builder.define(DATA_VARIANT, 0);
     }
 
+    /** Like vanilla animals: a wandering Druid in the grove never despawns just because the player walked off. */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
+
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
