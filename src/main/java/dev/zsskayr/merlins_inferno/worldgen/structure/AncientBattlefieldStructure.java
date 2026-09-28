@@ -96,7 +96,7 @@ public class AncientBattlefieldStructure extends Structure {
             if (lavaTopY < 0 || !isLavaSite(generator, heightAccessor, randomState, cx, cz, lavaTopY)) {
                 continue;
             }
-            int originY = lavaTopY - AncientBattlefieldPiece.LAVA_TOP_LOCAL_Y;
+            int originY = lavaTopY - AncientBattlefieldPiece.LAVA_TOP_LOCAL_Y - 1; // one layer lower: 5 layers of rim show above the lava
             BlockPos origin = new BlockPos(cx - size.getX() / 2, originY, cz - size.getZ() / 2);
             return Optional.of(new Structure.GenerationStub(new BlockPos(cx, originY, cz),
                     builder -> builder.addPiece(new AncientBattlefieldPiece(templateManager, origin))));
