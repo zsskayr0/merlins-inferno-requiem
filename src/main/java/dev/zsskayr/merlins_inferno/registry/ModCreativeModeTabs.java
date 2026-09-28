@@ -56,7 +56,6 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.OTHERWORLD_ESSENCE.get());
                         output.accept(ModItems.MUNDANE_ESSENCE.get());
                         output.accept(ModItems.FAE_ESSENCE.get());
-                        output.accept(ModItems.OSTARAS_FRUIT.get());
                         output.accept(ModItems.ANTIDOTE.get());
                         output.accept(ModItems.ROWANWOOD_SWORD.get());
                         output.accept(ModItems.ROWANWOOD_AXE.get());

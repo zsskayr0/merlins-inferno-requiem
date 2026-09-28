@@ -386,11 +386,9 @@ public final class ModItems {
     // Nether Star in the Pandora Box (see menu.PandoraBoxMenu). ---
     public static final DeferredItem<Item> BOOK_OF_CONTRACTS = ITEMS.registerSimpleItem("book_of_contracts",
             new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
+    /** Also edible - Ostara's fruit: an enchanted golden apple's blessings for twenty minutes (but then it is gone as a key). */
     public static final DeferredItem<Item> EVES_SECRET = ITEMS.registerSimpleItem("eves_secret",
-            new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
-    /** Ostara's fruit: an enchanted golden apple's blessings, but for twenty minutes. Dropped by Ostara. */
-    public static final DeferredItem<Item> OSTARAS_FRUIT = ITEMS.registerSimpleItem("ostaras_fruit",
-            new Item.Properties().stacksTo(16).rarity(Rarity.EPIC).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).alwaysEdible()
+            new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant().food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).alwaysEdible()
                     .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 24000, 1), 1.0F)
                     .effect(() -> new MobEffectInstance(MobEffects.ABSORPTION, 24000, 3), 1.0F)
                     .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 24000, 0), 1.0F)
