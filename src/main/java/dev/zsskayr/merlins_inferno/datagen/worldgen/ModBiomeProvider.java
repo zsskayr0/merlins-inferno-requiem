@@ -61,11 +61,19 @@ public final class ModBiomeProvider {
         // of ~55 meant the Druid essentially never actually won the roll in practice (confirmed:
         // never once seen across several fresh test worlds) even though it was wired up correctly.
         mobSpawns.addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(ModEntityTypes.DRUID.get(), 15, 1, 1));
-        BiomeDefaultFeatures.commonSpawns(mobSpawns);
+        // A thinned-out version of vanilla's night set (BiomeDefaultFeatures.commonSpawns: weights ~100, packs of
+        // 4): the grove is meant to be eerie, not swarming.
+        mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.SPIDER, 40, 1, 2));
+        mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.ZOMBIE, 40, 1, 2));
+        mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.ZOMBIE_VILLAGER, 3, 1, 1));
+        mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.SKELETON, 40, 1, 2));
+        mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.CREEPER, 25, 1, 1));
+        mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.ENDERMAN, 5, 1, 1));
+        mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.WITCH, 3, 1, 1));
         // The night miniboss. Weight 5 against the ~500 of the vanilla monster set makes it a rare
         // roll; the spawn rule (night, this biome, none within 128 blocks) and the entity's own
         // dawn/leave-the-biome despawn do the rest - see DullahanEntity.
-        mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(ModEntityTypes.DULLAHAN.get(), 5, 1, 1));
+        mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(ModEntityTypes.DULLAHAN.get(), 3, 1, 1));
         // Ostara, the Spring Deity: the Circle 1 boss. Even rarer; the rule (daytime, solitary) lives on the entity.
         mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(ModEntityTypes.OSTARA.get(), 1, 1, 1));
 
