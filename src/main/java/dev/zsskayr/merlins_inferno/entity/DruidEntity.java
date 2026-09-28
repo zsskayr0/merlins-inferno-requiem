@@ -350,6 +350,26 @@ public class DruidEntity extends PathfinderMob implements Merchant {
         });
     }
 
+    /** One enchantment on a piece of gear sold by the Druid. */
+    private record Ench(ResourceKey<Enchantment> key, int level) {
+    }
+
+    private static Ench e(ResourceKey<Enchantment> key, int level) {
+        return new Ench(key, level);
+    }
+
+    /** Enchanted iron/diamond gear: sold from {@code minLevel} on, no Rowanwood needed. */
+    private void addGear(List<TradeEntry> list, int minLevel, int price, Item item, Ench... enchants) {
+        ItemStack stack = new ItemStack(item);
+        ItemEnchantments.Mutable stored = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        var registry = this.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        for (Ench ench : enchants) {
+            registry.get(ench.key()).ifPresent(holder -> stored.set(holder, ench.level()));
+        }
+        stack.set(DataComponents.ENCHANTMENTS, stored.toImmutable());
+        add(list, minLevel, false, new ItemCost(Items.EMERALD, price), stack, 3);
+    }
+
     private List<TradeEntry> buildEntries() {
         List<TradeEntry> list = new ArrayList<>();
         // Level 1: simple flowers and saplings, and a little buying of forest goods.
@@ -357,23 +377,56 @@ public class DruidEntity extends PathfinderMob implements Merchant {
         add(list, 1, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.POPPY, 6), 8);
         add(list, 1, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.OAK_SAPLING, 4), 8);
         add(list, 1, false, new ItemCost(Items.SWEET_BERRIES, 10), new ItemStack(Items.EMERALD, 1), 8);
-        // Level 2: rarer flowers, bone meal, moss.
+        add(list, 1, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.OXEYE_DAISY, 6), 8);
+        add(list, 1, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.BIRCH_SAPLING, 4), 8);
+        add(list, 1, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.SPRUCE_SAPLING, 4), 8);
+        add(list, 1, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.FERN, 6), 8);
+        add(list, 1, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.SWEET_BERRIES, 8), 8);
+        add(list, 1, false, new ItemCost(Items.WHEAT_SEEDS, 16), new ItemStack(Items.EMERALD, 1), 8);
+        // Level 2: rarer flowers, bone meal, moss - and enchanted iron gear.
         add(list, 2, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.CORNFLOWER, 4), 6);
         add(list, 2, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.LILY_OF_THE_VALLEY, 4), 6);
         add(list, 2, false, new ItemCost(Items.EMERALD, 2), new ItemStack(Items.BONE_MEAL, 8), 6);
         add(list, 2, false, new ItemCost(Items.EMERALD, 3), new ItemStack(Items.MOSS_BLOCK, 4), 6);
-        // Level 3: uncommon growths.
+        add(list, 2, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.ALLIUM, 4), 6);
+        add(list, 2, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.AZURE_BLUET, 4), 6);
+        add(list, 2, false, new ItemCost(Items.EMERALD, 2), new ItemStack(Items.DARK_OAK_SAPLING, 3), 6);
+        add(list, 2, false, new ItemCost(Items.EMERALD, 2), new ItemStack(Items.AZALEA, 2), 6);
+        add(list, 2, false, new ItemCost(Items.EMERALD, 2), new ItemStack(Items.GLOW_BERRIES, 6), 6);
+        addGear(list, 2, 9, Items.IRON_SWORD, e(Enchantments.SHARPNESS, 3), e(Enchantments.UNBREAKING, 2));
+        addGear(list, 2, 9, Items.IRON_PICKAXE, e(Enchantments.EFFICIENCY, 3), e(Enchantments.UNBREAKING, 2));
+        addGear(list, 2, 9, Items.IRON_AXE, e(Enchantments.EFFICIENCY, 3), e(Enchantments.UNBREAKING, 2));
+        addGear(list, 2, 7, Items.IRON_SHOVEL, e(Enchantments.EFFICIENCY, 3), e(Enchantments.UNBREAKING, 2));
+        addGear(list, 2, 8, Items.IRON_HELMET, e(Enchantments.PROTECTION, 3), e(Enchantments.UNBREAKING, 2));
+        addGear(list, 2, 12, Items.IRON_CHESTPLATE, e(Enchantments.PROTECTION, 3), e(Enchantments.UNBREAKING, 2));
+        addGear(list, 2, 10, Items.IRON_LEGGINGS, e(Enchantments.PROTECTION, 3), e(Enchantments.UNBREAKING, 2));
+        addGear(list, 2, 8, Items.IRON_BOOTS, e(Enchantments.PROTECTION, 3), e(Enchantments.FEATHER_FALLING, 3));
+        addGear(list, 2, 9, Items.BOW, e(Enchantments.POWER, 3), e(Enchantments.UNBREAKING, 2));
+        // Level 3: uncommon growths - and enchanted diamond gear.
         add(list, 3, false, new ItemCost(Items.EMERALD, 3), new ItemStack(Items.CHERRY_SAPLING, 2), 5);
         add(list, 3, false, new ItemCost(Items.EMERALD, 4), new ItemStack(Items.SPORE_BLOSSOM, 1), 5);
         add(list, 3, false, new ItemCost(Items.EMERALD, 5), new ItemStack(Items.HONEYCOMB, 3), 5);
+        add(list, 3, false, new ItemCost(Items.EMERALD, 3), new ItemStack(Items.FLOWERING_AZALEA, 2), 5);
+        add(list, 3, false, new ItemCost(Items.EMERALD, 4), new ItemStack(Items.MANGROVE_PROPAGULE, 3), 5);
+        add(list, 3, false, new ItemCost(Items.EMERALD, 6), new ItemStack(Items.TORCHFLOWER_SEEDS, 2), 5);
+        add(list, 3, false, new ItemCost(Items.EMERALD, 6), new ItemStack(Items.LILAC, 3), 5);
+        addGear(list, 3, 26, Items.DIAMOND_SWORD, e(Enchantments.SHARPNESS, 4), e(Enchantments.UNBREAKING, 3), e(Enchantments.LOOTING, 2));
+        addGear(list, 3, 28, Items.DIAMOND_PICKAXE, e(Enchantments.EFFICIENCY, 4), e(Enchantments.UNBREAKING, 3), e(Enchantments.FORTUNE, 2));
+        addGear(list, 3, 24, Items.DIAMOND_AXE, e(Enchantments.EFFICIENCY, 4), e(Enchantments.UNBREAKING, 3));
+        addGear(list, 3, 18, Items.DIAMOND_SHOVEL, e(Enchantments.EFFICIENCY, 4), e(Enchantments.UNBREAKING, 3));
+        addGear(list, 3, 22, Items.DIAMOND_HELMET, e(Enchantments.PROTECTION, 3), e(Enchantments.UNBREAKING, 3), e(Enchantments.RESPIRATION, 2));
+        addGear(list, 3, 32, Items.DIAMOND_CHESTPLATE, e(Enchantments.PROTECTION, 3), e(Enchantments.UNBREAKING, 3));
+        addGear(list, 3, 28, Items.DIAMOND_LEGGINGS, e(Enchantments.PROTECTION, 3), e(Enchantments.UNBREAKING, 3));
+        addGear(list, 3, 22, Items.DIAMOND_BOOTS, e(Enchantments.PROTECTION, 3), e(Enchantments.UNBREAKING, 3), e(Enchantments.FEATHER_FALLING, 3));
+        addGear(list, 3, 24, Items.BOW, e(Enchantments.POWER, 4), e(Enchantments.UNBREAKING, 3), e(Enchantments.FLAME, 1));
         // Level 4: Mundane Essence, the road to the Rowanwood Bar.
         add(list, 4, false, new ItemCost(Items.EMERALD, 20), new ItemStack(ModItems.MUNDANE_ESSENCE.get()), 4);
         // After the customer's first Rowanwood Scrap: the Druid's tools (craft-only otherwise)...
-        add(list, 1, true, new ItemCost(Items.EMERALD, 8), new ItemStack(ModItems.ROWANWOOD_SHOVEL.get()), 2);
-        add(list, 1, true, new ItemCost(Items.EMERALD, 8), new ItemStack(ModItems.ROWANWOOD_HOE.get()), 2);
-        add(list, 1, true, new ItemCost(Items.EMERALD, 12), new ItemStack(ModItems.ROWANWOOD_SWORD.get()), 2);
-        add(list, 1, true, new ItemCost(Items.EMERALD, 12), new ItemStack(ModItems.ROWANWOOD_AXE.get()), 2);
-        add(list, 1, true, new ItemCost(Items.EMERALD, 14), new ItemStack(ModItems.ROWANWOOD_PICKAXE.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 20), new ItemStack(ModItems.ROWANWOOD_SHOVEL.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 20), new ItemStack(ModItems.ROWANWOOD_HOE.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 32), new ItemStack(ModItems.ROWANWOOD_SWORD.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 32), new ItemStack(ModItems.ROWANWOOD_AXE.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 36), new ItemStack(ModItems.ROWANWOOD_PICKAXE.get()), 2);
         // ...and enchanted books at bargain prices: the Druid is the best enchantment merchant around.
         addBook(list, ModEnchantments.DRUIDS_TOUCH, 1, 4);
         addBook(list, Enchantments.SILK_TOUCH, 1, 5);
@@ -384,6 +437,16 @@ public class DruidEntity extends PathfinderMob implements Merchant {
         addBook(list, Enchantments.PROTECTION, 4, 9);
         addBook(list, Enchantments.SHARPNESS, 5, 10);
         addBook(list, Enchantments.MENDING, 1, 12);
+        addBook(list, Enchantments.FEATHER_FALLING, 4, 5);
+        addBook(list, Enchantments.RESPIRATION, 3, 6);
+        addBook(list, Enchantments.POWER, 5, 9);
+        addBook(list, Enchantments.FIRE_ASPECT, 2, 7);
+        addBook(list, Enchantments.SWEEPING_EDGE, 3, 7);
+        addBook(list, Enchantments.THORNS, 3, 6);
+        addBook(list, Enchantments.LOYALTY, 3, 6);
+        addBook(list, Enchantments.LUCK_OF_THE_SEA, 3, 7);
+        addBook(list, Enchantments.SMITE, 5, 8);
+        addBook(list, Enchantments.SWIFT_SNEAK, 3, 10);
         if (this.savedUses != null) {
             for (int i = 0; i < list.size() && i < this.savedUses.length; i++) {
                 for (int u = 0; u < this.savedUses[i]; u++) {
