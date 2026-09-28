@@ -39,7 +39,7 @@ import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
  * Andras, the Forgotten Demon - the Infernal path's Circle 1 boss: a lesser demon, the overseer of the Nether's
  * lower ranks. He keeps Imps at his beck and call and treats Starveds as tools.
  * <ul>
- *     <li><b>Stats:</b> 300 health, 12 damage; fire-immune; a demon (see the {@code demon} entity tag).</li>
+ *     <li><b>Stats:</b> 370 health, 15 damage; fire-immune; a demon (see the {@code demon} entity tag).</li>
  *     <li><b>Contracts:</b> while he fights, every {@link #SUMMON_INTERVAL} ticks he calls up to
  *     {@link #SUMMON_COUNT} Imps (never more than {@link #MAX_IMPS} of them around him).</li>
  *     <li><b>Mark of Debt:</b> every blow he lands brands a player ({@code ModEffects#MARK_OF_DEBT}): more damage
@@ -49,8 +49,8 @@ import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
  * Spawns rarely in the Nether, solitary. His fortress is future content. Drawn as an enlarged humanoid placeholder.
  */
 public class AndrasEntity extends Monster {
-    public static final double MAX_HEALTH = 300.0;
-    public static final double ATTACK_DAMAGE = 12.0;
+    public static final double MAX_HEALTH = 370.0;
+    public static final double ATTACK_DAMAGE = 15.0;
     public static final double MOVEMENT_SPEED = 0.26;
 
     private static final int SUMMON_INTERVAL = 400;

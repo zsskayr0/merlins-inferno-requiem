@@ -37,7 +37,7 @@ import dev.zsskayr.merlins_inferno.worldgen.biome.ModBiomes;
 /**
  * Ostara, the Spring Deity - the Mundane (Druidic) path's Circle 1 boss.
  * <ul>
- *     <li><b>Stats:</b> 350 health, 14 damage.</li>
+ *     <li><b>Stats:</b> 300 health, 12 damage.</li>
  *     <li><b>Petals:</b> from a distance she flings a volley of petals: magic damage and a bout of Slowness
  *     and Poison ({@link #PETAL_INTERVAL} ticks apart, up to {@link #PETAL_RANGE} blocks, needs line of sight).</li>
  *     <li><b>Bloom:</b> every {@link #BLOOM_INTERVAL} ticks she heals the monsters around her (and herself, less).</li>
@@ -47,8 +47,8 @@ import dev.zsskayr.merlins_inferno.worldgen.biome.ModBiomes;
  * Drawn as a humanoid placeholder.
  */
 public class OstaraEntity extends Monster {
-    public static final double MAX_HEALTH = 350.0;
-    public static final double ATTACK_DAMAGE = 14.0;
+    public static final double MAX_HEALTH = 300.0;
+    public static final double ATTACK_DAMAGE = 12.0;
     public static final double MOVEMENT_SPEED = 0.25;
 
     private static final int PETAL_INTERVAL = 80;
