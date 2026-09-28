@@ -2,7 +2,10 @@ package dev.zsskayr.merlins_inferno.entity;
 
 import java.util.EnumSet;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -43,6 +46,7 @@ import dev.zsskayr.merlins_inferno.registry.ModTags;
  * eight of them once, and a few more wander the world rarely (biome modifier).
  */
 public class SacredCultistEntity extends PathfinderMob {
+    private static final double BROTHERHOOD_RADIUS = 32.0;
     private static final float IRON_SWORD_CHANCE = 0.30F;
     private static final float SERAPHIUM_SWORD_CHANCE = 0.08F;
 
@@ -91,6 +95,37 @@ public class SacredCultistEntity extends PathfinderMob {
         }
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
         return data;
+    }
+
+    /** Brotherhood, like zombified piglins: strike one and every cultist and priest within earshot turns on the attacker. */
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        boolean hurt = super.hurt(source, amount);
+        if (hurt) {
+            this.rallyBrethren(source);
+        }
+        return hurt;
+    }
+
+    @Override
+    public void die(DamageSource cause) {
+        super.die(cause);
+        this.rallyBrethren(cause);
+    }
+
+    private void rallyBrethren(DamageSource source) {
+        if (!(source.getEntity() instanceof LivingEntity attacker) || attacker instanceof SacredCultistEntity
+                || attacker instanceof SacredPriestEntity || !(this.level() instanceof ServerLevel level)) {
+            return;
+        }
+        if (attacker instanceof Player player && (player.isCreative() || player.isSpectator())) {
+            return;
+        }
+        AABB area = this.getBoundingBox().inflate(BROTHERHOOD_RADIUS);
+        for (Mob brother : level.getEntitiesOfClass(Mob.class, area,
+                m -> m != this && m.isAlive() && (m instanceof SacredCultistEntity || m instanceof SacredPriestEntity))) {
+            brother.setTarget(attacker);
+        }
     }
 
     @Override

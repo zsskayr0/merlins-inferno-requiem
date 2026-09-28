@@ -69,6 +69,9 @@ public final class GreatBell {
      */
     public static void build(LevelAccessor level, @Nullable BoundingBox box, BlockPos center) {
         place(level, box, center, HEART);
+        if (box != null) {
+            place(level, box, center.below(), Blocks.GOLD_BLOCK.defaultBlockState()); // the clapper: only ever placed at worldgen
+        }
         for (int[] s : SHELL) {
             place(level, box, center.offset(s[0], s[1], s[2]), s[3] == 0 ? BODY : RIM);
         }
@@ -96,10 +99,13 @@ public final class GreatBell {
         level.sendParticles(ParticleTypes.NOTE, center.getX() + 0.5, center.getY() - 2.5, center.getZ() + 0.5, 20, 2.5, 0.5, 2.5, 1.0);
     }
 
-    /** Breaks the whole bell - heart and shell - with the usual crash of each block, dropping nothing. */
+    /** Breaks the whole bell - heart and shell - with the usual crash of each block; only the gold block inside drops. */
     public static void shatter(ServerLevel level, BlockPos center) {
         if (level.getBlockState(center).is(Blocks.BELL)) {
             level.destroyBlock(center, false);
+        }
+        if (level.getBlockState(center.below()).is(Blocks.GOLD_BLOCK)) {
+            level.destroyBlock(center.below(), true);
         }
         for (int[] s : SHELL) {
             BlockPos p = center.offset(s[0], s[1], s[2]);
