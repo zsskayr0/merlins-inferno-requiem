@@ -60,10 +60,19 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     private static final int ELIAS_X = 39, ELIAS_Y = 3, ELIAS_Z = 22;
     private static final int NAVE_Y = 2; // the red carpet down the nave
     private static final int[][] CULTISTS = {{18, 21}, {22, 21}, {26, 21}, {30, 21}, {18, 23}, {22, 23}, {26, 23}, {30, 23}};
-    private static final int[] CHEST = {34, 2, 6};
+    /** Loot chests on the nave floor level (y = 2), tucked into nooks: {x, z}. All but the first are only placed by chance. */
+    private static final int[][] CHESTS = {{34, 6}, {12, 13}, {12, 31}, {12, 17}, {12, 27}, {32, 38}, {40, 6}, {55, 33}, {59, 33}, {41, 12}, {41, 32}};
+    /** Candidate nooks behind the east hall for the hidden vault chest (Pandora Box, see the hidden loot table); one is picked per church. */
+    private static final int[][] HIDDEN_CHESTS = {{68, 19}, {68, 25}, {67, 17}, {67, 27}};
+    /** Chance for each entry of {@link #CHESTS} after the first to actually exist. */
+    private static final double CHEST_CHANCE = 0.7;
+    /** The template's two eyed End portal frames, replaced by plain slabs. */
+    private static final int[][] PORTAL_FRAMES = {{63, 4, 19}, {63, 4, 25}};
 
     private static final ResourceKey<LootTable> LOOT = ResourceKey.create(Registries.LOOT_TABLE,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/sacred_church"));
+    private static final ResourceKey<LootTable> HIDDEN_LOOT = ResourceKey.create(Registries.LOOT_TABLE,
+            ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/sacred_church_hidden"));
 
     private final long seed;
     private int spawnedMask; // bit 0 = the Sacred Priest, bits 1.. = cultists
@@ -106,7 +115,7 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         this.foundation(level, chunkBox);
         super.postProcess(level, structureManager, generator, random, chunkBox, chunkPos, pos);
         this.chancel(level, chunkBox);
-        this.chest(level, chunkBox, random);
+        this.chests(level, chunkBox, random);
         this.spawnInhabitants(level, chunkBox);
     }
 
@@ -153,12 +162,34 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         }
     }
 
-    private void chest(WorldGenLevel level, BoundingBox chunkBox, RandomSource random) {
-        BlockPos chest = this.at(CHEST[0], CHEST[1], CHEST[2]);
-        if (chunkBox.isInside(chest)) {
-            level.setBlock(chest, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.EAST), Block.UPDATE_CLIENTS);
-            RandomizableContainer.setBlockEntityLootTable(level, random, chest, LOOT);
+    private void chests(WorldGenLevel level, BoundingBox chunkBox, RandomSource random) {
+        for (int[] frame : PORTAL_FRAMES) {
+            this.set(level, chunkBox, frame[0], frame[1], frame[2], Blocks.STONE_BRICK_SLAB.defaultBlockState());
         }
+        for (int i = 0; i < CHESTS.length; i++) {
+            if (i == 0 || this.roll(CHESTS[i][0], CHESTS[i][1], 300 + i) < CHEST_CHANCE) {
+                this.placeChest(level, chunkBox, random, CHESTS[i][0], CHESTS[i][1], LOOT);
+            }
+        }
+        int[] hidden = HIDDEN_CHESTS[(int) (this.roll(0, 0, 400) * HIDDEN_CHESTS.length)];
+        this.placeChest(level, chunkBox, random, hidden[0], hidden[1], HIDDEN_LOOT);
+    }
+
+    /** Places a loot chest at floor level facing the first open side (away from the nook's walls). */
+    private void placeChest(WorldGenLevel level, BoundingBox chunkBox, RandomSource random, int lx, int lz, ResourceKey<LootTable> table) {
+        BlockPos chest = this.at(lx, NAVE_Y, lz);
+        if (!chunkBox.isInside(chest)) {
+            return;
+        }
+        Direction facing = Direction.NORTH;
+        for (Direction d : Direction.Plane.HORIZONTAL) {
+            if (level.getBlockState(chest.relative(d)).isAir()) {
+                facing = d;
+                break;
+            }
+        }
+        level.setBlock(chest, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, facing), Block.UPDATE_CLIENTS);
+        RandomizableContainer.setBlockEntityLootTable(level, random, chest, table);
     }
 
     // ------------------------------------------------------------------------------------------
