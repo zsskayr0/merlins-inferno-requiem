@@ -1,7 +1,5 @@
 package dev.zsskayr.merlins_inferno.menu;
 
-import java.util.function.Predicate;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -14,217 +12,182 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 import dev.zsskayr.merlins_inferno.registry.ModMenuTypes;
+import dev.zsskayr.merlins_inferno.menu.PandoraRecipeRules.Ingredient;
+import dev.zsskayr.merlins_inferno.menu.PandoraRecipeRules.Recipe;
 
-/**
- * The Pandora Box's screen: three slots around a central one. The three boss key items (Book of Contracts, Eve's
- * Secret, Flame of God) go around, a Nether Star in the middle; the Perform Ritual button (menu button
- * {@link #BUTTON_RITUAL}) then swallows them, opens Circle 2 and - outside Hardcore - kills the player. Once
- * Circle 2 is open the same screen forges the Oblivion and Purgatory keys ({@link #BUTTON_OBLIVION_KEY},
- * {@link #BUTTON_PURGATORY_KEY}).
- * <p>
- * All logic runs in {@link #clickMenuButton} on the server; the client only sees the slots and one synced value
- * (the player's Circle, via {@link ContainerData}).
- */
+/** Four inputs, one forge action. The server owns the timer, validation, consumption and result. */
 public class PandoraBoxMenu extends AbstractContainerMenu {
-    public static final int BUTTON_RITUAL = 0;
-    public static final int BUTTON_OBLIVION_KEY = 1;
-    public static final int BUTTON_PURGATORY_KEY = 2;
-
-    public static final int SLOT_BOOK = 0, SLOT_EVE = 1, SLOT_FLAME = 2, SLOT_STAR = 3;
-    private static final int KEY_SLOTS = 4;
-    private static final int INVENTORY_START = KEY_SLOTS;
-    private static final int INVENTORY_END = INVENTORY_START + 36;
-
-    /** Slot positions (top-left of each 16x16 slot) relative to the screen: three in a triangle, the star in the middle. */
-    public static final int[][] SLOT_POS = {{80, 10}, {47, 67}, {113, 67}, {80, 46}};
-    public static final int PLAYER_INV_Y = 140;
-
-    private final Container container = new SimpleContainer(KEY_SLOTS);
-    private final ContainerData data;
+    public static final int BUTTON_FORGE = 0;
+    public static final int CRAFT_TICKS = 60;
+    private static final int INPUTS = 4;
+    public static final int RESULT_SLOT = 4, INVENTORY_START = 5, INVENTORY_END = 41;
+    private final Container container = new SimpleContainer(INPUTS);
+    private final Container resultContainer = new SimpleContainer(1);
     private final Player player;
+    private final ContainerData data;
+    private final ItemStack[] workingInputs = new ItemStack[INPUTS];
+    private int progress, completionSerial;
+    private Recipe workingRecipe = Recipe.NONE, lastRecipe = Recipe.NONE;
+    private long lastCraftTick = Long.MIN_VALUE;
 
-    /**
-     * Both sides use this constructor (it's what {@code MenuType<PandoraBoxMenu>} calls to rebuild the menu from
-     * the open packet on the client, and what {@code PandoraBoxItem} calls directly on the server): the ritual
-     * slots start empty either way, and {@code data} reads the opener's own Circle live (server) or as last
-     * synced (client) - one value, so a plain {@code SimpleContainerData} works on both sides.
-     */
     public PandoraBoxMenu(int containerId, Inventory inventory) {
         super(ModMenuTypes.PANDORA_BOX.get(), containerId);
-        this.player = inventory.player;
-        this.data = new SimpleContainerData(1) {
-            @Override
-            public int get(int index) {
-                return ProgressionHelper.circle(PandoraBoxMenu.this.player);
+        player = inventory.player;
+        // Client reads the server's synchronized values, not its local progression attachment.
+        data = player.level().isClientSide ? new SimpleContainerData(5) : new SimpleContainerData(5) {
+            @Override public int get(int index) {
+                return switch (index) {
+                    case 0 -> ProgressionHelper.circle(player);
+                    case 1 -> progress;
+                    case 2 -> workingRecipe.ordinal();
+                    case 3 -> completionSerial;
+                    case 4 -> lastRecipe.ordinal();
+                    default -> 0;
+                };
             }
         };
-        // Circle 1: the ritual's four offerings. Circle 2: the same slots take the Key of Oblivion's ingredients -
-        // Otherworld Essence on top, Infernal Essence bottom-left, Celestial Essence bottom-right, a Void Block in the middle.
-        this.addSlot(new KeySlot(0, stack -> stack.is(ModItems.BOOK_OF_CONTRACTS.get()), stack -> stack.is(ModItems.OTHERWORLD_ESSENCE.get())));
-        this.addSlot(new KeySlot(1, stack -> stack.is(ModItems.EVES_SECRET.get()), stack -> stack.is(ModItems.INFERNAL_ESSENCE.get())));
-        this.addSlot(new KeySlot(2, stack -> stack.is(ModItems.FLAME_OF_GOD.get()), stack -> stack.is(ModItems.CELESTIAL_ESSENCE.get())));
-        this.addSlot(new KeySlot(3, stack -> stack.is(Items.NETHER_STAR), stack -> stack.is(ModBlocks.VOID_BLOCK.get().asItem())));
+        for (int i = 0; i < INPUTS; i++) addSlot(new InputSlot(i));
+        addSlot(new ResultSlot());
         for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                this.addSlot(new Slot(inventory, col + row * 9 + 9, 8 + col * 18, PLAYER_INV_Y + row * 18));
-            }
+            for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col + row * 9 + 9,
+                    PandoraLayout.INVENTORY_X + col * 18, PandoraLayout.INVENTORY_Y + row * 18));
         }
-        for (int col = 0; col < 9; col++) {
-            this.addSlot(new Slot(inventory, col, 8 + col * 18, PLAYER_INV_Y + 58));
-        }
-        this.addDataSlots(data);
+        for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col,
+                PandoraLayout.INVENTORY_X + col * 18, PandoraLayout.HOTBAR_Y));
+        addDataSlots(data);
     }
 
-    /** The opener's Circle (server: live; client: as last synced). */
-    public int getCircle() {
-        return this.data.get(0);
+    public int getCircle() { return data.get(0); }
+    public boolean isCrafting() { return data.get(1) > 0; }
+    public float getCraftProgress() { return Math.min(1, data.get(1) / (float) CRAFT_TICKS); }
+    public int getCompletionSerial() { return data.get(3); }
+    public Recipe getLastRecipe() { return recipeValue(data.get(4)); }
+    private static Recipe recipeValue(int ordinal) {
+        return ordinal >= 0 && ordinal < Recipe.values().length ? Recipe.values()[ordinal] : Recipe.NONE;
+    }
+    public Recipe getDisplayedRecipe() { return isCrafting() ? recipeValue(data.get(2)) : getMatchedRecipe(); }
+    public boolean hasResult() { return !resultContainer.isEmpty(); }
+    public boolean canForge() { return !hasResult() && !isCrafting() && getMatchedRecipe() != Recipe.NONE; }
+    public int getOfferingCount() {
+        int count = 0;
+        for (int i = 0; i < 3; i++) if (getSlot(i).hasItem()) count++;
+        return count;
     }
 
-    /** True when all four slots hold what the ritual needs. */
-    public boolean isRitualReady() {
-        return this.slots.get(SLOT_BOOK).hasItem() && this.slots.get(SLOT_EVE).hasItem()
-                && this.slots.get(SLOT_FLAME).hasItem() && this.slots.get(SLOT_STAR).hasItem();
+    public Recipe getMatchedRecipe() {
+        Ingredient[] offerings = new Ingredient[3];
+        int[] counts = new int[3];
+        for (int i = 0; i < 3; i++) {
+            ItemStack stack = container.getItem(i);
+            offerings[i] = ingredient(stack);
+            counts[i] = stack.getCount();
+        }
+        return PandoraRecipeRules.match(getCircle() >= ProgressionHelper.SECOND_CIRCLE,
+                ingredient(container.getItem(3)), offerings, counts);
+    }
+
+    private static Ingredient ingredient(ItemStack stack) {
+        if (stack.isEmpty()) return Ingredient.EMPTY;
+        if (stack.is(ModItems.BOOK_OF_CONTRACTS.get())) return Ingredient.BOOK;
+        if (stack.is(ModItems.EVES_SECRET.get())) return Ingredient.EVE;
+        if (stack.is(ModItems.FLAME_OF_GOD.get())) return Ingredient.FLAME;
+        if (stack.is(Items.NETHER_STAR)) return Ingredient.STAR;
+        if (stack.is(ModItems.OTHERWORLD_ESSENCE.get())) return Ingredient.OTHERWORLD;
+        if (stack.is(ModItems.INFERNAL_ESSENCE.get())) return Ingredient.INFERNAL;
+        if (stack.is(ModItems.CELESTIAL_ESSENCE.get())) return Ingredient.CELESTIAL;
+        if (stack.is(ModBlocks.VOID_BLOCK.get().asItem())) return Ingredient.VOID;
+        if (stack.is(Items.NETHERITE_INGOT)) return Ingredient.NETHERITE;
+        return Ingredient.OTHER;
+    }
+
+    public static ItemStack result(Recipe recipe) {
+        return switch (recipe) {
+            case OBLIVION -> new ItemStack(ModItems.OBLIVION_KEY.get());
+            case PURGATORY -> new ItemStack(ModItems.PURGATORY_KEY.get());
+            default -> ItemStack.EMPTY;
+        };
     }
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        if (!(player instanceof ServerPlayer serverPlayer)) {
-            return false;
-        }
-        switch (id) {
-            case BUTTON_RITUAL:
-                return this.performRitual(serverPlayer);
-            case BUTTON_OBLIVION_KEY:
-                return this.forgeOblivionKey(serverPlayer);
-            case BUTTON_PURGATORY_KEY:
-                return this.forgeKey(serverPlayer, ModItems.PURGATORY_KEY.get(),
-                        new Ingredient(Items.BLAZE_ROD, 1), new Ingredient(ModItems.DEMON_BLOOD.get(), 2));
-            default:
-                return false;
-        }
-    }
-
-    private boolean performRitual(ServerPlayer player) {
-        if (ProgressionHelper.circle(player) >= ProgressionHelper.SECOND_CIRCLE) {
-            player.displayClientMessage(Component.translatable("message.merlins_inferno.pandora_box.already_open"), true);
-            return false;
-        }
-        if (!this.isRitualReady()) {
-            player.displayClientMessage(Component.translatable("message.merlins_inferno.pandora_box.incomplete"), true);
-            return false;
-        }
-        this.container.clearContent(); // the centre swallows the rest
-        ProgressionHelper.setCircle(player, ProgressionHelper.SECOND_CIRCLE);
-        player.level().playSound(null, player.blockPosition(), SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 1.0F, 0.6F);
-        boolean spared = player.level().getLevelData().isHardcore() || player.isCreative();
-        player.displayClientMessage(Component.translatable(spared
-                ? "message.merlins_inferno.pandora_box.opened_spared" : "message.merlins_inferno.pandora_box.opened"), false);
-        if (!spared) {
-            player.closeContainer();
-            player.kill(); // the box stays with them - see event.PandoraHandler
-        }
+        if (!(player instanceof ServerPlayer) || id != BUTTON_FORGE || !stillValid(player) || !canForge()) return false;
+        workingRecipe = getMatchedRecipe();
+        for (int i = 0; i < INPUTS; i++) workingInputs[i] = container.getItem(i).copy();
+        progress = 1;
+        lastCraftTick = player.level().getGameTime();
+        player.level().playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.5F, 0.6F);
+        broadcastChanges();
         return true;
     }
 
-    private record Ingredient(Item item, int count) {
+    @Override
+    public void broadcastChanges() {
+        // ServerPlayer broadcasts once per tick. Guard against additional calls in the same game tick.
+        if (player instanceof ServerPlayer server && progress > 0 && lastCraftTick != player.level().getGameTime()) {
+            lastCraftTick = player.level().getGameTime();
+            if (hasResult() || !stillValid(player) || getMatchedRecipe() != workingRecipe || !inputsUnchanged()) cancelCraft();
+            else if (++progress >= CRAFT_TICKS) finishCraft(server);
+        }
+        super.broadcastChanges();
     }
 
-    /** Forges the Key of Oblivion from the four slots (Circle 2 only): each must hold its ingredient, and all are consumed. */
-    private boolean forgeOblivionKey(ServerPlayer player) {
-        if (ProgressionHelper.circle(player) < ProgressionHelper.SECOND_CIRCLE) {
-            return false;
-        }
-        if (!this.slots.get(SLOT_BOOK).hasItem() || !this.slots.get(SLOT_EVE).hasItem()
-                || !this.slots.get(SLOT_FLAME).hasItem() || !this.slots.get(SLOT_STAR).hasItem()) {
-            player.displayClientMessage(Component.translatable("message.merlins_inferno.pandora_box.key_missing"), true);
-            return false;
-        }
-        for (int i = 0; i < KEY_SLOTS; i++) {
-            this.container.setItem(i, ItemStack.EMPTY);
-        }
-        ItemStack result = new ItemStack(ModItems.OBLIVION_KEY.get());
-        if (!player.getInventory().add(result)) {
-            player.drop(result, false);
-        }
-        player.level().playSound(null, player.blockPosition(), SoundEvents.SMITHING_TABLE_USE, SoundSource.PLAYERS, 1.0F, 0.6F);
+    private boolean inputsUnchanged() {
+        for (int i = 0; i < INPUTS; i++) if (!ItemStack.matches(workingInputs[i], container.getItem(i))) return false;
         return true;
     }
 
-    /** Forges a key from items in the player's inventory (Circle 2 only). */
-    private boolean forgeKey(ServerPlayer player, Item key, Ingredient... ingredients) {
-        if (ProgressionHelper.circle(player) < ProgressionHelper.SECOND_CIRCLE) {
-            return false;
-        }
-        Inventory inventory = player.getInventory();
-        for (Ingredient ingredient : ingredients) {
-            if (countItem(inventory, ingredient.item()) < ingredient.count()) {
-                player.displayClientMessage(Component.translatable("message.merlins_inferno.pandora_box.key_missing"), true);
-                return false;
-            }
-        }
-        for (Ingredient ingredient : ingredients) {
-            removeItem(inventory, ingredient.item(), ingredient.count());
-        }
-        ItemStack result = new ItemStack(key);
-        if (!inventory.add(result)) {
-            player.drop(result, false);
-        }
-        player.level().playSound(null, player.blockPosition(), SoundEvents.SMITHING_TABLE_USE, SoundSource.PLAYERS, 1.0F, 0.8F);
-        return true;
-    }
+    private void cancelCraft() { progress = 0; workingRecipe = Recipe.NONE; }
 
-    private static int countItem(Inventory inventory, Item item) {
-        int total = 0;
-        for (ItemStack stack : inventory.items) {
-            if (stack.is(item)) {
-                total += stack.getCount();
+    private void finishCraft(ServerPlayer server) {
+        Recipe completed = workingRecipe;
+        // Exact recipe quantities, retaining surplus stacks.
+        for (int i = 0; i < 3; i++) container.removeItem(i, PandoraRecipeRules.required(completed, ingredient(container.getItem(i))));
+        container.removeItem(3, 1);
+        lastRecipe = completed;
+        completionSerial = (completionSerial + 1) & 0x7FFF;
+        cancelCraft();
+        if (completed == Recipe.AWAKENING) {
+            ProgressionHelper.setCircle(server, ProgressionHelper.SECOND_CIRCLE);
+            server.level().playSound(null, server.blockPosition(), SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 1, 0.6F);
+            boolean spared = server.level().getLevelData().isHardcore() || server.isCreative();
+            server.displayClientMessage(Component.translatable(spared
+                    ? "message.merlins_inferno.pandora_box.opened_spared" : "message.merlins_inferno.pandora_box.opened"), false);
+            if (!spared) {
+                server.closeContainer();
+                server.kill();
             }
-        }
-        return total;
-    }
-
-    private static void removeItem(Inventory inventory, Item item, int count) {
-        for (ItemStack stack : inventory.items) {
-            if (count <= 0) {
-                return;
-            }
-            if (stack.is(item)) {
-                int taken = Math.min(count, stack.getCount());
-                stack.shrink(taken);
-                count -= taken;
-            }
+        } else {
+            resultContainer.setItem(0, result(completed));
+            server.level().playSound(null, server.blockPosition(), SoundEvents.SMITHING_TABLE_USE, SoundSource.PLAYERS, 1, 0.8F);
         }
     }
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        ItemStack result = ItemStack.EMPTY;
-        Slot slot = this.slots.get(index);
-        if (slot != null && slot.hasItem()) {
-            ItemStack stack = slot.getItem();
-            result = stack.copy();
-            if (index < KEY_SLOTS) {
-                if (!this.moveItemStackTo(stack, INVENTORY_START, INVENTORY_END, true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!this.moveItemStackTo(stack, 0, KEY_SLOTS, false)) {
-                return ItemStack.EMPTY;
-            }
-            if (stack.isEmpty()) {
-                slot.setByPlayer(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
+        if (index < 0 || index >= slots.size()) return ItemStack.EMPTY;
+        Slot slot = slots.get(index);
+        if (!slot.hasItem() || !slot.mayPickup(player)) return ItemStack.EMPTY;
+        ItemStack stack = slot.getItem(), original = stack.copy();
+        if (index < INVENTORY_START) {
+            if (!moveItemStackTo(stack, INVENTORY_START, INVENTORY_END, true)) return ItemStack.EMPTY;
+        } else {
+            if (isCrafting()) return ItemStack.EMPTY;
+            Ingredient kind = ingredient(stack);
+            // The Book is an offering for the Awakening, but the catalyst once the Box is open.
+            boolean catalyst = kind == Ingredient.STAR || kind == Ingredient.VOID
+                    || (kind == Ingredient.BOOK && getCircle() >= ProgressionHelper.SECOND_CIRCLE);
+            if (catalyst && hasResult()) return ItemStack.EMPTY;
+            if (!moveItemStackTo(stack, catalyst ? 3 : 0, catalyst ? 4 : 3, false)) return ItemStack.EMPTY;
         }
-        return result;
+        if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY); else slot.setChanged();
+        slot.onTake(player, stack);
+        return original;
     }
 
     @Override
@@ -234,29 +197,29 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
 
     @Override
     public void removed(Player player) {
+        cancelCraft();
         super.removed(player);
-        this.clearContainer(player, this.container); // whatever was not swallowed goes back
+        clearContainer(player, container);
+        clearContainer(player, resultContainer);
     }
 
-    /** One of the four ritual slots: takes only its item, one at a time, and only while Circle 2 is still closed. */
-    private class KeySlot extends Slot {
-        private final Predicate<ItemStack> ritualItem;
-        private final Predicate<ItemStack> keyIngredient;
-
-        KeySlot(int index, Predicate<ItemStack> ritualItem, Predicate<ItemStack> keyIngredient) {
-            super(PandoraBoxMenu.this.container, index, SLOT_POS[index][0], SLOT_POS[index][1]);
-            this.ritualItem = ritualItem;
-            this.keyIngredient = keyIngredient;
+    private class InputSlot extends Slot {
+        InputSlot(int index) {
+            super(PandoraBoxMenu.this.container, index, PandoraLayout.slotX(index, PandoraLayout.INITIAL_ANGLE),
+                    PandoraLayout.slotY(index, PandoraLayout.INITIAL_ANGLE));
         }
+        @Override public boolean isActive() { return getContainerSlot() != 3 || !hasResult(); }
+        @Override public boolean mayPlace(ItemStack stack) { return isActive() && !isCrafting(); }
+        @Override public boolean mayPickup(Player player) { return isActive() && !isCrafting(); }
+    }
 
-        @Override
-        public boolean mayPlace(ItemStack stack) {
-            return (PandoraBoxMenu.this.getCircle() < ProgressionHelper.SECOND_CIRCLE ? this.ritualItem : this.keyIngredient).test(stack);
+    /** Shares the catalyst's screen position, but has its own storage and never accepts input. */
+    private class ResultSlot extends Slot {
+        ResultSlot() {
+            super(PandoraBoxMenu.this.resultContainer, 0, PandoraLayout.CENTER_X - 8, PandoraLayout.CENTER_Y - 8);
         }
-
-        @Override
-        public int getMaxStackSize() {
-            return 1;
-        }
+        @Override public boolean isActive() { return hasResult(); }
+        @Override public boolean mayPlace(ItemStack stack) { return false; }
+        @Override public boolean mayPickup(Player player) { return !isCrafting() && hasResult(); }
     }
 }
