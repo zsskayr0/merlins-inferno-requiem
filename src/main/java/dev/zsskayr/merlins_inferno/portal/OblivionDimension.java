@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
-import dev.zsskayr.merlins_inferno.block.OblivionPortalBlock;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 
 /**
@@ -35,6 +34,7 @@ public final class OblivionDimension {
             return;
         }
         BlockState obsidian = Blocks.OBSIDIAN.defaultBlockState();
+        BlockState frame = ModBlocks.VOID_BLOCK.get().defaultBlockState();
         for (int x = -6; x <= 7; x++) {
             for (int z = -6; z <= 6; z++) {
                 level.setBlock(new BlockPos(x, 63, z), obsidian, 3);
@@ -47,15 +47,10 @@ public final class OblivionDimension {
             for (int y = 63; y <= 67; y++) {
                 boolean border = x == -1 || x == 2 || y == 63 || y == 67;
                 if (border) {
-                    level.setBlock(new BlockPos(x, y, 0), obsidian, 3);
+                    level.setBlock(new BlockPos(x, y, 0), frame, 3);
                 }
             }
         }
-        BlockState portal = ModBlocks.OBLIVION_PORTAL.get().defaultBlockState().setValue(OblivionPortalBlock.AXIS, net.minecraft.core.Direction.Axis.X);
-        for (int x = 0; x <= 1; x++) {
-            for (int y = 64; y <= 66; y++) {
-                level.setBlock(new BlockPos(x, y, 0), portal, 18);
-            }
-        }
+        OblivionPortalShape.findEmptyPortalShape(level, PORTAL, net.minecraft.core.Direction.Axis.X).ifPresent(OblivionPortalShape::createPortalBlocks);
     }
 }

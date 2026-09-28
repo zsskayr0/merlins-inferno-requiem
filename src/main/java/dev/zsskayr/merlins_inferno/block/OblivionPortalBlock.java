@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
@@ -47,12 +48,18 @@ import dev.zsskayr.merlins_inferno.registry.ModAttachments;
 public class OblivionPortalBlock extends Block implements Portal {
     public static final MapCodec<OblivionPortalBlock> CODEC = simpleCodec(OblivionPortalBlock::new);
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
+    /** Which sides of the portal film touch the frame (drawn as a glowing rim); set once, when the portal is lit. */
+    public static final BooleanProperty EDGE_LEFT = BooleanProperty.create("edge_left");
+    public static final BooleanProperty EDGE_RIGHT = BooleanProperty.create("edge_right");
+    public static final BooleanProperty EDGE_UP = BooleanProperty.create("edge_up");
+    public static final BooleanProperty EDGE_DOWN = BooleanProperty.create("edge_down");
     protected static final VoxelShape X_AXIS_AABB = Block.box(0.0, 0.0, 6.0, 16.0, 16.0, 10.0);
     protected static final VoxelShape Z_AXIS_AABB = Block.box(6.0, 0.0, 0.0, 10.0, 16.0, 16.0);
 
     public OblivionPortalBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(AXIS, Direction.Axis.X));
+        this.registerDefaultState(this.stateDefinition.any().setValue(AXIS, Direction.Axis.X).setValue(EDGE_LEFT, false)
+                .setValue(EDGE_RIGHT, false).setValue(EDGE_UP, false).setValue(EDGE_DOWN, false));
     }
 
     @Override
@@ -165,6 +172,6 @@ public class OblivionPortalBlock extends Block implements Portal {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(AXIS);
+        builder.add(AXIS, EDGE_LEFT, EDGE_RIGHT, EDGE_UP, EDGE_DOWN);
     }
 }

@@ -1,7 +1,7 @@
 {
   "textures": {
     "particle": "merlins_inferno:block/oblivion_portal",
-    "portal": "merlins_inferno:block/oblivion_portal"
+    "t": "merlins_inferno:block/oblivion_portal"
   },
   "render_type": "minecraft:translucent",
   "elements": [
@@ -25,7 +25,7 @@
             16,
             16
           ],
-          "texture": "#portal"
+          "texture": "#t"
         },
         "south": {
           "uv": [
@@ -34,7 +34,7 @@
             16,
             16
           ],
-          "texture": "#portal"
+          "texture": "#t"
         }
       }
     }

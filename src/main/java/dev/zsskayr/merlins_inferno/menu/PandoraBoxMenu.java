@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
+import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 import dev.zsskayr.merlins_inferno.registry.ModMenuTypes;
 
@@ -65,10 +66,12 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
                 return ProgressionHelper.circle(PandoraBoxMenu.this.player);
             }
         };
-        this.addSlot(new KeySlot(0, stack -> stack.is(ModItems.BOOK_OF_CONTRACTS.get())));
-        this.addSlot(new KeySlot(1, stack -> stack.is(ModItems.EVES_SECRET.get())));
-        this.addSlot(new KeySlot(2, stack -> stack.is(ModItems.FLAME_OF_GOD.get())));
-        this.addSlot(new KeySlot(3, stack -> stack.is(Items.NETHER_STAR)));
+        // Circle 1: the ritual's four offerings. Circle 2: the same slots take the Key of Oblivion's ingredients -
+        // Otherworld Essence on top, Infernal Essence bottom-left, Celestial Essence bottom-right, a Void Block in the middle.
+        this.addSlot(new KeySlot(0, stack -> stack.is(ModItems.BOOK_OF_CONTRACTS.get()), stack -> stack.is(ModItems.OTHERWORLD_ESSENCE.get())));
+        this.addSlot(new KeySlot(1, stack -> stack.is(ModItems.EVES_SECRET.get()), stack -> stack.is(ModItems.INFERNAL_ESSENCE.get())));
+        this.addSlot(new KeySlot(2, stack -> stack.is(ModItems.FLAME_OF_GOD.get()), stack -> stack.is(ModItems.CELESTIAL_ESSENCE.get())));
+        this.addSlot(new KeySlot(3, stack -> stack.is(Items.NETHER_STAR), stack -> stack.is(ModBlocks.VOID_BLOCK.get().asItem())));
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
                 this.addSlot(new Slot(inventory, col + row * 9 + 9, 8 + col * 18, PLAYER_INV_Y + row * 18));
@@ -100,8 +103,7 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
             case BUTTON_RITUAL:
                 return this.performRitual(serverPlayer);
             case BUTTON_OBLIVION_KEY:
-                return this.forgeKey(serverPlayer, ModItems.OBLIVION_KEY.get(),
-                        new Ingredient(Items.ENDER_PEARL, 1), new Ingredient(Items.OBSIDIAN, 4));
+                return this.forgeOblivionKey(serverPlayer);
             case BUTTON_PURGATORY_KEY:
                 return this.forgeKey(serverPlayer, ModItems.PURGATORY_KEY.get(),
                         new Ingredient(Items.BLAZE_ROD, 1), new Ingredient(ModItems.DEMON_BLOOD.get(), 2));
@@ -133,6 +135,27 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
     }
 
     private record Ingredient(Item item, int count) {
+    }
+
+    /** Forges the Key of Oblivion from the four slots (Circle 2 only): each must hold its ingredient, and all are consumed. */
+    private boolean forgeOblivionKey(ServerPlayer player) {
+        if (ProgressionHelper.circle(player) < ProgressionHelper.SECOND_CIRCLE) {
+            return false;
+        }
+        if (!this.slots.get(SLOT_BOOK).hasItem() || !this.slots.get(SLOT_EVE).hasItem()
+                || !this.slots.get(SLOT_FLAME).hasItem() || !this.slots.get(SLOT_STAR).hasItem()) {
+            player.displayClientMessage(Component.translatable("message.merlins_inferno.pandora_box.key_missing"), true);
+            return false;
+        }
+        for (int i = 0; i < KEY_SLOTS; i++) {
+            this.container.setItem(i, ItemStack.EMPTY);
+        }
+        ItemStack result = new ItemStack(ModItems.OBLIVION_KEY.get());
+        if (!player.getInventory().add(result)) {
+            player.drop(result, false);
+        }
+        player.level().playSound(null, player.blockPosition(), SoundEvents.SMITHING_TABLE_USE, SoundSource.PLAYERS, 1.0F, 0.6F);
+        return true;
     }
 
     /** Forges a key from items in the player's inventory (Circle 2 only). */
@@ -217,16 +240,18 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
 
     /** One of the four ritual slots: takes only its item, one at a time, and only while Circle 2 is still closed. */
     private class KeySlot extends Slot {
-        private final Predicate<ItemStack> accepts;
+        private final Predicate<ItemStack> ritualItem;
+        private final Predicate<ItemStack> keyIngredient;
 
-        KeySlot(int index, Predicate<ItemStack> accepts) {
+        KeySlot(int index, Predicate<ItemStack> ritualItem, Predicate<ItemStack> keyIngredient) {
             super(PandoraBoxMenu.this.container, index, SLOT_POS[index][0], SLOT_POS[index][1]);
-            this.accepts = accepts;
+            this.ritualItem = ritualItem;
+            this.keyIngredient = keyIngredient;
         }
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return this.accepts.test(stack) && PandoraBoxMenu.this.getCircle() < ProgressionHelper.SECOND_CIRCLE;
+            return (PandoraBoxMenu.this.getCircle() < ProgressionHelper.SECOND_CIRCLE ? this.ritualItem : this.keyIngredient).test(stack);
         }
 
         @Override

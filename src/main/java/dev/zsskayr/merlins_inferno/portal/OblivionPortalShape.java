@@ -9,14 +9,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import dev.zsskayr.merlins_inferno.block.OblivionPortalBlock;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 
 /**
- * The shape of an Oblivion portal: the Nether portal's rules exactly (an obsidian rectangle, 2-21 wide and 3-21 tall
+ * The shape of an Oblivion portal: the Nether portal's rules exactly (a Void Block rectangle, 2-21 wide and 3-21 tall
  * inside), filled with Oblivion portal blocks instead. A trimmed copy of vanilla's {@code PortalShape}, which is
  * hard-wired to the Nether portal block.
  */
@@ -142,7 +141,7 @@ public class OblivionPortalShape {
     }
 
     private static boolean isFrame(BlockState state) {
-        return state.is(Blocks.OBSIDIAN);
+        return state.is(ModBlocks.VOID_BLOCK.get());
     }
 
     private static boolean isEmpty(BlockState state) {
@@ -155,8 +154,13 @@ public class OblivionPortalShape {
 
     public void createPortalBlocks() {
         BlockState portal = ModBlocks.OBLIVION_PORTAL.get().defaultBlockState().setValue(OblivionPortalBlock.AXIS, this.axis);
-        BlockPos.betweenClosed(this.bottomLeft, this.bottomLeft.relative(Direction.UP, this.height - 1).relative(this.rightDir, this.width - 1))
-                .forEach(pos -> this.level.setBlock(pos, portal, 18));
+        for (int w = 0; w < this.width; w++) {
+            for (int h = 0; h < this.height; h++) {
+                BlockPos pos = this.bottomLeft.relative(Direction.UP, h).relative(this.rightDir, w);
+                this.level.setBlock(pos, portal.setValue(OblivionPortalBlock.EDGE_LEFT, w == 0).setValue(OblivionPortalBlock.EDGE_RIGHT, w == this.width - 1)
+                        .setValue(OblivionPortalBlock.EDGE_DOWN, h == 0).setValue(OblivionPortalBlock.EDGE_UP, h == this.height - 1), 18);
+            }
+        }
     }
 
     public boolean isComplete() {
