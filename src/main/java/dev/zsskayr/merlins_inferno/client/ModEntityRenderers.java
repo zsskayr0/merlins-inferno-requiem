@@ -57,6 +57,7 @@ public final class ModEntityRenderers {
     @SubscribeEvent
     static void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ModParticles.SANCTIFIED_TYPE, SanctifiedParticle.Provider::new);
+        event.registerSpriteSet(ModParticles.OBLIVION_RUNE.get(), net.minecraft.client.particle.FlyTowardsPositionParticle.EnchantProvider::new);
     }
 
     /**

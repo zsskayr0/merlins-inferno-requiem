@@ -7,7 +7,6 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -39,6 +38,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import dev.zsskayr.merlins_inferno.portal.OblivionDimension;
 import dev.zsskayr.merlins_inferno.portal.OblivionPortalShape;
 import dev.zsskayr.merlins_inferno.registry.ModAttachments;
+import dev.zsskayr.merlins_inferno.registry.ModParticles;
 
 /**
  * The film of an Oblivion portal, behaving like a Nether portal: it lives in an obsidian frame, vanishes when the
@@ -138,22 +138,18 @@ public class OblivionPortalBlock extends Block implements Portal {
             level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, SoundEvents.PORTAL_AMBIENT, SoundSource.BLOCKS,
                     0.5F, random.nextFloat() * 0.4F + 0.5F, false);
         }
-        for (int i = 0; i < 4; i++) {
-            double x = pos.getX() + random.nextDouble();
+        // Runes stream in toward the film from the sides, like glyphs drawn to an enchanting table.
+        boolean alongX = state.getValue(AXIS) == Direction.Axis.X;
+        for (int i = 0; i < 2; i++) {
+            double x = pos.getX() + (alongX ? random.nextDouble() : 0.5);
             double y = pos.getY() + random.nextDouble();
-            double z = pos.getZ() + random.nextDouble();
-            double vx = (random.nextFloat() - 0.5) * 0.5;
-            double vy = (random.nextFloat() - 0.5) * 0.5;
-            double vz = (random.nextFloat() - 0.5) * 0.5;
+            double z = pos.getZ() + (alongX ? 0.5 : random.nextDouble());
             int side = random.nextInt(2) * 2 - 1;
-            if (!level.getBlockState(pos.west()).is(this) && !level.getBlockState(pos.east()).is(this)) {
-                x = pos.getX() + 0.5 + 0.25 * side;
-                vx = random.nextFloat() * 2.0F * side;
-            } else {
-                z = pos.getZ() + 0.5 + 0.25 * side;
-                vz = random.nextFloat() * 2.0F * side;
-            }
-            level.addParticle(ParticleTypes.SQUID_INK, x, y, z, vx * 0.1, vy * 0.1, vz * 0.1);
+            double offAcross = side * (0.8 + random.nextDouble() * 0.8);
+            double offAlong = (random.nextDouble() - 0.5) * 1.6;
+            double ox = alongX ? offAlong : offAcross;
+            double oz = alongX ? offAcross : offAlong;
+            level.addParticle(ModParticles.OBLIVION_RUNE.get(), x, y + 0.6, z, ox, random.nextDouble() * 0.8 - 0.2, oz);
         }
     }
 
