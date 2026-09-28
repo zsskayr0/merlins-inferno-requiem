@@ -1,56 +1,46 @@
 package dev.zsskayr.merlins_inferno.portal;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 
 /**
- * Oblivion: an empty, lightless void dimension. Its only built thing is the arrival hub - a small obsidian platform
- * with a return portal - raised on demand by {@link #ensureHub} the first time somebody comes through.
+ * Oblivion: an empty, lightless void dimension. Its only built thing is the arrival hub - a floating gothic
+ * chapel ({@code structure/oblivion_hub.nbt}, built by {@code tools/build_oblivion_hub.py}) with the return portal
+ * inside, facing north - raised on demand by {@link #ensureHub} the first time somebody comes through.
  */
 public final class OblivionDimension {
     public static final ResourceKey<Level> LEVEL = ResourceKey.create(Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "oblivion"));
+    public static final ResourceLocation HUB_TEMPLATE = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "oblivion_hub");
 
-    /** The hub's return portal: the lower-left interior block of a two-by-three portal in the X-Y plane, at z = 0. */
-    private static final BlockPos PORTAL = new BlockPos(0, 64, 0);
-    /** Where arrivals stand, a few blocks in front of the portal. */
-    public static final BlockPos ARRIVAL = new BlockPos(1, 64, 3);
+    /** Template-local layout, from the tool's printout: the island's centre is (30, 30), its surface y = 28. */
+    private static final BlockPos ORIGIN = new BlockPos(-30, 40, -30);
+    /** Lower-left interior block of the return portal (the frame is a Void Block ring around a 3x4 opening in the X-Y plane). */
+    private static final BlockPos PORTAL = ORIGIN.offset(29, 29, 33);
+    /** Where arrivals stand: in front of (north of) the portal, facing north, out of the doorway's way. */
+    public static final BlockPos ARRIVAL = ORIGIN.offset(30, 29, 29);
 
     private OblivionDimension() {
     }
 
-    /** Builds the hub if its portal is not there (first arrival, or somebody broke it). */
+    /** Raises the hub if its portal is not there (first arrival, or somebody broke it). */
     public static void ensureHub(ServerLevel level) {
         if (level.getBlockState(PORTAL).is(ModBlocks.OBLIVION_PORTAL.get())) {
             return;
         }
-        BlockState obsidian = Blocks.OBSIDIAN.defaultBlockState();
-        BlockState frame = ModBlocks.VOID_BLOCK.get().defaultBlockState();
-        for (int x = -6; x <= 7; x++) {
-            for (int z = -6; z <= 6; z++) {
-                level.setBlock(new BlockPos(x, 63, z), obsidian, 3);
-                for (int y = 64; y <= 70; y++) {
-                    level.setBlock(new BlockPos(x, y, z), Blocks.AIR.defaultBlockState(), 2);
-                }
-            }
-        }
-        for (int x = -1; x <= 2; x++) {
-            for (int y = 63; y <= 67; y++) {
-                boolean border = x == -1 || x == 2 || y == 63 || y == 67;
-                if (border) {
-                    level.setBlock(new BlockPos(x, y, 0), frame, 3);
-                }
-            }
-        }
-        OblivionPortalShape.findEmptyPortalShape(level, PORTAL, net.minecraft.core.Direction.Axis.X).ifPresent(OblivionPortalShape::createPortalBlocks);
+        StructureTemplate template = level.getServer().getStructureManager().getOrCreate(HUB_TEMPLATE);
+        template.placeInWorld(level, ORIGIN, ORIGIN, new StructurePlaceSettings().setIgnoreEntities(true), level.getRandom(), Block.UPDATE_CLIENTS);
+        OblivionPortalShape.findEmptyPortalShape(level, PORTAL, Direction.Axis.X).ifPresent(OblivionPortalShape::createPortalBlocks);
     }
 }
