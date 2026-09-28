@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.worldgen.structure.DruidSanctuaryPiece;
 import dev.zsskayr.merlins_inferno.worldgen.structure.AncientBattlefieldPiece;
+import dev.zsskayr.merlins_inferno.worldgen.structure.AncientBattlefieldScrubPiece;
 import dev.zsskayr.merlins_inferno.worldgen.structure.RowanwoodTreePiece;
 import dev.zsskayr.merlins_inferno.worldgen.structure.SacredChurchPiece;
 
@@ -28,6 +29,9 @@ public final class ModStructurePieceTypes {
 
     public static final DeferredHolder<StructurePieceType, StructurePieceType> ANCIENT_BATTLEFIELD = STRUCTURE_PIECE_TYPES.register("ancient_battlefield",
             () -> (StructurePieceType.StructureTemplateType) AncientBattlefieldPiece::new);
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> ANCIENT_BATTLEFIELD_SCRUB = STRUCTURE_PIECE_TYPES.register("ancient_battlefield_scrub",
+            () -> (StructurePieceType) (context, tag) -> new AncientBattlefieldScrubPiece(tag));
 
     private ModStructurePieceTypes() {
     }

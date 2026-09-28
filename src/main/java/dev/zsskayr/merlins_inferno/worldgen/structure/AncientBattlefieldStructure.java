@@ -99,7 +99,12 @@ public class AncientBattlefieldStructure extends Structure {
             int originY = lavaTopY - AncientBattlefieldPiece.LAVA_TOP_LOCAL_Y - 1; // one layer lower: 5 layers of rim show above the lava
             BlockPos origin = new BlockPos(cx - size.getX() / 2, originY, cz - size.getZ() / 2);
             return Optional.of(new Structure.GenerationStub(new BlockPos(cx, originY, cz),
-                    builder -> builder.addPiece(new AncientBattlefieldPiece(templateManager, origin))));
+                    builder -> {
+                        builder.addPiece(new AncientBattlefieldPiece(templateManager, origin));
+                        // Wider box that strips the fungus trees the dome would leave half-cut (see the piece's javadoc).
+                        builder.addPiece(new AncientBattlefieldScrubPiece(cx, cz, originY + AncientBattlefieldPiece.SURFACE_Y + 1,
+                                heightAccessor.getMaxBuildHeight() - 1));
+                    }));
         }
         return Optional.empty();
     }
