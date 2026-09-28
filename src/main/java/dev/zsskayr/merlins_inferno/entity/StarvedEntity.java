@@ -173,6 +173,10 @@ public class StarvedEntity extends Monster implements GeoEntity {
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         // mustSee = false: it keeps tracking through walls inside its follow range.
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false, null));
+        // The Nether's own game is prey to it too: hoglins and piglins (brutes included).
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, net.minecraft.world.entity.Mob.class, 10, false, false,
+                prey -> prey instanceof net.minecraft.world.entity.monster.hoglin.Hoglin
+                        || prey instanceof net.minecraft.world.entity.monster.piglin.AbstractPiglin));
     }
 
     // ------------------------------------------------------------------------------------------

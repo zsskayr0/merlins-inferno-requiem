@@ -43,7 +43,7 @@ public final class ModSpawnPlacements {
         event.register(ModEntityTypes.DULLAHAN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 DullahanEntity::checkDullahanSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
-        // Andras: rare and solitary in the Nether (biomes from biome_modifier/andras_spawns.json). Ostara: rare,
+        // Andras: no natural spawn - only his Ancient Battlefield places him (spawn egg/command still work). Ostara: rare,
         // daytime, Hallowed Grove only (spawn list in ModBiomeProvider, the rule itself does the rest).
         event.register(ModEntityTypes.ANDRAS.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AndrasEntity::checkAndrasSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);

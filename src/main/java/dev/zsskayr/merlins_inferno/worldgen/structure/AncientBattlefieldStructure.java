@@ -52,6 +52,9 @@ public class AncientBattlefieldStructure extends Structure {
     /** Clear air needed above the middle columns for the sword (its tip is ~42 layers over the lava line). */
     private static final int HEADROOM_LOW = 8, HEADROOM_HIGH = 44;
 
+    /** How far above the generator's sea level the lava surface is searched for. */
+    private static final int MAX_LAVA_RISE = 24;
+
     private static final List<int[]> CANDIDATES = candidates();
 
     public AncientBattlefieldStructure(Structure.StructureSettings settings) {
@@ -81,19 +84,27 @@ public class AncientBattlefieldStructure extends Structure {
         ChunkGenerator generator = context.chunkGenerator();
         LevelHeightAccessor heightAccessor = context.heightAccessor();
         RandomState randomState = context.randomState();
-        int lavaTopY = generator.getSeaLevel() - 1;
-        int originY = lavaTopY - AncientBattlefieldPiece.LAVA_TOP_LOCAL_Y;
+        int seaTopY = generator.getSeaLevel() - 1;
 
         ChunkPos chunkPos = context.chunkPos();
         for (int[] offset : CANDIDATES) {
             int cx = chunkPos.getMiddleBlockX() + offset[0];
             int cz = chunkPos.getMiddleBlockZ() + offset[1];
-            if (!isLavaSite(generator, heightAccessor, randomState, cx, cz, lavaTopY)) {
+            // The lava's real surface can sit above the generator's sea level (modded or datapack Nethers raise it),
+            // so read it off the base noise instead of assuming it: the island must rise 6 layers over the actual lava.
+            int lavaTopY = lavaSurface(generator.getBaseColumn(cx, cz, heightAccessor, randomState), seaTopY);
+            if (lavaTopY < 0 || !isLavaSite(generator, heightAccessor, randomState, cx, cz, lavaTopY)) {
                 continue;
             }
+            int originY = lavaTopY - AncientBattlefieldPiece.LAVA_TOP_LOCAL_Y - 1; // one layer lower: 5 layers of rim show above the lava
             BlockPos origin = new BlockPos(cx - size.getX() / 2, originY, cz - size.getZ() / 2);
             return Optional.of(new Structure.GenerationStub(new BlockPos(cx, originY, cz),
-                    builder -> builder.addPiece(new AncientBattlefieldPiece(templateManager, origin))));
+                    builder -> {
+                        builder.addPiece(new AncientBattlefieldPiece(templateManager, origin));
+                        // Wider box that strips the fungus trees the dome would leave half-cut (see the piece's javadoc).
+                        builder.addPiece(new AncientBattlefieldScrubPiece(cx, cz, originY + AncientBattlefieldPiece.SURFACE_Y + 1,
+                                heightAccessor.getMaxBuildHeight() - 1));
+                    }));
         }
         return Optional.empty();
     }
@@ -129,6 +140,18 @@ public class AncientBattlefieldStructure extends Structure {
             }
         }
         return true;
+    }
+
+    /** Y of the topmost lava block of the lava column that starts at {@code seaTopY}, or -1 if there is no lava there. */
+    private static int lavaSurface(NoiseColumn column, int seaTopY) {
+        if (!column.getBlock(seaTopY).getFluidState().is(FluidTags.LAVA)) {
+            return -1;
+        }
+        int y = seaTopY;
+        while (y < seaTopY + MAX_LAVA_RISE && column.getBlock(y + 1).getFluidState().is(FluidTags.LAVA)) {
+            y++;
+        }
+        return y;
     }
 
     private static boolean isOpen(BlockState state) {

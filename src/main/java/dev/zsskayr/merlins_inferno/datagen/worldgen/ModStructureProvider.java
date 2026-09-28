@@ -50,7 +50,11 @@ public final class ModStructureProvider {
                 new SacredChurchStructure(new Structure.StructureSettings(biomes.getOrThrow(BiomeTags.IS_MOUNTAIN))));
         // Andras' Ancient Battlefield: any Nether biome - it floats at a fixed height regardless (see the structure's own javadoc).
         context.register(ModStructures.ANCIENT_BATTLEFIELD,
-                new AncientBattlefieldStructure(new Structure.StructureSettings(biomes.getOrThrow(BiomeTags.IS_NETHER))));
+                // Last decoration step: the island and its cut dome go in after every feature of the chunk (fungus trees
+                // included), so nothing in-chunk can grow into the sword afterwards.
+                new AncientBattlefieldStructure(new Structure.StructureSettings(biomes.getOrThrow(BiomeTags.IS_NETHER), java.util.Map.of(),
+                        net.minecraft.world.level.levelgen.GenerationStep.Decoration.TOP_LAYER_MODIFICATION,
+                        net.minecraft.world.level.levelgen.structure.TerrainAdjustment.NONE)));
     }
 
     public static void bootstrapStructureSets(BootstrapContext<StructureSet> context) {

@@ -163,7 +163,7 @@ def main(src, dst):
             solid = [y for y in range(H) if not isair(name(x, y, z))]
             if not solid: continue
             for y in range(solid[0], solid[-1] + 1):
-                e = {'pos': ints((x, y, z)), 'state': int_(pidx(name(x, y, z)))}
+                e = {'pos': lst(3, [int_(x), int_(y), int_(z)]), 'state': int_(pidx(name(x, y, z)))}
                 if (x, y, z) in spawners:
                     sd = spawners[(x, y, z)]
                     ent = sd['SpawnData']['entity']['id']

@@ -9,6 +9,8 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -58,6 +60,9 @@ public class AncientBattlefieldPiece extends TemplateStructurePiece {
     /** How far he may wander from his spot - the dome and the circle around it. */
     private static final int ANDRAS_LEASH = 24;
 
+    /** The dome of air cut over the island: centred on the island's middle (template-local), radius and height in blocks. */
+    private static final int DOME_CENTER_X = 40, DOME_CENTER_Z = 40, DOME_RADIUS = 38, DOME_HEIGHT = 56;
+
     private boolean spawned;
 
     public AncientBattlefieldPiece(StructureTemplateManager templateManager, BlockPos pos) {
@@ -88,11 +93,45 @@ public class AncientBattlefieldPiece extends TemplateStructurePiece {
     @Override
     public void postProcess(WorldGenLevel level, StructureManager structureManager, ChunkGenerator generator, RandomSource random,
             BoundingBox chunkBox, ChunkPos chunkPos, BlockPos pos) {
+        this.clearDome(level, chunkBox);
         super.postProcess(level, structureManager, generator, random, chunkBox, chunkPos, pos);
         this.spawnAndras(level, chunkBox);
     }
 
-    /** Andras himself, spawned once - guaranteed, unlike his rare roaming spawn elsewhere in the Nether. */
+    /**
+     * Cuts a hard-edged dome of air over the island (the template is pasted right after, over the top of it), so the
+     * Nether's own terrain, fungus trees and ceiling can never swallow the giant sword: everything inside an
+     * ellipsoid centred on the island's middle, from its surface up, is removed. It has to reach ~42 layers above the
+     * surface at the sword, which hangs 19 blocks off-centre, hence the tall vertical radius.
+     */
+    private void clearDome(WorldGenLevel level, BoundingBox chunkBox) {
+        int cx = this.templatePosition.getX() + DOME_CENTER_X;
+        int cz = this.templatePosition.getZ() + DOME_CENTER_Z;
+        int baseY = this.templatePosition.getY() + SURFACE_Y + 1;
+        int minX = Math.max(chunkBox.minX(), cx - DOME_RADIUS);
+        int maxX = Math.min(chunkBox.maxX(), cx + DOME_RADIUS);
+        int minZ = Math.max(chunkBox.minZ(), cz - DOME_RADIUS);
+        int maxZ = Math.min(chunkBox.maxZ(), cz + DOME_RADIUS);
+        int topY = Math.min(chunkBox.maxY(), baseY + DOME_HEIGHT);
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) {
+                double horizontal = ((double) (x - cx) * (x - cx) + (double) (z - cz) * (z - cz)) / ((double) DOME_RADIUS * DOME_RADIUS);
+                if (horizontal >= 1.0) {
+                    continue;
+                }
+                int height = (int) Math.floor(DOME_HEIGHT * Math.sqrt(1.0 - horizontal));
+                for (int y = baseY; y <= Math.min(topY, baseY + height); y++) {
+                    p.set(x, y, z);
+                    if (!level.getBlockState(p).isAir()) {
+                        level.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+                    }
+                }
+            }
+        }
+    }
+
+    /** Andras himself, spawned once, and the only place he ever appears naturally. */
     private void spawnAndras(WorldGenLevel level, BoundingBox chunkBox) {
         BlockPos p = this.templatePosition.offset(ANDRAS_X, ANDRAS_Y, ANDRAS_Z);
         if (this.spawned || !chunkBox.isInside(p)) {
