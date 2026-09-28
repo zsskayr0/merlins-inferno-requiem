@@ -244,6 +244,11 @@ public final class ModBlocks {
             SacredAltarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CHISELED_QUARTZ_BLOCK).strength(-1.0F, 3600000.0F)
                     .noLootTable().lightLevel(state -> 8).pushReaction(PushReaction.BLOCK));
 
+    // The film of an Oblivion portal; lit with the Key of Oblivion (see OblivionKeyItem). No item, no drops.
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.OblivionPortalBlock> OBLIVION_PORTAL = BLOCKS.registerBlock("oblivion_portal",
+            dev.zsskayr.merlins_inferno.block.OblivionPortalBlock::new, BlockBehaviour.Properties.of().noCollission().strength(-1.0F)
+                    .sound(SoundType.GLASS).lightLevel(state -> 5).pushReaction(PushReaction.BLOCK).noLootTable());
+
     // --- Hell Forge: see HellForgeBlock's javadoc - block/blockentity exist for now purely to
     // carry HellForgeModel's oversized (~2.5x2.5x2 block) geometry via a BlockEntityRenderer.
     // No furnace/crafting-station behavior yet - that's a separate pass once this one (getting

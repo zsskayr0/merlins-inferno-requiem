@@ -33,6 +33,11 @@ public final class ModAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> ROWANWOOD_UNLOCKED =
             ATTACHMENT_TYPES.register("rowanwood_unlocked", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).copyOnDeath().build());
 
+    /** Where a player stood when they last entered Oblivion; the hub's portal brings them back there. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<net.minecraft.core.GlobalPos>> OBLIVION_ORIGIN =
+            ATTACHMENT_TYPES.register("oblivion_origin", () -> AttachmentType.builder(() -> net.minecraft.core.GlobalPos.of(net.minecraft.world.level.Level.OVERWORLD, net.minecraft.core.BlockPos.ZERO))
+                    .serialize(net.minecraft.core.GlobalPos.CODEC).copyOnDeath().build());
+
     private ModAttachments() {
     }
 

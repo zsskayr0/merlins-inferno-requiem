@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "merlins_inferno:block/oblivion_portal_ns"
+    },
+    "axis=z": {
+      "model": "merlins_inferno:block/oblivion_portal_ew"
+    }
+  }
+}
