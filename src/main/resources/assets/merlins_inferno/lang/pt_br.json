@@ -283,5 +283,13 @@
   "subtitles.merlins_inferno.entity.starved.hunger": "Faminto rosna",
   "subtitles.merlins_inferno.entity.starved.step": "Faminto anda",
   "subtitles.merlins_inferno.entity.starved.attack": "Faminto ataca com garras",
-  "subtitles.merlins_inferno.entity.starved.charge": "Faminto investe"
+  "subtitles.merlins_inferno.entity.starved.charge": "Faminto investe",
+  "block.merlins_inferno.flesh_block": "Bloco de Carne",
+  "block.merlins_inferno.flesh_slab": "Laje de Carne",
+  "block.merlins_inferno.flesh_carpet": "Tapete de Carne",
+  "block.merlins_inferno.red_chain": "Corrente Vermelha",
+  "block.merlins_inferno.black_nylium": "Nylium Negro",
+  "block.merlins_inferno.tall_crimson_roots": "Raízes Carmesim Altas",
+  "block.merlins_inferno.tall_black_grass": "Grama Negra Alta",
+  "block.merlins_inferno.lust_flower": "Flor da Luxúria"
 }

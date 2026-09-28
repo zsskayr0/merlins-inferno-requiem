@@ -283,5 +283,13 @@
   "subtitles.merlins_inferno.entity.starved.hunger": "Starved growls",
   "subtitles.merlins_inferno.entity.starved.step": "Starved steps",
   "subtitles.merlins_inferno.entity.starved.attack": "Starved claws",
-  "subtitles.merlins_inferno.entity.starved.charge": "Starved charges"
+  "subtitles.merlins_inferno.entity.starved.charge": "Starved charges",
+  "block.merlins_inferno.flesh_block": "Flesh Block",
+  "block.merlins_inferno.flesh_slab": "Flesh Slab",
+  "block.merlins_inferno.flesh_carpet": "Flesh Carpet",
+  "block.merlins_inferno.red_chain": "Red Chain",
+  "block.merlins_inferno.black_nylium": "Black Nylium",
+  "block.merlins_inferno.tall_crimson_roots": "Tall Crimson Roots",
+  "block.merlins_inferno.tall_black_grass": "Tall Black Grass",
+  "block.merlins_inferno.lust_flower": "Lust Flower"
 }

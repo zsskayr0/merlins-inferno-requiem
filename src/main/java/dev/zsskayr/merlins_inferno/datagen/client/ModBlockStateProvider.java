@@ -1,8 +1,12 @@
 package dev.zsskayr.merlins_inferno.datagen.client;
 
+import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DoublePlantBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
@@ -50,6 +54,7 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         registerLyrium();
         registerSacredChurch();
         registerCompressedNetherrack();
+        registerFleshAndNetherFlora();
 
         // Rowanwood
         logBlock(ModBlocks.ROWANWOOD_LOG.get());
@@ -84,6 +89,48 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         wallBlock(ModBlocks.COMPRESSED_NETHERRACK_WALL.get(), texture);
         models().singleTexture("compressed_netherrack_wall_inventory", mcLoc("block/wall_inventory"), "wall", texture);
         itemModels().withExistingParent("compressed_netherrack_wall", modLoc("block/compressed_netherrack_wall_inventory"));
+    }
+
+    /** Flesh (block/slab/carpet), the red chain, black nylium and the Nether plants (texture names differ from block names). */
+    private void registerFleshAndNetherFlora() {
+        ResourceLocation flesh = modLoc("block/flesh");
+        ModelFile full = models().cubeAll("flesh_block", flesh);
+        simpleBlock(ModBlocks.FLESH_BLOCK.get(), full);
+        itemModels().simpleBlockItem(ModBlocks.FLESH_BLOCK.get());
+        slabBlock(ModBlocks.FLESH_SLAB.get(), models().slab("flesh_slab", flesh, flesh, flesh),
+                models().slabTop("flesh_slab_top", flesh, flesh, flesh), full);
+        itemModels().simpleBlockItem(ModBlocks.FLESH_SLAB.get());
+        simpleBlock(ModBlocks.FLESH_CARPET.get(), models().singleTexture("flesh_carpet", mcLoc("block/carpet"), "wool", flesh));
+        itemModels().withExistingParent("flesh_carpet", modLoc("block/flesh_carpet"));
+
+        // Hand-written model (models/block/red_chain.json), imported from the "Better Lanterns and Chains" pack.
+        ModelFile chain = models().getExistingFile(modLoc("block/red_chain"));
+        getVariantBuilder(ModBlocks.RED_CHAIN.get())
+                .partialState().with(BlockStateProperties.AXIS, Direction.Axis.Y).modelForState().modelFile(chain).addModel()
+                .partialState().with(BlockStateProperties.AXIS, Direction.Axis.X).modelForState().modelFile(chain).rotationX(90).rotationY(90).addModel()
+                .partialState().with(BlockStateProperties.AXIS, Direction.Axis.Z).modelForState().modelFile(chain).rotationX(90).addModel();
+        itemModels().basicItem(ModItems.RED_CHAIN_ITEM.get());
+
+        ModelFile nylium = models().cubeBottomTop("black_nylium", modLoc("block/black_nylium_side"),
+                mcLoc("block/netherrack"), modLoc("block/black_nylium_top"));
+        simpleBlock(ModBlocks.BLACK_NYLIUM.get(), nylium);
+        itemModels().simpleBlockItem(ModBlocks.BLACK_NYLIUM.get());
+
+        ModelFile lust = models().cross("lust_flower", modLoc("block/lust_rose")).renderType("cutout");
+        simpleBlock(ModBlocks.LUST_FLOWER.get(), lust);
+        itemModels().withExistingParent("lust_flower", "item/generated").texture("layer0", modLoc("block/lust_rose"));
+
+        doublePlant(ModBlocks.TALL_CRIMSON_ROOTS.get(), "tall_crimson_roots");
+        doublePlant(ModBlocks.TALL_BLACK_GRASS.get(), "tall_black_grass");
+    }
+
+    private void doublePlant(Block block, String name) {
+        ModelFile bottom = models().cross(name + "_bottom", modLoc("block/" + name + "_bottom")).renderType("cutout");
+        ModelFile top = models().cross(name + "_top", modLoc("block/" + name + "_top")).renderType("cutout");
+        getVariantBuilder(block)
+                .partialState().with(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER).modelForState().modelFile(bottom).addModel()
+                .partialState().with(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER).modelForState().modelFile(top).addModel();
+        itemModels().withExistingParent(name, "item/generated").texture("layer0", modLoc("block/" + name + "_top"));
     }
 
     /** Ore, deepslate ore, lining block and the directional crystal cluster. */
