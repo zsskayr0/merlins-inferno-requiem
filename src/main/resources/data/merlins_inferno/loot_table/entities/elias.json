@@ -7,6 +7,16 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "name": "merlins_inferno:flame_of_god"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
           "name": "merlins_inferno:celestial_essence",
           "functions": [
             {
