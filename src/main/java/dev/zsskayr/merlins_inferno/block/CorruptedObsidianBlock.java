@@ -8,8 +8,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 
 /**
- * Corrupted Obsidian: Crying Obsidian's demonic cousin, and Andras' Citadel's portal frame material (see
- * {@code worldgen.structure.InfernalCitadelPiece}). Per design:
+ * Corrupted Obsidian: Crying Obsidian's demonic cousin, and Andras' Ancient Battlefield's portal frame material (see
+ * {@code worldgen.structure.AncientBattlefieldPiece}). Per design:
  * <ul>
  *     <li><b>Circle 1:</b> outright unbreakable in survival, whatever the tool - like Bedrock.</li>
  *     <li><b>Circle 2:</b> breakable, but at three times Obsidian's own hardness ({@link #HARDNESS}) and gated

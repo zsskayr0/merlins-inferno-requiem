@@ -14,6 +14,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
 
 import dev.zsskayr.merlins_inferno.datagen.ModDataGenerators;
+import dev.zsskayr.merlins_inferno.event.BossRewardChestHandler;
 import dev.zsskayr.merlins_inferno.event.DemonbloodCombatHandler;
 import dev.zsskayr.merlins_inferno.event.RowanwoodCombatHandler;
 import dev.zsskayr.merlins_inferno.event.DruidsTouchHandler;
@@ -85,6 +86,7 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new LyriumVillagerTrades());
         NeoForge.EVENT_BUS.register(new MarkOfDebtHandler());
         NeoForge.EVENT_BUS.register(new PandoraHandler());
+        NeoForge.EVENT_BUS.register(new BossRewardChestHandler());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }

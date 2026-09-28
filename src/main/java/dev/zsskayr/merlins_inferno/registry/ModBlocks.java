@@ -266,7 +266,7 @@ public final class ModBlocks {
                     .noOcclusion()
                     .noLootTable()); // breaking a part drops via HellForgePartBlock's own logic, not loot tables
 
-    // --- Corrupted Obsidian: crying obsidian's demonic cousin, red instead of purple. Andras' Citadel's boss room
+    // --- Corrupted Obsidian: crying obsidian's demonic cousin, red instead of purple. Andras' Ancient Battlefield's boss room
     // uses it for its portal frame - decorative only for now (the Purgatory dimension it's meant to open onto is
     // future content). Unbreakable in Circle 1 (see CorruptedObsidianBlock); from Circle 2 on it's minable, at
     // 3x Obsidian's hardness and gated behind a tool tier above Netherite that doesn't exist yet (see
