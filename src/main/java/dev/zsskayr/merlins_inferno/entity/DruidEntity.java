@@ -1,11 +1,18 @@
 package dev.zsskayr.merlins_inferno.entity;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -45,6 +52,8 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 
+import dev.zsskayr.merlins_inferno.registry.ModAttachments;
+import dev.zsskayr.merlins_inferno.registry.ModEnchantments;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 
 /**
@@ -75,9 +84,6 @@ public class DruidEntity extends PathfinderMob implements Merchant {
 
     @Nullable
     private Player tradingPlayer;
-    @Nullable
-    private MerchantOffers offers;
-
     public DruidEntity(EntityType<? extends DruidEntity> type, Level level) {
         super(type, level);
     }
@@ -200,19 +206,17 @@ public class DruidEntity extends PathfinderMob implements Merchant {
     }
 
     private static final String TAG_VARIANT = "Variant";
-    private static final String TAG_OFFERS = "Offers";
+    private static final String TAG_TRADE_COUNT = "TradeCount";
+    private static final String TAG_USES = "OfferUses";
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt(TAG_VARIANT, this.getVariant());
         compound.putLong(TAG_LAST_RESTOCK_DAY, this.lastRestockDay);
-        if (!this.level().isClientSide) {
-            MerchantOffers currentOffers = this.getOffers();
-            if (!currentOffers.isEmpty()) {
-                compound.put(TAG_OFFERS,
-                        MerchantOffers.CODEC.encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), currentOffers).getOrThrow());
-            }
+        compound.putInt(TAG_TRADE_COUNT, this.tradeCount);
+        if (this.entries != null) {
+            compound.putIntArray(TAG_USES, this.entries.stream().mapToInt(e -> e.offer().getUses()).toArray());
         }
     }
 
@@ -228,12 +232,9 @@ public class DruidEntity extends PathfinderMob implements Merchant {
         if (compound.contains(TAG_LAST_RESTOCK_DAY)) {
             this.lastRestockDay = compound.getLong(TAG_LAST_RESTOCK_DAY);
         }
-        if (compound.contains(TAG_OFFERS)) {
-            MerchantOffers.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.get(TAG_OFFERS))
-                    .resultOrPartial(error -> {
-                    })
-                    .ifPresent(loaded -> this.offers = loaded);
-        }
+        this.tradeCount = compound.getInt(TAG_TRADE_COUNT);
+        // The offers themselves are rebuilt from code (see buildEntries); only their use counts are saved.
+        this.savedUses = compound.contains(TAG_USES) ? compound.getIntArray(TAG_USES) : null;
     }
 
     // --- Daily restock: the trade's uses come back once per in-game day (design decision - a
@@ -247,7 +248,7 @@ public class DruidEntity extends PathfinderMob implements Merchant {
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
-        if (this.tickCount % 100 == 0 && this.offers != null) {
+        if (this.tickCount % 100 == 0 && this.entries != null) {
             long day = this.level().getDayTime() / TICKS_PER_DAY;
             if (this.lastRestockDay == Long.MIN_VALUE) {
                 this.lastRestockDay = day;
@@ -255,8 +256,8 @@ public class DruidEntity extends PathfinderMob implements Merchant {
                 this.lastRestockDay = day;
                 // Never mid-trade: the open screen already holds a reference to these offers.
                 if (!this.isTrading()) {
-                    for (MerchantOffer offer : this.offers) {
-                        offer.resetUses();
+                    for (TradeEntry entry : this.entries) {
+                        entry.offer().resetUses();
                     }
                 }
             }
@@ -306,19 +307,111 @@ public class DruidEntity extends PathfinderMob implements Merchant {
         }
     }
 
-    // --- Merchant: a single fixed trade, no profession/leveling/reputation system - see class javadoc. ---
+    // --- Merchant: trades are gated by the Druid's level (it rises with the trades it makes) and, for the tool
+    // and enchantment trades, by the customer having found a Rowanwood Scrap. All entries live in one list whose
+    // MerchantOffer instances keep their use counts; each customer is shown a filtered view of it. No
+    // profession/reputation system - see class javadoc. ---
 
-    private static final int EMERALD_PRICE = 20;
-    private static final int MAX_USES = 4;
+    /** Total trades the Druid must have made to reach level 2, 3 and 4 (level 4 sells Mundane Essence). */
+    private static final int[] LEVEL_TRADES = {0, 8, 24, 48};
     private static final int TRADE_XP = 5;
     private static final float PRICE_MULTIPLIER = 0.05F;
 
-    private void updateTrades() {
-        MerchantOffers currentOffers = this.getOffers();
-        if (currentOffers.isEmpty()) {
-            currentOffers.add(new MerchantOffer(new ItemCost(Items.EMERALD, EMERALD_PRICE),
-                    new ItemStack(ModItems.MUNDANE_ESSENCE.get()), MAX_USES, TRADE_XP, PRICE_MULTIPLIER));
+    private record TradeEntry(int minLevel, boolean rowanwood, MerchantOffer offer) {
+    }
+
+    @Nullable
+    private List<TradeEntry> entries;
+    @Nullable
+    private int[] savedUses;
+    private int tradeCount;
+
+    public int getDruidLevel() {
+        int level = 1;
+        for (int i = 1; i < LEVEL_TRADES.length; i++) {
+            if (this.tradeCount >= LEVEL_TRADES[i]) {
+                level = i + 1;
+            }
         }
+        return level;
+    }
+
+    private static void add(List<TradeEntry> list, int minLevel, boolean rowanwood, ItemCost cost, ItemStack result, int maxUses) {
+        list.add(new TradeEntry(minLevel, rowanwood, new MerchantOffer(cost, result, maxUses, TRADE_XP, PRICE_MULTIPLIER)));
+    }
+
+    private void addBook(List<TradeEntry> list, ResourceKey<Enchantment> key, int enchantLevel, int price) {
+        this.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(key).ifPresent(holder -> {
+            ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
+            ItemEnchantments.Mutable stored = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+            stored.set(holder, enchantLevel);
+            book.set(DataComponents.STORED_ENCHANTMENTS, stored.toImmutable());
+            add(list, 1, true, new ItemCost(Items.EMERALD, price), book, 2);
+        });
+    }
+
+    private List<TradeEntry> buildEntries() {
+        List<TradeEntry> list = new ArrayList<>();
+        // Level 1: simple flowers and saplings, and a little buying of forest goods.
+        add(list, 1, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.DANDELION, 6), 8);
+        add(list, 1, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.POPPY, 6), 8);
+        add(list, 1, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.OAK_SAPLING, 4), 8);
+        add(list, 1, false, new ItemCost(Items.SWEET_BERRIES, 10), new ItemStack(Items.EMERALD, 1), 8);
+        // Level 2: rarer flowers, bone meal, moss.
+        add(list, 2, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.CORNFLOWER, 4), 6);
+        add(list, 2, false, new ItemCost(Items.EMERALD, 1), new ItemStack(Items.LILY_OF_THE_VALLEY, 4), 6);
+        add(list, 2, false, new ItemCost(Items.EMERALD, 2), new ItemStack(Items.BONE_MEAL, 8), 6);
+        add(list, 2, false, new ItemCost(Items.EMERALD, 3), new ItemStack(Items.MOSS_BLOCK, 4), 6);
+        // Level 3: uncommon growths.
+        add(list, 3, false, new ItemCost(Items.EMERALD, 3), new ItemStack(Items.CHERRY_SAPLING, 2), 5);
+        add(list, 3, false, new ItemCost(Items.EMERALD, 4), new ItemStack(Items.SPORE_BLOSSOM, 1), 5);
+        add(list, 3, false, new ItemCost(Items.EMERALD, 5), new ItemStack(Items.HONEYCOMB, 3), 5);
+        // Level 4: Mundane Essence, the road to the Rowanwood Bar.
+        add(list, 4, false, new ItemCost(Items.EMERALD, 20), new ItemStack(ModItems.MUNDANE_ESSENCE.get()), 4);
+        // After the customer's first Rowanwood Scrap: the Druid's tools (craft-only otherwise)...
+        add(list, 1, true, new ItemCost(Items.EMERALD, 8), new ItemStack(ModItems.ROWANWOOD_SHOVEL.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 8), new ItemStack(ModItems.ROWANWOOD_HOE.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 12), new ItemStack(ModItems.ROWANWOOD_SWORD.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 12), new ItemStack(ModItems.ROWANWOOD_AXE.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 14), new ItemStack(ModItems.ROWANWOOD_PICKAXE.get()), 2);
+        // ...and enchanted books at bargain prices: the Druid is the best enchantment merchant around.
+        addBook(list, ModEnchantments.DRUIDS_TOUCH, 1, 4);
+        addBook(list, Enchantments.SILK_TOUCH, 1, 5);
+        addBook(list, Enchantments.UNBREAKING, 3, 6);
+        addBook(list, Enchantments.FORTUNE, 3, 8);
+        addBook(list, Enchantments.LOOTING, 3, 8);
+        addBook(list, Enchantments.EFFICIENCY, 5, 9);
+        addBook(list, Enchantments.PROTECTION, 4, 9);
+        addBook(list, Enchantments.SHARPNESS, 5, 10);
+        addBook(list, Enchantments.MENDING, 1, 12);
+        if (this.savedUses != null) {
+            for (int i = 0; i < list.size() && i < this.savedUses.length; i++) {
+                for (int u = 0; u < this.savedUses[i]; u++) {
+                    list.get(i).offer().increaseUses();
+                }
+            }
+            this.savedUses = null;
+        }
+        return list;
+    }
+
+    private List<TradeEntry> entries() {
+        if (this.entries == null) {
+            this.entries = this.buildEntries();
+        }
+        return this.entries;
+    }
+
+    /** True once the player has ever held a Rowanwood Scrap (also catches scrap that came from a chest or a trade). */
+    private static boolean hasRowanwoodUnlocked(Player player) {
+        if (player.getData(ModAttachments.ROWANWOOD_UNLOCKED)) {
+            return true;
+        }
+        if (player.getInventory().contains(new ItemStack(ModItems.ROWANWOOD_SCRAP.get()))) {
+            player.setData(ModAttachments.ROWANWOOD_UNLOCKED, true);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -329,7 +422,7 @@ public class DruidEntity extends PathfinderMob implements Merchant {
                     return InteractionResult.CONSUME;
                 }
                 this.setTradingPlayer(player);
-                this.openTradingScreen(player, this.getDisplayName(), 1);
+                this.openTradingScreen(player, this.getDisplayName(), this.getDruidLevel());
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
@@ -356,11 +449,15 @@ public class DruidEntity extends PathfinderMob implements Merchant {
         if (this.level().isClientSide) {
             throw new IllegalStateException("Cannot load Druid offers on the client");
         }
-        if (this.offers == null) {
-            this.offers = new MerchantOffers();
-            this.updateTrades();
+        int level = this.getDruidLevel();
+        boolean rowanwood = this.tradingPlayer != null && hasRowanwoodUnlocked(this.tradingPlayer);
+        MerchantOffers view = new MerchantOffers();
+        for (TradeEntry entry : this.entries()) {
+            if (entry.minLevel() <= level && (!entry.rowanwood() || rowanwood)) {
+                view.add(entry.offer());
+            }
         }
-        return this.offers;
+        return view;
     }
 
     @Override
@@ -372,6 +469,7 @@ public class DruidEntity extends PathfinderMob implements Merchant {
     @Override
     public void notifyTrade(MerchantOffer offer) {
         offer.increaseUses();
+        this.tradeCount++;
         this.ambientSoundTime = -this.getAmbientSoundInterval();
     }
 

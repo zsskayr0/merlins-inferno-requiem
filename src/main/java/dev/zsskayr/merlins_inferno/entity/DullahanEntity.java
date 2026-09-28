@@ -7,18 +7,14 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -128,9 +124,6 @@ public class DullahanEntity extends Monster implements GeoEntity {
     private int pendingAnimationTick;
     private RawAnimation loopAnimation = RawAnimation.begin().thenLoop("animation.dullahan.idle");
     private int lastHurtAnimationTick = -100;
-
-    private final ServerBossEvent bossEvent = new ServerBossEvent(Component.translatable("entity.merlins_inferno.dullahan"),
-            BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
 
     /** Whether the night/biome rule governs this one (natural spawns only). Persisted. */
     private boolean bound;
@@ -266,7 +259,7 @@ public class DullahanEntity extends Monster implements GeoEntity {
     }
 
     // ------------------------------------------------------------------------------------------
-    // Tick: paralysis, repellent, fading, boss bar
+    // Tick: paralysis, repellent, fading
     // ------------------------------------------------------------------------------------------
 
     @Override
@@ -275,8 +268,6 @@ public class DullahanEntity extends Monster implements GeoEntity {
         if (this.level().isClientSide) {
             return;
         }
-        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
-
         if (this.paralysisTicks > 0) {
             if (--this.paralysisTicks == 0) {
                 this.entityData.set(DATA_PARALYZED, false);
@@ -365,26 +356,8 @@ public class DullahanEntity extends Monster implements GeoEntity {
     }
 
     // ------------------------------------------------------------------------------------------
-    // Boss bar (only players who can see it), data, save
+    // Data, save (a miniboss: no boss bar)
     // ------------------------------------------------------------------------------------------
-
-    @Override
-    public void startSeenByPlayer(ServerPlayer player) {
-        super.startSeenByPlayer(player);
-        this.bossEvent.addPlayer(player);
-    }
-
-    @Override
-    public void stopSeenByPlayer(ServerPlayer player) {
-        super.stopSeenByPlayer(player);
-        this.bossEvent.removePlayer(player);
-    }
-
-    @Override
-    public void remove(RemovalReason reason) {
-        this.bossEvent.removeAllPlayers();
-        super.remove(reason);
-    }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
