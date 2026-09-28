@@ -89,7 +89,34 @@ public class AncientBattlefieldPiece extends TemplateStructurePiece {
     public void postProcess(WorldGenLevel level, StructureManager structureManager, ChunkGenerator generator, RandomSource random,
             BoundingBox chunkBox, ChunkPos chunkPos, BlockPos pos) {
         super.postProcess(level, structureManager, generator, random, chunkBox, chunkPos, pos);
+        this.logPlacement(level, chunkBox, chunkPos);
         this.spawnAndras(level, chunkBox);
+    }
+
+    /** TEMPORARY diagnostic: how many of the template's nether bricks inside this chunk really ended up in the world. */
+    private void logPlacement(WorldGenLevel level, BoundingBox chunkBox, ChunkPos chunkPos) {
+        try {
+            java.util.List<net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo> bricks =
+                    this.template.filterBlocks(this.templatePosition, this.placeSettings, net.minecraft.world.level.block.Blocks.NETHER_BRICKS);
+            int expected = 0;
+            int found = 0;
+            net.minecraft.world.level.block.state.BlockState sample = null;
+            for (var info : bricks) {
+                if (chunkBox.isInside(info.pos())) {
+                    expected++;
+                    net.minecraft.world.level.block.state.BlockState state = level.getBlockState(info.pos());
+                    if (state.is(net.minecraft.world.level.block.Blocks.NETHER_BRICKS)) {
+                        found++;
+                    } else if (sample == null) {
+                        sample = state;
+                    }
+                }
+            }
+            Merlins_inferno.LOGGER.info("[battlefield-diag] chunk {} templatePos {} pieceBB {} chunkBox {} templateSize {} allBricksInfos {} expectedInChunk {} foundInWorld {} sampleWorldState {}",
+                    chunkPos, this.templatePosition, this.boundingBox, chunkBox, this.template.getSize(), bricks.size(), expected, found, sample);
+        } catch (RuntimeException e) {
+            Merlins_inferno.LOGGER.error("[battlefield-diag] failed", e);
+        }
     }
 
     /** Andras himself, spawned once, and the only place he ever appears naturally. */

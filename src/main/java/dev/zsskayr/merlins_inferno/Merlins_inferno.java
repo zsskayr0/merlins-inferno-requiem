@@ -46,7 +46,7 @@ import dev.zsskayr.merlins_inferno.registry.ModStructureTypes;
 @Mod(Merlins_inferno.MODID)
 public class Merlins_inferno {
     public static final String MODID = "merlins_inferno";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
