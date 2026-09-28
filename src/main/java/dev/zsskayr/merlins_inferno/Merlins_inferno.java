@@ -60,6 +60,7 @@ public class Merlins_inferno {
         ModParticles.register(modEventBus);
         ModEffects.register(modEventBus);
         ModAttachments.register(modEventBus);
+        dev.zsskayr.merlins_inferno.registry.ModLootModifiers.register(modEventBus);
         ModRecipeTypes.register(modEventBus);
         ModRecipeSerializers.register(modEventBus);
         ModItems.register(modEventBus);
@@ -88,6 +89,7 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new LyriumVillagerTrades());
         NeoForge.EVENT_BUS.register(new MarkOfDebtHandler());
         NeoForge.EVENT_BUS.register(new PandoraHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EssenceDropHandler());
         NeoForge.EVENT_BUS.register(new BossRewardChestHandler());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

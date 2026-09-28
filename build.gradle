@@ -187,3 +187,14 @@ idea {
         downloadJavadoc = true
     }
 }
+
+// Pure Pandora recipe and layout checks; no Minecraft client or test framework required.
+tasks.register('verifyPandoraGui', JavaExec) {
+    group = 'verification'
+    description = 'Checks Pandora recipe matching and animated GUI geometry.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    mainClass = 'dev.zsskayr.merlins_inferno.menu.PandoraGuiChecks'
+}
+tasks.named('check') { dependsOn tasks.named('verifyPandoraGui') }
