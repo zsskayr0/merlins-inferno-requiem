@@ -43,7 +43,7 @@ import dev.zsskayr.merlins_inferno.worldgen.structure.GreatBell;
  * Elias - the Angelical path's miniboss: a Lyrium-mad zealot who keeps vigil over a shrine, blindfold
  * on, dragging a censer on a chain. Not an angel: a faithful, broken by what he worships.
  * <ul>
- *     <li><b>Stats:</b> the miniboss ruler (half a Warden: 250 health, 15 damage), slow, with the chain
+ *     <li><b>Stats:</b> the miniboss ruler (stronger than Ostara: 400 health, 18 damage, some armor), slow, with the chain
  *     reaching past a normal swing.</li>
  *     <li><b>The Great Bell (signature):</b> while he fights, the church's bell tolls every minute. Each toll
  *     makes him stronger and lets him regenerate more, but he also takes more damage. On the seventh toll - or
@@ -58,8 +58,8 @@ import dev.zsskayr.merlins_inferno.worldgen.structure.GreatBell;
  * Death starts the altar's cooldown; a diamond on the altar wakes the next one.
  */
 public class EliasEntity extends Monster {
-    public static final double MAX_HEALTH = 250.0;
-    public static final double ATTACK_DAMAGE = 15.0;
+    public static final double MAX_HEALTH = 400.0;
+    public static final double ATTACK_DAMAGE = 18.0;
     public static final double MOVEMENT_SPEED = 0.2;
 
     /** The chain reaches this far past a normal melee swing on each side. */
@@ -116,6 +116,7 @@ public class EliasEntity extends Monster {
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH)
                 .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
                 .add(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
+                .add(Attributes.ARMOR, 8.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.5)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }

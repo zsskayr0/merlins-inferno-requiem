@@ -37,7 +37,7 @@ import dev.zsskayr.merlins_inferno.worldgen.biome.ModBiomes;
 /**
  * Ostara, the Spring Deity - the Mundane (Druidic) path's Circle 1 boss.
  * <ul>
- *     <li><b>Stats:</b> 350 health, 14 damage.</li>
+ *     <li><b>Stats:</b> 300 health, 12 damage.</li>
  *     <li><b>Petals:</b> from a distance she flings a volley of petals: magic damage and a bout of Slowness
  *     and Poison ({@link #PETAL_INTERVAL} ticks apart, up to {@link #PETAL_RANGE} blocks, needs line of sight).</li>
  *     <li><b>Bloom:</b> every {@link #BLOOM_INTERVAL} ticks she heals the monsters around her (and herself, less).</li>
@@ -47,8 +47,8 @@ import dev.zsskayr.merlins_inferno.worldgen.biome.ModBiomes;
  * Drawn as a humanoid placeholder.
  */
 public class OstaraEntity extends Monster {
-    public static final double MAX_HEALTH = 350.0;
-    public static final double ATTACK_DAMAGE = 14.0;
+    public static final double MAX_HEALTH = 300.0;
+    public static final double ATTACK_DAMAGE = 12.0;
     public static final double MOVEMENT_SPEED = 0.25;
 
     private static final int PETAL_INTERVAL = 80;
@@ -59,6 +59,8 @@ public class OstaraEntity extends Monster {
     private static final float BLOOM_ALLY_HEAL = 20.0F;
     private static final float BLOOM_SELF_HEAL = 8.0F;
     private static final double SOLITARY_RADIUS = 256.0;
+    /** Fraction of otherwise-valid natural spawn attempts that succeed. */
+    private static final float NATURAL_SPAWN_CHANCE = 0.1F;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(Component.translatable("entity.merlins_inferno.ostara"),
             BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
@@ -88,6 +90,10 @@ public class OstaraEntity extends Monster {
             return true;
         }
         if (level.dayTime() % 24000L >= 12000L || !level.getBiome(pos).is(ModBiomes.HALLOWED_GROVE)) {
+            return false;
+        }
+        // By day she is the grove's only monster, so without this gate she wins nearly every spawn attempt.
+        if (random.nextFloat() >= NATURAL_SPAWN_CHANCE) {
             return false;
         }
         if (!level.getBlockState(pos.below()).isValidSpawn(level, pos.below(), type)

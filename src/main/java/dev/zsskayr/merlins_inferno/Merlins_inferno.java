@@ -79,6 +79,8 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new DemonbloodCombatHandler());
         NeoForge.EVENT_BUS.register(new RowanwoodCombatHandler());
         NeoForge.EVENT_BUS.register(new DruidsTouchHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.AntivenomHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.RowanwoodUnlockHandler());
         NeoForge.EVENT_BUS.register(new SanctifiedTickHandler());
         NeoForge.EVENT_BUS.register(new SanctifiedCombatHandler());
         NeoForge.EVENT_BUS.register(new SeraphiumCombatHandler());

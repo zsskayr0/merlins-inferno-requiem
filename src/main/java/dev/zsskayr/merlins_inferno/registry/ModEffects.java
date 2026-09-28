@@ -27,6 +27,10 @@ public final class ModEffects {
     public static final DeferredHolder<MobEffect, MarkOfDebtEffect> MARK_OF_DEBT = MOB_EFFECTS.register("mark_of_debt",
             () -> new MarkOfDebtEffect(MobEffectCategory.HARMFUL, 0x8B1A1A));
 
+    // Drunk from an Antidote: immunity to Poison (Ostara's petals included). See event.AntivenomHandler.
+    public static final DeferredHolder<MobEffect, MarkOfDebtEffect> ANTIVENOM = MOB_EFFECTS.register("antivenom",
+            () -> new MarkOfDebtEffect(MobEffectCategory.BENEFICIAL, 0x7FD66B));
+
     private ModEffects() {
     }
 

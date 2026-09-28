@@ -2,7 +2,18 @@ package dev.zsskayr.merlins_inferno.entity;
 
 import java.util.EnumSet;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -20,8 +31,11 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
+import dev.zsskayr.merlins_inferno.registry.ModItems;
+import dev.zsskayr.merlins_inferno.registry.ModTags;
 
 /**
  * A cultist of the Sacred Church, and (rarely) of the open world too. In Circle 1 it is neutral - it ignores
@@ -32,6 +46,10 @@ import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
  * eight of them once, and a few more wander the world rarely (biome modifier).
  */
 public class SacredCultistEntity extends PathfinderMob {
+    private static final double BROTHERHOOD_RADIUS = 32.0;
+    private static final float IRON_SWORD_CHANCE = 0.30F;
+    private static final float SERAPHIUM_SWORD_CHANCE = 0.08F;
+
     public SacredCultistEntity(EntityType<? extends SacredCultistEntity> type, Level level) {
         super(type, level);
         this.setPersistenceRequired();
@@ -58,6 +76,56 @@ public class SacredCultistEntity extends PathfinderMob {
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, true,
                 living -> living instanceof Player player && ProgressionHelper.hasReached(player, ProgressionHelper.SECOND_CIRCLE)));
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this, SacredCultistEntity.class).setAlertOthers(SacredCultistEntity.class));
+        // The faithful hunt the unholy: undead and demons are attacked on sight, whatever the circle.
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 5, false, false,
+                living -> living.getType().is(EntityTypeTags.UNDEAD) || living.getType().is(ModTags.EntityTypes.DEMON)));
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
+            SpawnGroupData spawnGroupData) {
+        SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+        // Most go bare-handed; some carry an iron sword, and a rare few a Seraphium one. Never dropped, so
+        // cultists can't be farmed for Seraphium swords.
+        float roll = this.random.nextFloat();
+        if (roll < SERAPHIUM_SWORD_CHANCE) {
+            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.SERAPHIUM_SWORD.get()));
+        } else if (roll < SERAPHIUM_SWORD_CHANCE + IRON_SWORD_CHANCE) {
+            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+        }
+        this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
+        return data;
+    }
+
+    /** Brotherhood, like zombified piglins: strike one and every cultist and priest within earshot turns on the attacker. */
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        boolean hurt = super.hurt(source, amount);
+        if (hurt) {
+            this.rallyBrethren(source);
+        }
+        return hurt;
+    }
+
+    @Override
+    public void die(DamageSource cause) {
+        super.die(cause);
+        this.rallyBrethren(cause);
+    }
+
+    private void rallyBrethren(DamageSource source) {
+        if (!(source.getEntity() instanceof LivingEntity attacker) || attacker instanceof SacredCultistEntity
+                || attacker instanceof SacredPriestEntity || !(this.level() instanceof ServerLevel level)) {
+            return;
+        }
+        if (attacker instanceof Player player && (player.isCreative() || player.isSpectator())) {
+            return;
+        }
+        AABB area = this.getBoundingBox().inflate(BROTHERHOOD_RADIUS);
+        for (Mob brother : level.getEntitiesOfClass(Mob.class, area,
+                m -> m != this && m.isAlive() && (m instanceof SacredCultistEntity || m instanceof SacredPriestEntity))) {
+            brother.setTarget(attacker);
+        }
     }
 
     @Override

@@ -5,6 +5,9 @@ import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
@@ -28,6 +31,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.item.AntidoteItem;
 import dev.zsskayr.merlins_inferno.item.GrimmoriumItem;
 import dev.zsskayr.merlins_inferno.item.PandoraBoxItem;
 import dev.zsskayr.merlins_inferno.item.PortalKeyItem;
@@ -384,6 +388,17 @@ public final class ModItems {
             new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
     public static final DeferredItem<Item> EVES_SECRET = ITEMS.registerSimpleItem("eves_secret",
             new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
+    /** Ostara's fruit: an enchanted golden apple's blessings, but for twenty minutes. Dropped by Ostara. */
+    public static final DeferredItem<Item> OSTARAS_FRUIT = ITEMS.registerSimpleItem("ostaras_fruit",
+            new Item.Properties().stacksTo(16).rarity(Rarity.EPIC).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).alwaysEdible()
+                    .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 24000, 1), 1.0F)
+                    .effect(() -> new MobEffectInstance(MobEffects.ABSORPTION, 24000, 3), 1.0F)
+                    .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 24000, 0), 1.0F)
+                    .effect(() -> new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 24000, 0), 1.0F)
+                    .build()));
+    /** Drinkable: ten minutes of immunity to Poison. */
+    public static final DeferredItem<AntidoteItem> ANTIDOTE = ITEMS.registerItem("antidote",
+            props -> new AntidoteItem(props.stacksTo(16).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<Item> FLAME_OF_GOD = ITEMS.registerSimpleItem("flame_of_god",
             new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
     // Found in the Sacred Church's chest. Survives death (see event.PandoraHandler).
