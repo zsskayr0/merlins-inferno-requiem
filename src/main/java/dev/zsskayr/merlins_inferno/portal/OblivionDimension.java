@@ -31,7 +31,14 @@ public final class OblivionDimension {
     /** Where arrivals stand: in front of (north of) the portal, facing north, out of the doorway's way. */
     public static final BlockPos ARRIVAL = ORIGIN.offset(30, 29, 29);
 
+    /** Horizontal radius around the hub's centre (the world origin) where nothing spawns naturally, so arrivals are safe. */
+    private static final int HUB_SAFE_RADIUS = 40;
+
     private OblivionDimension() {
+    }
+
+    public static boolean isNearHub(double x, double z) {
+        return x * x + z * z < (double) HUB_SAFE_RADIUS * HUB_SAFE_RADIUS;
     }
 
     /** Raises the hub if its portal is not there (first arrival, or somebody broke it). */

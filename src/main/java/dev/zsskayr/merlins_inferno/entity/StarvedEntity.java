@@ -8,6 +8,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -30,7 +31,6 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
@@ -43,12 +43,15 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 import dev.zsskayr.merlins_inferno.entity.ai.StarvedChargeGoal;
 import dev.zsskayr.merlins_inferno.entity.ai.StarvedSeekGoal;
 import dev.zsskayr.merlins_inferno.registry.ModSounds;
 
 /**
- * The Starved - the Nether's miniboss between the Imp and the true boss (tag {@code merlins_inferno:demon}).
+ * The Starved - the first common mob of Circle 2 (tag {@code merlins_inferno:demon}); it only spawns naturally once
+ * the nearby player has reached Circle 2 ({@link #checkStarvedSpawnRules}). It used to be the Circle 1 miniboss - that
+ * role passed to the Grymn - and its stats were raised to fit its new tier.
  * The Imp's counterpart: big, four-legged, grounded, relentless, and hungry for flesh rather than gold.
  * <ul>
  *     <li><b>Never flees</b>, has a long follow range and, once it loses sight of its target, walks to the
@@ -75,10 +78,8 @@ public class StarvedEntity extends Monster implements GeoEntity {
     private static final ResourceLocation BITE_DAMAGE_ID = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "starved_bite_damage");
     private static final double SPEED_PER_HUNGER = 0.05;
     private static final double DAMAGE_PER_HUNGER = 0.08;
-    /** Natural spawns only below this height (the Nether's deep half) and in the dark. */
-    private static final int MAX_SPAWN_Y = 70;
-    private static final int MAX_SPAWN_BLOCK_LIGHT = 9;
-    private static final double SOLITARY_RADIUS = 64.0;
+    /** How far a natural spawn attempt looks for the player whose Circle actually gates it. */
+    private static final double CIRCLE_CHECK_RADIUS = 64.0;
 
     private static final ResourceLocation HUNGER_SPEED_ID = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "starved_hunger_speed");
     private static final ResourceLocation HUNGER_DAMAGE_ID = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "starved_hunger_damage");
@@ -113,18 +114,18 @@ public class StarvedEntity extends Monster implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 80.0)
-                .add(Attributes.ATTACK_DAMAGE, 8.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.27)
+                .add(Attributes.MAX_HEALTH, 120.0)
+                .add(Attributes.ATTACK_DAMAGE, 12.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.28)
                 .add(Attributes.FOLLOW_RANGE, 48.0)
-                .add(Attributes.ARMOR, 6.0)
+                .add(Attributes.ARMOR, 8.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.7)
                 .add(Attributes.ATTACK_KNOCKBACK, 0.8);
     }
 
     /**
-     * Solitary, rare (see its biome modifier), and only in the deep, dark parts of the Nether: below
-     * {@link #MAX_SPAWN_Y}, low block light, and no other Starved within {@link #SOLITARY_RADIUS}.
+     * A regular ground spawn anywhere in the Nether (see its biome modifier), but only once the nearest player has
+     * reached Circle 2 - before that the Starved simply doesn't exist for them.
      */
     public static boolean checkStarvedSpawnRules(EntityType<StarvedEntity> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         if (level.getDifficulty() == Difficulty.PEACEFUL) {
@@ -137,10 +138,11 @@ public class StarvedEntity extends Monster implements GeoEntity {
                 || !level.getBlockState(pos).getCollisionShape(level, pos).isEmpty()) {
             return false;
         }
-        if (pos.getY() > MAX_SPAWN_Y || level.getBrightness(LightLayer.BLOCK, pos) > MAX_SPAWN_BLOCK_LIGHT) {
+        if (!(level instanceof ServerLevel serverLevel)) {
             return false;
         }
-        return level.getEntitiesOfClass(StarvedEntity.class, new net.minecraft.world.phys.AABB(pos).inflate(SOLITARY_RADIUS)).isEmpty();
+        Player nearest = serverLevel.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, CIRCLE_CHECK_RADIUS, false);
+        return nearest != null && ProgressionHelper.hasReached(nearest, ProgressionHelper.SECOND_CIRCLE);
     }
 
     @Override
@@ -150,7 +152,7 @@ public class StarvedEntity extends Monster implements GeoEntity {
 
     @Override
     public int getMaxSpawnClusterSize() {
-        return 1;
+        return 2;
     }
 
     @Override

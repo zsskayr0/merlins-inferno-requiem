@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.entity.AndrasEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
-import dev.zsskayr.merlins_inferno.entity.GhostEntity;
+import dev.zsskayr.merlins_inferno.entity.GrymnEntity;
 import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 import dev.zsskayr.merlins_inferno.entity.OstaraEntity;
 import dev.zsskayr.merlins_inferno.entity.StarvedEntity;
@@ -34,9 +34,14 @@ public final class ModSpawnPlacements {
         event.register(ModEntityTypes.IMP.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 ImpEntity::checkImpSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
-        // Rare, solitary, deep-and-dark Nether miniboss; biomes come from biome_modifier/starved_spawns.json.
+        // Circle 2 common Nether mob (the rule carries the Circle gate); biomes from biome_modifier/starved_spawns.json.
         event.register(ModEntityTypes.STARVED.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 StarvedEntity::checkStarvedSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+
+        // Rare, solitary, deep-and-dark Circle 1 Nether miniboss (spawns on the ground, then hovers up);
+        // biomes come from biome_modifier/grymn_spawns.json.
+        event.register(ModEntityTypes.GRYMN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                GrymnEntity::checkGrymnSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
         // Night-only, Hallowed-Grove-only, one at a time - the rule itself carries all three (the
         // biome's spawn list just makes it a rare entry, see ModBiomeProvider).
@@ -53,9 +58,5 @@ public final class ModSpawnPlacements {
         // Sacred Cultists also wander the world (biome_modifier/sacred_cultist_spawns.json); the church places its own.
         event.register(ModEntityTypes.SACRED_CULTIST.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-
-        // Ghosts: flying, no ground requirement - night and Circle 2+ only (biomes from biome_modifier/ghost_spawns.json).
-        event.register(ModEntityTypes.GHOST.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                GhostEntity::checkGhostSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 }

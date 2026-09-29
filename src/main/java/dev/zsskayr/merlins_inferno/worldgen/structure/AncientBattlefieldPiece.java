@@ -30,7 +30,7 @@ import dev.zsskayr.merlins_inferno.registry.ModStructurePieceTypes;
  * {@code ancient_battlefield} template (converted from the author's WorldEdit schematic by
  * {@code tools/schem_to_structure.py}, which also wires every chest to its loot table). What the template holds:
  * <ul>
- *     <li>the battlefield itself - rubble piles with 10 chests ({@code andras_ruins}) and four Starved spawners,
+ *     <li>the battlefield itself - rubble piles with 10 chests ({@code andras_ruins}) and four Grymn spawners,
  *     an Imp spawner in the middle, and a ritual circle of flesh and compressed netherrack;</li>
  *     <li>the glass-roofed dome at the circle's centre, with the giant sword hanging over it. The sword's core is
  *     Corrupted Obsidian: it is the portal Andras' key opens (decorative for now - see the block's javadoc);</li>

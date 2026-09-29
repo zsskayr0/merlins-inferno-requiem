@@ -14,10 +14,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
+import dev.zsskayr.merlins_inferno.entity.GrymnEntity;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 
 /**
- * Extra essence drops for kills by a player: Infernal Essence from Nether mobs (Circle 2 on) and Mundane Essence from
+ * Extra essence drops for kills by a player (plus the Grymn's Circle 2 Otherworld Essence): Infernal Essence from Nether mobs (Circle 2 on) and Mundane Essence from
  * the Overworld's vanilla hostile mobs. These live here rather than in loot tables because the Circle is per player.
  * The Circle 2 doubling of loot-table essences is {@link dev.zsskayr.merlins_inferno.loot.DoubleEssenceModifier};
  * drops added here are already past that point, so they are doubled directly.
@@ -29,7 +30,18 @@ public final class EssenceDropHandler {
     public void onLivingDrops(LivingDropsEvent event) {
         LivingEntity victim = event.getEntity();
         if (!(event.getSource().getEntity() instanceof Player player) || !(victim.level() instanceof ServerLevel level)
-                || !(victim instanceof Mob) || level.random.nextFloat() >= DROP_CHANCE) {
+                || !(victim instanceof Mob)) {
+            return;
+        }
+        if (victim instanceof GrymnEntity) {
+            // The Grymn is the source of Otherworld Essence, guaranteed, from Circle 2 on. It also takes part in
+            // the random Nether roll below like any other Nether mob (on top of its loot-table Infernal Essence).
+            if (ProgressionHelper.hasReached(player, ProgressionHelper.SECOND_CIRCLE)) {
+                ItemStack stack = new ItemStack(ModItems.OTHERWORLD_ESSENCE.get(), (1 + level.random.nextInt(2)) * 2);
+                event.getDrops().add(new ItemEntity(level, victim.getX(), victim.getY(), victim.getZ(), stack));
+            }
+        }
+        if (level.random.nextFloat() >= DROP_CHANCE) {
             return;
         }
         boolean circleTwo = ProgressionHelper.hasReached(player, ProgressionHelper.SECOND_CIRCLE);

@@ -2,7 +2,7 @@
   "name": "patchouli.merlins_inferno.entry.starved.name",
   "icon": "merlins_inferno:starved_spawn_egg",
   "category": "merlins_inferno:infernal_road",
-  "sortnum": 1,
+  "sortnum": 2,
   "pages": [
     { "type": "patchouli:text", "text": "patchouli.merlins_inferno.entry.starved.page1" },
     { "type": "patchouli:text", "text": "patchouli.merlins_inferno.entry.starved.page2" },

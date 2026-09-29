@@ -12,7 +12,7 @@ import dev.zsskayr.merlins_inferno.entity.AndrasEntity;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanSteedEntity;
-import dev.zsskayr.merlins_inferno.entity.GhostEntity;
+import dev.zsskayr.merlins_inferno.entity.GrymnEntity;
 import dev.zsskayr.merlins_inferno.entity.EliasEntity;
 import dev.zsskayr.merlins_inferno.entity.OstaraEntity;
 import dev.zsskayr.merlins_inferno.entity.SacredPriestEntity;
@@ -61,6 +61,16 @@ public final class ModEntityTypes {
                     .fireImmune()
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":starved"));
+
+    // Circle 1 Nether miniboss - see GrymnEntity. Low-flying phantom: ~1.5 blocks wide and 2.6 tall in the model
+    // (bind pose spans y 0.13-2.64, head at ~2.25), so the entity origin is its lowest point, hovering above the floor.
+    public static final DeferredHolder<EntityType<?>, EntityType<GrymnEntity>> GRYMN = ENTITY_TYPES.register("grymn",
+            () -> EntityType.Builder.of(GrymnEntity::new, MobCategory.MONSTER)
+                    .sized(1.2F, 2.6F)
+                    .eyeHeight(2.2F)
+                    .fireImmune()
+                    .clientTrackingRange(10)
+                    .build(Merlins_inferno.MODID + ":grymn"));
 
     // The Hallowed Grove's night miniboss - see DullahanEntity. 0.75 x 2.3 matches the model (2.295 blocks tall
     // on foot). ridingOffset lowers it onto the saddle: its hips sit 0.875 above its feet and the mounted clips
@@ -123,16 +133,6 @@ public final class ModEntityTypes {
                     .eyeHeight(1.95F)
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":ostara"));
-
-    // A harmless Otherworld spirit - night only, and only once the nearest player has reached Circle 2
-    // (see GhostEntity::checkGhostSpawnRules). The only source of Otherworld Essence.
-    public static final DeferredHolder<EntityType<?>, EntityType<GhostEntity>> GHOST = ENTITY_TYPES.register("ghost",
-            () -> EntityType.Builder.of(GhostEntity::new, MobCategory.CREATURE)
-                    .sized(0.6F, 1.8F)
-                    .eyeHeight(1.6F)
-                    .fireImmune()
-                    .clientTrackingRange(8)
-                    .build(Merlins_inferno.MODID + ":ghost"));
 
     private ModEntityTypes() {
     }

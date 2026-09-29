@@ -9,11 +9,11 @@ import dev.zsskayr.merlins_inferno.entity.AndrasEntity;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanSteedEntity;
-import dev.zsskayr.merlins_inferno.entity.GhostEntity;
 import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 import dev.zsskayr.merlins_inferno.entity.EliasEntity;
 import dev.zsskayr.merlins_inferno.entity.OstaraEntity;
 import dev.zsskayr.merlins_inferno.entity.SacredPriestEntity;
+import dev.zsskayr.merlins_inferno.entity.GrymnEntity;
 import dev.zsskayr.merlins_inferno.entity.StarvedEntity;
 import dev.zsskayr.merlins_inferno.entity.SacredCultistEntity;
 
@@ -28,6 +28,7 @@ public final class ModEntityAttributes {
         event.put(ModEntityTypes.DRUID.get(), DruidEntity.createAttributes().build());
         event.put(ModEntityTypes.IMP.get(), ImpEntity.createAttributes().build());
         event.put(ModEntityTypes.STARVED.get(), StarvedEntity.createAttributes().build());
+        event.put(ModEntityTypes.GRYMN.get(), GrymnEntity.createAttributes().build());
         event.put(ModEntityTypes.DULLAHAN.get(), DullahanEntity.createAttributes().build());
         event.put(ModEntityTypes.DULLAHAN_STEED.get(), DullahanSteedEntity.createAttributes().build());
         event.put(ModEntityTypes.ELIAS.get(), EliasEntity.createAttributes().build());
@@ -35,6 +36,5 @@ public final class ModEntityAttributes {
         event.put(ModEntityTypes.SACRED_PRIEST.get(), SacredPriestEntity.createAttributes().build());
         event.put(ModEntityTypes.ANDRAS.get(), AndrasEntity.createAttributes().build());
         event.put(ModEntityTypes.OSTARA.get(), OstaraEntity.createAttributes().build());
-        event.put(ModEntityTypes.GHOST.get(), GhostEntity.createAttributes().build());
     }
 }
