@@ -68,6 +68,8 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.ROWANWOOD_BOOTS.get());
                         output.accept(ModItems.DEMON_BLOOD.get());
                         output.accept(ModItems.INFERNAL_SINEW.get());
+                        output.accept(ModItems.DEVIL_FLESH.get());
+                        output.accept(ModItems.MONSTER_LEATHER.get());
                         output.accept(ModItems.WITHERED_BONE.get());
                         output.accept(ModItems.DEMONBLOOD_SCRAP.get());
                         output.accept(ModItems.DEMONBLOOD_BAR.get());
@@ -83,13 +85,13 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DRUID_SPAWN_EGG.get());
                         output.accept(ModItems.IMP_SPAWN_EGG.get());
                         output.accept(ModItems.STARVED_SPAWN_EGG.get());
+                        output.accept(ModItems.GRYMN_SPAWN_EGG.get());
                         output.accept(ModItems.DULLAHAN_SPAWN_EGG.get());
                         output.accept(ModItems.ELIAS_SPAWN_EGG.get());
                         output.accept(ModItems.SACRED_CULTIST_SPAWN_EGG.get());
                         output.accept(ModItems.SACRED_PRIEST_SPAWN_EGG.get());
                         output.accept(ModItems.ANDRAS_SPAWN_EGG.get());
                         output.accept(ModItems.OSTARA_SPAWN_EGG.get());
-                        output.accept(ModItems.GHOST_SPAWN_EGG.get());
                         output.accept(ModItems.BOOK_OF_CONTRACTS.get());
                         output.accept(ModItems.EVES_SECRET.get());
                         output.accept(ModItems.FLAME_OF_GOD.get());

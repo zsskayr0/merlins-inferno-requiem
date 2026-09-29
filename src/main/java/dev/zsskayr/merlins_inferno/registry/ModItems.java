@@ -110,6 +110,8 @@ public final class ModItems {
     // bar below (data/merlins_inferno/recipe/demonblood_bar_from_hell_forge.json).
     public static final DeferredItem<Item> DEMON_BLOOD = ITEMS.registerSimpleItem("demon_blood", new Item.Properties().fireResistant());
     public static final DeferredItem<Item> INFERNAL_SINEW = ITEMS.registerSimpleItem("infernal_sinew", new Item.Properties().fireResistant());
+    public static final DeferredItem<Item> MONSTER_LEATHER = ITEMS.registerSimpleItem("monster_leather", new Item.Properties());
+    public static final DeferredItem<Item> DEVIL_FLESH = ITEMS.registerSimpleItem("devil_flesh", new Item.Properties().fireResistant());
     public static final DeferredItem<Item> WITHERED_BONE = ITEMS.registerSimpleItem("withered_bone", new Item.Properties().fireResistant());
     public static final DeferredItem<Item> DEMONBLOOD_SCRAP = ITEMS.registerSimpleItem("demonblood_scrap", new Item.Properties().fireResistant());
 
@@ -365,6 +367,8 @@ public final class ModItems {
             props -> new DeferredSpawnEggItem(ModEntityTypes.IMP, 0xA8231B, 0xF2C230, props));
     public static final DeferredItem<DeferredSpawnEggItem> STARVED_SPAWN_EGG = ITEMS.registerItem("starved_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.STARVED, 0x2A1A16, 0xFF5A1F, props));
+    public static final DeferredItem<DeferredSpawnEggItem> GRYMN_SPAWN_EGG = ITEMS.registerItem("grymn_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.GRYMN, 0x1C1626, 0x8FE0D0, props));
     public static final DeferredItem<DeferredSpawnEggItem> DULLAHAN_SPAWN_EGG = ITEMS.registerItem("dullahan_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.DULLAHAN, 0x1B1F2B, 0xD8D2BC, props));
     public static final DeferredItem<DeferredSpawnEggItem> ELIAS_SPAWN_EGG = ITEMS.registerItem("elias_spawn_egg",
@@ -377,8 +381,6 @@ public final class ModItems {
             props -> new DeferredSpawnEggItem(ModEntityTypes.ANDRAS, 0x5A0E0E, 0xC9A227, props));
     public static final DeferredItem<DeferredSpawnEggItem> OSTARA_SPAWN_EGG = ITEMS.registerItem("ostara_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.OSTARA, 0x5FA85F, 0xF2B8D0, props));
-    public static final DeferredItem<DeferredSpawnEggItem> GHOST_SPAWN_EGG = ITEMS.registerItem("ghost_spawn_egg",
-            props -> new DeferredSpawnEggItem(ModEntityTypes.GHOST, 0xC9D9E8, 0xFFFFFF, props));
     public static final DeferredItem<DeferredSpawnEggItem> DRUID_SPAWN_EGG = ITEMS.registerItem("druid_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.DRUID, 0x4A6B3D, 0xC9A66B, props));
 

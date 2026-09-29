@@ -37,7 +37,7 @@ import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 
 /**
  * Andras, the Forgotten Demon - the Infernal path's Circle 1 boss: a lesser demon, the overseer of the Nether's
- * lower ranks. He keeps Imps at his beck and call and treats Starveds as tools.
+ * lower ranks. He keeps Imps at his beck and call and treats Grymns as tools.
  * <ul>
  *     <li><b>Stats:</b> 370 health, 15 damage; fire-immune; a demon (see the {@code demon} entity tag).</li>
  *     <li><b>Contracts:</b> while he fights, every {@link #SUMMON_INTERVAL} ticks he calls up to
