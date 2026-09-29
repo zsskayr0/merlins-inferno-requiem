@@ -243,7 +243,7 @@
   "entity.merlins_inferno.ostara": "Ostara, the Spring Deity",
   "item.merlins_inferno.ostara_spawn_egg": "Ostara Spawn Egg",
   "patchouli.merlins_inferno.entry.ostara.name": "Ostara, the Spring Deity",
-  "patchouli.merlins_inferno.entry.ostara.page1": "$(bold)Ostara, the Spring Deity$()$(br2)Patron of the Hallowed Grove's spring. Rare, and only abroad by day - she flings withering petals from afar and mends the beasts around her.",
+  "patchouli.merlins_inferno.entry.ostara.page1": "$(bold)Ostara, the Spring Deity$()$(br2)Patron of the Hallowed Grove's spring. She walks only at dawn, every third day, beneath a Rowanwood tree - and is gone by dusk. She flings withering petals from afar and mends the beasts around her.",
   "patchouli.merlins_inferno.entry.ostara.page2": "Slain, she leaves $(bold)Eve's Secret$() - a key to Pandora's Box.",
   "item.merlins_inferno.book_of_contracts": "Book of Contracts",
   "item.merlins_inferno.antidote": "Antidote",

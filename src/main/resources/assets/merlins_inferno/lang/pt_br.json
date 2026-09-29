@@ -243,7 +243,7 @@
   "entity.merlins_inferno.ostara": "Ostara, a Divindade da Primavera",
   "item.merlins_inferno.ostara_spawn_egg": "Ovo de Spawn de Ostara",
   "patchouli.merlins_inferno.entry.ostara.name": "Ostara, a Divindade da Primavera",
-  "patchouli.merlins_inferno.entry.ostara.page1": "$(bold)Ostara, a Divindade da Primavera$()$(br2)Padroeira da primavera do Bosque Sagrado. Rara, e só aparece de dia - lança pétalas murchantes a distância e cura as bestas ao seu redor.",
+  "patchouli.merlins_inferno.entry.ostara.page1": "$(bold)Ostara, a Divindade da Primavera$()$(br2)Padroeira da primavera do Bosque Sagrado. Só aparece ao amanhecer, a cada três dias, junto a uma árvore de Rowanwood - e some ao anoitecer. Ela lança pétalas murchantes a distância e cura as bestas ao seu redor.",
   "patchouli.merlins_inferno.entry.ostara.page2": "Derrotada, deixa o $(bold)Segredo de Eva$() - uma chave da Caixa de Pandora.",
   "item.merlins_inferno.book_of_contracts": "Livro dos Contratos",
   "item.merlins_inferno.antidote": "Antídoto",

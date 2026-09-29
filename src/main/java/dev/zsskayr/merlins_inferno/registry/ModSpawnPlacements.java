@@ -48,8 +48,8 @@ public final class ModSpawnPlacements {
         event.register(ModEntityTypes.DULLAHAN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 DullahanEntity::checkDullahanSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
-        // Andras: no natural spawn - only his Ancient Battlefield places him (spawn egg/command still work). Ostara: rare,
-        // daytime, Hallowed Grove only (spawn list in ModBiomeProvider, the rule itself does the rest).
+        // Andras: no natural spawn - only his Ancient Battlefield places him (spawn egg/command still work). Ostara: no natural
+        // spawn either - OstaraSpawnHandler calls her to a Rowanwood tree at dawn every third day.
         event.register(ModEntityTypes.ANDRAS.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AndrasEntity::checkAndrasSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(ModEntityTypes.OSTARA.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
