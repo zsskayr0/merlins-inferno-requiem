@@ -250,6 +250,8 @@
   "effect.merlins_inferno.antivenom": "Antiveneno",
   "item.merlins_inferno.eves_secret": "Segredo de Eva",
   "item.merlins_inferno.flame_of_god": "Chama de Deus",
+  "item.merlins_inferno.champion_seeker": "Champion Seeker",
+  "item.merlins_inferno.champion_seeker.tooltip": "Aponta para o chefe mais próximo",
   "item.merlins_inferno.pandora_box": "Caixa de Pandora",
   "item.merlins_inferno.pandora_box_tooltip.1": "O Livro dos Contratos, o Segredo de Eva e a Chama de Deus a abrem, com uma Estrela do Nether.",
   "item.merlins_inferno.pandora_box_tooltip.2": "Uma vez aberta, nunca o deixa - nem mesmo na morte.",

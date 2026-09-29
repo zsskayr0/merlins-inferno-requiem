@@ -250,6 +250,8 @@
   "effect.merlins_inferno.antivenom": "Antivenom",
   "item.merlins_inferno.eves_secret": "Eve's Secret",
   "item.merlins_inferno.flame_of_god": "Flame of God",
+  "item.merlins_inferno.champion_seeker": "Champion Seeker",
+  "item.merlins_inferno.champion_seeker.tooltip": "Points at the nearest boss",
   "item.merlins_inferno.pandora_box": "Pandora's Box",
   "item.merlins_inferno.pandora_box_tooltip.1": "The Book of Contracts, Eve's Secret and the Flame of God open it, with a Nether Star.",
   "item.merlins_inferno.pandora_box_tooltip.2": "Once opened, it never leaves you - not even to death.",

@@ -98,6 +98,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.PANDORA_BOX.get());
                         output.accept(ModItems.OBLIVION_KEY.get());
                         output.accept(ModItems.PURGATORY_KEY.get());
+                        output.accept(ModItems.CHAMPION_SEEKER.get());
                         output.accept(ModItems.SACRED_ALTAR_ITEM.get());
                         output.accept(ModItems.CORRUPTED_OBSIDIAN_ITEM.get());
                         output.accept(ModItems.PETRIFIED_SKULL_ITEM.get());

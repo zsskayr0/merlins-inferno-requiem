@@ -2,6 +2,10 @@ package dev.zsskayr.merlins_inferno.client;
 
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -12,8 +16,10 @@ import net.neoforged.neoforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.item.ChampionSeekerItem;
 import dev.zsskayr.merlins_inferno.registry.ModBlockEntityTypes;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
+import dev.zsskayr.merlins_inferno.registry.ModItems;
 import dev.zsskayr.merlins_inferno.registry.ModMenuTypes;
 import dev.zsskayr.merlins_inferno.menu.PandoraBoxMenu;
 import dev.zsskayr.merlins_inferno.registry.ModParticles;
@@ -72,6 +78,42 @@ public final class ModEntityRenderers {
     /** Adds Ashwood's sign textures to the sign atlas; {@code Sheets.addWoodType} isn't thread-safe, hence enqueueWork. */
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> Sheets.addWoodType(ModWoodTypes.ASHWOOD));
+        event.enqueueWork(() -> {
+            Sheets.addWoodType(ModWoodTypes.ASHWOOD);
+            ItemProperties.register(ModItems.CHAMPION_SEEKER.get(), ResourceLocation.withDefaultNamespace("angle"),
+                    (stack, level, entity, seed) -> {
+                        if (!(entity instanceof LivingEntity holder)) {
+                            return 0.0F;
+                        }
+                        LivingEntity target = getOrRefreshTarget(holder);
+                        if (target == null) {
+                            // No boss loaded nearby: spin slowly instead of freezing on a stale heading.
+                            return (holder.level().getGameTime() % 360L) / 360.0F;
+                        }
+                        return ChampionSeekerItem.getAngle(holder, new Vec3(target.getX(), target.getY(), target.getZ()));
+                    });
+        });
+    }
+
+    /**
+     * How often (in ticks) to re-scan for the nearest boss. The property function above is called
+     * every frame the item is drawn (held, hotbar, inventory...), and {@code findNearestBoss} is an
+     * entity-list scan - throttling it here keeps the Champion Seeker from costing noticeable client
+     * FPS while its needle still updates every frame using the cached target's live position.
+     */
+    private static final int RESCAN_INTERVAL_TICKS = 10;
+    private static final double SEARCH_RADIUS = 200.0D;
+
+    private static long lastScanTick = Long.MIN_VALUE;
+    private static LivingEntity cachedTarget;
+
+    private static LivingEntity getOrRefreshTarget(LivingEntity holder) {
+        long tick = holder.level().getGameTime();
+        boolean staleCache = cachedTarget != null && (!cachedTarget.isAlive() || cachedTarget.level() != holder.level());
+        if (staleCache || tick - lastScanTick >= RESCAN_INTERVAL_TICKS) {
+            cachedTarget = ChampionSeekerItem.findNearestBoss(holder, SEARCH_RADIUS);
+            lastScanTick = tick;
+        }
+        return cachedTarget;
     }
 }

@@ -32,6 +32,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.item.AntidoteItem;
+import dev.zsskayr.merlins_inferno.item.ChampionSeekerItem;
 import dev.zsskayr.merlins_inferno.item.GrimmoriumItem;
 import dev.zsskayr.merlins_inferno.item.OblivionKeyItem;
 import dev.zsskayr.merlins_inferno.item.PandoraBoxItem;
@@ -410,6 +411,10 @@ public final class ModItems {
             props -> new OblivionKeyItem(props.durability(3).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredItem<PortalKeyItem> PURGATORY_KEY = ITEMS.registerItem("purgatory_key",
             props -> new PortalKeyItem(props.stacksTo(1).rarity(Rarity.RARE).fireResistant(), "purgatory"));
+
+    /** Points at the nearest boss/miniboss instead of world spawn - see ChampionSeekerItem and ModTags.EntityTypes.BOSS_COMPASS_TARGETS. */
+    public static final DeferredItem<ChampionSeekerItem> CHAMPION_SEEKER = ITEMS.registerItem("champion_seeker",
+            props -> new ChampionSeekerItem(props.stacksTo(1).rarity(Rarity.UNCOMMON)));
 
     // --- Debug-only tooling. No recipe, never added to the creative tab (see
     // ModCreativeModeTabs) - /give merlins_inferno:debug_cursed-nullifier is the only way to get
