@@ -96,10 +96,11 @@ public final class ModEntityTypes {
     // The Angelical Circle 1 boss (see EliasEntity), the church's Sacred Priest guardian and its neutral
     // congregation. Elias never spawns on his own: the altar wakes him once the Priest has fallen. The Priest is
     // placed by the church structure; cultists also wander the world rarely (biome modifier).
+    // 2x the player's own hitbox (0.6 x 1.8), matching the GeckoLib model's 64-unit (4-block) height.
     public static final DeferredHolder<EntityType<?>, EntityType<EliasEntity>> ELIAS = ENTITY_TYPES.register("elias",
             () -> EntityType.Builder.of(EliasEntity::new, MobCategory.MONSTER)
-                    .sized(0.7F, 2.1F)
-                    .eyeHeight(1.85F)
+                    .sized(1.2F, 3.6F)
+                    .eyeHeight(3.24F)
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":elias"));
 

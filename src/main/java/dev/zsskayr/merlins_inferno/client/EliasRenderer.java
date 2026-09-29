@@ -1,30 +1,21 @@
 package dev.zsskayr.merlins_inferno.client;
 
-import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.resources.ResourceLocation;
 
-import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
+
 import dev.zsskayr.merlins_inferno.entity.EliasEntity;
 
-/** Elias, drawn as an enlarged vanilla zombie skeleton with its own texture until it gets a proper model. */
-public class EliasRenderer extends HumanoidMobRenderer<EliasEntity, HumanoidModel<EliasEntity>> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "textures/entity/elias/elias.png");
-
+/** Renders {@link EliasEntity} with {@link EliasModel}. His Seraphium Sword is baked into the model, not a held item. */
+public class EliasRenderer extends GeoEntityRenderer<EliasEntity> {
     public EliasRenderer(EntityRendererProvider.Context context) {
-        super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.ZOMBIE)), 0.6F);
+        super(context, new EliasModel());
+        this.shadowRadius = 1.0F;
     }
 
+    /** The death clip already collapses the body; GeckoLib's default extra tip-over would stack on it. */
     @Override
-    protected void scale(EliasEntity entity, PoseStack poseStack, float partialTick) {
-        poseStack.scale(1.15F, 1.15F, 1.15F);
-    }
-
-    @Override
-    public ResourceLocation getTextureLocation(EliasEntity entity) {
-        return TEXTURE;
+    protected float getDeathMaxRotation(EliasEntity animatable) {
+        return 0.0F;
     }
 }

@@ -1,5 +1,6 @@
 package dev.zsskayr.merlins_inferno.entity;
 
+import java.util.EnumSet;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -12,10 +13,13 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -26,19 +30,28 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
 
 /**
  * The Sacred Priest - the Angelical path's Circle 1 miniboss and the guardian of the Sacred Church. Neutral
  * until struck (he ignores players who leave him be), then fights back and his cultists join him. Elias
- * cannot be woken at the altar until he has fallen. Every so often he intones a prayer and mends himself.
+ * cannot be woken at the altar until he has fallen. Left in peace, he kneels in silent vigil, broadsword
+ * planted before him ({@link PrayGoal}); every so often, mid-fight, he intones a healing prayer instead.
  * <ul>
  *     <li><b>Stats:</b> 150 health, 10 damage.</li>
  *     <li><b>Loot:</b> Lyrium Shards (data/.../loot_table/entities/sacred_priest.json).</li>
  * </ul>
- * Drawn as a humanoid placeholder.
+ * Animated with GeckoLib ({@code geo/sacred_priest.geo.json}, {@code animations/sacred_priest.animation.json}); the
+ * broadsword is baked into the model, not a held item.
  */
-public class SacredPriestEntity extends Monster {
+public class SacredPriestEntity extends Monster implements GeoEntity {
     public static final double MAX_HEALTH = 150.0;
     public static final double ATTACK_DAMAGE = 10.0;
     public static final double MOVEMENT_SPEED = 0.23;
@@ -48,6 +61,24 @@ public class SacredPriestEntity extends Monster {
     private static final int HOME_RADIUS = 24;
     /** Cultists this close rally to him when he is struck (see {@link #hurt}). */
     private static final double CULTIST_ALERT_RADIUS = 16.0;
+
+    /** Horizontal speed (blocks per tick, squared) above which it counts as moving / running. */
+    private static final double WALK_SPEED_SQR = 0.002;
+    private static final double WALK_HYSTERESIS_SQR = 0.0007;
+    private static final double RUN_SPEED_SQR = 0.035;
+    /** The death clip is 2.5 s; the body lingers a little past it so the last pose is held before it vanishes. */
+    private static final int DEATH_ANIMATION_TICKS = 55;
+
+    private static final RawAnimation ATTACK_ANIMATION = RawAnimation.begin().thenPlay("animation.sacred_priest.attack");
+    private static final RawAnimation DEATH_ANIMATION = RawAnimation.begin().thenPlayAndHold("animation.sacred_priest.death");
+
+    private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
+    // Client-side visual state, debounced once per entity tick, same technique as the Sacred Cultist's.
+    private String animationState;
+    private String pendingAnimationState;
+    private int pendingAnimationTick;
+    private RawAnimation loopAnimation = RawAnimation.begin().thenLoop("animation.sacred_priest.idle");
+    private int deathTicks;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(Component.translatable("entity.merlins_inferno.sacred_priest"),
             BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.PROGRESS);
@@ -80,6 +111,7 @@ public class SacredPriestEntity extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
+        this.goalSelector.addGoal(3, new PrayGoal(this));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.5));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -125,6 +157,88 @@ public class SacredPriestEntity extends Monster {
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
         return false;
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        if (!this.level().isClientSide) {
+            this.triggerAnim("move", "attack");
+        }
+        return super.doHurtTarget(target);
+    }
+
+    /** Lingers for the whole death clip instead of vanilla's 20 ticks, like the Sacred Cultist's. */
+    @Override
+    protected void tickDeath() {
+        ++this.deathTicks;
+        if (this.deathTicks >= DEATH_ANIMATION_TICKS && !this.level().isClientSide() && !this.isRemoved()) {
+            this.level().broadcastEntityEvent(this, (byte) 60);
+            this.remove(Entity.RemovalReason.KILLED);
+        }
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // GeckoLib animation: one controller owns the whole pose - loops, the kneeling bracket and the
+    // attack trigger. Praying is read straight from the vanilla pose PrayGoal already sets.
+    // ------------------------------------------------------------------------------------------
+
+    /** idle / walk / run on foot, or "pray" while {@link PrayGoal} has him kneeling. */
+    private String desiredAnimationState() {
+        if (this.getPose() == Pose.CROUCHING) {
+            return "pray";
+        }
+        // Position change per tick works on the client too (remote entities carry no reliable velocity).
+        double dx = this.getX() - this.xOld;
+        double dz = this.getZ() - this.zOld;
+        double speedSqr = dx * dx + dz * dz;
+        boolean wasMoving = "walk".equals(this.animationState) || "run".equals(this.animationState);
+        boolean moving = speedSqr > (wasMoving ? WALK_HYSTERESIS_SQR : WALK_SPEED_SQR);
+        if (!moving) {
+            return "idle";
+        }
+        return speedSqr > RUN_SPEED_SQR ? "run" : "walk";
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "move", 4, state -> {
+            if (this.isDeadOrDying()) {
+                return state.setAndContinue(DEATH_ANIMATION);
+            }
+            String desired = this.desiredAnimationState();
+            if (this.animationState == null) {
+                this.animationState = desired;
+                this.loopAnimation = RawAnimation.begin().thenLoop("animation.sacred_priest." + desired);
+            } else if (!desired.equals(this.animationState)) {
+                // Only entering/leaving the kneeling prayer is debounced (it is the one state with bracket
+                // clips to protect from a one-tick flicker); idle/walk/run swap the moment the threshold does,
+                // so a slow, stop-start wander (WaterAvoidingRandomStrollGoal) never gets stuck showing idle.
+                boolean bracketed = "pray".equals(desired) || "pray".equals(this.animationState);
+                if (bracketed) {
+                    if (!desired.equals(this.pendingAnimationState)) {
+                        this.pendingAnimationState = desired;
+                        this.pendingAnimationTick = this.tickCount;
+                        return state.setAndContinue(this.loopAnimation);
+                    } else if (this.tickCount - this.pendingAnimationTick < 3) {
+                        return state.setAndContinue(this.loopAnimation);
+                    }
+                }
+                RawAnimation next = RawAnimation.begin();
+                if ("pray".equals(desired)) {
+                    next = next.thenPlay("animation.sacred_priest.pray_start");
+                } else if ("pray".equals(this.animationState)) {
+                    next = next.thenPlay("animation.sacred_priest.pray_end");
+                }
+                this.loopAnimation = next.thenLoop("animation.sacred_priest." + desired);
+                this.animationState = desired;
+            }
+            return state.setAndContinue(this.loopAnimation);
+        }).triggerableAnim("attack", ATTACK_ANIMATION));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.animationCache;
     }
 
     // ------------------------------------------------------------------------------------------
@@ -179,5 +293,43 @@ public class SacredPriestEntity extends Monster {
     @Override
     protected SoundEvent getDeathSound() {
         return SoundEvents.VILLAGER_DEATH;
+    }
+
+    /** Kneels in silent vigil, broadsword planted, for stretches while he has nothing else to do. */
+    private static class PrayGoal extends Goal {
+        private final SacredPriestEntity priest;
+        private int ticksLeft;
+
+        PrayGoal(SacredPriestEntity priest) {
+            this.priest = priest;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
+        }
+
+        @Override
+        public boolean canUse() {
+            return this.priest.getTarget() == null && this.priest.getRandom().nextInt(150) == 0;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.ticksLeft > 0 && this.priest.getTarget() == null;
+        }
+
+        @Override
+        public void start() {
+            this.ticksLeft = 300 + this.priest.getRandom().nextInt(400);
+            this.priest.getNavigation().stop();
+            this.priest.setPose(Pose.CROUCHING);
+        }
+
+        @Override
+        public void tick() {
+            this.ticksLeft--;
+        }
+
+        @Override
+        public void stop() {
+            this.priest.setPose(Pose.STANDING);
+        }
     }
 }
