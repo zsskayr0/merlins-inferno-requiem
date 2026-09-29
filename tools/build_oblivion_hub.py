@@ -158,6 +158,9 @@ def main():
                 if bid == 0: continue
                 if y >= SPIRE_Y: continue
                 if y >= 24 and (x - 19) ** 2 + (z - 14) ** 2 > BODY_RADIUS ** 2: continue
+                # what is left of the chapel's own walls around the chamber is only ragged fragments (the radius cuts
+                # through them) and it walls the exits in: above the island keep nothing outside the chamber's footprint
+                if y > SURFACE_Y and not (CHAMBER[0] <= x + SHIFT[0] <= CHAMBER[1] and CHAMBER[0] <= z + SHIFT[1] <= CHAMBER[1]): continue
                 st = legacy.get((bid, data[i] & 15))
                 if st is None or st[0] == 'minecraft:air': continue
                 g[(x + SHIFT[0], y, z + SHIFT[1])] = st
@@ -202,6 +205,14 @@ def main():
     g[(32, SURFACE_Y + 4, x0)] = S('stone_brick_stairs', facing='west', half='top', shape='straight', waterlogged=False)
     for x in range(29, 32):
         g[(x, SURFACE_Y + 5, x0)] = S('chiseled_stone_bricks')
+    # the chapel's own outer wall (3 thick, up to y = 36) still stands a block north of the door and would wall the
+    # exit in: cut a doorway-sized porch through it out to the north path (no rng, so the rest stays as it was)
+    for x in range(29, 32):
+        for z in range(CENTER[1] - 14, x0):
+            for y in range(SURFACE_Y + 1, SURFACE_Y + 5):
+                g.pop((x, y, z), None)
+            if z >= CENTER[1] - 10:
+                g[(x, SURFACE_Y, z)] = S('mossy_stone_bricks') if (x + z) % 3 == 0 else S('stone_bricks')
     # the Void Block frame, in the X-Y plane at z = PORTAL_Z
     for x in range(FRAME_X[0], FRAME_X[1] + 1):
         for y in range(FRAME_Y[0], FRAME_Y[1] + 1):
