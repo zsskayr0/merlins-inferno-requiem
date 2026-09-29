@@ -7,11 +7,14 @@
     },
     "S": {
       "item": "merlins_inferno:withered_bone"
+    },
+    "N": {
+      "item": "merlins_inferno:infernal_sinew"
     }
   },
   "pattern": [
     "X",
-    "S",
+    "N",
     "S"
   ],
   "result": {

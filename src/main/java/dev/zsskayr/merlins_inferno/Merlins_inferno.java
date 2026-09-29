@@ -91,6 +91,7 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new PandoraHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EssenceDropHandler());
         NeoForge.EVENT_BUS.register(new BossRewardChestHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.MonsterLeatherDropHandler());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
