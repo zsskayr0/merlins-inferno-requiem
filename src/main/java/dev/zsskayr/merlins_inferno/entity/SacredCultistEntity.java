@@ -73,13 +73,15 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity, Chu
 
     private static final RawAnimation ATTACK_ANIMATION = RawAnimation.begin().thenPlay("animation.cultist.attack");
     private static final RawAnimation DEATH_ANIMATION = RawAnimation.begin().thenPlayAndHold("animation.cultist.death");
+    private static final RawAnimation IDLE_ANIMATION = RawAnimation.begin().thenLoop("animation.cultist.idle");
+    private static final RawAnimation WALK_ANIMATION = RawAnimation.begin().thenLoop("animation.cultist.walk");
+    private static final RawAnimation RUN_ANIMATION = RawAnimation.begin().thenLoop("animation.cultist.run");
+    /** Kneels down (pray_start), then holds the prayer. */
+    private static final RawAnimation PRAY_ANIMATION = RawAnimation.begin().thenPlay("animation.cultist.pray_start").thenLoop("animation.cultist.pray");
+    /** Vanilla's limb-swing amount (about 4 x blocks moved per tick, capped at 1): a stroll is ~0.5, a chase ~1. */
+    private static final float RUN_LIMB_SWING = 0.7F;
 
     private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
-    // Client-side visual state, debounced once per entity tick, same technique as the Dullahan's.
-    private String animationState;
-    private String pendingAnimationState;
-    private int pendingAnimationTick;
-    private RawAnimation loopAnimation = RawAnimation.begin().thenLoop("animation.cultist.idle");
 
     /** Where it prays during the night service (its pew), or null for a cultist of the open world. */
     @Nullable
@@ -105,7 +107,7 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity, Chu
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.1, false));
-        this.goalSelector.addGoal(3, new ChurchServiceGoal<>(this, 1.0));
+        this.goalSelector.addGoal(3, new ChurchServiceGoal<>(this, 0.7));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.5));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -265,48 +267,22 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity, Chu
     // vanilla pose PrayGoal already sets; it needs no extra synced state.
     // ------------------------------------------------------------------------------------------
 
-    private final GaitTracker gait = new GaitTracker();
-
-    /** idle / walk / run on foot, or "pray" while {@link ChurchServiceGoal} has it kneeling. */
-    private String desiredAnimationState() {
-        return this.getPose() == Pose.CROUCHING ? "pray" : this.gait.update(this);
-    }
-
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        // The standard GeckoLib shape, decided fresh every frame: the kneeling pose ChurchServiceGoal sets shows the prayer,
+        // otherwise GeckoLib's own movement test (vanilla's limb swing, which is reliable for remote entities) picks walk,
+        // run or idle. No hand-rolled state to get stuck.
         controllers.add(new AnimationController<>(this, "move", 8, state -> {
             if (this.isDeadOrDying()) {
                 return state.setAndContinue(DEATH_ANIMATION);
             }
-            String desired = this.desiredAnimationState();
-            if (this.animationState == null) {
-                this.animationState = desired;
-                this.loopAnimation = RawAnimation.begin().thenLoop("animation.cultist." + desired);
-            } else if (!desired.equals(this.animationState)) {
-                // Only entering/leaving the kneeling prayer is debounced (it is the one state with bracket
-                // clips to protect from a one-tick flicker); idle/walk/run swap the moment the threshold does,
-                // so a slow, stop-start wander (WaterAvoidingRandomStrollGoal) never gets stuck showing idle.
-                boolean bracketed = "pray".equals(desired) || "pray".equals(this.animationState);
-                if (bracketed) {
-                    if (!desired.equals(this.pendingAnimationState)) {
-                        this.pendingAnimationState = desired;
-                        this.pendingAnimationTick = this.tickCount;
-                        return state.setAndContinue(this.loopAnimation);
-                    } else if (this.tickCount - this.pendingAnimationTick < 3) {
-                        return state.setAndContinue(this.loopAnimation);
-                    }
-                }
-                // The model only ships bracket clips for entering/leaving the kneeling prayer.
-                RawAnimation next = RawAnimation.begin();
-                if ("pray".equals(desired)) {
-                    next = next.thenPlay("animation.cultist.pray_start");
-                } else if ("pray".equals(this.animationState)) {
-                    next = next.thenPlay("animation.cultist.pray_end");
-                }
-                this.loopAnimation = next.thenLoop("animation.cultist." + desired);
-                this.animationState = desired;
+            if (this.getPose() == Pose.CROUCHING) {
+                return state.setAndContinue(PRAY_ANIMATION);
             }
-            return state.setAndContinue(this.loopAnimation);
+            if (state.isMoving()) {
+                return state.setAndContinue(state.getLimbSwingAmount() > RUN_LIMB_SWING ? RUN_ANIMATION : WALK_ANIMATION);
+            }
+            return state.setAndContinue(IDLE_ANIMATION);
         }).triggerableAnim("attack", ATTACK_ANIMATION));
     }
 
