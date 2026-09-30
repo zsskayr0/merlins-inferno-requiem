@@ -79,7 +79,7 @@ public class RowanwoodTreePiece extends TemplateStructurePiece {
         super.postProcess(level, structureManager, generator, random, box, chunkPos, pos);
 
         Set<BlockPos> roots = new LinkedHashSet<>();
-        for (StructureTemplate.StructureBlockInfo info : this.template.filterBlocks(this.templatePosition, this.placeSettings, ModBlocks.ROWANWOOD_LOG.get())) {
+        for (StructureTemplate.StructureBlockInfo info : this.template.filterBlocks(this.templatePosition, makeSettings(), ModBlocks.ROWANWOOD_LOG.get())) {
             if (info.pos().getY() - this.templatePosition.getY() <= BASE_HEIGHT) {
                 for (int dx = -SPREAD; dx <= SPREAD; dx++) {
                     for (int dz = -SPREAD; dz <= SPREAD; dz++) {
