@@ -17,8 +17,8 @@
       "xz_spread": 0,
       "y_spread": {
         "type": "minecraft:uniform",
-        "max_inclusive": -6,
-        "min_inclusive": -14
+        "max_inclusive": -12,
+        "min_inclusive": -22
       }
     },
     {
