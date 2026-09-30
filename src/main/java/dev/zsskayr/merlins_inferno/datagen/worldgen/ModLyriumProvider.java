@@ -106,7 +106,9 @@ public final class ModLyriumProvider {
                 RarityFilter.onAverageOnceEvery(16),
                 InSquarePlacement.spread(),
                 HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG),
-                RandomOffsetPlacement.vertical(UniformInt.of(-22, -12)),
+                // Two offsets: one RandomOffsetPlacement only takes -16..16, and the total here is -22..-12.
+                RandomOffsetPlacement.vertical(UniformInt.of(-12, -6)),
+                RandomOffsetPlacement.vertical(UniformInt.of(-10, -6)),
                 BiomeFilter.biome())));
     }
 
