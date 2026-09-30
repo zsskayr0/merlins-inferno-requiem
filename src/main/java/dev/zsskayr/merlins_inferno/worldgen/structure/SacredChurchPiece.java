@@ -1,5 +1,6 @@
 package dev.zsskayr.merlins_inferno.worldgen.structure;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -100,6 +101,7 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     private int spawnedMask; // bit 0 = the Sacred Priest, bits 1.. = cultists
     private List<BlockPos> pewSeats; // derived from the template, not saved
     private Set<BlockPos> carpetSpots; // likewise
+    private Set<BlockPos> carpetGaps; // likewise
 
     public SacredChurchPiece(StructureTemplateManager templateManager, long seed, BlockPos pos) {
         super(ModStructurePieceTypes.SACRED_CHURCH.get(), 0, templateManager, TEMPLATE, TEMPLATE.toString(), makeSettings(), pos);
@@ -111,6 +113,22 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         this.seed = tag.getLong("Seed");
         this.spawnedMask = tag.getInt("Spawned");
     }
+
+    /**
+     * Where the Sacred Carpet differs from the template's own red and yellow carpet, as the layout was hand-edited in a
+     * generated church. Template-relative {x, y, z}; expanded by {@link #carpetAdditions()}.
+     * <ul>
+     *     <li>the east walkway (x 49-59, y 3) gets a carpet lane on each side, z = 20 and 24, next to its three-wide aisle;</li>
+     *     <li>the platform beyond it (x 61-62, y 4, z 19-25) is carpeted;</li>
+     *     <li>the altar's white carpet corners and sides (x 40 and 42, y 4, z 20/22/24) turn to Sacred Carpet - its two white
+     *     centre pieces and the ones on the anvils stay vanilla.</li>
+     * </ul>
+     */
+    private static final int WALKWAY_X_FROM = 49, WALKWAY_X_TO = 59, WALKWAY_Y = 3;
+    private static final int PLATFORM_X_FROM = 61, PLATFORM_X_TO = 62, PLATFORM_Y = 4, PLATFORM_Z_FROM = 19, PLATFORM_Z_TO = 25;
+    private static final int ALTAR_CARPET_Y = 4;
+    /** Yellow carpet nubs the layout drops (they stuck out of the aisle's edge): template-relative {x, y, z}. */
+    private static final int[][] CARPET_REMOVED = {{34, 2, 6}, {33, 2, 18}, {33, 2, 26}};
 
     /**
      * The template's four yellow wool blocks (odd full blocks in the floor) become smooth stone slabs. A top slab, so the
@@ -163,9 +181,43 @@ public class SacredChurchPiece extends TemplateStructurePiece {
             for (Block carpet : List.of(Blocks.RED_CARPET, Blocks.YELLOW_CARPET)) {
                 this.template.filterBlocks(this.templatePosition, makeSettings(), carpet).forEach(info -> spots.add(info.pos().immutable()));
             }
+            spots.addAll(this.carpetAdditions());
+            spots.removeAll(this.carpetGaps());
             this.carpetSpots = spots;
         }
         return this.carpetSpots;
+    }
+
+    /** World positions that get a Sacred Carpet although the template has no red or yellow carpet there. */
+    private List<BlockPos> carpetAdditions() {
+        List<BlockPos> added = new ArrayList<>();
+        for (int x = WALKWAY_X_FROM; x <= WALKWAY_X_TO; x++) {
+            added.add(this.at(x, WALKWAY_Y, 20));
+            added.add(this.at(x, WALKWAY_Y, 24));
+        }
+        for (int x = PLATFORM_X_FROM; x <= PLATFORM_X_TO; x++) {
+            for (int z = PLATFORM_Z_FROM; z <= PLATFORM_Z_TO; z++) {
+                added.add(this.at(x, PLATFORM_Y, z));
+            }
+        }
+        for (int x : new int[] {40, 42}) {
+            for (int z : new int[] {20, 22, 24}) {
+                added.add(this.at(x, ALTAR_CARPET_Y, z));
+            }
+        }
+        return added;
+    }
+
+    /** World positions where the template's red or yellow carpet is dropped from the layout. */
+    private Set<BlockPos> carpetGaps() {
+        if (this.carpetGaps == null) {
+            Set<BlockPos> gaps = new HashSet<>();
+            for (int[] p : CARPET_REMOVED) {
+                gaps.add(this.at(p[0], p[1], p[2]));
+            }
+            this.carpetGaps = gaps;
+        }
+        return this.carpetGaps;
     }
 
     /**
@@ -185,6 +237,11 @@ public class SacredChurchPiece extends TemplateStructurePiece {
      */
     private void sacredCarpets(WorldGenLevel level, BoundingBox chunkBox) {
         Set<BlockPos> spots = this.carpetSpots();
+        for (BlockPos gap : this.carpetGaps()) {
+            if (chunkBox.isInside(gap)) {
+                level.setBlock(gap, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+            }
+        }
         for (BlockPos spot : spots) {
             if (!chunkBox.isInside(spot)) {
                 continue;
