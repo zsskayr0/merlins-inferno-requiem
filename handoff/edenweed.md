@@ -15,7 +15,7 @@ Branch: `feature/edenweed`. Design original: seções 1-4 do handoff de game des
 | `wooden_pipe` | `item/WoodenPipeItem` | Durabilidade 64. Fuma 1 erva seca do inventário: Trance por 90s. |
 | `edenweed_tea` | `item/EdenweedTeaItem` | Receita: erva seca + garrafa de água (`neoforge:components`). Trance por 4 min. Devolve garrafa. |
 | Efeito `druidic_trance` | `effect/DruidicTranceEffect`, `event/EdenweedHandler` | Couch-lock: velocidade -35%, mineração -60%, dano -50%; resistência 80% (não vale para `BYPASSES_INVULNERABILITY`); larica: dreno de fome ~3x o Hunger I; comida dá 2x saturação e Regeneration proporcional. |
-| The Sight | `client/EdenweedSight` | Tudo client-side: só quem está sob o Trance vê. Contorno por linhas grossas, desenhado por nós (não pelo glow do vanilla, que shaders engolem), atravessando paredes: blocos da tag `sight_revealed` num raio de 14 e **todo ser vivo** num raio de 32 (hostis em laranja-avermelhado, o resto em verde). Vinheta clara, em blend aditivo, nas bordas da tela. |
+| The Sight | `client/EdenweedSight` | Tudo client-side: só quem está sob o Trance vê. Contorno por linhas grossas, desenhado por nós (não pelo glow do vanilla, que shaders engolem), atravessando paredes: blocos da tag `sight_revealed` num raio de 14 e **todo ser vivo** num raio de 32 (hostis em laranja-avermelhado, o resto em verde). Vinheta verde nas bordas da tela. |
 | Guia | `patchouli .../entries/edenweed.json` (druid_road) + lang en_us/pt_br | |
 
 ## Decisões que não estavam no doc original

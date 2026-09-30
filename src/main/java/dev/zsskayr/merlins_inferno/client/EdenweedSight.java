@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -126,14 +125,12 @@ public final class EdenweedSight {
                 return;
             }
             // A slow breathing pulse on the haze.
-            float pulse = 0.8F + 0.2F * (float) Math.sin((minecraft.player.tickCount + deltaTracker.getGameTimeDeltaPartialTick(false)) * 0.06);
+            float pulse = 0.55F + 0.15F * (float) Math.sin((minecraft.player.tickCount + deltaTracker.getGameTimeDeltaPartialTick(false)) * 0.06);
             RenderSystem.enableBlend();
-            // Additive, so the haze lightens the edges instead of dimming them - on a dark screen or under a shader pack it must glow, not smudge.
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+            RenderSystem.defaultBlendFunc();
             graphics.setColor(1.0F, 1.0F, 1.0F, pulse);
             graphics.blit(HAZE, 0, 0, graphics.guiWidth(), graphics.guiHeight(), 0.0F, 0.0F, 256, 256, 256, 256);
             graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.defaultBlendFunc();
             RenderSystem.disableBlend();
         });
     }
