@@ -35,7 +35,6 @@ import net.minecraft.world.phys.Vec3;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
-import dev.zsskayr.merlins_inferno.entity.SacredCultistEntity;
 import dev.zsskayr.merlins_inferno.entity.SacredPriestEntity;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
@@ -68,16 +67,12 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     /** The Priest stands behind the altar (east of it), on the slab there, facing the nave. */
     private static final int PRIEST_X = 43, PRIEST_Y = 3, PRIEST_Z = 22;
     private static final double PRIEST_FEET_OFFSET = 0.5; // the bottom slab he stands on
-    /** Yaw facing west (the nave) / east (the altar): 0 is south, 90 west, 180 north, 270 east. */
-    private static final float FACE_WEST = 90.0F, FACE_EAST = 270.0F;
+    /** Yaw facing west (the nave): 0 is south, 90 west, 180 north, 270 east. */
+    private static final float FACE_WEST = 90.0F;
     /** The pews: spruce stairs facing west (their backs to the nave, so a worshipper looks east at the altar) at floor level. */
     private static final int PEW_MIN_X = 14, PEW_MAX_X = 36;
-    /** The congregation: fills the pews from the front (nearest the altar) backwards, both sides of the aisle. */
-    private static final int CULTIST_COUNT = 12;
-    /** How far from the nave they roam by day - reaching the churchyard around it. */
-    private static final int CULTIST_ROAM_RADIUS = 30;
-    /** A stair's low step sits half a block up, on its front (east) half; feet go there. */
-    private static final double SEAT_STEP_HEIGHT = 0.5, SEAT_X_OFFSET = 0.8;
+    /** The middle of the nave: where the congregation roams around by day (see {@link ChurchCongregation}). */
+    private static final int NAVE_CENTER_X = 25, NAVE_CENTER_Z = 22;
     /** Loot chests on the nave floor level (y = 2), tucked into nooks: {x, z}. All but the first are only placed by chance. */
     private static final int[][] CHESTS = {{34, 6}, {12, 13}, {12, 31}, {12, 17}, {12, 27}, {32, 38}, {40, 6}, {55, 33}, {59, 33}, {41, 12}, {41, 32}};
     /** Candidate nooks behind the east hall for the hidden vault chest (Pandora Box, see the hidden loot table); one is picked per church. */
@@ -193,6 +188,8 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         }
         if (chunkBox.isInside(altarPos) && level.getBlockEntity(altarPos) instanceof SacredAltarBlockEntity altar) {
             altar.configure(bellPos, this.at(ELIAS_X, ELIAS_Y, ELIAS_Z), true);
+            altar.setCongregation(this.at(NAVE_CENTER_X, NAVE_Y, NAVE_CENTER_Z), ChurchCongregation.baseSeats(this.pewSeats(), this.templatePosition),
+                    ChurchCongregation.extraSeats(this.pewSeats(), this.templatePosition), level.getLevel().getGameTime());
         }
     }
 
@@ -256,24 +253,15 @@ public class SacredChurchPiece extends TemplateStructurePiece {
                 level.addFreshEntityWithPassengers(priest);
             }
         }
-        List<BlockPos> seats = this.pewSeats();
-        for (int i = 0; i < Math.min(CULTIST_COUNT, seats.size()); i++) {
+        List<BlockPos> seats = ChurchCongregation.baseSeats(this.pewSeats(), this.templatePosition);
+        for (int i = 0; i < seats.size(); i++) {
             int bit = 1 << (i + 1);
             BlockPos seat = seats.get(i);
             if ((this.spawnedMask & bit) != 0 || !chunkBox.isInside(seat)) {
                 continue;
             }
             this.spawnedMask |= bit;
-            SacredCultistEntity cultist = ModEntityTypes.SACRED_CULTIST.get().create(level.getLevel());
-            if (cultist != null) {
-                Vec3 post = new Vec3(seat.getX() + SEAT_X_OFFSET, seat.getY() + SEAT_STEP_HEIGHT, seat.getZ() + 0.5);
-                cultist.moveTo(post.x, post.y, post.z, FACE_EAST, 0.0F); // in the pew, facing the altar
-                cultist.setPersistenceRequired();
-                cultist.restrictTo(this.at(25, NAVE_Y, 22), CULTIST_ROAM_RADIUS);
-                cultist.setServicePost(post, FACE_EAST);
-                cultist.finalizeSpawn(level, level.getCurrentDifficultyAt(seat), MobSpawnType.STRUCTURE, null);
-                level.addFreshEntityWithPassengers(cultist);
-            }
+            ChurchCongregation.spawn(level, seat, this.at(NAVE_CENTER_X, NAVE_Y, NAVE_CENTER_Z));
         }
     }
 }

@@ -15,10 +15,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
+import dev.zsskayr.merlins_inferno.registry.ModBlockEntityTypes;
 
 /**
  * The altar of a Sacred Church. A diamond laid on it - a tithe - keeps the vigil again: it rehangs the
@@ -28,6 +31,17 @@ import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
 public class SacredAltarBlock extends Block implements EntityBlock {
     public SacredAltarBlock(Properties properties) {
         super(properties);
+    }
+
+    /** Ticks the altar on the server: it tends the church's congregation (see {@link SacredAltarBlockEntity#serverTick}). */
+    @Override
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (level.isClientSide || type != ModBlockEntityTypes.SACRED_ALTAR.get()) {
+            return null;
+        }
+        return (BlockEntityTicker<T>) (BlockEntityTicker<SacredAltarBlockEntity>) (l, pos, st, altar) -> altar.serverTick((ServerLevel) l);
     }
 
     @Nullable
