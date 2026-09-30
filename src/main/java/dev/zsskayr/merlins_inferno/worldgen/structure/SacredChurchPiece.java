@@ -124,10 +124,15 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     }
 
     /** The pew seats, front row first (nearest the altar), read from the pasted template's own stairs. */
+    /**
+     * Every scan of the template goes through fresh settings ({@link #makeSettings()}): the piece's own {@code placeSettings} get
+     * the current chunk's bounding box on every {@code postProcess}, and {@code filterBlocks} honours it, so a scan (or its cached
+     * result) would only ever see the blocks of whichever chunk happened to be generated first.
+     */
     private List<BlockPos> pewSeats() {
         if (this.pewSeats == null) {
             int floor = this.templatePosition.getY() + NAVE_Y;
-            this.pewSeats = this.template.filterBlocks(this.templatePosition, this.placeSettings, Blocks.SPRUCE_STAIRS).stream()
+            this.pewSeats = this.template.filterBlocks(this.templatePosition, makeSettings(), Blocks.SPRUCE_STAIRS).stream()
                     .filter(info -> info.state().getValue(StairBlock.FACING) == Direction.WEST && info.state().getValue(StairBlock.HALF) == Half.BOTTOM
                             && info.pos().getY() == floor
                             && info.pos().getX() >= this.templatePosition.getX() + PEW_MIN_X && info.pos().getX() <= this.templatePosition.getX() + PEW_MAX_X)
@@ -143,7 +148,7 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         if (this.carpetSpots == null) {
             Set<BlockPos> spots = new HashSet<>();
             for (Block carpet : List.of(Blocks.RED_CARPET, Blocks.YELLOW_CARPET)) {
-                this.template.filterBlocks(this.templatePosition, this.placeSettings, carpet).forEach(info -> spots.add(info.pos().immutable()));
+                this.template.filterBlocks(this.templatePosition, makeSettings(), carpet).forEach(info -> spots.add(info.pos().immutable()));
             }
             this.carpetSpots = spots;
         }
