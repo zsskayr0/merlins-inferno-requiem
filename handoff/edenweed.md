@@ -15,7 +15,7 @@ Branch: `feature/edenweed`. Design original: seções 1-4 do handoff de game des
 | `wooden_pipe` | `item/WoodenPipeItem` | Durabilidade 64. Fuma 1 erva seca do inventário: Trance por 90s. |
 | `edenweed_tea` | `item/EdenweedTeaItem` | Receita: erva seca + garrafa de água (`neoforge:components`). Trance por 4 min. Devolve garrafa. |
 | Efeito `druidic_trance` | `effect/DruidicTranceEffect`, `event/EdenweedHandler` | Couch-lock: velocidade -35%, mineração -60%, dano -50%; resistência 80% (não vale para `BYPASSES_INVULNERABILITY`); larica: dreno de fome ~3x o Hunger I; comida dá 2x saturação e Regeneration proporcional. |
-| The Sight | `client/EdenweedSight` + `mixin/MinecraftMixin` | Tudo client-side: só quem está sob o Trance vê. Entidades da tag `sight_revealed` num raio de 32 ganham outline via mixin em `Minecraft#shouldEntityAppearGlowing`. Blocos da tag `sight_revealed` num raio de 14 são contornados através das paredes. Vinheta verde nas bordas. |
+| The Sight | `client/EdenweedSight` | Tudo client-side: só quem está sob o Trance vê. Contorno por linhas grossas, desenhado por nós (não pelo glow do vanilla, que shaders engolem), atravessando paredes: blocos da tag `sight_revealed` num raio de 14 e **todo ser vivo** num raio de 32 (hostis em laranja-avermelhado, o resto em verde). Vinheta clara, em blend aditivo, nas bordas da tela. |
 | Guia | `patchouli .../entries/edenweed.json` (druid_road) + lang en_us/pt_br | |
 
 ## Decisões que não estavam no doc original
@@ -28,5 +28,5 @@ Branch: `feature/edenweed`. Design original: seções 1-4 do handoff de game des
 - **C2 - Incensário Pacifista** (block entity de área): queima `Compressed Edenweed Block`, fumaça ~64x64, impede spawn hostil e torna hostis/bosses neutros dentro da área. Ainda não existe o `Compressed Edenweed Block` nem o Incensário.
 - **C3 - Óleo Estabilizador**: erva prensada -> `Edenweed Essential Oil`, base dos caldeirões de poções de late game, com explosão sem o óleo (vai exigir mixin/evento no caldeirão).
 - Sons próprios (fumar, secar, colher); hoje usa vanilla.
-- Valores a calibrar: `DRY_TICKS`, duração do Trance, `HUNGER_EXHAUSTION`, raios da Sight, lista das tags `sight_revealed`.
+- Valores a calibrar: `DRY_TICKS`, duração do Trance, `HUNGER_EXHAUSTION`, raios da Sight, a tag de blocos `sight_revealed`, espessura das linhas.
 - Bloco do arbusto não tem item; se quiser plantar/bonemeal, definir semente.
