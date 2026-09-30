@@ -47,6 +47,14 @@ public final class ModTags {
         public static final TagKey<EntityType<?>> REWARD_CHEST_BOSSES = TagKey.create(Registries.ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "reward_chest_bosses"));
 
+        /**
+         * Every boss/miniboss the Champion Seeker ({@code item.ChampionSeekerItem}) will point at - a
+         * broader roster than {@link #REWARD_CHEST_BOSSES} (includes minibosses like the Starved,
+         * Grymn and Dullahan, not just the three Circle 1 bosses).
+         */
+        public static final TagKey<EntityType<?>> BOSS_COMPASS_TARGETS = TagKey.create(Registries.ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "boss_compass_targets"));
+
         /** "Toque do Druida"'s bonus-loot roster for swords - see {@code event.DruidsTouchHandler}. */
         public static final TagKey<EntityType<?>> MAGICAL_MOBS = TagKey.create(Registries.ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "magical_mobs"));
@@ -89,6 +97,10 @@ public final class ModTags {
          */
         public static final TagKey<Block> DRUIDS_TOUCH_ORES = TagKey.create(Registries.BLOCK,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "druids_touch_ores"));
+
+        /** Magical ores and chests The Sight of the Druidic Trance outlines through walls - see {@code client.EdenweedSight}. */
+        public static final TagKey<Block> SIGHT_REVEALED = TagKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "sight_revealed"));
 
         private Blocks() {
         }

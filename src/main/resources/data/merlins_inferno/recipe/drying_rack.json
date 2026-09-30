@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": { "tag": "minecraft:planks" },
+    "S": { "item": "minecraft:stick" },
+    "T": { "item": "minecraft:string" }
+  },
+  "pattern": [ "SSS", "STS", "P P" ],
+  "result": { "count": 1, "id": "merlins_inferno:drying_rack" }
+}

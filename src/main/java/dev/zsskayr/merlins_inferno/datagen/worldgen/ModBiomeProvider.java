@@ -74,8 +74,6 @@ public final class ModBiomeProvider {
         // roll; the spawn rule (night, this biome, none within 128 blocks) and the entity's own
         // dawn/leave-the-biome despawn do the rest - see DullahanEntity.
         mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(ModEntityTypes.DULLAHAN.get(), 3, 1, 1));
-        // Ostara, the Spring Deity: the Circle 1 boss. Even rarer; the rule (daytime, solitary) lives on the entity.
-        mobSpawns.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(ModEntityTypes.OSTARA.get(), 1, 1, 1));
 
         BiomeGenerationSettings.Builder generation = new BiomeGenerationSettings.Builder(placedFeatures, worldCarvers);
         BiomeDefaultFeatures.addDefaultCarversAndLakes(generation);

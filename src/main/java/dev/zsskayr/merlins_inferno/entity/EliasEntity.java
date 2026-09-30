@@ -1,5 +1,6 @@
 package dev.zsskayr.merlins_inferno.entity;
 
+import java.util.EnumSet;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -17,11 +18,13 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -33,6 +36,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
@@ -56,8 +66,13 @@ import dev.zsskayr.merlins_inferno.worldgen.structure.GreatBell;
  *     <li><b>Loot:</b> Celestial Essence (data/merlins_inferno/loot_table/entities/elias.json).</li>
  * </ul>
  * Death starts the altar's cooldown; a diamond on the altar wakes the next one.
+ * <p>
+ * Animated with GeckoLib ({@code geo/elias.geo.json}, {@code animations/elias.animation.json}): the same clip set
+ * the Sacred Priest has (idle/idle_hands_on_hips/walk/run/attack/pray_start/pray/pray_end/death - he too kneels
+ * in vigil, Seraphium Sword planted, when left in peace), plus a fury-only moveset once {@link #enraged} is set:
+ * idle_fury, run_fury and a wider, harder two-handed attack_fury.
  */
-public class EliasEntity extends Monster {
+public class EliasEntity extends Monster implements GeoEntity {
     public static final double MAX_HEALTH = 400.0;
     public static final double ATTACK_DAMAGE = 18.0;
     public static final double MOVEMENT_SPEED = 0.2;
@@ -105,6 +120,24 @@ public class EliasEntity extends Monster {
     private int tollTimer;
     private boolean enraged;
 
+    // --- GeckoLib animation ---
+    private static final double WALK_SPEED_SQR = 0.0016;
+    private static final double WALK_HYSTERESIS_SQR = 0.0006;
+    private static final double RUN_SPEED_SQR = 0.02;
+    /** The death clip is 2.5 s; the body lingers a little past it so the last pose is held before it vanishes. */
+    private static final int DEATH_ANIMATION_TICKS = 55;
+
+    private static final RawAnimation ATTACK_ANIMATION = RawAnimation.begin().thenPlay("animation.elias.attack");
+    private static final RawAnimation ATTACK_FURY_ANIMATION = RawAnimation.begin().thenPlay("animation.elias.attack_fury");
+    private static final RawAnimation DEATH_ANIMATION = RawAnimation.begin().thenPlayAndHold("animation.elias.death");
+
+    private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
+    private String animationState;
+    private String pendingAnimationState;
+    private int pendingAnimationTick;
+    private RawAnimation loopAnimation = RawAnimation.begin().thenLoop("animation.elias.idle");
+    private int deathTicks;
+
     public EliasEntity(EntityType<? extends EliasEntity> type, Level level) {
         super(type, level);
         this.xpReward = 50;
@@ -135,6 +168,7 @@ public class EliasEntity extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
+        this.goalSelector.addGoal(3, new PrayGoal(this));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.6));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 16.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -151,6 +185,9 @@ public class EliasEntity extends Monster {
     @Override
     public boolean doHurtTarget(Entity target) {
         this.level().playSound(null, this.blockPosition(), SoundEvents.CHAIN_BREAK, SoundSource.HOSTILE, 1.0F, 0.7F);
+        if (!this.level().isClientSide) {
+            this.triggerAnim("move", this.enraged ? "attack_fury" : "attack");
+        }
         boolean hit = super.doHurtTarget(target);
         if (hit && target instanceof Player player) {
             MobEffectInstance current = player.getEffect(ModEffects.SANCTIFIED);
@@ -298,6 +335,82 @@ public class EliasEntity extends Monster {
         return false;
     }
 
+    /** Lingers for the whole death clip instead of vanilla's 20 ticks, like the Sacred Priest's. */
+    @Override
+    protected void tickDeath() {
+        ++this.deathTicks;
+        if (this.deathTicks >= DEATH_ANIMATION_TICKS && !this.level().isClientSide() && !this.isRemoved()) {
+            this.level().broadcastEntityEvent(this, (byte) 60);
+            this.remove(Entity.RemovalReason.KILLED);
+        }
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // GeckoLib animation: one controller owns the whole pose. Praying is read straight from the vanilla pose
+    // PrayGoal sets (disabled once enraged - see PrayGoal.canUse); the fury moveset takes over entirely once
+    // this.enraged is set, replacing idle/walk/run/attack outright rather than blending with them.
+    // ------------------------------------------------------------------------------------------
+
+    private String desiredAnimationState() {
+        if (this.getPose() == Pose.CROUCHING) {
+            return "pray";
+        }
+        double dx = this.getX() - this.xOld;
+        double dz = this.getZ() - this.zOld;
+        double speedSqr = dx * dx + dz * dz;
+        boolean wasMoving = "walk".equals(this.animationState) || "run".equals(this.animationState) || "run_fury".equals(this.animationState);
+        boolean moving = speedSqr > (wasMoving ? WALK_HYSTERESIS_SQR : WALK_SPEED_SQR);
+        if (this.enraged) {
+            return moving ? "run_fury" : "idle_fury";
+        }
+        if (!moving) {
+            return "idle";
+        }
+        return speedSqr > RUN_SPEED_SQR ? "run" : "walk";
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "move", 4, state -> {
+            if (this.isDeadOrDying()) {
+                return state.setAndContinue(DEATH_ANIMATION);
+            }
+            String desired = this.desiredAnimationState();
+            if (this.animationState == null) {
+                this.animationState = desired;
+                this.loopAnimation = RawAnimation.begin().thenLoop("animation.elias." + desired);
+            } else if (!desired.equals(this.animationState)) {
+                // Only entering/leaving the kneeling prayer is debounced (it is the one state with bracket clips
+                // to protect from a one-tick flicker); idle/walk/run/fury states swap the moment the threshold
+                // does, so a slow, stop-start wander never gets stuck showing idle.
+                boolean bracketed = "pray".equals(desired) || "pray".equals(this.animationState);
+                if (bracketed) {
+                    if (!desired.equals(this.pendingAnimationState)) {
+                        this.pendingAnimationState = desired;
+                        this.pendingAnimationTick = this.tickCount;
+                        return state.setAndContinue(this.loopAnimation);
+                    } else if (this.tickCount - this.pendingAnimationTick < 3) {
+                        return state.setAndContinue(this.loopAnimation);
+                    }
+                }
+                RawAnimation next = RawAnimation.begin();
+                if ("pray".equals(desired)) {
+                    next = next.thenPlay("animation.elias.pray_start");
+                } else if ("pray".equals(this.animationState)) {
+                    next = next.thenPlay("animation.elias.pray_end");
+                }
+                this.loopAnimation = next.thenLoop("animation.elias." + desired);
+                this.animationState = desired;
+            }
+            return state.setAndContinue(this.loopAnimation);
+        }).triggerableAnim("attack", ATTACK_ANIMATION).triggerableAnim("attack_fury", ATTACK_FURY_ANIMATION));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.animationCache;
+    }
+
     // ------------------------------------------------------------------------------------------
     // Boss bar, save
     // ------------------------------------------------------------------------------------------
@@ -370,5 +483,43 @@ public class EliasEntity extends Monster {
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
         this.playSound(SoundEvents.CHAIN_STEP, 0.4F, 0.8F);
+    }
+
+    /** Kneels in silent vigil, sword planted, while left in peace - never once the bell has broken and fury has taken him. */
+    private static class PrayGoal extends Goal {
+        private final EliasEntity elias;
+        private int ticksLeft;
+
+        PrayGoal(EliasEntity elias) {
+            this.elias = elias;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.elias.enraged && this.elias.getTarget() == null && this.elias.getRandom().nextInt(150) == 0;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.ticksLeft > 0 && !this.elias.enraged && this.elias.getTarget() == null;
+        }
+
+        @Override
+        public void start() {
+            this.ticksLeft = 300 + this.elias.getRandom().nextInt(400);
+            this.elias.getNavigation().stop();
+            this.elias.setPose(Pose.CROUCHING);
+        }
+
+        @Override
+        public void tick() {
+            this.ticksLeft--;
+        }
+
+        @Override
+        public void stop() {
+            this.elias.setPose(Pose.STANDING);
+        }
     }
 }

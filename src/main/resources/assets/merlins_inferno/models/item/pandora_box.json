@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "merlins_inferno:item/grimmorium"
+    "layer0": "merlins_inferno:item/pandora_box"
   }
 }

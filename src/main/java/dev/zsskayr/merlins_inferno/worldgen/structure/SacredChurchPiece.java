@@ -1,5 +1,11 @@
 package dev.zsskayr.merlins_inferno.worldgen.structure;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -8,7 +14,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.RandomizableContainer;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -17,16 +22,25 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
+import net.minecraft.world.level.levelgen.structure.templatesystem.AlwaysTrueTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.ProcessorRule;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.phys.Vec3;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
@@ -59,7 +73,15 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     private static final int BELL_X = 36, BELL_Y = 9, BELL_Z = 22, VAULT_Y = 31;
     private static final int ELIAS_X = 39, ELIAS_Y = 3, ELIAS_Z = 22;
     private static final int NAVE_Y = 2; // the red carpet down the nave
-    private static final int[][] CULTISTS = {{18, 21}, {22, 21}, {26, 21}, {30, 21}, {18, 23}, {22, 23}, {26, 23}, {30, 23}};
+    /** The Priest stands behind the altar (east of it), on the slab there, facing the nave. */
+    private static final int PRIEST_X = 43, PRIEST_Y = 3, PRIEST_Z = 22;
+    private static final double PRIEST_FEET_OFFSET = 0.5; // the bottom slab he stands on
+    /** Yaw facing west (the nave): 0 is south, 90 west, 180 north, 270 east. */
+    private static final float FACE_WEST = 90.0F;
+    /** The pews: spruce stairs facing west (their backs to the nave, so a worshipper looks east at the altar) at floor level. */
+    private static final int PEW_MIN_X = 14, PEW_MAX_X = 36;
+    /** The middle of the nave: where the congregation roams around by day (see {@link ChurchCongregation}). */
+    private static final int NAVE_CENTER_X = 25, NAVE_CENTER_Z = 22;
     /** Loot chests on the nave floor level (y = 2), tucked into nooks: {x, z}. All but the first are only placed by chance. */
     private static final int[][] CHESTS = {{34, 6}, {12, 13}, {12, 31}, {12, 17}, {12, 27}, {32, 38}, {40, 6}, {55, 33}, {59, 33}, {41, 12}, {41, 32}};
     /** Candidate nooks behind the east hall for the hidden vault chest (Pandora Box, see the hidden loot table); one is picked per church. */
@@ -76,6 +98,9 @@ public class SacredChurchPiece extends TemplateStructurePiece {
 
     private final long seed;
     private int spawnedMask; // bit 0 = the Sacred Priest, bits 1.. = cultists
+    private List<BlockPos> pewSeats; // derived from the template, not saved
+    private Set<BlockPos> carpetSpots; // likewise
+    private Set<BlockPos> carpetGaps; // likewise
 
     public SacredChurchPiece(StructureTemplateManager templateManager, long seed, BlockPos pos) {
         super(ModStructurePieceTypes.SACRED_CHURCH.get(), 0, templateManager, TEMPLATE, TEMPLATE.toString(), makeSettings(), pos);
@@ -88,9 +113,32 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         this.spawnedMask = tag.getInt("Spawned");
     }
 
+    /**
+     * Where the Sacred Carpet differs from the template's own red and yellow carpet, as the layout was hand-edited in a
+     * generated church. Template-relative {x, y, z}; expanded by {@link #carpetAdditions()}.
+     * <ul>
+     *     <li>the east walkway (x 49-59, y 3) gets a carpet lane on each side, z = 20 and 24, next to its three-wide aisle;</li>
+     *     <li>the platform beyond it (x 61-62, y 4, z 19-25) is carpeted;</li>
+     *     <li>the altar's white carpet corners and sides (x 40 and 42, y 4, z 20/22/24) turn to Sacred Carpet - its two white
+     *     centre pieces and the ones on the anvils stay vanilla.</li>
+     * </ul>
+     */
+    private static final int WALKWAY_X_FROM = 49, WALKWAY_X_TO = 59, WALKWAY_Y = 3;
+    private static final int PLATFORM_X_FROM = 61, PLATFORM_X_TO = 62, PLATFORM_Y = 4, PLATFORM_Z_FROM = 19, PLATFORM_Z_TO = 25;
+    private static final int ALTAR_CARPET_Y = 4;
+    /** Yellow carpet nubs the layout drops (they stuck out of the aisle's edge): template-relative {x, y, z}. */
+    private static final int[][] CARPET_REMOVED = {{34, 2, 6}, {33, 2, 18}, {33, 2, 26}};
+
+    /**
+     * The template's four yellow wool blocks (odd full blocks in the floor) become smooth stone slabs. A top slab, so the
+     * walking surface stays as high as the full block it replaces.
+     */
+    private static final BlockState FLOOR_SLAB = Blocks.SMOOTH_STONE_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP);
+
     private static StructurePlaceSettings makeSettings() {
         // No ignore-air processor: the template's air is what clears the hillside.
-        return new StructurePlaceSettings().setRotation(Rotation.NONE).setMirror(Mirror.NONE).setIgnoreEntities(true);
+        return new StructurePlaceSettings().setRotation(Rotation.NONE).setMirror(Mirror.NONE).setIgnoreEntities(true)
+                .addProcessor(new RuleProcessor(List.of(new ProcessorRule(new BlockMatchTest(Blocks.YELLOW_WOOL), AlwaysTrueTest.INSTANCE, FLOOR_SLAB))));
     }
 
     @Override
@@ -105,6 +153,99 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         // No data markers in this template.
     }
 
+    /** The pew seats, front row first (nearest the altar), read from the pasted template's own stairs. */
+    /**
+     * Every scan of the template goes through fresh settings ({@link #makeSettings()}): the piece's own {@code placeSettings} get
+     * the current chunk's bounding box on every {@code postProcess}, and {@code filterBlocks} honours it, so a scan (or its cached
+     * result) would only ever see the blocks of whichever chunk happened to be generated first.
+     */
+    private List<BlockPos> pewSeats() {
+        if (this.pewSeats == null) {
+            int floor = this.templatePosition.getY() + NAVE_Y;
+            this.pewSeats = this.template.filterBlocks(this.templatePosition, makeSettings(), Blocks.SPRUCE_STAIRS).stream()
+                    .filter(info -> info.state().getValue(StairBlock.FACING) == Direction.WEST && info.state().getValue(StairBlock.HALF) == Half.BOTTOM
+                            && info.pos().getY() == floor
+                            && info.pos().getX() >= this.templatePosition.getX() + PEW_MIN_X && info.pos().getX() <= this.templatePosition.getX() + PEW_MAX_X)
+                    .map(info -> info.pos().immutable())
+                    .sorted(Comparator.comparingInt((BlockPos p) -> -p.getX()).thenComparingInt(BlockPos::getZ))
+                    .toList();
+        }
+        return this.pewSeats;
+    }
+
+    /** Where the template lays its red and yellow carpet (the aisle and its border), as world positions. */
+    private Set<BlockPos> carpetSpots() {
+        if (this.carpetSpots == null) {
+            Set<BlockPos> spots = new HashSet<>();
+            for (Block carpet : List.of(Blocks.RED_CARPET, Blocks.YELLOW_CARPET)) {
+                this.template.filterBlocks(this.templatePosition, makeSettings(), carpet).forEach(info -> spots.add(info.pos().immutable()));
+            }
+            spots.addAll(this.carpetAdditions());
+            spots.removeAll(this.carpetGaps());
+            this.carpetSpots = spots;
+        }
+        return this.carpetSpots;
+    }
+
+    /** World positions that get a Sacred Carpet although the template has no red or yellow carpet there. */
+    private List<BlockPos> carpetAdditions() {
+        List<BlockPos> added = new ArrayList<>();
+        for (int x = WALKWAY_X_FROM; x <= WALKWAY_X_TO; x++) {
+            added.add(this.at(x, WALKWAY_Y, 20));
+            added.add(this.at(x, WALKWAY_Y, 24));
+        }
+        for (int x = PLATFORM_X_FROM; x <= PLATFORM_X_TO; x++) {
+            for (int z = PLATFORM_Z_FROM; z <= PLATFORM_Z_TO; z++) {
+                added.add(this.at(x, PLATFORM_Y, z));
+            }
+        }
+        for (int x : new int[] {40, 42}) {
+            for (int z : new int[] {20, 22, 24}) {
+                added.add(this.at(x, ALTAR_CARPET_Y, z));
+            }
+        }
+        return added;
+    }
+
+    /** World positions where the template's red or yellow carpet is dropped from the layout. */
+    private Set<BlockPos> carpetGaps() {
+        if (this.carpetGaps == null) {
+            Set<BlockPos> gaps = new HashSet<>();
+            for (int[] p : CARPET_REMOVED) {
+                gaps.add(this.at(p[0], p[1], p[2]));
+            }
+            this.carpetGaps = gaps;
+        }
+        return this.carpetGaps;
+    }
+
+    /**
+     * Swaps the template's vanilla red and yellow carpet for the mod's Sacred Carpet. Its blue binding shows only at the
+     * exposed edges, so each piece's connections come from the template's own carpet layout (not from the world, whose
+     * neighbouring chunks may not exist yet) and every chunk of the church agrees on them.
+     */
+    private void sacredCarpets(WorldGenLevel level, BoundingBox chunkBox) {
+        Set<BlockPos> spots = this.carpetSpots();
+        for (BlockPos gap : this.carpetGaps()) {
+            if (chunkBox.isInside(gap)) {
+                level.setBlock(gap, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+            }
+        }
+        // Pasting the template runs updateShape across the seam with the neighbouring chunk, which resets the connection of
+        // any Sacred Carpet already standing on its side of the border (the pasted vanilla carpet is not one). So this chunk
+        // also re-states the carpets in the ring just outside its box - only those that already exist.
+        BoundingBox reach = new BoundingBox(chunkBox.minX() - 1, chunkBox.minY(), chunkBox.minZ() - 1,
+                chunkBox.maxX() + 1, chunkBox.maxY(), chunkBox.maxZ() + 1);
+        for (BlockPos spot : spots) {
+            if (!chunkBox.isInside(spot) && !(reach.isInside(spot) && level.getBlockState(spot).is(ModBlocks.SACRED_CARPET.get()))) {
+                continue;
+            }
+            BlockState carpet = ModBlocks.SACRED_CARPET.get().connectedState(
+                    ModBlocks.SACRED_CARPET.get().defaultBlockState(), spot, spots::contains);
+            level.setBlock(spot, carpet, Block.UPDATE_CLIENTS);
+        }
+    }
+
     private BlockPos at(int lx, int ly, int lz) {
         return this.templatePosition.offset(lx, ly, lz);
     }
@@ -115,6 +256,7 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         this.foundation(level, chunkBox);
         super.postProcess(level, structureManager, generator, random, chunkBox, chunkPos, pos);
         this.chancel(level, chunkBox);
+        this.sacredCarpets(level, chunkBox);
         this.chests(level, chunkBox, random);
         this.spawnInhabitants(level, chunkBox);
     }
@@ -159,6 +301,8 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         }
         if (chunkBox.isInside(altarPos) && level.getBlockEntity(altarPos) instanceof SacredAltarBlockEntity altar) {
             altar.configure(bellPos, this.at(ELIAS_X, ELIAS_Y, ELIAS_Z), true);
+            altar.setCongregation(this.at(NAVE_CENTER_X, NAVE_Y, NAVE_CENTER_Z), ChurchCongregation.baseSeats(this.pewSeats(), this.templatePosition),
+                    ChurchCongregation.extraSeats(this.pewSeats(), this.templatePosition), level.getLevel().getGameTime());
         }
     }
 
@@ -209,32 +353,28 @@ public class SacredChurchPiece extends TemplateStructurePiece {
      * Elias is not among them: he is woken at the altar once the Priest has fallen.
      */
     private void spawnInhabitants(WorldGenLevel level, BoundingBox chunkBox) {
-        BlockPos priestPos = this.at(ELIAS_X, ELIAS_Y, ELIAS_Z);
+        BlockPos priestPos = this.at(PRIEST_X, PRIEST_Y, PRIEST_Z);
         if ((this.spawnedMask & 1) == 0 && chunkBox.isInside(priestPos)) {
             this.spawnedMask |= 1;
             SacredPriestEntity priest = ModEntityTypes.SACRED_PRIEST.get().create(level.getLevel());
             if (priest != null) {
-                priest.moveTo(priestPos.getX() + 0.5, priestPos.getY(), priestPos.getZ() + 0.5, 270.0F, 0.0F); // facing east, toward the altar
+                Vec3 post = new Vec3(priestPos.getX() + 0.5, priestPos.getY() + PRIEST_FEET_OFFSET, priestPos.getZ() + 0.5);
+                priest.moveTo(post.x, post.y, post.z, FACE_WEST, 0.0F); // behind the altar, facing the congregation
                 priest.setHome(this.at(ALTAR_X, ALTAR_Y, ALTAR_Z));
+                priest.setServicePost(post, FACE_WEST);
                 priest.finalizeSpawn(level, level.getCurrentDifficultyAt(priestPos), MobSpawnType.STRUCTURE, null);
                 level.addFreshEntityWithPassengers(priest);
             }
         }
-        for (int i = 0; i < CULTISTS.length; i++) {
+        List<BlockPos> seats = ChurchCongregation.baseSeats(this.pewSeats(), this.templatePosition);
+        for (int i = 0; i < seats.size(); i++) {
             int bit = 1 << (i + 1);
-            BlockPos p = this.at(CULTISTS[i][0], NAVE_Y, CULTISTS[i][1]);
-            if ((this.spawnedMask & bit) != 0 || !chunkBox.isInside(p)) {
+            BlockPos seat = seats.get(i);
+            if ((this.spawnedMask & bit) != 0 || !chunkBox.isInside(seat)) {
                 continue;
             }
             this.spawnedMask |= bit;
-            Mob cultist = ModEntityTypes.SACRED_CULTIST.get().create(level.getLevel());
-            if (cultist != null) {
-                cultist.moveTo(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, (float) (this.roll(p.getX(), p.getZ(), 90) * 360.0), 0.0F);
-                cultist.setPersistenceRequired();
-                cultist.restrictTo(this.at(25, NAVE_Y, 22), 18);
-                cultist.finalizeSpawn(level, level.getCurrentDifficultyAt(p), MobSpawnType.STRUCTURE, null);
-                level.addFreshEntityWithPassengers(cultist);
-            }
+            ChurchCongregation.spawn(level, seat, this.at(NAVE_CENTER_X, NAVE_Y, NAVE_CENTER_Z));
         }
     }
 }

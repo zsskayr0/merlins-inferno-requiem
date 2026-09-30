@@ -1,5 +1,7 @@
 package dev.zsskayr.merlins_inferno.blockentity;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -10,15 +12,19 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 import dev.zsskayr.merlins_inferno.entity.EliasEntity;
+import dev.zsskayr.merlins_inferno.entity.SacredCultistEntity;
 import dev.zsskayr.merlins_inferno.registry.ModBlockEntityTypes;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
+import dev.zsskayr.merlins_inferno.worldgen.structure.ChurchCongregation;
 import dev.zsskayr.merlins_inferno.worldgen.structure.GreatBell;
 
 /**
@@ -26,6 +32,9 @@ import dev.zsskayr.merlins_inferno.worldgen.structure.GreatBell;
  * the vigil may be kept again, and whether the Sacred Priest still guards it. The church's structure piece fills this in ({@link #configure}) when it
  * places the altar; Elias's death starts the cooldown ({@link #startCooldown}), and a diamond laid on
  * the altar after it ({@link #invoke}) rehangs the bell and wakes a new Elias.
+ * <p>
+ * It also keeps the congregation: every seven in-game days it refills the pews that stand empty
+ * ({@link ChurchCongregation}), and the first time a Circle 2 player is near it seats the extra row of cultists.
  */
 public class SacredAltarBlockEntity extends BlockEntity {
     /** One in-game day (20 minutes) between Elias's death and the next vigil - stops the 1% drop from being spammed. */
@@ -41,6 +50,19 @@ public class SacredAltarBlockEntity extends BlockEntity {
     /** True from the church's generation until its Sacred Priest falls: Elias cannot be woken meanwhile. */
     private boolean priestPending;
 
+    /** How often the congregation is checked, in ticks, and how close a player must be for the church to be active. */
+    private static final int CHECK_INTERVAL_TICKS = 100;
+    private static final double ACTIVE_RADIUS = 96.0;
+    /** A cultist with its post this close to a seat's post is that seat's occupant. */
+    private static final double SEAT_MATCH_SQR = 0.25;
+    /** Seats beside the aisle that make up the Circle 1 congregation, the extra row for Circle 2, and the middle of the nave. */
+    private final List<BlockPos> baseSeats = new ArrayList<>();
+    private final List<BlockPos> extraSeats = new ArrayList<>();
+    @Nullable
+    private BlockPos churchCenter;
+    private long nextRefill;
+    private boolean extrasSeated;
+
     public SacredAltarBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntityTypes.SACRED_ALTAR.get(), pos, state);
     }
@@ -50,6 +72,67 @@ public class SacredAltarBlockEntity extends BlockEntity {
         this.spawnPos = spawn.immutable();
         this.priestPending = priestPending;
         this.setChanged();
+    }
+
+    /** Records the pews the congregation sits in and starts the seven-day refill clock. */
+    public void setCongregation(BlockPos center, List<BlockPos> base, List<BlockPos> extra, long gameTime) {
+        this.churchCenter = center.immutable();
+        this.baseSeats.clear();
+        this.baseSeats.addAll(base);
+        this.extraSeats.clear();
+        this.extraSeats.addAll(extra);
+        this.nextRefill = gameTime + ChurchCongregation.REFILL_INTERVAL_TICKS;
+        this.setChanged();
+    }
+
+    /** Run by the altar block's ticker on the server. */
+    public void serverTick(ServerLevel level) {
+        if (this.churchCenter == null || level.getGameTime() % CHECK_INTERVAL_TICKS != 0L) {
+            return;
+        }
+        boolean circleTwoNear = false;
+        boolean anyoneNear = false;
+        for (Player player : level.players()) {
+            if (player.distanceToSqr(this.worldPosition.getX() + 0.5, this.worldPosition.getY(), this.worldPosition.getZ() + 0.5) <= ACTIVE_RADIUS * ACTIVE_RADIUS) {
+                anyoneNear = true;
+                circleTwoNear |= ProgressionHelper.hasReached(player, ProgressionHelper.SECOND_CIRCLE);
+            }
+        }
+        if (!anyoneNear) {
+            return; // the pews are only tended while somebody is around to see them
+        }
+        boolean refillDue = level.getGameTime() >= this.nextRefill;
+        boolean seatExtras = circleTwoNear && (refillDue || !this.extrasSeated);
+        if (!refillDue && !seatExtras) {
+            return;
+        }
+        if (refillDue) {
+            this.fillEmptySeats(level, this.baseSeats);
+            this.nextRefill = level.getGameTime() + ChurchCongregation.REFILL_INTERVAL_TICKS;
+        }
+        if (seatExtras) {
+            this.fillEmptySeats(level, this.extraSeats);
+            this.extrasSeated = true;
+        }
+        this.setChanged();
+    }
+
+    private void fillEmptySeats(ServerLevel level, List<BlockPos> seats) {
+        List<SacredCultistEntity> present = level.getEntitiesOfClass(SacredCultistEntity.class,
+                new AABB(this.worldPosition).inflate(ACTIVE_RADIUS), c -> c.isAlive() && c.servicePost() != null);
+        for (BlockPos seat : seats) {
+            Vec3 post = ChurchCongregation.postFor(seat);
+            boolean taken = false;
+            for (SacredCultistEntity cultist : present) {
+                if (cultist.servicePost().distanceToSqr(post) < SEAT_MATCH_SQR) {
+                    taken = true;
+                    break;
+                }
+            }
+            if (!taken && this.churchCenter != null) {
+                ChurchCongregation.spawn(level, seat, this.churchCenter);
+            }
+        }
     }
 
     public boolean isPriestPending() {
@@ -126,6 +209,13 @@ public class SacredAltarBlockEntity extends BlockEntity {
         if (this.spawnPos != null) {
             tag.putLong("SpawnPos", this.spawnPos.asLong());
         }
+        if (this.churchCenter != null) {
+            tag.putLong("Center", this.churchCenter.asLong());
+        }
+        tag.putLongArray("BaseSeats", this.baseSeats.stream().mapToLong(BlockPos::asLong).toArray());
+        tag.putLongArray("ExtraSeats", this.extraSeats.stream().mapToLong(BlockPos::asLong).toArray());
+        tag.putLong("NextRefill", this.nextRefill);
+        tag.putBoolean("ExtrasSeated", this.extrasSeated);
     }
 
     @Override
@@ -135,5 +225,16 @@ public class SacredAltarBlockEntity extends BlockEntity {
         this.priestPending = tag.getBoolean("PriestPending");
         this.bellPos = tag.contains("Bell") ? BlockPos.of(tag.getLong("Bell")) : null;
         this.spawnPos = tag.contains("SpawnPos") ? BlockPos.of(tag.getLong("SpawnPos")) : null;
+        this.churchCenter = tag.contains("Center") ? BlockPos.of(tag.getLong("Center")) : null;
+        this.baseSeats.clear();
+        for (long seat : tag.getLongArray("BaseSeats")) {
+            this.baseSeats.add(BlockPos.of(seat));
+        }
+        this.extraSeats.clear();
+        for (long seat : tag.getLongArray("ExtraSeats")) {
+            this.extraSeats.add(BlockPos.of(seat));
+        }
+        this.nextRefill = tag.getLong("NextRefill");
+        this.extrasSeated = tag.getBoolean("ExtrasSeated");
     }
 }

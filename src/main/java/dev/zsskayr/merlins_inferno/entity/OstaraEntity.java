@@ -2,6 +2,7 @@ package dev.zsskayr.merlins_inferno.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
@@ -30,9 +31,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.phys.AABB;
-
-import dev.zsskayr.merlins_inferno.worldgen.biome.ModBiomes;
 
 /**
  * Ostara, the Spring Deity - the Mundane (Druidic) path's Circle 1 boss.
@@ -41,7 +39,8 @@ import dev.zsskayr.merlins_inferno.worldgen.biome.ModBiomes;
  *     <li><b>Petals:</b> from a distance she flings a volley of petals: magic damage and a bout of Slowness
  *     and Poison ({@link #PETAL_INTERVAL} ticks apart, up to {@link #PETAL_RANGE} blocks, needs line of sight).</li>
  *     <li><b>Bloom:</b> every {@link #BLOOM_INTERVAL} ticks she heals the monsters around her (and herself, less).</li>
- *     <li><b>Spawn:</b> rare, by day, in the Hallowed Grove only, one at a time ({@link #checkOstaraSpawnRules}).</li>
+ *     <li><b>Spawn:</b> never naturally - {@code OstaraSpawnHandler} calls her to a Rowanwood tree at dawn every third day, and
+ *     she fades away at dusk ({@link #isDawnBorn}); one at a time.</li>
  *     <li><b>Loot:</b> Eve's Secret, the key item of the Pandora Box ritual (data/.../loot_table/entities/ostara.json).</li>
  * </ul>
  * Drawn as a humanoid placeholder.
@@ -58,9 +57,12 @@ public class OstaraEntity extends Monster {
     private static final double BLOOM_RADIUS = 12.0;
     private static final float BLOOM_ALLY_HEAL = 20.0F;
     private static final float BLOOM_SELF_HEAL = 8.0F;
-    private static final double SOLITARY_RADIUS = 256.0;
-    /** Fraction of otherwise-valid natural spawn attempts that succeed. */
-    private static final float NATURAL_SPAWN_CHANCE = 0.1F;
+    /** Time of day (ticks) from which she fades away. */
+    private static final long DUSK = 12000L;
+    private static final long NOT_DAWN_BORN = -1L;
+
+    /** The world day she was called on by the Rowanwood dawn ritual, or {@link #NOT_DAWN_BORN} (egg, command). */
+    private long dawnDay = NOT_DAWN_BORN;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(Component.translatable("entity.merlins_inferno.ostara"),
             BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
@@ -80,27 +82,34 @@ public class OstaraEntity extends Monster {
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
-    /** Daytime, Hallowed Grove only, and none of her within {@value #SOLITARY_RADIUS} blocks. */
+    /** No natural spawns: only the dawn ritual (and eggs, commands, spawners) place her. */
     public static boolean checkOstaraSpawnRules(EntityType<OstaraEntity> type, ServerLevelAccessor level, MobSpawnType spawnType,
             BlockPos pos, RandomSource random) {
         if (level.getDifficulty() == Difficulty.PEACEFUL) {
             return false;
         }
-        if (spawnType == MobSpawnType.SPAWNER || spawnType == MobSpawnType.SPAWN_EGG || spawnType == MobSpawnType.COMMAND) {
-            return true;
-        }
-        if (level.dayTime() % 24000L >= 12000L || !level.getBiome(pos).is(ModBiomes.HALLOWED_GROVE)) {
-            return false;
-        }
-        // By day she is the grove's only monster, so without this gate she wins nearly every spawn attempt.
-        if (random.nextFloat() >= NATURAL_SPAWN_CHANCE) {
-            return false;
-        }
-        if (!level.getBlockState(pos.below()).isValidSpawn(level, pos.below(), type)
-                || !level.getBlockState(pos).getCollisionShape(level, pos).isEmpty()) {
-            return false;
-        }
-        return level.getEntitiesOfClass(OstaraEntity.class, new AABB(pos).inflate(SOLITARY_RADIUS)).isEmpty();
+        return spawnType == MobSpawnType.SPAWNER || spawnType == MobSpawnType.SPAWN_EGG || spawnType == MobSpawnType.COMMAND;
+    }
+
+    /** Marks her as called by the dawn ritual of the given world day: she leaves at dusk. */
+    public void setDawnDay(long day) {
+        this.dawnDay = day;
+    }
+
+    public boolean isDawnBorn() {
+        return this.dawnDay != NOT_DAWN_BORN;
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putLong("DawnDay", this.dawnDay);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.dawnDay = tag.contains("DawnDay") ? tag.getLong("DawnDay") : NOT_DAWN_BORN;
     }
 
     @Override
@@ -123,6 +132,14 @@ public class OstaraEntity extends Monster {
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (!this.isAlive()) {
             return;
+        }
+        if (this.isDawnBorn()) {
+            long time = serverLevel.getDayTime();
+            if (time % 24000L >= DUSK || time / 24000L != this.dawnDay) {
+                serverLevel.sendParticles(ParticleTypes.CHERRY_LEAVES, this.getX(), this.getY() + 1.0, this.getZ(), 40, 0.6, 1.0, 0.6, 0.05);
+                this.discard();
+                return;
+            }
         }
         LivingEntity target = this.getTarget();
         if (target != null && this.tickCount % PETAL_INTERVAL == 0 && this.distanceToSqr(target) <= PETAL_RANGE * PETAL_RANGE

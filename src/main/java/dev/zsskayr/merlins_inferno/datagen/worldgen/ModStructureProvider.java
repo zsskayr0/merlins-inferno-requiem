@@ -73,10 +73,11 @@ public final class ModStructureProvider {
                         new RandomSpreadStructurePlacement(Vec3i.ZERO, StructurePlacement.FrequencyReductionMethod.DEFAULT, 1.0F, 0x44525549,
                                 Optional.of(new StructurePlacement.ExclusionZone(rowanwoodTrees, 5)), 10, 4, RandomSpreadType.LINEAR))); // salt: "DRUI"
 
-        // The Sacred Church: a rare landmark (spacing 40 / separation 16 chunks, in mountain biomes only).
+        // The Sacred Church: a landmark for mountain biomes only (~3% of the world), so spacing 16 / separation 6 chunks gives roughly
+        // one per 2 million blocks squared - about a village's frequency. It was 40/16, one per ~12 million.
         context.register(ModStructureSets.SACRED_CHURCH,
                 new StructureSet(structures.getOrThrow(ModStructures.SACRED_CHURCH),
-                        new RandomSpreadStructurePlacement(40, 16, RandomSpreadType.LINEAR, 0x5649474C))); // salt: "VIGL"
+                        new RandomSpreadStructurePlacement(16, 6, RandomSpreadType.LINEAR, 0x5649474C))); // salt: "VIGL"
 
         // Andras' Ancient Battlefield: a little more common than the Sacred Church (spacing 32 / separation 10 chunks); only where a lava sea can hold it.
         context.register(ModStructureSets.ANCIENT_BATTLEFIELD,

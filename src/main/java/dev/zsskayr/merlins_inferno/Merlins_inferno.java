@@ -93,6 +93,8 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new BossRewardChestHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.MonsterLeatherDropHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.OblivionSpawnHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.OstaraSpawnHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EdenweedHandler());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }

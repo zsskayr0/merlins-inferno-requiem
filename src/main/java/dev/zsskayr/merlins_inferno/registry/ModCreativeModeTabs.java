@@ -98,6 +98,12 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.PANDORA_BOX.get());
                         output.accept(ModItems.OBLIVION_KEY.get());
                         output.accept(ModItems.PURGATORY_KEY.get());
+                        output.accept(ModItems.CHAMPION_SEEKER.get());
+                        output.accept(ModItems.RAW_EDENWEED_BUD.get());
+                        output.accept(ModItems.DRIED_EDENWEED.get());
+                        output.accept(ModItems.WOODEN_PIPE.get());
+                        output.accept(ModItems.EDENWEED_TEA.get());
+                        output.accept(ModItems.DRYING_RACK_ITEM.get());
                         output.accept(ModItems.SACRED_ALTAR_ITEM.get());
                         output.accept(ModItems.CORRUPTED_OBSIDIAN_ITEM.get());
                         output.accept(ModItems.PETRIFIED_SKULL_ITEM.get());
@@ -110,6 +116,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.FLESH_BLOCK_ITEM.get());
                         output.accept(ModItems.FLESH_SLAB_ITEM.get());
                         output.accept(ModItems.FLESH_CARPET_ITEM.get());
+                        output.accept(ModItems.SACRED_CARPET_ITEM.get());
                         output.accept(ModItems.RED_CHAIN_ITEM.get());
                         output.accept(ModItems.BLACK_NYLIUM_ITEM.get());
                         output.accept(ModItems.TALL_CRIMSON_ROOTS_ITEM.get());

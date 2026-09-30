@@ -9,15 +9,25 @@
       "type": "minecraft:in_square"
     },
     {
-      "type": "minecraft:height_range",
-      "height": {
+      "type": "minecraft:heightmap",
+      "heightmap": "OCEAN_FLOOR_WG"
+    },
+    {
+      "type": "minecraft:random_offset",
+      "xz_spread": 0,
+      "y_spread": {
         "type": "minecraft:uniform",
-        "max_inclusive": {
-          "absolute": 200
-        },
-        "min_inclusive": {
-          "absolute": 16
-        }
+        "max_inclusive": -12,
+        "min_inclusive": -15
+      }
+    },
+    {
+      "type": "minecraft:random_offset",
+      "xz_spread": 0,
+      "y_spread": {
+        "type": "minecraft:uniform",
+        "max_inclusive": -12,
+        "min_inclusive": -15
       }
     },
     {
