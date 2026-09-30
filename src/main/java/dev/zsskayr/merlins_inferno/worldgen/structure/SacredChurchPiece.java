@@ -24,13 +24,19 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
+import net.minecraft.world.level.levelgen.structure.templatesystem.AlwaysTrueTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.ProcessorRule;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -106,9 +112,16 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         this.spawnedMask = tag.getInt("Spawned");
     }
 
+    /**
+     * The template's four yellow wool blocks (odd full blocks in the floor) become smooth stone slabs. A top slab, so the
+     * walking surface stays as high as the full block it replaces.
+     */
+    private static final BlockState FLOOR_SLAB = Blocks.SMOOTH_STONE_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP);
+
     private static StructurePlaceSettings makeSettings() {
         // No ignore-air processor: the template's air is what clears the hillside.
-        return new StructurePlaceSettings().setRotation(Rotation.NONE).setMirror(Mirror.NONE).setIgnoreEntities(true);
+        return new StructurePlaceSettings().setRotation(Rotation.NONE).setMirror(Mirror.NONE).setIgnoreEntities(true)
+                .addProcessor(new RuleProcessor(List.of(new ProcessorRule(new BlockMatchTest(Blocks.YELLOW_WOOL), AlwaysTrueTest.INSTANCE, FLOOR_SLAB))));
     }
 
     @Override
