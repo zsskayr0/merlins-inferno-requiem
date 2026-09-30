@@ -97,18 +97,19 @@ public final class ModLyriumProvider {
                 BiomeFilter.biome())));
 
         // One in 16 chunks of mountain (vanilla's amethyst geode is one in 24, but it can generate
-        // anywhere underground - this one only in mountains, so it has to be denser to be found). The centre goes
-        // 12-22 blocks under the terrain surface rather than at a fixed height. The geode is a sphere about 8 blocks
-        // across and knows nothing about the terrain, so on a slope the ground beside it is lower than the ground
-        // above it: 6-14 blocks down still left a dome of basalt standing on the hillside. Deep enough that even the
-        // slope's low side covers it, it is found where mountain caves, ravines and cliffs crack it open.
+        // anywhere underground - this one only in mountains, so it has to be denser to be found). The origin goes
+        // 24-30 blocks under the terrain surface rather than at a fixed height. Measured on generated worlds, the
+        // geode's own sphere sits about 5 blocks above its origin and reaches ~10 blocks out, and on a slope the ground
+        // beside it is lower than the ground above it: 12-22 blocks still left the shell of most geodes standing on
+        // the hillside. Down here it stays under the surface and is found where mountain caves, ravines and cliffs
+        // crack it open.
         context.register(ModPlacedFeatures.LYRIUM_GEODE_PLACED, new PlacedFeature(configured.getOrThrow(ModConfiguredFeatures.LYRIUM_GEODE), List.of(
                 RarityFilter.onAverageOnceEvery(16),
                 InSquarePlacement.spread(),
                 HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG),
-                // Two offsets: one RandomOffsetPlacement only takes -16..16, and the total here is -22..-12.
-                RandomOffsetPlacement.vertical(UniformInt.of(-12, -6)),
-                RandomOffsetPlacement.vertical(UniformInt.of(-10, -6)),
+                // Two offsets: one RandomOffsetPlacement only takes -16..16, and the total here is -30..-24.
+                RandomOffsetPlacement.vertical(UniformInt.of(-15, -12)),
+                RandomOffsetPlacement.vertical(UniformInt.of(-15, -12)),
                 BiomeFilter.biome())));
     }
 
