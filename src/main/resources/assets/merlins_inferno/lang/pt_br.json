@@ -327,5 +327,19 @@
   "gui.merlins_inferno.pandora_box.offering_help": "A ordem das oferendas não importa.",
   "gui.merlins_inferno.pandora_box.second_circle_help": "Abre o Segundo Círculo; este ritual não produz um item.",
   "gui.merlins_inferno.pandora_box.confirm_forge": "Confirmar ritual",
-  "gui.merlins_inferno.pandora_box.take_result": "Retire o resultado do centro para forjar novamente."
+  "gui.merlins_inferno.pandora_box.take_result": "Retire o resultado do centro para forjar novamente.",
+  "block.merlins_inferno.edenweed_bush": "Edenweed",
+  "block.merlins_inferno.drying_rack": "Varal de Secagem",
+  "item.merlins_inferno.raw_edenweed_bud": "Broto Cru de Edenweed",
+  "item.merlins_inferno.dried_edenweed": "Edenweed Seca",
+  "item.merlins_inferno.wooden_pipe": "Cachimbo de Madeira",
+  "item.merlins_inferno.edenweed_tea": "Chá de Edenweed",
+  "effect.merlins_inferno.druidic_trance": "Transe Druídico",
+  "effect.merlins_inferno.druidic_trance.description": "Mais lento, mais fraco e desajeitado ao minerar - mas quase nenhum dano chega até você. A fome não passa; a comida sacia o dobro e cura. As coisas ocultas do Bosque aparecem através das paredes.",
+  "effect.merlins_inferno.druidic_trance.desc": "Mais lento, mais fraco e desajeitado ao minerar - mas quase nenhum dano chega até você. A fome não passa; a comida sacia o dobro e cura. As coisas ocultas do Bosque aparecem através das paredes.",
+  "message.merlins_inferno.pipe.empty": "Você não tem Edenweed Seca.",
+  "patchouli.merlins_inferno.entry.edenweed.name": "Edenweed",
+  "patchouli.merlins_inferno.entry.edenweed.page1": "$(bold)Edenweed$()$(br2)Um arbusto de folhas serrilhadas que cresce só nas raízes das Rowanwood do Bosque, com um leve brilho. Clique com o botão direito quando estiver crescido para colher os brotos - ele rebrota.",
+  "patchouli.merlins_inferno.entry.edenweed.page2": "Brotos crus fazem pouco. Pendure-os em um $(bold)Varal de Secagem$() e, depois de alguns minutos, viram $(bold)Edenweed Seca$().$(br2)Fume em um $(bold)Cachimbo de Madeira$() ou ferva em um $(bold)Chá$() com uma garrafa de água.",
+  "patchouli.merlins_inferno.entry.edenweed.page3": "$(bold)Transe Druídico$()$(br2)Você anda e minera devagar e bate fraco - mas sofre 80% menos dano. A fome corrói; tudo que você come sacia o dobro e cura.$(br2)E você enxerga: minérios, baús e os espíritos do Bosque aparecem através das paredes."
 }

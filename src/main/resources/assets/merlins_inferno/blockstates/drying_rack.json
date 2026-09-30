@@ -1,0 +1,14 @@
+{ "variants": {
+  "facing=north,contents=empty": { "model": "merlins_inferno:block/drying_rack_empty", "y": 0 },
+  "facing=north,contents=drying": { "model": "merlins_inferno:block/drying_rack_drying", "y": 0 },
+  "facing=north,contents=ready": { "model": "merlins_inferno:block/drying_rack_ready", "y": 0 },
+  "facing=east,contents=empty": { "model": "merlins_inferno:block/drying_rack_empty", "y": 90 },
+  "facing=east,contents=drying": { "model": "merlins_inferno:block/drying_rack_drying", "y": 90 },
+  "facing=east,contents=ready": { "model": "merlins_inferno:block/drying_rack_ready", "y": 90 },
+  "facing=south,contents=empty": { "model": "merlins_inferno:block/drying_rack_empty", "y": 180 },
+  "facing=south,contents=drying": { "model": "merlins_inferno:block/drying_rack_drying", "y": 180 },
+  "facing=south,contents=ready": { "model": "merlins_inferno:block/drying_rack_ready", "y": 180 },
+  "facing=west,contents=empty": { "model": "merlins_inferno:block/drying_rack_empty", "y": 270 },
+  "facing=west,contents=drying": { "model": "merlins_inferno:block/drying_rack_drying", "y": 270 },
+  "facing=west,contents=ready": { "model": "merlins_inferno:block/drying_rack_ready", "y": 270 }
+} }

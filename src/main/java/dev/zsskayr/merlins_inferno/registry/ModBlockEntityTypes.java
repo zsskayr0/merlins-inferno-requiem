@@ -7,6 +7,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.blockentity.DryingRackBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.HellForgeBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.HellForgePartBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
@@ -23,6 +24,9 @@ public final class ModBlockEntityTypes {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SacredAltarBlockEntity>> SACRED_ALTAR = BLOCK_ENTITY_TYPES.register("sacred_altar",
             () -> BlockEntityType.Builder.of(SacredAltarBlockEntity::new, ModBlocks.SACRED_ALTAR.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DryingRackBlockEntity>> DRYING_RACK = BLOCK_ENTITY_TYPES.register("drying_rack",
+            () -> BlockEntityType.Builder.of(DryingRackBlockEntity::new, ModBlocks.DRYING_RACK.get()).build(null));
 
     private ModBlockEntityTypes() {
     }

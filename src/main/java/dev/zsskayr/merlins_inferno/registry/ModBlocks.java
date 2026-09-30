@@ -37,6 +37,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.block.BlackNyliumBlock;
 import dev.zsskayr.merlins_inferno.block.CorruptedObsidianBlock;
+import dev.zsskayr.merlins_inferno.block.DryingRackBlock;
+import dev.zsskayr.merlins_inferno.block.EdenweedBushBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgeBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumBlock;
 import dev.zsskayr.merlins_inferno.block.NetherDoublePlantBlock;
@@ -311,6 +313,26 @@ public final class ModBlocks {
                 .strength(0.4F)
                 .sound(SoundType.NETHERRACK);
     }
+
+    // --- Edenweed: a shrub that grows at the roots of the Hallowed Grove's Rowanwood trees (see RowanwoodTreePiece) and
+    // regrows when picked. Not an item: it is found, not planted. The drying rack turns its buds into Dried Edenweed. ---
+    public static final DeferredBlock<EdenweedBushBlock> EDENWEED_BUSH = BLOCKS.registerBlock("edenweed_bush",
+            EdenweedBushBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .noCollission()
+                    .randomTicks()
+                    .instabreak()
+                    .sound(SoundType.SWEET_BERRY_BUSH)
+                    .pushReaction(PushReaction.DESTROY));
+
+    public static final DeferredBlock<DryingRackBlock> DRYING_RACK = BLOCKS.registerBlock("drying_rack",
+            DryingRackBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(1.0F)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+                    .ignitedByLava());
 
     // Chain dyed with Nether Wart - same behaviour as the vanilla one.
     public static final DeferredBlock<ChainBlock> RED_CHAIN = BLOCKS.registerBlock("red_chain",

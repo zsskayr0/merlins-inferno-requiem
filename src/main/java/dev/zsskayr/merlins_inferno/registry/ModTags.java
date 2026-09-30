@@ -55,6 +55,10 @@ public final class ModTags {
         public static final TagKey<EntityType<?>> BOSS_COMPASS_TARGETS = TagKey.create(Registries.ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "boss_compass_targets"));
 
+        /** The Grove's creatures and spirits The Sight of the Druidic Trance makes glow - see {@code event.EdenweedHandler}. */
+        public static final TagKey<EntityType<?>> SIGHT_REVEALED = TagKey.create(Registries.ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "sight_revealed"));
+
         /** "Toque do Druida"'s bonus-loot roster for swords - see {@code event.DruidsTouchHandler}. */
         public static final TagKey<EntityType<?>> MAGICAL_MOBS = TagKey.create(Registries.ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "magical_mobs"));
@@ -97,6 +101,10 @@ public final class ModTags {
          */
         public static final TagKey<Block> DRUIDS_TOUCH_ORES = TagKey.create(Registries.BLOCK,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "druids_touch_ores"));
+
+        /** Magical ores and chests The Sight of the Druidic Trance outlines through walls - see {@code client.EdenweedSight}. */
+        public static final TagKey<Block> SIGHT_REVEALED = TagKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "sight_revealed"));
 
         private Blocks() {
         }

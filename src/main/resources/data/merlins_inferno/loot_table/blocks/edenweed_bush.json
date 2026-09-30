@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "conditions": [
+        { "condition": "minecraft:block_state_property", "block": "merlins_inferno:edenweed_bush", "properties": { "age": "3" } }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "merlins_inferno:raw_edenweed_bud",
+          "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1.0, "max": 2.0 } } ]
+        }
+      ]
+    }
+  ]
+}

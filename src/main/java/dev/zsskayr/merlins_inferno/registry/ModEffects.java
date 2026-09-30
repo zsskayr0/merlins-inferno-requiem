@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.effect.DruidicTranceEffect;
 import dev.zsskayr.merlins_inferno.effect.MarkOfDebtEffect;
 import dev.zsskayr.merlins_inferno.effect.SanctifiedEffect;
 
@@ -30,6 +31,10 @@ public final class ModEffects {
     // Drunk from an Antidote: immunity to Poison (Ostara's petals included). See event.AntivenomHandler.
     public static final DeferredHolder<MobEffect, MarkOfDebtEffect> ANTIVENOM = MOB_EFFECTS.register("antivenom",
             () -> new MarkOfDebtEffect(MobEffectCategory.BENEFICIAL, 0x7FD66B));
+
+    // The Edenweed high: slow, clumsy, hungry - and nearly untouchable. See effect.DruidicTranceEffect and event.EdenweedHandler.
+    public static final DeferredHolder<MobEffect, DruidicTranceEffect> DRUIDIC_TRANCE = MOB_EFFECTS.register("druidic_trance",
+            () -> new DruidicTranceEffect(MobEffectCategory.NEUTRAL, 0x5FE04A));
 
     private ModEffects() {
     }
