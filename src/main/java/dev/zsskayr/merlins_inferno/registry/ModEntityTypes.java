@@ -105,7 +105,7 @@ public final class ModEntityTypes {
                     .build(Merlins_inferno.MODID + ":elias"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SacredCultistEntity>> SACRED_CULTIST = ENTITY_TYPES.register("sacred_cultist",
-            () -> EntityType.Builder.of(SacredCultistEntity::new, MobCategory.CREATURE)
+            () -> EntityType.Builder.of(SacredCultistEntity::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
                     .eyeHeight(1.74F)
                     .clientTrackingRange(8)
