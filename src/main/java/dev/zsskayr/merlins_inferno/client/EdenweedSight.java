@@ -2,7 +2,6 @@ package dev.zsskayr.merlins_inferno.client;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalDouble;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -34,17 +33,18 @@ import dev.zsskayr.merlins_inferno.registry.ModTags;
 
 /**
  * The Druidic Trance, client half: The Sight outlines hidden magical ores and chests through walls, and a green haze
- * creeps in from the edges of the screen. Every living creature around is outlined the same way (the outline is drawn here,
- * not through the entity glow, which shader packs tend to swallow), so only the entranced player sees anything.
+ * creeps in from the edges of the screen. Living creatures get the vanilla glow outline (see {@link #revealsEntity} and
+ * {@code mixin.MinecraftMixin}), so only the entranced player sees anything.
  */
 @EventBusSubscriber(modid = Merlins_inferno.MODID, value = Dist.CLIENT)
 public final class EdenweedSight {
     private static final int SCAN_RADIUS = 14;
     private static final int SCAN_INTERVAL_TICKS = 20;
-    private static final int MAX_MARKED = 256;
+    private static final int MAX_MARKED = 512;
     private static final double SIGHT_ENTITY_RADIUS = 32.0;
-    /** Line thickness in pixels: thick enough to read under shader packs and at a distance. */
-    private static final double LINE_WIDTH = 4.5;
+    /** Translucent neon green fill for revealed blocks. */
+    private static final float BLOCK_RED = 0.30F, BLOCK_GREEN = 1.0F, BLOCK_BLUE = 0.35F, BLOCK_ALPHA = 0.45F;
+    private static final int HOSTILE_OUTLINE = 0xFF6644, FRIENDLY_OUTLINE = 0x66FF77;
     private static final ResourceLocation HAZE = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "textures/gui/druidic_haze.png");
 
     private static final List<BlockPos> MARKED = new ArrayList<>();
@@ -90,31 +90,29 @@ public final class EdenweedSight {
         Vec3 camera = event.getCamera().getPosition();
         PoseStack poseStack = event.getPoseStack();
         MultiBufferSource.BufferSource buffers = minecraft.renderBuffers().bufferSource();
-        VertexConsumer lines = buffers.getBuffer(SightLines.TYPE);
+        VertexConsumer boxes = buffers.getBuffer(SightBoxes.TYPE);
         for (BlockPos pos : MARKED) {
-            AABB box = new AABB(pos).inflate(0.002).move(-camera.x, -camera.y, -camera.z);
-            outline(poseStack, lines, box, 0.45F, 1.0F, 0.35F);
+            AABB box = new AABB(pos).inflate(0.004).move(-camera.x, -camera.y, -camera.z);
+            LevelRenderer.addChainedFilledBoxVertices(poseStack, boxes, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ,
+                    BLOCK_RED, BLOCK_GREEN, BLOCK_BLUE, BLOCK_ALPHA);
         }
-        float partial = event.getPartialTick().getGameTimeDeltaPartialTick(false);
-        double radiusSqr = SIGHT_ENTITY_RADIUS * SIGHT_ENTITY_RADIUS;
-        for (Entity entity : minecraft.level.entitiesForRendering()) {
-            if (!(entity instanceof LivingEntity living) || entity == minecraft.player || !living.isAlive() || living.isSpectator()
-                    || entity.distanceToSqr(minecraft.player) > radiusSqr) {
-                continue;
-            }
-            // Hostile things burn orange-red, everything else stays sacred green.
-            boolean hostile = living instanceof Enemy;
-            AABB box = living.getBoundingBox().move(living.getPosition(partial).subtract(living.position())).inflate(0.03)
-                    .move(-camera.x, -camera.y, -camera.z);
-            outline(poseStack, lines, box, hostile ? 1.0F : 0.45F, hostile ? 0.4F : 1.0F, hostile ? 0.2F : 0.35F);
-        }
-        buffers.endBatch(SightLines.TYPE);
+        buffers.endBatch(SightBoxes.TYPE);
     }
 
-    /** A box drawn twice, the second a hair larger, so the line reads as one thick, solid stroke. */
-    private static void outline(PoseStack poseStack, VertexConsumer lines, AABB box, float red, float green, float blue) {
-        LevelRenderer.renderLineBox(poseStack, lines, box, red, green, blue, 1.0F);
-        LevelRenderer.renderLineBox(poseStack, lines, box.inflate(0.012), red, green, blue, 1.0F);
+    /**
+     * Whether The Sight outlines this entity for the local player: any living creature around, whichever mod it comes from.
+     * Called from {@code mixin.MinecraftMixin}, which turns it into the vanilla glow outline - it follows the model's
+     * silhouette and shows through walls, with no per-mob code.
+     */
+    public static boolean revealsEntity(Entity entity) {
+        Minecraft minecraft = Minecraft.getInstance();
+        return entranced(minecraft) && entity != minecraft.player && entity instanceof LivingEntity living && living.isAlive()
+                && !living.isSpectator() && entity.distanceToSqr(minecraft.player) <= SIGHT_ENTITY_RADIUS * SIGHT_ENTITY_RADIUS;
+    }
+
+    /** The outline colour of a revealed entity, used by {@code mixin.EntityMixin}: hostile things orange-red, the rest green. */
+    public static int outlineColor(Entity entity) {
+        return entity instanceof Enemy ? HOSTILE_OUTLINE : FRIENDLY_OUTLINE;
     }
 
     @SubscribeEvent
@@ -135,13 +133,12 @@ public final class EdenweedSight {
         });
     }
 
-    /** Line boxes that ignore the depth buffer, so they show through walls. */
-    private static final class SightLines extends RenderType {
-        static final RenderType TYPE = RenderType.create("merlins_inferno_sight_lines", DefaultVertexFormat.POSITION_COLOR_NORMAL,
-                VertexFormat.Mode.LINES, 1536, false, false,
+    /** Filled boxes that ignore the depth buffer, so they show through walls. Unlit, so a shader pack cannot darken them. */
+    private static final class SightBoxes extends RenderType {
+        static final RenderType TYPE = RenderType.create("merlins_inferno_sight_boxes", DefaultVertexFormat.POSITION_COLOR,
+                VertexFormat.Mode.TRIANGLE_STRIP, 1536, false, true,
                 RenderType.CompositeState.builder()
-                        .setShaderState(RENDERTYPE_LINES_SHADER)
-                        .setLineState(new LineStateShard(OptionalDouble.of(LINE_WIDTH)))
+                        .setShaderState(POSITION_COLOR_SHADER)
                         .setLayeringState(VIEW_OFFSET_Z_LAYERING)
                         .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
                         .setWriteMaskState(COLOR_WRITE)
@@ -149,7 +146,7 @@ public final class EdenweedSight {
                         .setCullState(NO_CULL)
                         .createCompositeState(false));
 
-        private SightLines(String name, VertexFormat format, VertexFormat.Mode mode, int bufferSize, boolean affectsCrumbling,
+        private SightBoxes(String name, VertexFormat format, VertexFormat.Mode mode, int bufferSize, boolean affectsCrumbling,
                 boolean sortOnUpload, Runnable setup, Runnable clear) {
             super(name, format, mode, bufferSize, affectsCrumbling, sortOnUpload, setup, clear);
         }

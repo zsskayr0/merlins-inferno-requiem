@@ -5,7 +5,10 @@
     "OverworldBiomeBuilderMixin",
     "WitherRoseBlockMixin"
   ],
-  "client": [],
+  "client": [
+    "MinecraftMixin",
+    "EntityMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

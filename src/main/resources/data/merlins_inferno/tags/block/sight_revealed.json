@@ -1,18 +1,17 @@
 {
   "replace": false,
   "values": [
-    "merlins_inferno:lyrium_ore",
-    "merlins_inferno:deepslate_lyrium_ore",
+    {
+      "id": "#c:ores",
+      "required": false
+    },
+    {
+      "id": "#c:chests",
+      "required": false
+    },
     "merlins_inferno:lyrium_block",
     "merlins_inferno:lyrium_cluster",
-    "minecraft:lapis_ore",
-    "minecraft:deepslate_lapis_ore",
-    "minecraft:redstone_ore",
-    "minecraft:deepslate_redstone_ore",
-    "minecraft:emerald_ore",
-    "minecraft:deepslate_emerald_ore",
     "minecraft:amethyst_cluster",
-    "minecraft:chest",
-    "minecraft:trapped_chest"
+    "minecraft:spawner"
   ]
 }
