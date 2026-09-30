@@ -242,8 +242,13 @@ public class SacredChurchPiece extends TemplateStructurePiece {
                 level.setBlock(gap, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
             }
         }
+        // Pasting the template runs updateShape across the seam with the neighbouring chunk, which resets the connection of
+        // any Sacred Carpet already standing on its side of the border (the pasted vanilla carpet is not one). So this chunk
+        // also re-states the carpets in the ring just outside its box - only those that already exist.
+        BoundingBox reach = new BoundingBox(chunkBox.minX() - 1, chunkBox.minY(), chunkBox.minZ() - 1,
+                chunkBox.maxX() + 1, chunkBox.maxY(), chunkBox.maxZ() + 1);
         for (BlockPos spot : spots) {
-            if (!chunkBox.isInside(spot)) {
+            if (!chunkBox.isInside(spot) && !(reach.isInside(spot) && level.getBlockState(spot).is(ModBlocks.SACRED_CARPET.get()))) {
                 continue;
             }
             BlockState carpet = ModBlocks.SACRED_CARPET.get().defaultBlockState()
