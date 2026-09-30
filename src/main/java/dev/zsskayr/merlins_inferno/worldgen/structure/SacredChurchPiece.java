@@ -1,5 +1,8 @@
 package dev.zsskayr.merlins_inferno.worldgen.structure;
 
+import java.util.Comparator;
+import java.util.List;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -8,7 +11,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.RandomizableContainer;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -17,6 +19,8 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,9 +31,11 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.phys.Vec3;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
+import dev.zsskayr.merlins_inferno.entity.SacredCultistEntity;
 import dev.zsskayr.merlins_inferno.entity.SacredPriestEntity;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
@@ -59,7 +65,19 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     private static final int BELL_X = 36, BELL_Y = 9, BELL_Z = 22, VAULT_Y = 31;
     private static final int ELIAS_X = 39, ELIAS_Y = 3, ELIAS_Z = 22;
     private static final int NAVE_Y = 2; // the red carpet down the nave
-    private static final int[][] CULTISTS = {{18, 21}, {22, 21}, {26, 21}, {30, 21}, {18, 23}, {22, 23}, {26, 23}, {30, 23}};
+    /** The Priest stands behind the altar (east of it), on the slab there, facing the nave. */
+    private static final int PRIEST_X = 43, PRIEST_Y = 3, PRIEST_Z = 22;
+    private static final double PRIEST_FEET_OFFSET = 0.5; // the bottom slab he stands on
+    /** Yaw facing west (the nave) / east (the altar): 0 is south, 90 west, 180 north, 270 east. */
+    private static final float FACE_WEST = 90.0F, FACE_EAST = 270.0F;
+    /** The pews: spruce stairs facing west (their backs to the nave, so a worshipper looks east at the altar) at floor level. */
+    private static final int PEW_MIN_X = 14, PEW_MAX_X = 36;
+    /** The congregation: fills the pews from the front (nearest the altar) backwards, both sides of the aisle. */
+    private static final int CULTIST_COUNT = 12;
+    /** How far from the nave they roam by day - reaching the churchyard around it. */
+    private static final int CULTIST_ROAM_RADIUS = 30;
+    /** A stair's low step sits half a block up, on its front (east) half; feet go there. */
+    private static final double SEAT_STEP_HEIGHT = 0.5, SEAT_X_OFFSET = 0.8;
     /** Loot chests on the nave floor level (y = 2), tucked into nooks: {x, z}. All but the first are only placed by chance. */
     private static final int[][] CHESTS = {{34, 6}, {12, 13}, {12, 31}, {12, 17}, {12, 27}, {32, 38}, {40, 6}, {55, 33}, {59, 33}, {41, 12}, {41, 32}};
     /** Candidate nooks behind the east hall for the hidden vault chest (Pandora Box, see the hidden loot table); one is picked per church. */
@@ -76,6 +94,7 @@ public class SacredChurchPiece extends TemplateStructurePiece {
 
     private final long seed;
     private int spawnedMask; // bit 0 = the Sacred Priest, bits 1.. = cultists
+    private List<BlockPos> pewSeats; // derived from the template, not saved
 
     public SacredChurchPiece(StructureTemplateManager templateManager, long seed, BlockPos pos) {
         super(ModStructurePieceTypes.SACRED_CHURCH.get(), 0, templateManager, TEMPLATE, TEMPLATE.toString(), makeSettings(), pos);
@@ -103,6 +122,21 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     @Override
     protected void handleDataMarker(String name, BlockPos pos, ServerLevelAccessor level, RandomSource random, BoundingBox box) {
         // No data markers in this template.
+    }
+
+    /** The pew seats, front row first (nearest the altar), read from the pasted template's own stairs. */
+    private List<BlockPos> pewSeats() {
+        if (this.pewSeats == null) {
+            int floor = this.templatePosition.getY() + NAVE_Y;
+            this.pewSeats = this.template.filterBlocks(this.templatePosition, this.placeSettings, Blocks.SPRUCE_STAIRS).stream()
+                    .filter(info -> info.state().getValue(StairBlock.FACING) == Direction.WEST && info.state().getValue(StairBlock.HALF) == Half.BOTTOM
+                            && info.pos().getY() == floor
+                            && info.pos().getX() >= this.templatePosition.getX() + PEW_MIN_X && info.pos().getX() <= this.templatePosition.getX() + PEW_MAX_X)
+                    .map(info -> info.pos().immutable())
+                    .sorted(Comparator.comparingInt((BlockPos p) -> -p.getX()).thenComparingInt(BlockPos::getZ))
+                    .toList();
+        }
+        return this.pewSeats;
     }
 
     private BlockPos at(int lx, int ly, int lz) {
@@ -209,30 +243,35 @@ public class SacredChurchPiece extends TemplateStructurePiece {
      * Elias is not among them: he is woken at the altar once the Priest has fallen.
      */
     private void spawnInhabitants(WorldGenLevel level, BoundingBox chunkBox) {
-        BlockPos priestPos = this.at(ELIAS_X, ELIAS_Y, ELIAS_Z);
+        BlockPos priestPos = this.at(PRIEST_X, PRIEST_Y, PRIEST_Z);
         if ((this.spawnedMask & 1) == 0 && chunkBox.isInside(priestPos)) {
             this.spawnedMask |= 1;
             SacredPriestEntity priest = ModEntityTypes.SACRED_PRIEST.get().create(level.getLevel());
             if (priest != null) {
-                priest.moveTo(priestPos.getX() + 0.5, priestPos.getY(), priestPos.getZ() + 0.5, 270.0F, 0.0F); // facing east, toward the altar
+                Vec3 post = new Vec3(priestPos.getX() + 0.5, priestPos.getY() + PRIEST_FEET_OFFSET, priestPos.getZ() + 0.5);
+                priest.moveTo(post.x, post.y, post.z, FACE_WEST, 0.0F); // behind the altar, facing the congregation
                 priest.setHome(this.at(ALTAR_X, ALTAR_Y, ALTAR_Z));
+                priest.setServicePost(post, FACE_WEST);
                 priest.finalizeSpawn(level, level.getCurrentDifficultyAt(priestPos), MobSpawnType.STRUCTURE, null);
                 level.addFreshEntityWithPassengers(priest);
             }
         }
-        for (int i = 0; i < CULTISTS.length; i++) {
+        List<BlockPos> seats = this.pewSeats();
+        for (int i = 0; i < Math.min(CULTIST_COUNT, seats.size()); i++) {
             int bit = 1 << (i + 1);
-            BlockPos p = this.at(CULTISTS[i][0], NAVE_Y, CULTISTS[i][1]);
-            if ((this.spawnedMask & bit) != 0 || !chunkBox.isInside(p)) {
+            BlockPos seat = seats.get(i);
+            if ((this.spawnedMask & bit) != 0 || !chunkBox.isInside(seat)) {
                 continue;
             }
             this.spawnedMask |= bit;
-            Mob cultist = ModEntityTypes.SACRED_CULTIST.get().create(level.getLevel());
+            SacredCultistEntity cultist = ModEntityTypes.SACRED_CULTIST.get().create(level.getLevel());
             if (cultist != null) {
-                cultist.moveTo(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, (float) (this.roll(p.getX(), p.getZ(), 90) * 360.0), 0.0F);
+                Vec3 post = new Vec3(seat.getX() + SEAT_X_OFFSET, seat.getY() + SEAT_STEP_HEIGHT, seat.getZ() + 0.5);
+                cultist.moveTo(post.x, post.y, post.z, FACE_EAST, 0.0F); // in the pew, facing the altar
                 cultist.setPersistenceRequired();
-                cultist.restrictTo(this.at(25, NAVE_Y, 22), 18);
-                cultist.finalizeSpawn(level, level.getCurrentDifficultyAt(p), MobSpawnType.STRUCTURE, null);
+                cultist.restrictTo(this.at(25, NAVE_Y, 22), CULTIST_ROAM_RADIUS);
+                cultist.setServicePost(post, FACE_EAST);
+                cultist.finalizeSpawn(level, level.getCurrentDifficultyAt(seat), MobSpawnType.STRUCTURE, null);
                 level.addFreshEntityWithPassengers(cultist);
             }
         }

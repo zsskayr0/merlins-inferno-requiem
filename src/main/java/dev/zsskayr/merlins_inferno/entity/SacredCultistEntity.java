@@ -1,12 +1,14 @@
 package dev.zsskayr.merlins_inferno.entity;
 
-import java.util.EnumSet;
+import javax.annotation.Nullable;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -23,7 +25,6 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -42,6 +43,7 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
+import dev.zsskayr.merlins_inferno.entity.ai.ChurchServiceGoal;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 import dev.zsskayr.merlins_inferno.registry.ModTags;
 
@@ -54,10 +56,14 @@ import dev.zsskayr.merlins_inferno.registry.ModTags;
  * eight of them once, and a few more wander the world rarely (biome modifier).
  * <p>
  * Animated with GeckoLib ({@code geo/cultist.geo.json}, {@code animations/cultist.animation.json}): idle, walk,
- * run, a triggered attack, the kneeling prayer bracketed by pray_start/pray_end ({@link PrayGoal}'s
+ * run, a triggered attack, the kneeling prayer bracketed by pray_start/pray_end ({@link ChurchServiceGoal}'s
  * {@link Pose#CROUCHING}), and a death clip that holds its last frame.
+ * <p>
+ * Church life: the church gives each of its cultists a pew seat ({@link #setServicePost}). By day they wander loose around
+ * the church; from dusk to dawn they file into their seats, face the altar and pray - and only then. Being hurt, provoked
+ * or warned (a target) ends the prayer until the next dawn.
  */
-public class SacredCultistEntity extends PathfinderMob implements GeoEntity {
+public class SacredCultistEntity extends PathfinderMob implements GeoEntity, ChurchServiceGoal.Attendee {
     private static final double BROTHERHOOD_RADIUS = 32.0;
     private static final float IRON_SWORD_CHANCE = 0.30F;
     private static final float SERAPHIUM_SWORD_CHANCE = 0.08F;
@@ -79,6 +85,13 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity {
     private int pendingAnimationTick;
     private RawAnimation loopAnimation = RawAnimation.begin().thenLoop("animation.cultist.idle");
 
+    /** Where it prays during the night service (its pew), or null for a cultist of the open world. */
+    @Nullable
+    private Vec3 servicePost;
+    private float serviceYaw;
+    /** Hurt or warned: it stays out of the service until dawn. */
+    private boolean alarmed;
+
     public SacredCultistEntity(EntityType<? extends SacredCultistEntity> type, Level level) {
         super(type, level);
         this.setPersistenceRequired();
@@ -96,7 +109,7 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.1, false));
-        this.goalSelector.addGoal(3, new PrayGoal(this));
+        this.goalSelector.addGoal(3, new ChurchServiceGoal<>(this, 1.0));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.5));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -108,6 +121,73 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity {
         // The faithful hunt the unholy: undead and demons are attacked on sight, whatever the circle.
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 5, false, false,
                 living -> living.getType().is(EntityTypeTags.UNDEAD) || living.getType().is(ModTags.EntityTypes.DEMON)));
+    }
+
+    /** Gives it a seat: where its feet go and the direction it faces while praying. */
+    public void setServicePost(Vec3 post, float yaw) {
+        this.servicePost = post;
+        this.serviceYaw = yaw;
+    }
+
+    @Override
+    @Nullable
+    public Vec3 servicePost() {
+        return this.servicePost;
+    }
+
+    @Override
+    public float serviceYaw() {
+        return this.serviceYaw;
+    }
+
+    @Override
+    public boolean isAlarmed() {
+        return this.alarmed;
+    }
+
+    /** A target - it was provoked, or its brethren called it - also breaks the prayer. */
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
+        if (target != null) {
+            this.alarmed = true;
+        }
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        if (this.alarmed && this.getTarget() == null && !ChurchServiceGoal.isServiceTime(this.level())) {
+            this.alarmed = false; // a new day: peace again, ready for the next night's service
+        }
+    }
+
+    /** Kneeling worshippers are not shoved out of their pews. */
+    @Override
+    public boolean isPushable() {
+        return this.getPose() != Pose.CROUCHING && super.isPushable();
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        if (this.servicePost != null) {
+            tag.putDouble("PostX", this.servicePost.x);
+            tag.putDouble("PostY", this.servicePost.y);
+            tag.putDouble("PostZ", this.servicePost.z);
+            tag.putFloat("PostYaw", this.serviceYaw);
+        }
+        tag.putBoolean("Alarmed", this.alarmed);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.contains("PostX")) {
+            this.servicePost = new Vec3(tag.getDouble("PostX"), tag.getDouble("PostY"), tag.getDouble("PostZ"));
+            this.serviceYaw = tag.getFloat("PostYaw");
+        }
+        this.alarmed = tag.getBoolean("Alarmed");
     }
 
     @Override
@@ -131,6 +211,7 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity {
     public boolean hurt(DamageSource source, float amount) {
         boolean hurt = super.hurt(source, amount);
         if (hurt) {
+            this.alarmed = true;
             this.rallyBrethren(source);
         }
         return hurt;
@@ -188,7 +269,7 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity {
     // vanilla pose PrayGoal already sets; it needs no extra synced state.
     // ------------------------------------------------------------------------------------------
 
-    /** idle / walk / run on foot, or "pray" while {@link PrayGoal} has it kneeling. */
+    /** idle / walk / run on foot, or "pray" while {@link ChurchServiceGoal} has it kneeling. */
     private String desiredAnimationState() {
         if (this.getPose() == Pose.CROUCHING) {
             return "pray";
@@ -274,43 +355,5 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity {
     @Override
     protected SoundEvent getDeathSound() {
         return SoundEvents.VILLAGER_DEATH;
-    }
-
-    /** Kneels (crouching pose) for stretches while it has nothing else to do, then gets up and mills about. */
-    private static class PrayGoal extends Goal {
-        private final SacredCultistEntity mob;
-        private int ticksLeft;
-
-        PrayGoal(SacredCultistEntity mob) {
-            this.mob = mob;
-            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
-        }
-
-        @Override
-        public boolean canUse() {
-            return this.mob.getTarget() == null && this.mob.getRandom().nextInt(120) == 0;
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return this.ticksLeft > 0 && this.mob.getTarget() == null;
-        }
-
-        @Override
-        public void start() {
-            this.ticksLeft = 200 + this.mob.getRandom().nextInt(300);
-            this.mob.getNavigation().stop();
-            this.mob.setPose(Pose.CROUCHING);
-        }
-
-        @Override
-        public void tick() {
-            this.ticksLeft--;
-        }
-
-        @Override
-        public void stop() {
-            this.mob.setPose(Pose.STANDING);
-        }
     }
 }

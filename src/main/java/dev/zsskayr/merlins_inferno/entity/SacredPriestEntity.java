@@ -1,6 +1,5 @@
 package dev.zsskayr.merlins_inferno.entity;
 
-import java.util.EnumSet;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -15,11 +14,11 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -29,6 +28,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -38,12 +38,15 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
+import dev.zsskayr.merlins_inferno.entity.ai.ChurchServiceGoal;
 
 /**
  * The Sacred Priest - the Angelical path's Circle 1 miniboss and the guardian of the Sacred Church. Neutral
  * until struck (he ignores players who leave him be), then fights back and his cultists join him. Elias
- * cannot be woken at the altar until he has fallen. Left in peace, he kneels in silent vigil, broadsword
- * planted before him ({@link PrayGoal}); every so often, mid-fight, he intones a healing prayer instead.
+ * cannot be woken at the altar until he has fallen. By day he wanders near the church; from dusk to dawn he takes his
+ * place behind the altar, facing the congregation, and kneels in silent vigil with the broadsword planted before him
+ * ({@link ChurchServiceGoal}) - until he is struck or warned, which ends it till the next dawn. Mid-fight he intones a
+ * healing prayer every so often instead.
  * <ul>
  *     <li><b>Stats:</b> 150 health, 10 damage.</li>
  *     <li><b>Loot:</b> Lyrium Shards (data/.../loot_table/entities/sacred_priest.json).</li>
@@ -51,7 +54,7 @@ import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
  * Animated with GeckoLib ({@code geo/sacred_priest.geo.json}, {@code animations/sacred_priest.animation.json}); the
  * broadsword is baked into the model, not a held item.
  */
-public class SacredPriestEntity extends Monster implements GeoEntity {
+public class SacredPriestEntity extends Monster implements GeoEntity, ChurchServiceGoal.Attendee {
     public static final double MAX_HEALTH = 150.0;
     public static final double ATTACK_DAMAGE = 10.0;
     public static final double MOVEMENT_SPEED = 0.23;
@@ -85,6 +88,12 @@ public class SacredPriestEntity extends Monster implements GeoEntity {
 
     @Nullable
     private BlockPos altarPos;
+    /** Where he stands during the night service - behind the altar, facing the nave - or null if he has no post. */
+    @Nullable
+    private Vec3 servicePost;
+    private float serviceYaw;
+    /** Struck or warned: he stays out of the service until dawn. */
+    private boolean alarmed;
 
     public SacredPriestEntity(EntityType<? extends SacredPriestEntity> type, Level level) {
         super(type, level);
@@ -107,11 +116,55 @@ public class SacredPriestEntity extends Monster implements GeoEntity {
         this.restrictTo(this.altarPos, HOME_RADIUS);
     }
 
+    /** Gives him his place at the altar: where his feet go and the direction he faces while praying. */
+    public void setServicePost(Vec3 post, float yaw) {
+        this.servicePost = post;
+        this.serviceYaw = yaw;
+    }
+
+    @Override
+    @Nullable
+    public Vec3 servicePost() {
+        return this.servicePost;
+    }
+
+    @Override
+    public float serviceYaw() {
+        return this.serviceYaw;
+    }
+
+    @Override
+    public boolean isAlarmed() {
+        return this.alarmed;
+    }
+
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
+        if (target != null) {
+            this.alarmed = true;
+        }
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        if (this.alarmed && this.getTarget() == null && !ChurchServiceGoal.isServiceTime(this.level())) {
+            this.alarmed = false; // a new day: peace again, ready for the next night's service
+        }
+    }
+
+    /** A kneeling priest is not shoved away from the altar. */
+    @Override
+    public boolean isPushable() {
+        return this.getPose() != Pose.CROUCHING && super.isPushable();
+    }
+
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
-        this.goalSelector.addGoal(3, new PrayGoal(this));
+        this.goalSelector.addGoal(3, new ChurchServiceGoal<>(this, 1.0));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.5));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -136,6 +189,9 @@ public class SacredPriestEntity extends Monster implements GeoEntity {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         boolean hurt = super.hurt(source, amount);
+        if (hurt) {
+            this.alarmed = true;
+        }
         if (hurt && source.getEntity() instanceof net.minecraft.world.entity.LivingEntity attacker && this.level() instanceof ServerLevel serverLevel) {
             for (SacredCultistEntity cultist : serverLevel.getEntitiesOfClass(SacredCultistEntity.class,
                     new AABB(this.blockPosition()).inflate(CULTIST_ALERT_RADIUS), SacredCultistEntity::isAlive)) {
@@ -179,7 +235,7 @@ public class SacredPriestEntity extends Monster implements GeoEntity {
 
     // ------------------------------------------------------------------------------------------
     // GeckoLib animation: one controller owns the whole pose - loops, the kneeling bracket and the
-    // attack trigger. Praying is read straight from the vanilla pose PrayGoal already sets.
+    // attack trigger. Praying is read straight from the vanilla pose ChurchServiceGoal already sets.
     // ------------------------------------------------------------------------------------------
 
     /** idle / walk / run on foot, or "pray" while {@link PrayGoal} has him kneeling. */
@@ -269,6 +325,13 @@ public class SacredPriestEntity extends Monster implements GeoEntity {
         if (this.altarPos != null) {
             compound.putLong("Altar", this.altarPos.asLong());
         }
+        if (this.servicePost != null) {
+            compound.putDouble("PostX", this.servicePost.x);
+            compound.putDouble("PostY", this.servicePost.y);
+            compound.putDouble("PostZ", this.servicePost.z);
+            compound.putFloat("PostYaw", this.serviceYaw);
+        }
+        compound.putBoolean("Alarmed", this.alarmed);
     }
 
     @Override
@@ -277,6 +340,11 @@ public class SacredPriestEntity extends Monster implements GeoEntity {
         if (compound.contains("Altar")) {
             this.setHome(BlockPos.of(compound.getLong("Altar")));
         }
+        if (compound.contains("PostX")) {
+            this.servicePost = new Vec3(compound.getDouble("PostX"), compound.getDouble("PostY"), compound.getDouble("PostZ"));
+            this.serviceYaw = compound.getFloat("PostYaw");
+        }
+        this.alarmed = compound.getBoolean("Alarmed");
     }
 
     // Vanilla placeholders until the mod has its own audio.
@@ -293,43 +361,5 @@ public class SacredPriestEntity extends Monster implements GeoEntity {
     @Override
     protected SoundEvent getDeathSound() {
         return SoundEvents.VILLAGER_DEATH;
-    }
-
-    /** Kneels in silent vigil, broadsword planted, for stretches while he has nothing else to do. */
-    private static class PrayGoal extends Goal {
-        private final SacredPriestEntity priest;
-        private int ticksLeft;
-
-        PrayGoal(SacredPriestEntity priest) {
-            this.priest = priest;
-            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
-        }
-
-        @Override
-        public boolean canUse() {
-            return this.priest.getTarget() == null && this.priest.getRandom().nextInt(150) == 0;
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return this.ticksLeft > 0 && this.priest.getTarget() == null;
-        }
-
-        @Override
-        public void start() {
-            this.ticksLeft = 300 + this.priest.getRandom().nextInt(400);
-            this.priest.getNavigation().stop();
-            this.priest.setPose(Pose.CROUCHING);
-        }
-
-        @Override
-        public void tick() {
-            this.ticksLeft--;
-        }
-
-        @Override
-        public void stop() {
-            this.priest.setPose(Pose.STANDING);
-        }
     }
 }
