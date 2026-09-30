@@ -169,6 +169,16 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     }
 
     /**
+     * Whether the carpet at {@code spot} continues in the given direction. The aisle lies a block below the crossing, so a
+     * carpet one block up or down counts as continuing too - otherwise every step would draw a blue border straight across
+     * the walkway and every carpet raised on a wool block would look like an island.
+     */
+    private static boolean joins(Set<BlockPos> spots, BlockPos spot, Direction direction) {
+        BlockPos next = spot.relative(direction);
+        return spots.contains(next) || spots.contains(next.above()) || spots.contains(next.below());
+    }
+
+    /**
      * Swaps the template's vanilla red and yellow carpet for the mod's Sacred Carpet. Its blue binding shows only at the
      * exposed edges, so each piece's connections come from the template's own carpet layout (not from the world, whose
      * neighbouring chunks may not exist yet) and every chunk of the church agrees on them.
@@ -180,10 +190,10 @@ public class SacredChurchPiece extends TemplateStructurePiece {
                 continue;
             }
             BlockState carpet = ModBlocks.SACRED_CARPET.get().defaultBlockState()
-                    .setValue(BlockStateProperties.NORTH, spots.contains(spot.north()))
-                    .setValue(BlockStateProperties.EAST, spots.contains(spot.east()))
-                    .setValue(BlockStateProperties.SOUTH, spots.contains(spot.south()))
-                    .setValue(BlockStateProperties.WEST, spots.contains(spot.west()));
+                    .setValue(BlockStateProperties.NORTH, joins(spots, spot, Direction.NORTH))
+                    .setValue(BlockStateProperties.EAST, joins(spots, spot, Direction.EAST))
+                    .setValue(BlockStateProperties.SOUTH, joins(spots, spot, Direction.SOUTH))
+                    .setValue(BlockStateProperties.WEST, joins(spots, spot, Direction.WEST));
             level.setBlock(spot, carpet, Block.UPDATE_CLIENTS);
         }
     }
