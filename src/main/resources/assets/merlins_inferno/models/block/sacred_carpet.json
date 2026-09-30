@@ -37,7 +37,7 @@
           ]
         },
         "north": {
-          "texture": "#red",
+          "texture": "#blue",
           "uv": [
             0,
             15,
@@ -46,7 +46,7 @@
           ]
         },
         "south": {
-          "texture": "#red",
+          "texture": "#blue",
           "uv": [
             0,
             15,
@@ -55,7 +55,7 @@
           ]
         },
         "east": {
-          "texture": "#red",
+          "texture": "#blue",
           "uv": [
             0,
             15,
@@ -64,7 +64,7 @@
           ]
         },
         "west": {
-          "texture": "#red",
+          "texture": "#blue",
           "uv": [
             0,
             15,

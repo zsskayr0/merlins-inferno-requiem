@@ -49,6 +49,9 @@
           },
           {
             "west": "false"
+          },
+          {
+            "north_west": "false"
           }
         ]
       },
@@ -65,6 +68,9 @@
           },
           {
             "north": "false"
+          },
+          {
+            "north_east": "false"
           }
         ]
       },
@@ -81,6 +87,9 @@
           },
           {
             "east": "false"
+          },
+          {
+            "south_east": "false"
           }
         ]
       },
@@ -97,6 +106,9 @@
           },
           {
             "south": "false"
+          },
+          {
+            "south_west": "false"
           }
         ]
       },
