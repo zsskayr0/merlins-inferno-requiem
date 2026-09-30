@@ -75,8 +75,8 @@ public class SacredPriestEntity extends Monster implements GeoEntity, ChurchServ
     private static final RawAnimation RUN_ANIMATION = RawAnimation.begin().thenLoop("animation.sacred_priest.run");
     /** Kneels down (pray_start), then holds the prayer. */
     private static final RawAnimation PRAY_ANIMATION = RawAnimation.begin().thenPlay("animation.sacred_priest.pray_start").thenLoop("animation.sacred_priest.pray");
-    /** Vanilla's limb-swing amount (about 4 x blocks moved per tick, capped at 1): a stroll is ~0.5, a chase ~1. */
-    private static final float RUN_LIMB_SWING = 0.7F;
+    /** Vanilla's limb-swing amount (about 4 x blocks moved per tick, capped at 1) above which the legs are visibly working. */
+    private static final float MOVING_LIMB_SWING = 0.08F;
 
     private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
     private int deathTicks;
@@ -239,8 +239,9 @@ public class SacredPriestEntity extends Monster implements GeoEntity, ChurchServ
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         // The standard GeckoLib shape, decided fresh every frame: the kneeling pose ChurchServiceGoal sets shows the prayer,
-        // otherwise GeckoLib's own movement test (vanilla's limb swing, which is reliable for remote entities) picks walk,
-        // run or idle. No hand-rolled state to get stuck.
+        // otherwise vanilla's limb swing - worked out from how far the entity really moved each tick, so it is reliable for
+        // remote entities where GeckoLib's isMoving (delta movement) is not - picks walk or idle, and run while it is
+        // chasing (the aggressive flag is synced). No hand-rolled state to get stuck.
         controllers.add(new AnimationController<>(this, "move", 8, state -> {
             if (this.isDeadOrDying()) {
                 return state.setAndContinue(DEATH_ANIMATION);
@@ -248,8 +249,8 @@ public class SacredPriestEntity extends Monster implements GeoEntity, ChurchServ
             if (this.getPose() == Pose.CROUCHING) {
                 return state.setAndContinue(PRAY_ANIMATION);
             }
-            if (state.isMoving()) {
-                return state.setAndContinue(state.getLimbSwingAmount() > RUN_LIMB_SWING ? RUN_ANIMATION : WALK_ANIMATION);
+            if (state.getLimbSwingAmount() > MOVING_LIMB_SWING) {
+                return state.setAndContinue(this.isAggressive() ? RUN_ANIMATION : WALK_ANIMATION);
             }
             return state.setAndContinue(IDLE_ANIMATION);
         }).triggerableAnim("attack", ATTACK_ANIMATION));
