@@ -1,7 +1,9 @@
 package dev.zsskayr.merlins_inferno.worldgen.structure;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,6 +22,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -90,6 +93,7 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     private final long seed;
     private int spawnedMask; // bit 0 = the Sacred Priest, bits 1.. = cultists
     private List<BlockPos> pewSeats; // derived from the template, not saved
+    private Set<BlockPos> carpetSpots; // likewise
 
     public SacredChurchPiece(StructureTemplateManager templateManager, long seed, BlockPos pos) {
         super(ModStructurePieceTypes.SACRED_CHURCH.get(), 0, templateManager, TEMPLATE, TEMPLATE.toString(), makeSettings(), pos);
@@ -134,6 +138,38 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         return this.pewSeats;
     }
 
+    /** Where the template lays its red and yellow carpet (the aisle and its border), as world positions. */
+    private Set<BlockPos> carpetSpots() {
+        if (this.carpetSpots == null) {
+            Set<BlockPos> spots = new HashSet<>();
+            for (Block carpet : List.of(Blocks.RED_CARPET, Blocks.YELLOW_CARPET)) {
+                this.template.filterBlocks(this.templatePosition, this.placeSettings, carpet).forEach(info -> spots.add(info.pos().immutable()));
+            }
+            this.carpetSpots = spots;
+        }
+        return this.carpetSpots;
+    }
+
+    /**
+     * Swaps the template's vanilla red and yellow carpet for the mod's Sacred Carpet. Its blue binding shows only at the
+     * exposed edges, so each piece's connections come from the template's own carpet layout (not from the world, whose
+     * neighbouring chunks may not exist yet) and every chunk of the church agrees on them.
+     */
+    private void sacredCarpets(WorldGenLevel level, BoundingBox chunkBox) {
+        Set<BlockPos> spots = this.carpetSpots();
+        for (BlockPos spot : spots) {
+            if (!chunkBox.isInside(spot)) {
+                continue;
+            }
+            BlockState carpet = ModBlocks.SACRED_CARPET.get().defaultBlockState()
+                    .setValue(BlockStateProperties.NORTH, spots.contains(spot.north()))
+                    .setValue(BlockStateProperties.EAST, spots.contains(spot.east()))
+                    .setValue(BlockStateProperties.SOUTH, spots.contains(spot.south()))
+                    .setValue(BlockStateProperties.WEST, spots.contains(spot.west()));
+            level.setBlock(spot, carpet, Block.UPDATE_CLIENTS);
+        }
+    }
+
     private BlockPos at(int lx, int ly, int lz) {
         return this.templatePosition.offset(lx, ly, lz);
     }
@@ -144,6 +180,7 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         this.foundation(level, chunkBox);
         super.postProcess(level, structureManager, generator, random, chunkBox, chunkPos, pos);
         this.chancel(level, chunkBox);
+        this.sacredCarpets(level, chunkBox);
         this.chests(level, chunkBox, random);
         this.spawnInhabitants(level, chunkBox);
     }
