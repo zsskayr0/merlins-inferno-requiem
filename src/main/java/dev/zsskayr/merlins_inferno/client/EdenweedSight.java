@@ -43,7 +43,7 @@ public final class EdenweedSight {
     private static final int MAX_MARKED = 512;
     private static final double SIGHT_ENTITY_RADIUS = 32.0;
     /** Translucent neon green fill for revealed blocks. */
-    private static final float BLOCK_RED = 0.30F, BLOCK_GREEN = 1.0F, BLOCK_BLUE = 0.35F, BLOCK_ALPHA = 0.45F;
+    private static final float BLOCK_RED = 0.30F, BLOCK_GREEN = 1.0F, BLOCK_BLUE = 0.35F, BLOCK_ALPHA = 0.22F;
     private static final int HOSTILE_OUTLINE = 0xFF6644, FRIENDLY_OUTLINE = 0x66FF77;
     private static final ResourceLocation HAZE = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "textures/gui/druidic_haze.png");
 
