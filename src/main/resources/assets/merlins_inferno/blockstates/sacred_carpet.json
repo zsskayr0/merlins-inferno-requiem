@@ -1,0 +1,109 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "merlins_inferno:block/sacred_carpet"
+      }
+    },
+    {
+      "when": {
+        "north": "false"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/sacred_carpet_edge",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "east": "false"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/sacred_carpet_edge",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "false"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/sacred_carpet_edge",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "false"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/sacred_carpet_edge",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "north": "false"
+          },
+          {
+            "west": "false"
+          }
+        ]
+      },
+      "apply": {
+        "model": "merlins_inferno:block/sacred_carpet_corner",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "east": "false"
+          },
+          {
+            "north": "false"
+          }
+        ]
+      },
+      "apply": {
+        "model": "merlins_inferno:block/sacred_carpet_corner",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "south": "false"
+          },
+          {
+            "east": "false"
+          }
+        ]
+      },
+      "apply": {
+        "model": "merlins_inferno:block/sacred_carpet_corner",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "west": "false"
+          },
+          {
+            "south": "false"
+          }
+        ]
+      },
+      "apply": {
+        "model": "merlins_inferno:block/sacred_carpet_corner",
+        "y": 270
+      }
+    }
+  ]
+}

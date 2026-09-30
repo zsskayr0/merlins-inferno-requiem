@@ -116,6 +116,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.FLESH_BLOCK_ITEM.get());
                         output.accept(ModItems.FLESH_SLAB_ITEM.get());
                         output.accept(ModItems.FLESH_CARPET_ITEM.get());
+                        output.accept(ModItems.SACRED_CARPET_ITEM.get());
                         output.accept(ModItems.RED_CHAIN_ITEM.get());
                         output.accept(ModItems.BLACK_NYLIUM_ITEM.get());
                         output.accept(ModItems.TALL_CRIMSON_ROOTS_ITEM.get());
