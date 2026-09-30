@@ -68,10 +68,6 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity, Chu
     private static final float IRON_SWORD_CHANCE = 0.30F;
     private static final float SERAPHIUM_SWORD_CHANCE = 0.08F;
 
-    /** Horizontal speed (blocks per tick, squared) above which it counts as moving / running. */
-    private static final double WALK_SPEED_SQR = 0.002;
-    private static final double WALK_HYSTERESIS_SQR = 0.0007;
-    private static final double RUN_SPEED_SQR = 0.035;
     /** The death clip is 2.4 s; the body lingers a little past it so the last pose is held before it vanishes. */
     private static final int DEATH_ANIMATION_TICKS = 50;
 
@@ -269,69 +265,46 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity, Chu
     // vanilla pose PrayGoal already sets; it needs no extra synced state.
     // ------------------------------------------------------------------------------------------
 
+    private final GaitTracker gait = new GaitTracker();
+
     /** idle / walk / run on foot, or "pray" while {@link ChurchServiceGoal} has it kneeling. */
     private String desiredAnimationState() {
-        if (this.getPose() == Pose.CROUCHING) {
-            return "pray";
-        }
-        // Position change per tick works on the client too (remote entities carry no reliable velocity).
-        double dx = this.getX() - this.xOld;
-        double dz = this.getZ() - this.zOld;
-        double speedSqr = dx * dx + dz * dz;
-        boolean wasMoving = "walk".equals(this.animationState) || "run".equals(this.animationState);
-        boolean moving = speedSqr > (wasMoving ? WALK_HYSTERESIS_SQR : WALK_SPEED_SQR);
-        if (!moving) {
-            return this.idleVariant();
-        }
-        return speedSqr > RUN_SPEED_SQR ? "run" : "walk";
-    }
-
-    private static final int MIN_IDLE_VARIANT_TICKS = 100;
-    private static final int MAX_IDLE_VARIANT_TICKS = 300;
-    private boolean idleAlt;
-    private int idleVariantSwitchTick = -1;
-
-    /** Standing idle alternates between the plain loop and "idle_hands_on_hips" every 5-15 seconds. */
-    private String idleVariant() {
-        if (this.idleVariantSwitchTick < 0) {
-            this.idleVariantSwitchTick = this.tickCount + MIN_IDLE_VARIANT_TICKS + this.random.nextInt(MAX_IDLE_VARIANT_TICKS - MIN_IDLE_VARIANT_TICKS + 1);
-        } else if (this.tickCount >= this.idleVariantSwitchTick) {
-            this.idleAlt = !this.idleAlt;
-            this.idleVariantSwitchTick = this.tickCount + MIN_IDLE_VARIANT_TICKS + this.random.nextInt(MAX_IDLE_VARIANT_TICKS - MIN_IDLE_VARIANT_TICKS + 1);
-        }
-        return this.idleAlt ? "idle_hands_on_hips" : "idle";
+        return this.getPose() == Pose.CROUCHING ? "pray" : this.gait.update(this);
     }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "move", 4, state -> {
+        controllers.add(new AnimationController<>(this, "move", 8, state -> {
             if (this.isDeadOrDying()) {
                 return state.setAndContinue(DEATH_ANIMATION);
             }
             String desired = this.desiredAnimationState();
             if (this.animationState == null) {
                 this.animationState = desired;
-                this.pendingAnimationState = desired;
-                this.pendingAnimationTick = this.tickCount;
                 this.loopAnimation = RawAnimation.begin().thenLoop("animation.cultist." + desired);
             } else if (!desired.equals(this.animationState)) {
-                if (!desired.equals(this.pendingAnimationState)) {
-                    this.pendingAnimationState = desired;
-                    this.pendingAnimationTick = this.tickCount;
-                } else if (this.tickCount - this.pendingAnimationTick >= 3) {
-                    // The model only ships bracket clips for entering/leaving the kneeling prayer.
-                    RawAnimation next = RawAnimation.begin();
-                    if ("pray".equals(desired)) {
-                        next = next.thenPlay("animation.cultist.pray_start");
-                    } else if ("pray".equals(this.animationState)) {
-                        next = next.thenPlay("animation.cultist.pray_end");
+                // Only entering/leaving the kneeling prayer is debounced (it is the one state with bracket
+                // clips to protect from a one-tick flicker); idle/walk/run swap the moment the threshold does,
+                // so a slow, stop-start wander (WaterAvoidingRandomStrollGoal) never gets stuck showing idle.
+                boolean bracketed = "pray".equals(desired) || "pray".equals(this.animationState);
+                if (bracketed) {
+                    if (!desired.equals(this.pendingAnimationState)) {
+                        this.pendingAnimationState = desired;
+                        this.pendingAnimationTick = this.tickCount;
+                        return state.setAndContinue(this.loopAnimation);
+                    } else if (this.tickCount - this.pendingAnimationTick < 3) {
+                        return state.setAndContinue(this.loopAnimation);
                     }
-                    this.loopAnimation = next.thenLoop("animation.cultist." + desired);
-                    this.animationState = desired;
                 }
-            } else {
-                this.pendingAnimationState = desired;
-                this.pendingAnimationTick = this.tickCount;
+                // The model only ships bracket clips for entering/leaving the kneeling prayer.
+                RawAnimation next = RawAnimation.begin();
+                if ("pray".equals(desired)) {
+                    next = next.thenPlay("animation.cultist.pray_start");
+                } else if ("pray".equals(this.animationState)) {
+                    next = next.thenPlay("animation.cultist.pray_end");
+                }
+                this.loopAnimation = next.thenLoop("animation.cultist." + desired);
+                this.animationState = desired;
             }
             return state.setAndContinue(this.loopAnimation);
         }).triggerableAnim("attack", ATTACK_ANIMATION));

@@ -65,10 +65,6 @@ public class SacredPriestEntity extends Monster implements GeoEntity, ChurchServ
     /** Cultists this close rally to him when he is struck (see {@link #hurt}). */
     private static final double CULTIST_ALERT_RADIUS = 16.0;
 
-    /** Horizontal speed (blocks per tick, squared) above which it counts as moving / running. */
-    private static final double WALK_SPEED_SQR = 0.002;
-    private static final double WALK_HYSTERESIS_SQR = 0.0007;
-    private static final double RUN_SPEED_SQR = 0.035;
     /** The death clip is 2.5 s; the body lingers a little past it so the last pose is held before it vanishes. */
     private static final int DEATH_ANIMATION_TICKS = 55;
 
@@ -238,26 +234,16 @@ public class SacredPriestEntity extends Monster implements GeoEntity, ChurchServ
     // attack trigger. Praying is read straight from the vanilla pose ChurchServiceGoal already sets.
     // ------------------------------------------------------------------------------------------
 
-    /** idle / walk / run on foot, or "pray" while {@link PrayGoal} has him kneeling. */
+    private final GaitTracker gait = new GaitTracker();
+
+    /** idle / walk / run on foot, or "pray" while {@link ChurchServiceGoal} has him kneeling. */
     private String desiredAnimationState() {
-        if (this.getPose() == Pose.CROUCHING) {
-            return "pray";
-        }
-        // Position change per tick works on the client too (remote entities carry no reliable velocity).
-        double dx = this.getX() - this.xOld;
-        double dz = this.getZ() - this.zOld;
-        double speedSqr = dx * dx + dz * dz;
-        boolean wasMoving = "walk".equals(this.animationState) || "run".equals(this.animationState);
-        boolean moving = speedSqr > (wasMoving ? WALK_HYSTERESIS_SQR : WALK_SPEED_SQR);
-        if (!moving) {
-            return "idle";
-        }
-        return speedSqr > RUN_SPEED_SQR ? "run" : "walk";
+        return this.getPose() == Pose.CROUCHING ? "pray" : this.gait.update(this);
     }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "move", 4, state -> {
+        controllers.add(new AnimationController<>(this, "move", 8, state -> {
             if (this.isDeadOrDying()) {
                 return state.setAndContinue(DEATH_ANIMATION);
             }
