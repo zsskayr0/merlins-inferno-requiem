@@ -26,8 +26,11 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.placement.HeightmapPlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.placement.RandomOffsetPlacement;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 import net.neoforged.neoforge.common.world.BiomeModifiers;
@@ -94,14 +97,16 @@ public final class ModLyriumProvider {
                 BiomeFilter.biome())));
 
         // One in 16 chunks of mountain (vanilla's amethyst geode is one in 24, but it can generate
-        // anywhere underground - this one only in mountains, so it has to be denser to be found), and
-        // from the caves up to the peaks: the earlier 1-in-48 at y 32-120 left almost every geode
-        // buried in solid rock, where nothing ever revealed it. Higher up, ravines, cliffs and
-        // mountain caves are far more likely to crack one open.
+        // anywhere underground - this one only in mountains, so it has to be denser to be found). The centre goes
+        // 6-14 blocks under the terrain surface rather than at a fixed height: at a fixed y range the geode ended up
+        // sitting on top of the ground wherever the terrain was lower than it (a mound in the open), while too deep
+        // it stays buried where nothing reveals it. Just under the surface it is cracked open by slopes, ravines
+        // and mountain caves, and only its top edge ever breaks through.
         context.register(ModPlacedFeatures.LYRIUM_GEODE_PLACED, new PlacedFeature(configured.getOrThrow(ModConfiguredFeatures.LYRIUM_GEODE), List.of(
                 RarityFilter.onAverageOnceEvery(16),
                 InSquarePlacement.spread(),
-                HeightRangePlacement.uniform(VerticalAnchor.absolute(16), VerticalAnchor.absolute(200)),
+                HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG),
+                RandomOffsetPlacement.vertical(UniformInt.of(-14, -6)),
                 BiomeFilter.biome())));
     }
 
