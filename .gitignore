@@ -41,3 +41,8 @@ src/generated/resources/.cache/
 
 # Working art files (models, previews) live outside the repo - never commit them
 artifacts/
+
+# Local working notes, scripts and backups live outside the repo - never commit them
+backups/
+handoff/
+tools/
