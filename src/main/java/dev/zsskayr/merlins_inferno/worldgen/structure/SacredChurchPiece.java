@@ -114,12 +114,12 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     }
 
     /**
-     * Where the Sacred Carpet differs from the template's own red and yellow carpet, as the layout was hand-edited in a
+     * Where the Ornated Carpet differs from the template's own red and yellow carpet, as the layout was hand-edited in a
      * generated church. Template-relative {x, y, z}; expanded by {@link #carpetAdditions()}.
      * <ul>
      *     <li>the east walkway (x 49-59, y 3) gets a carpet lane on each side, z = 20 and 24, next to its three-wide aisle;</li>
      *     <li>the platform beyond it (x 61-62, y 4, z 19-25) is carpeted;</li>
-     *     <li>the altar's white carpet corners and sides (x 40 and 42, y 4, z 20/22/24) turn to Sacred Carpet - its two white
+     *     <li>the altar's white carpet corners and sides (x 40 and 42, y 4, z 20/22/24) turn to Ornated Carpet - its two white
      *     centre pieces and the ones on the anvils stay vanilla.</li>
      * </ul>
      */
@@ -187,7 +187,7 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         return this.carpetSpots;
     }
 
-    /** World positions that get a Sacred Carpet although the template has no red or yellow carpet there. */
+    /** World positions that get a Ornated Carpet although the template has no red or yellow carpet there. */
     private List<BlockPos> carpetAdditions() {
         List<BlockPos> added = new ArrayList<>();
         for (int x = WALKWAY_X_FROM; x <= WALKWAY_X_TO; x++) {
@@ -220,7 +220,7 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     }
 
     /**
-     * Swaps the template's vanilla red and yellow carpet for the mod's Sacred Carpet. Its blue binding shows only at the
+     * Swaps the template's vanilla red and yellow carpet for the mod's Ornated Carpet. Its blue binding shows only at the
      * exposed edges, so each piece's connections come from the template's own carpet layout (not from the world, whose
      * neighbouring chunks may not exist yet) and every chunk of the church agrees on them.
      */
@@ -232,16 +232,16 @@ public class SacredChurchPiece extends TemplateStructurePiece {
             }
         }
         // Pasting the template runs updateShape across the seam with the neighbouring chunk, which resets the connection of
-        // any Sacred Carpet already standing on its side of the border (the pasted vanilla carpet is not one). So this chunk
+        // any Ornated Carpet already standing on its side of the border (the pasted vanilla carpet is not one). So this chunk
         // also re-states the carpets in the ring just outside its box - only those that already exist.
         BoundingBox reach = new BoundingBox(chunkBox.minX() - 1, chunkBox.minY(), chunkBox.minZ() - 1,
                 chunkBox.maxX() + 1, chunkBox.maxY(), chunkBox.maxZ() + 1);
         for (BlockPos spot : spots) {
-            if (!chunkBox.isInside(spot) && !(reach.isInside(spot) && level.getBlockState(spot).is(ModBlocks.SACRED_CARPET.get()))) {
+            if (!chunkBox.isInside(spot) && !(reach.isInside(spot) && level.getBlockState(spot).is(ModBlocks.ORNATED_CARPET.get()))) {
                 continue;
             }
-            BlockState carpet = ModBlocks.SACRED_CARPET.get().connectedState(
-                    ModBlocks.SACRED_CARPET.get().defaultBlockState(), spot, spots::contains);
+            BlockState carpet = ModBlocks.ORNATED_CARPET.get().connectedState(
+                    ModBlocks.ORNATED_CARPET.get().defaultBlockState(), spot, spots::contains);
             level.setBlock(spot, carpet, Block.UPDATE_CLIENTS);
         }
     }
