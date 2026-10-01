@@ -2,6 +2,7 @@ package dev.zsskayr.merlins_inferno.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalDouble;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -42,8 +43,8 @@ public final class EdenweedSight {
     private static final int SCAN_INTERVAL_TICKS = 20;
     private static final int MAX_MARKED = 512;
     private static final double SIGHT_ENTITY_RADIUS = 32.0;
-    /** Translucent neon green fill for revealed blocks. */
-    private static final float BLOCK_RED = 0.30F, BLOCK_GREEN = 1.0F, BLOCK_BLUE = 0.35F, BLOCK_ALPHA = 0.22F;
+    /** Thin green outline for revealed blocks. */
+    private static final float BLOCK_RED = 0.30F, BLOCK_GREEN = 1.0F, BLOCK_BLUE = 0.35F, BLOCK_ALPHA = 0.85F;
     private static final int HOSTILE_OUTLINE = 0xFF6644, FRIENDLY_OUTLINE = 0x66FF77;
     private static final ResourceLocation HAZE = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "textures/gui/druidic_haze.png");
 
@@ -90,13 +91,12 @@ public final class EdenweedSight {
         Vec3 camera = event.getCamera().getPosition();
         PoseStack poseStack = event.getPoseStack();
         MultiBufferSource.BufferSource buffers = minecraft.renderBuffers().bufferSource();
-        VertexConsumer boxes = buffers.getBuffer(SightBoxes.TYPE);
+        VertexConsumer lines = buffers.getBuffer(SightLines.TYPE);
         for (BlockPos pos : MARKED) {
             AABB box = new AABB(pos).inflate(0.004).move(-camera.x, -camera.y, -camera.z);
-            LevelRenderer.addChainedFilledBoxVertices(poseStack, boxes, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ,
-                    BLOCK_RED, BLOCK_GREEN, BLOCK_BLUE, BLOCK_ALPHA);
+            LevelRenderer.renderLineBox(poseStack, lines, box, BLOCK_RED, BLOCK_GREEN, BLOCK_BLUE, BLOCK_ALPHA);
         }
-        buffers.endBatch(SightBoxes.TYPE);
+        buffers.endBatch(SightLines.TYPE);
     }
 
     /**
@@ -133,12 +133,13 @@ public final class EdenweedSight {
         });
     }
 
-    /** Filled boxes that ignore the depth buffer, so they show through walls. Unlit, so a shader pack cannot darken them. */
-    private static final class SightBoxes extends RenderType {
-        static final RenderType TYPE = RenderType.create("merlins_inferno_sight_boxes", DefaultVertexFormat.POSITION_COLOR,
-                VertexFormat.Mode.TRIANGLE_STRIP, 1536, false, true,
+    /** Block outlines that ignore the depth buffer, so they remain visible through walls. */
+    private static final class SightLines extends RenderType {
+        static final RenderType TYPE = RenderType.create("merlins_inferno_sight_lines", DefaultVertexFormat.POSITION_COLOR_NORMAL,
+                VertexFormat.Mode.LINES, 1536, false, false,
                 RenderType.CompositeState.builder()
-                        .setShaderState(POSITION_COLOR_SHADER)
+                        .setShaderState(RENDERTYPE_LINES_SHADER)
+                        .setLineState(new LineStateShard(OptionalDouble.of(2.0D)))
                         .setLayeringState(VIEW_OFFSET_Z_LAYERING)
                         .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
                         .setWriteMaskState(COLOR_WRITE)
@@ -146,7 +147,7 @@ public final class EdenweedSight {
                         .setCullState(NO_CULL)
                         .createCompositeState(false));
 
-        private SightBoxes(String name, VertexFormat format, VertexFormat.Mode mode, int bufferSize, boolean affectsCrumbling,
+        private SightLines(String name, VertexFormat format, VertexFormat.Mode mode, int bufferSize, boolean affectsCrumbling,
                 boolean sortOnUpload, Runnable setup, Runnable clear) {
             super(name, format, mode, bufferSize, affectsCrumbling, sortOnUpload, setup, clear);
         }

@@ -18,8 +18,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 /** Connected cloth: blue binding and loose threads appear only at exposed edges. */
-public class SacredCarpetBlock extends CarpetBlock {
-    public static final MapCodec<SacredCarpetBlock> CODEC = simpleCodec(SacredCarpetBlock::new);
+public class OrnatedCarpetBlock extends CarpetBlock {
+    public static final MapCodec<OrnatedCarpetBlock> CODEC = simpleCodec(OrnatedCarpetBlock::new);
 
     private static final BooleanProperty[] DIAGONALS = {
         BooleanProperty.create("north_west"), BooleanProperty.create("north_east"),
@@ -77,7 +77,7 @@ public class SacredCarpetBlock extends CarpetBlock {
         }
     }
 
-    public SacredCarpetBlock(Properties properties) {
+    public OrnatedCarpetBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any()
                 .setValue(BlockStateProperties.NORTH, false).setValue(BlockStateProperties.EAST, false)
@@ -87,7 +87,7 @@ public class SacredCarpetBlock extends CarpetBlock {
     }
 
     @Override
-    public MapCodec<SacredCarpetBlock> codec() { return CODEC; }
+    public MapCodec<OrnatedCarpetBlock> codec() { return CODEC; }
 
     private static BooleanProperty connection(Direction direction) {
         return switch (direction) {

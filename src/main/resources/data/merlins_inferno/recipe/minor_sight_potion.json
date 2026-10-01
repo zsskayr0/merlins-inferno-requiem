@@ -9,5 +9,5 @@
       "components": { "minecraft:potion_contents": { "potion": "minecraft:water" } }
     }
   ],
-  "result": { "count": 1, "id": "merlins_inferno:edenweed_tea" }
+  "result": { "count": 1, "id": "merlins_inferno:minor_sight_potion" }
 }

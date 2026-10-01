@@ -1,39 +1,39 @@
 {
   "parent": "minecraft:block/thin_block",
   "textures": {
-    "red": "merlins_inferno:block/sacred_carpet",
-    "blue": "merlins_inferno:block/sacred_carpet_border",
-    "particle": "merlins_inferno:block/sacred_carpet"
+    "red": "merlins_inferno:block/ornated_carpet",
+    "blue": "merlins_inferno:block/ornated_carpet_border",
+    "particle": "merlins_inferno:block/ornated_carpet"
   },
   "elements": [
     {
       "from": [
         0,
-        1.01,
+        0,
         0
       ],
       "to": [
-        2,
-        1.07,
-        2
+        16,
+        1,
+        16
       ],
       "faces": {
         "up": {
-          "texture": "#blue",
+          "texture": "#red",
           "uv": [
             0,
             0,
-            2,
-            2
+            16,
+            16
           ]
         },
         "down": {
-          "texture": "#blue",
+          "texture": "#red",
           "uv": [
             0,
             0,
-            2,
-            2
+            16,
+            16
           ]
         },
         "north": {
@@ -41,7 +41,7 @@
           "uv": [
             0,
             15,
-            2,
+            16,
             16
           ]
         },
@@ -50,7 +50,7 @@
           "uv": [
             0,
             15,
-            2,
+            16,
             16
           ]
         },
@@ -59,7 +59,7 @@
           "uv": [
             0,
             15,
-            2,
+            16,
             16
           ]
         },
@@ -68,7 +68,7 @@
           "uv": [
             0,
             15,
-            2,
+            16,
             16
           ]
         }

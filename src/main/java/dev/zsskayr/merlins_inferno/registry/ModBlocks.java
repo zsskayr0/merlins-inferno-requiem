@@ -298,8 +298,8 @@ public final class ModBlocks {
             Block::new, fleshProperties());
     public static final DeferredBlock<SlabBlock> FLESH_SLAB = BLOCKS.registerBlock("flesh_slab",
             SlabBlock::new, fleshProperties());
-    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.SacredCarpetBlock> SACRED_CARPET =
-            BLOCKS.registerBlock("sacred_carpet", dev.zsskayr.merlins_inferno.block.SacredCarpetBlock::new,
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.OrnatedCarpetBlock> ORNATED_CARPET =
+            BLOCKS.registerBlock("ornated_carpet", dev.zsskayr.merlins_inferno.block.OrnatedCarpetBlock::new,
                     BlockBehaviour.Properties.ofFullCopy(Blocks.RED_CARPET).noOcclusion());
 
     public static final DeferredBlock<CarpetBlock> FLESH_CARPET = BLOCKS.registerBlock("flesh_carpet",

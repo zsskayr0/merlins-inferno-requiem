@@ -10,7 +10,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "merlins_inferno:raw_edenweed_bud",
+          "name": "merlins_inferno:raw_edenweed",
           "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1.0, "max": 2.0 } } ]
         }
       ]

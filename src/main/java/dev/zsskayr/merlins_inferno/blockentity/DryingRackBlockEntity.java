@@ -95,7 +95,7 @@ public class DryingRackBlockEntity extends BlockEntity {
         List<ItemStack> drops = new ArrayList<>();
         for (int i = 0; i < SLOTS; i++) {
             if (this.states[i] == DRYING) {
-                drops.add(new ItemStack(ModItems.RAW_EDENWEED_BUD.get()));
+                drops.add(new ItemStack(ModItems.RAW_EDENWEED.get()));
             } else if (this.states[i] == READY) {
                 drops.add(new ItemStack(ModItems.DRIED_EDENWEED.get()));
             }

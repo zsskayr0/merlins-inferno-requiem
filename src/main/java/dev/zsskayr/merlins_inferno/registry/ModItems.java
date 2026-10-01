@@ -33,8 +33,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.item.AntidoteItem;
 import dev.zsskayr.merlins_inferno.item.ChampionSeekerItem;
-import dev.zsskayr.merlins_inferno.item.EdenweedTeaItem;
-import dev.zsskayr.merlins_inferno.item.WoodenPipeItem;
+import dev.zsskayr.merlins_inferno.item.MinorSightPotionItem;
 import dev.zsskayr.merlins_inferno.item.GrimmoriumItem;
 import dev.zsskayr.merlins_inferno.item.OblivionKeyItem;
 import dev.zsskayr.merlins_inferno.item.PandoraBoxItem;
@@ -353,7 +352,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> COMPRESSED_NETHERRACK_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_WALL);
     public static final DeferredItem<BlockItem> FLESH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_BLOCK);
     public static final DeferredItem<BlockItem> FLESH_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_SLAB);
-    public static final DeferredItem<BlockItem> SACRED_CARPET_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SACRED_CARPET);
+    public static final DeferredItem<BlockItem> ORNATED_CARPET_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ORNATED_CARPET);
     public static final DeferredItem<BlockItem> FLESH_CARPET_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_CARPET);
     public static final DeferredItem<BlockItem> RED_CHAIN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.RED_CHAIN);
     public static final DeferredItem<BlockItem> BLACK_NYLIUM_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_NYLIUM);
@@ -415,18 +414,16 @@ public final class ModItems {
     public static final DeferredItem<PortalKeyItem> PURGATORY_KEY = ITEMS.registerItem("purgatory_key",
             props -> new PortalKeyItem(props.stacksTo(1).rarity(Rarity.RARE).fireResistant(), "purgatory"));
 
-    // --- Edenweed: Raw bud (found on the bush; eating it raw is weak) -> Drying Rack -> Dried Edenweed -> smoked in a
-    // Wooden Pipe or boiled into Tea, both giving the Druidic Trance. ---
-    public static final DeferredItem<Item> RAW_EDENWEED_BUD = ITEMS.registerSimpleItem("raw_edenweed_bud",
+    // --- Edenweed: Raw edenweed (found on the bush; eating it raw is weak) -> Drying Rack -> Dried Edenweed -> boiled
+    // into a Minor Sight Potion, giving the Druidic Trance. ---
+    public static final DeferredItem<Item> RAW_EDENWEED = ITEMS.registerSimpleItem("raw_edenweed",
             new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.1F).alwaysEdible()
                     .effect(() -> new MobEffectInstance(ModEffects.DRUIDIC_TRANCE, 400, 0), 1.0F)
                     .effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 160, 0), 1.0F)
                     .build()));
     public static final DeferredItem<Item> DRIED_EDENWEED = ITEMS.registerSimpleItem("dried_edenweed", new Item.Properties());
-    public static final DeferredItem<WoodenPipeItem> WOODEN_PIPE = ITEMS.registerItem("wooden_pipe",
-            props -> new WoodenPipeItem(props.durability(64)));
-    public static final DeferredItem<EdenweedTeaItem> EDENWEED_TEA = ITEMS.registerItem("edenweed_tea",
-            props -> new EdenweedTeaItem(props.stacksTo(16)));
+    public static final DeferredItem<MinorSightPotionItem> MINOR_SIGHT_POTION = ITEMS.registerItem("minor_sight_potion",
+            props -> new MinorSightPotionItem(props.stacksTo(16)));
     public static final DeferredItem<BlockItem> DRYING_RACK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DRYING_RACK);
 
     /** Points at the nearest boss/miniboss instead of world spawn - see ChampionSeekerItem and ModTags.EntityTypes.BOSS_COMPASS_TARGETS. */

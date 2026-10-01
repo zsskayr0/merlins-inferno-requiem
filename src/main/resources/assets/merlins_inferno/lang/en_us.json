@@ -1,5 +1,5 @@
 {
-  "block.merlins_inferno.sacred_carpet": "Sacred Carpet",
+  "block.merlins_inferno.ornated_carpet": "Ornated Carpet",
   "itemGroup.merlins_inferno": "Merlin's Inferno",
   "entity.merlins_inferno.druid": "Druid",
   "item.merlins_inferno.druid_spawn_egg": "Druid Spawn Egg",
@@ -331,16 +331,14 @@
   "gui.merlins_inferno.pandora_box.take_result": "Take the result from the center before forging again.",
   "block.merlins_inferno.edenweed_bush": "Edenweed",
   "block.merlins_inferno.drying_rack": "Drying Rack",
-  "item.merlins_inferno.raw_edenweed_bud": "Raw Edenweed Bud",
+  "item.merlins_inferno.raw_edenweed": "Raw Edenweed",
   "item.merlins_inferno.dried_edenweed": "Dried Edenweed",
-  "item.merlins_inferno.wooden_pipe": "Wooden Pipe",
-  "item.merlins_inferno.edenweed_tea": "Edenweed Tea",
+  "item.merlins_inferno.minor_sight_potion": "Minor Sight Potion",
   "effect.merlins_inferno.druidic_trance": "Druidic Trance",
   "effect.merlins_inferno.druidic_trance.description": "Slower, weaker and clumsy at mining - but hardly any harm reaches you. You are always hungry; food fills you twice as much and mends you. The Grove's hidden things show through the walls.",
   "effect.merlins_inferno.druidic_trance.desc": "Slower, weaker and clumsy at mining - but hardly any harm reaches you. You are always hungry; food fills you twice as much and mends you. The Grove's hidden things show through the walls.",
-  "message.merlins_inferno.pipe.empty": "You have no Dried Edenweed.",
   "patchouli.merlins_inferno.entry.edenweed.name": "Edenweed",
-  "patchouli.merlins_inferno.entry.edenweed.page1": "$(bold)Edenweed$()$(br2)A shrub of serrated leaves that grows only at the roots of the Grove's Rowanwood trees, faintly glowing. Right-click it when it is full-grown to pick its buds - it grows back.",
-  "patchouli.merlins_inferno.entry.edenweed.page2": "Raw buds do little. Hang them on a $(bold)Drying Rack$() and, after a couple of minutes, they become $(bold)Dried Edenweed$().$(br2)Smoke it in a $(bold)Wooden Pipe$(), or boil it into a $(bold)Tea$() with a bottle of water.",
+  "patchouli.merlins_inferno.entry.edenweed.page1": "$(bold)Edenweed$()$(br2)A shrub of serrated leaves that grows only at the roots of the Grove's Rowanwood trees, faintly glowing. Right-click it when it is full-grown to pick it - it grows back.",
+  "patchouli.merlins_inferno.entry.edenweed.page2": "Raw Edenweed does little. Hang it on a $(bold)Drying Rack$() and, after a couple of minutes, it becomes $(bold)Dried Edenweed$().$(br2)Boil it into a $(bold)Minor Sight Potion$() with a bottle of water.",
   "patchouli.merlins_inferno.entry.edenweed.page3": "$(bold)Druidic Trance$()$(br2)You move and mine slowly, and hit weakly - but you take 80% less damage. Hunger gnaws at you; whatever you eat fills you twice as much and mends you.$(br2)And you see: ores, chests and the Grove's spirits show through the walls."
 }

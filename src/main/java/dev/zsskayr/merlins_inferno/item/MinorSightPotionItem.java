@@ -14,12 +14,12 @@ import net.minecraft.world.level.Level;
 
 import dev.zsskayr.merlins_inferno.registry.ModEffects;
 
-/** A bottle of boiled Edenweed: the Druidic Trance for four minutes. */
-public class EdenweedTeaItem extends Item {
-    public static final int TRANCE_TICKS = 4800;
+/** A bottle of boiled Edenweed: the Druidic Trance for ninety seconds. */
+public class MinorSightPotionItem extends Item {
+    public static final int TRANCE_TICKS = 1800;
     private static final int DRINK_TICKS = 32;
 
-    public EdenweedTeaItem(Properties properties) {
+    public MinorSightPotionItem(Properties properties) {
         super(properties);
     }
 
