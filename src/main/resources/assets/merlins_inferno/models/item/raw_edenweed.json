@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "merlins_inferno:item/raw_edenweed_bud"
+    "layer0": "merlins_inferno:item/raw_edenweed"
   }
 }

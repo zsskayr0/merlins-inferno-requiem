@@ -84,7 +84,7 @@ public class EdenweedBushBlock extends BushBlock {
 
     @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        return new ItemStack(ModItems.RAW_EDENWEED_BUD.get());
+        return new ItemStack(ModItems.RAW_EDENWEED.get());
     }
 
     @Override
@@ -94,7 +94,7 @@ public class EdenweedBushBlock extends BushBlock {
         }
         if (!level.isClientSide) {
             int count = 1 + level.random.nextInt(2);
-            Block.popResource(level, pos, new ItemStack(ModItems.RAW_EDENWEED_BUD.get(), count));
+            Block.popResource(level, pos, new ItemStack(ModItems.RAW_EDENWEED.get(), count));
             level.playSound(null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
             level.setBlock(pos, state.setValue(AGE, PICKED_AGE), Block.UPDATE_CLIENTS);
         }
