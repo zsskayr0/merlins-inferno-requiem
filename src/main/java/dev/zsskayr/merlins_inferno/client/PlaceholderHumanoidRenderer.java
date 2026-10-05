@@ -11,7 +11,7 @@ import net.minecraft.world.entity.Mob;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 
 /**
- * Placeholder look for mobs that have no model yet (Andras, Ostara, the Sacred Priest): vanilla's zombie layout,
+ * Placeholder look for mobs that have no model yet (Ostara): vanilla's zombie layout,
  * optionally enlarged, with a tinted texture at {@code textures/entity/<name>/<name>.png}. Swap for a GeckoLib
  * renderer once the real model exists.
  */

@@ -49,9 +49,10 @@ public final class ModEntityRenderers {
         event.registerEntityRenderer(ModEntityTypes.ELIAS.get(), EliasRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.SACRED_CULTIST.get(), SacredCultistRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.SACRED_PRIEST.get(), SacredPriestRenderer::new);
-        event.registerEntityRenderer(ModEntityTypes.ANDRAS.get(), ctx -> new PlaceholderHumanoidRenderer<>(ctx, "andras", 1.25F));
+        event.registerEntityRenderer(ModEntityTypes.ANDRAS.get(), AndrasRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.OSTARA.get(), ctx -> new PlaceholderHumanoidRenderer<>(ctx, "ostara", 1.1F));
         event.registerBlockEntityRenderer(ModBlockEntityTypes.HELL_FORGE.get(), HellForgeBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.DRYING_RACK.get(), DryingRackRenderer::new);
     }
 
     @SubscribeEvent

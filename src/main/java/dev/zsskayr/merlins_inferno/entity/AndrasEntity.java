@@ -32,6 +32,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
 import dev.zsskayr.merlins_inferno.registry.ModEffects;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 
@@ -46,9 +53,10 @@ import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
  *     taken, for {@link #MARK_DURATION} ticks.</li>
  *     <li><b>Loot:</b> the Book of Contracts, the key item of the Pandora Box ritual (data/.../loot_table/entities/andras.json).</li>
  * </ul>
- * Spawns rarely in the Nether, solitary. His fortress is future content. Drawn as an enlarged humanoid placeholder.
+ * Spawns rarely in the Nether, solitary. His fortress is future content. Animated with GeckoLib
+ * (idle/walk, combat stance, slash, spell cast, flinch, death).
  */
-public class AndrasEntity extends Monster {
+public class AndrasEntity extends Monster implements GeoEntity {
     public static final double MAX_HEALTH = 370.0;
     public static final double ATTACK_DAMAGE = 15.0;
     public static final double MOVEMENT_SPEED = 0.26;
@@ -60,6 +68,21 @@ public class AndrasEntity extends Monster {
     private static final int MARK_DURATION = 600;
     /** Nothing else of his kind within this many blocks for a natural spawn. */
     private static final double SOLITARY_RADIUS = 256.0;
+    /** Length of the death clip (2.4 s): he lingers for all of it instead of vanilla's 20 ticks. */
+    private static final int DEATH_ANIMATION_TICKS = 48;
+    private static final int HURT_ANIMATION_COOLDOWN = 20;
+
+    private static final RawAnimation IDLE_ANIMATION = RawAnimation.begin().thenLoop("animation.andras.idle");
+    private static final RawAnimation WALK_ANIMATION = RawAnimation.begin().thenLoop("animation.andras.walk");
+    private static final RawAnimation IDLE_COMBAT_ANIMATION = RawAnimation.begin().thenLoop("animation.andras.idle_combat");
+    private static final RawAnimation WALK_COMBAT_ANIMATION = RawAnimation.begin().thenLoop("animation.andras.walk_combat");
+    private static final RawAnimation SLASH_ANIMATION = RawAnimation.begin().thenPlay("animation.andras.attack_slash");
+    private static final RawAnimation CAST_ANIMATION = RawAnimation.begin().thenPlay("animation.andras.cast_spell");
+    private static final RawAnimation HIT_ANIMATION = RawAnimation.begin().thenPlay("animation.andras.hit");
+    private static final RawAnimation DEATH_ANIMATION = RawAnimation.begin().thenPlayAndHold("animation.andras.death");
+
+    private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
+    private int lastHurtAnimationTick;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(Component.translatable("entity.merlins_inferno.andras"),
             BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
@@ -109,6 +132,9 @@ public class AndrasEntity extends Monster {
 
     @Override
     public boolean doHurtTarget(Entity target) {
+        if (!this.level().isClientSide) {
+            this.triggerAnim("move", "slash");
+        }
         boolean hit = super.doHurtTarget(target);
         if (hit && target instanceof Player player) {
             player.addEffect(new MobEffectInstance(ModEffects.MARK_OF_DEBT, MARK_DURATION, 0));
@@ -145,7 +171,29 @@ public class AndrasEntity extends Monster {
             level.addFreshEntity(imp);
         }
         if (room > 0) {
+            this.triggerAnim("move", "cast");
             this.playSound(SoundEvents.EVOKER_PREPARE_SUMMON, 1.0F, 0.6F);
+        }
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        boolean hurt = super.hurt(source, amount);
+        if (hurt && !this.level().isClientSide && this.isAlive()
+                && this.tickCount - this.lastHurtAnimationTick >= HURT_ANIMATION_COOLDOWN) {
+            this.lastHurtAnimationTick = this.tickCount;
+            this.triggerAnim("move", "hit");
+        }
+        return hurt;
+    }
+
+    /** Lingers for the whole death clip instead of vanilla's 20 ticks (and never tips over - see the renderer). */
+    @Override
+    protected void tickDeath() {
+        ++this.deathTime;
+        if (this.deathTime >= DEATH_ANIMATION_TICKS && !this.level().isClientSide() && !this.isRemoved()) {
+            this.level().broadcastEntityEvent(this, (byte) 60);
+            this.remove(Entity.RemovalReason.KILLED);
         }
     }
 
@@ -174,6 +222,32 @@ public class AndrasEntity extends Monster {
     public void remove(RemovalReason reason) {
         this.bossEvent.removeAllPlayers();
         super.remove(reason);
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // Animation: one controller owns the pose; slash, cast and flinch are triggered one-shots.
+    // ------------------------------------------------------------------------------------------
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "move", 4, state -> {
+            if (this.isDeadOrDying()) {
+                return state.setAndContinue(DEATH_ANIMATION);
+            }
+            boolean combat = this.isAggressive() || this.getTarget() != null;
+            if (state.isMoving()) {
+                return state.setAndContinue(combat ? WALK_COMBAT_ANIMATION : WALK_ANIMATION);
+            }
+            return state.setAndContinue(combat ? IDLE_COMBAT_ANIMATION : IDLE_ANIMATION);
+        })
+                .triggerableAnim("slash", SLASH_ANIMATION)
+                .triggerableAnim("cast", CAST_ANIMATION)
+                .triggerableAnim("hit", HIT_ANIMATION));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.animationCache;
     }
 
     // Vanilla placeholders until the mod has its own audio.

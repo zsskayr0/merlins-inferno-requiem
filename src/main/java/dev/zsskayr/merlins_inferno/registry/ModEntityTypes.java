@@ -121,8 +121,8 @@ public final class ModEntityTypes {
     // Infernal Circle 1 boss - see AndrasEntity. Fire-immune, like the rest of the Nether's residents.
     public static final DeferredHolder<EntityType<?>, EntityType<AndrasEntity>> ANDRAS = ENTITY_TYPES.register("andras",
             () -> EntityType.Builder.of(AndrasEntity::new, MobCategory.MONSTER)
-                    .sized(0.8F, 2.4F)
-                    .eyeHeight(2.1F)
+                    .sized(1.0F, 3.0F)
+                    .eyeHeight(2.6F)
                     .fireImmune()
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":andras"));

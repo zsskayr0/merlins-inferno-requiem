@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -25,60 +24,34 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import dev.zsskayr.merlins_inferno.blockentity.DryingRackBlockEntity;
 import dev.zsskayr.merlins_inferno.registry.ModBlockEntityTypes;
-import dev.zsskayr.merlins_inferno.registry.ModItems;
 
 /**
- * A rack that dries Raw Edenweed into Dried Edenweed (four at a time, see {@link DryingRackBlockEntity}). It sticks
- * to a wall (a shallow shelf) or hangs from a ceiling (a rope-and-bar hanger while drying, a shelf while empty or
- * ready). Right-click with edenweed to hang it; right-click with an empty hand to take what has dried. {@link #FACE}
- * and {@link #CONTENTS} only drive which model is shown.
+ * A half-slab rack that sticks to a wall (the wall is on the {@link #FACING} side). Three items sit stacked on its
+ * front face, drawn like item frames: right-click a spot with any item to put one there, right-click an occupied
+ * spot to take it back. Raw Edenweed dries into Dried Edenweed with time (see {@link DryingRackBlockEntity}).
  */
 public class DryingRackBlock extends BaseEntityBlock {
     public static final MapCodec<DryingRackBlock> CODEC = simpleCodec(DryingRackBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
-    public static final EnumProperty<Contents> CONTENTS = EnumProperty.create("contents", Contents.class);
 
-    // A shallow shelf hugging the wall behind it (the wall is on the FACING side).
-    private static final VoxelShape SHAPE_WALL_NORTH = Block.box(0, 9, 13, 16, 16, 16);
-    private static final VoxelShape SHAPE_WALL_SOUTH = Block.box(0, 9, 0, 16, 16, 3);
-    private static final VoxelShape SHAPE_WALL_WEST = Block.box(13, 9, 0, 16, 16, 16);
-    private static final VoxelShape SHAPE_WALL_EAST = Block.box(0, 9, 0, 3, 16, 16);
-    // A hanger dropping from the ceiling above.
-    private static final VoxelShape SHAPE_CEILING = Shapes.or(Block.box(6, 13, 6, 10, 16, 10), Block.box(1, 4, 6, 15, 8, 10));
-
-    public enum Contents implements StringRepresentable {
-        EMPTY("empty"), DRYING("drying"), READY("ready");
-
-        private final String name;
-
-        Contents(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getSerializedName() {
-            return this.name;
-        }
-    }
+    private static final VoxelShape SHAPE_NORTH = Block.box(0, 0, 0, 16, 16, 8);
+    private static final VoxelShape SHAPE_SOUTH = Block.box(0, 0, 8, 16, 16, 16);
+    private static final VoxelShape SHAPE_WEST = Block.box(0, 0, 0, 8, 16, 16);
+    private static final VoxelShape SHAPE_EAST = Block.box(8, 0, 0, 16, 16, 16);
 
     public DryingRackBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH)
-                .setValue(FACE, AttachFace.WALL).setValue(CONTENTS, Contents.EMPTY));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
@@ -88,21 +61,16 @@ public class DryingRackBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, FACE, CONTENTS);
+        builder.add(FACING);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         for (Direction direction : context.getNearestLookingDirections()) {
-            BlockState state;
-            if (direction == Direction.UP) {
-                state = this.defaultBlockState().setValue(FACE, AttachFace.CEILING)
-                        .setValue(FACING, context.getHorizontalDirection());
-            } else if (direction == Direction.DOWN) {
+            if (direction.getAxis().isVertical()) {
                 continue;
-            } else {
-                state = this.defaultBlockState().setValue(FACE, AttachFace.WALL).setValue(FACING, direction);
             }
+            BlockState state = this.defaultBlockState().setValue(FACING, direction);
             if (state.canSurvive(context.getLevel(), context.getClickedPos())) {
                 return state;
             }
@@ -122,32 +90,25 @@ public class DryingRackBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        if (state.getValue(FACE) == AttachFace.CEILING) {
-            return SHAPE_CEILING;
-        }
         return switch (state.getValue(FACING)) {
-            case SOUTH -> SHAPE_WALL_SOUTH;
-            case WEST -> SHAPE_WALL_WEST;
-            case EAST -> SHAPE_WALL_EAST;
-            default -> SHAPE_WALL_NORTH;
+            case SOUTH -> SHAPE_SOUTH;
+            case WEST -> SHAPE_WEST;
+            case EAST -> SHAPE_EAST;
+            default -> SHAPE_NORTH;
         };
-    }
-
-    private static BlockPos supportPos(BlockPos pos, BlockState state) {
-        return state.getValue(FACE) == AttachFace.CEILING ? pos.above() : pos.relative(state.getValue(FACING));
     }
 
     @Override
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        BlockPos support = supportPos(pos, state);
-        Direction supportFace = state.getValue(FACE) == AttachFace.CEILING ? Direction.DOWN : state.getValue(FACING).getOpposite();
-        return level.getBlockState(support).isFaceSturdy(level, support, supportFace);
+        Direction facing = state.getValue(FACING);
+        BlockPos support = pos.relative(facing);
+        return level.getBlockState(support).isFaceSturdy(level, support, facing.getOpposite());
     }
 
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
             LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        return neighborPos.equals(supportPos(pos, state)) && !this.canSurvive(state, level, pos)
+        return direction == state.getValue(FACING) && !this.canSurvive(state, level, pos)
                 ? Blocks.AIR.defaultBlockState() : state;
     }
 
@@ -166,31 +127,43 @@ public class DryingRackBlock extends BaseEntityBlock {
         return level.isClientSide ? null : createTickerHelper(type, ModBlockEntityTypes.DRYING_RACK.get(), DryingRackBlockEntity::serverTick);
     }
 
+    /** The slot under the cursor (0 = top, 2 = bottom), or -1 when the click was not on the front face. */
+    private static int slotAt(BlockState state, BlockPos pos, BlockHitResult hit) {
+        if (hit.getDirection() != state.getValue(FACING).getOpposite()) {
+            return -1;
+        }
+        double y = hit.getLocation().y - pos.getY();
+        return y >= 2.0 / 3.0 ? 0 : y >= 1.0 / 3.0 ? 1 : 2;
+    }
+
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
-        if (!stack.is(ModItems.RAW_EDENWEED.get())) {
+        int slot = slotAt(state, pos, hit);
+        if (slot < 0 || stack.isEmpty() || !(level.getBlockEntity(pos) instanceof DryingRackBlockEntity rack)
+                || !rack.getItem(slot).isEmpty()) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        if (level.getBlockEntity(pos) instanceof DryingRackBlockEntity rack && rack.hang()) {
-            if (!level.isClientSide) {
-                if (!player.getAbilities().instabuild) {
-                    stack.shrink(1);
-                }
-                rack.refreshState();
+        if (!level.isClientSide) {
+            rack.place(slot, stack.copyWithCount(1));
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
             }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
-        return ItemInteractionResult.CONSUME;
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.getBlockEntity(pos) instanceof DryingRackBlockEntity rack) {
-            int taken = level.isClientSide ? (rack.hasReady() ? 1 : 0) : rack.takeDried(player);
-            if (taken > 0) {
-                return InteractionResult.sidedSuccess(level.isClientSide);
+        int slot = slotAt(state, pos, hit);
+        if (slot >= 0 && level.getBlockEntity(pos) instanceof DryingRackBlockEntity rack && !rack.getItem(slot).isEmpty()) {
+            if (!level.isClientSide) {
+                ItemStack taken = rack.take(slot);
+                if (!player.getInventory().add(taken)) {
+                    player.drop(taken, false);
+                }
             }
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
         return InteractionResult.PASS;
     }
