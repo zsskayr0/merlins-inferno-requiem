@@ -4,6 +4,7 @@
     "minecraft:wandering_trader",
     "minecraft:zombie_villager",
     "#minecraft:raiders",
-    "merlins_inferno:sacred_cultist"
+    "merlins_inferno:sacred_cultist",
+    "merlins_inferno:sacred_priest"
   ]
 }

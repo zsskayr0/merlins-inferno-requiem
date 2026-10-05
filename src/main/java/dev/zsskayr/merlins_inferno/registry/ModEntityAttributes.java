@@ -8,7 +8,6 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.entity.AndrasEntity;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
-import dev.zsskayr.merlins_inferno.entity.DullahanSteedEntity;
 import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 import dev.zsskayr.merlins_inferno.entity.EliasEntity;
 import dev.zsskayr.merlins_inferno.entity.OstaraEntity;
@@ -30,7 +29,6 @@ public final class ModEntityAttributes {
         event.put(ModEntityTypes.STARVED.get(), StarvedEntity.createAttributes().build());
         event.put(ModEntityTypes.GRYMN.get(), GrymnEntity.createAttributes().build());
         event.put(ModEntityTypes.DULLAHAN.get(), DullahanEntity.createAttributes().build());
-        event.put(ModEntityTypes.DULLAHAN_STEED.get(), DullahanSteedEntity.createAttributes().build());
         event.put(ModEntityTypes.ELIAS.get(), EliasEntity.createAttributes().build());
         event.put(ModEntityTypes.SACRED_CULTIST.get(), SacredCultistEntity.createAttributes().build());
         event.put(ModEntityTypes.SACRED_PRIEST.get(), SacredPriestEntity.createAttributes().build());

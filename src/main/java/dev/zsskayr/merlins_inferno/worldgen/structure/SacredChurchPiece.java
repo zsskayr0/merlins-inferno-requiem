@@ -43,7 +43,9 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.block.SacredAltarBlock;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
+import dev.zsskayr.merlins_inferno.blockentity.SacredAltarPartBlockEntity;
 import dev.zsskayr.merlins_inferno.entity.SacredPriestEntity;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
@@ -69,6 +71,12 @@ public class SacredChurchPiece extends TemplateStructurePiece {
 
     // Local coordinates in the template.
     private static final int ALTAR_X = 41, ALTAR_Y = 3, ALTAR_Z = 22;
+    /**
+     * The altar is drawn by GeckoLib at about 3.5 x 3.5 blocks (and 6 tall), so the template's little quartz, trapdoor and carpet
+     * shrine around its enchanting table (x 40-42, z 20-24, y 3-4) is cleared: everything above the floor in this box but the
+     * altar itself.
+     */
+    private static final int CLEAR_X_FROM = 40, CLEAR_X_TO = 42, CLEAR_Z_FROM = 20, CLEAR_Z_TO = 24, CLEAR_Y_FROM = 3, CLEAR_Y_TO = 9;
     // The Great Bell's heart, over the crossing; the chain runs from its crown up to the vault (the crossing's ceiling is y = 32).
     private static final int BELL_X = 36, BELL_Y = 9, BELL_Z = 22, VAULT_Y = 31;
     private static final int ELIAS_X = 39, ELIAS_Y = 3, ELIAS_Z = 22;
@@ -119,13 +127,10 @@ public class SacredChurchPiece extends TemplateStructurePiece {
      * <ul>
      *     <li>the east walkway (x 49-59, y 3) gets a carpet lane on each side, z = 20 and 24, next to its three-wide aisle;</li>
      *     <li>the platform beyond it (x 61-62, y 4, z 19-25) is carpeted;</li>
-     *     <li>the altar's white carpet corners and sides (x 40 and 42, y 4, z 20/22/24) turn to Ornated Carpet - its two white
-     *     centre pieces and the ones on the anvils stay vanilla.</li>
      * </ul>
      */
     private static final int WALKWAY_X_FROM = 49, WALKWAY_X_TO = 59, WALKWAY_Y = 3;
     private static final int PLATFORM_X_FROM = 61, PLATFORM_X_TO = 62, PLATFORM_Y = 4, PLATFORM_Z_FROM = 19, PLATFORM_Z_TO = 25;
-    private static final int ALTAR_CARPET_Y = 4;
     /** Yellow carpet nubs the layout drops (they stuck out of the aisle's edge): template-relative {x, y, z}. */
     private static final int[][] CARPET_REMOVED = {{34, 2, 6}, {33, 2, 18}, {33, 2, 26}};
 
@@ -182,6 +187,7 @@ public class SacredChurchPiece extends TemplateStructurePiece {
             }
             spots.addAll(this.carpetAdditions());
             spots.removeAll(this.carpetGaps());
+            spots.removeIf(this::inAltarClearing);
             this.carpetSpots = spots;
         }
         return this.carpetSpots;
@@ -199,12 +205,13 @@ public class SacredChurchPiece extends TemplateStructurePiece {
                 added.add(this.at(x, PLATFORM_Y, z));
             }
         }
-        for (int x : new int[] {40, 42}) {
-            for (int z : new int[] {20, 22, 24}) {
-                added.add(this.at(x, ALTAR_CARPET_Y, z));
-            }
-        }
         return added;
+    }
+
+    private boolean inAltarClearing(BlockPos p) {
+        BlockPos local = p.subtract(this.templatePosition);
+        return local.getX() >= CLEAR_X_FROM && local.getX() <= CLEAR_X_TO && local.getZ() >= CLEAR_Z_FROM && local.getZ() <= CLEAR_Z_TO
+                && local.getY() >= CLEAR_Y_FROM && local.getY() <= CLEAR_Y_TO;
     }
 
     /** World positions where the template's red or yellow carpet is dropped from the layout. */
@@ -292,8 +299,27 @@ public class SacredChurchPiece extends TemplateStructurePiece {
 
     /** The altar where the template's enchanting table stood, and the Great Bell over the crossing. */
     private void chancel(WorldGenLevel level, BoundingBox chunkBox) {
-        this.set(level, chunkBox, ALTAR_X, ALTAR_Y, ALTAR_Z, ModBlocks.SACRED_ALTAR.get().defaultBlockState());
+        for (int x = CLEAR_X_FROM; x <= CLEAR_X_TO; x++) {
+            for (int z = CLEAR_Z_FROM; z <= CLEAR_Z_TO; z++) {
+                for (int y = CLEAR_Y_FROM; y <= CLEAR_Y_TO; y++) {
+                    this.set(level, chunkBox, x, y, z, Blocks.AIR.defaultBlockState());
+                }
+            }
+        }
+        // facing west, towards the nave
+        this.set(level, chunkBox, ALTAR_X, ALTAR_Y, ALTAR_Z,
+                ModBlocks.SACRED_ALTAR.get().defaultBlockState().setValue(SacredAltarBlock.FACING, Direction.WEST));
         BlockPos altarPos = this.at(ALTAR_X, ALTAR_Y, ALTAR_Z);
+        // the altar's 3 x 3 x 2 hitbox: only the parts inside this chunk (the rest come with the neighbouring chunks, or from the altar itself)
+        for (BlockPos offset : SacredAltarBlock.PART_OFFSETS) {
+            BlockPos partPos = altarPos.offset(offset);
+            if (chunkBox.isInside(partPos)) {
+                level.setBlock(partPos, ModBlocks.SACRED_ALTAR_PART.get().defaultBlockState(), Block.UPDATE_CLIENTS);
+                if (level.getBlockEntity(partPos) instanceof SacredAltarPartBlockEntity part) {
+                    part.setCorePos(altarPos);
+                }
+            }
+        }
         BlockPos bellPos = this.at(BELL_X, BELL_Y, BELL_Z);
         GreatBell.build(level, chunkBox, bellPos);
         for (int y = BELL_Y + GreatBell.CHAIN_START; y <= VAULT_Y; y++) {

@@ -1,5 +1,6 @@
 package dev.zsskayr.merlins_inferno.menu;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -14,6 +15,8 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.Nullable;
+
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
@@ -36,8 +39,16 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
     private Recipe workingRecipe = Recipe.NONE, lastRecipe = Recipe.NONE;
     private long lastCraftTick = Long.MIN_VALUE;
 
+    /** Where the placed Box this menu was opened from sits; null when opened from the item in the inventory. */
+    private final @Nullable BlockPos boxPos;
+
     public PandoraBoxMenu(int containerId, Inventory inventory) {
+        this(containerId, inventory, null);
+    }
+
+    public PandoraBoxMenu(int containerId, Inventory inventory, @Nullable BlockPos boxPos) {
         super(ModMenuTypes.PANDORA_BOX.get(), containerId);
+        this.boxPos = boxPos;
         player = inventory.player;
         // Client reads the server's synchronized values, not its local progression attachment.
         data = player.level().isClientSide ? new SimpleContainerData(5) : new SimpleContainerData(5) {
@@ -63,6 +74,7 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
         addDataSlots(data);
     }
 
+    public @Nullable BlockPos getBoxPos() { return boxPos; }
     public int getCircle() { return data.get(0); }
     public boolean isCrafting() { return data.get(1) > 0; }
     public float getCraftProgress() { return Math.min(1, data.get(1) / (float) CRAFT_TICKS); }
@@ -192,6 +204,10 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
+        if (boxPos != null) {
+            return player.level().getBlockState(boxPos).is(ModBlocks.PANDORA_BOX.get())
+                    && player.distanceToSqr(boxPos.getX() + 0.5, boxPos.getY() + 0.5, boxPos.getZ() + 0.5) <= 64.0;
+        }
         return player.getInventory().contains(stack -> stack.is(ModItems.PANDORA_BOX.get()));
     }
 

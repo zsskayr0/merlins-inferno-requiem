@@ -8,10 +8,10 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.entity.EliasEntity;
 
 /**
- * Elias's GeckoLib model: {@code geo/elias.geo.json}, {@code animations/elias.animation.json} (idle,
- * idle_hands_on_hips, walk, run, attack, pray_start/pray/pray_end, death, plus the fury moveset - idle_fury,
- * run_fury, attack_fury) and the texture {@code textures/entity/elias/elias.png}. His Seraphium Sword is baked
- * into the model itself, gripped one-handed normally and two-handed once he is in fury.
+ * Elias's GeckoLib model (the "mk2" weary knight): {@code geo/elias.geo.json}, {@code animations/elias.animation.json}
+ * (idle, walk, run, hurt, death and six attacks - light right/left/dual, heavy single/dual/spin; all named
+ * {@code animation.elias_mk2.*}) and the texture {@code textures/entity/elias/elias.png}. Both swords are part of the
+ * model, on their own follow/yaw/pitch/roll bones so the animations can aim them freely.
  */
 public class EliasModel extends GeoModel<EliasEntity> {
     private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "geo/elias.geo.json");

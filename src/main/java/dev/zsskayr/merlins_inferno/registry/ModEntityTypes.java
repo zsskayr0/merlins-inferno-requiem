@@ -11,7 +11,6 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.entity.AndrasEntity;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 import dev.zsskayr.merlins_inferno.entity.DullahanEntity;
-import dev.zsskayr.merlins_inferno.entity.DullahanSteedEntity;
 import dev.zsskayr.merlins_inferno.entity.GrymnEntity;
 import dev.zsskayr.merlins_inferno.entity.EliasEntity;
 import dev.zsskayr.merlins_inferno.entity.OstaraEntity;
@@ -72,35 +71,24 @@ public final class ModEntityTypes {
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":grymn"));
 
-    // The Hallowed Grove's night miniboss - see DullahanEntity. 0.75 x 2.3 matches the model (2.295 blocks tall
-    // on foot). ridingOffset lowers it onto the saddle: its hips sit 0.875 above its feet and the mounted clips
-    // only bend the legs, so without -0.8 it would float ~0.8 above the seat (seat point 1.32 on the steed).
+    // The Hallowed Grove's night miniboss - see DullahanEntity. Knight and horse are ONE model (about 1.5 blocks wide
+    // along its length and 3 tall), so the hitbox is a 1.4 x 3.0 column.
     public static final DeferredHolder<EntityType<?>, EntityType<DullahanEntity>> DULLAHAN = ENTITY_TYPES.register("dullahan",
             () -> EntityType.Builder.of(DullahanEntity::new, MobCategory.MONSTER)
-                    .sized(0.75F, 2.3F)
-                    .eyeHeight(2.0F)
-                    .ridingOffset(-0.8F)
+                    .sized(1.4F, 3.0F)
+                    .eyeHeight(2.7F)
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":dullahan"));
 
-    // The Dullahan's mount - vanilla skeleton-horse size, own type so its AI can be replaced (see the class).
-    // MISC: it never counts against a mob cap and never spawns on its own.
-    public static final DeferredHolder<EntityType<?>, EntityType<DullahanSteedEntity>> DULLAHAN_STEED = ENTITY_TYPES.register("dullahan_steed",
-            () -> EntityType.Builder.of(DullahanSteedEntity::new, MobCategory.MISC)
-                    .sized(1.3964844F, 1.6F)
-                    .eyeHeight(1.52F)
-                    .passengerAttachments(1.31875F)
-                    .clientTrackingRange(10)
-                    .build(Merlins_inferno.MODID + ":dullahan_steed"));
 
     // The Angelical Circle 1 boss (see EliasEntity), the church's Sacred Priest guardian and its neutral
     // congregation. Elias never spawns on his own: the altar wakes him once the Priest has fallen. The Priest is
     // placed by the church structure; cultists also wander the world rarely (biome modifier).
-    // 2x the player's own hitbox (0.6 x 1.8), matching the GeckoLib model's 64-unit (4-block) height.
+    // Matches the GeckoLib model's ~52-unit (3.3-block) height; the blades and cape reach far past the box on purpose.
     public static final DeferredHolder<EntityType<?>, EntityType<EliasEntity>> ELIAS = ENTITY_TYPES.register("elias",
             () -> EntityType.Builder.of(EliasEntity::new, MobCategory.MONSTER)
-                    .sized(1.2F, 3.6F)
-                    .eyeHeight(3.24F)
+                    .sized(1.2F, 3.4F)
+                    .eyeHeight(2.95F)
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":elias"));
 

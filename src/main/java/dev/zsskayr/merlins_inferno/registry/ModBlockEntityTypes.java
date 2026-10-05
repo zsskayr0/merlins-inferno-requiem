@@ -8,9 +8,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.blockentity.DryingRackBlockEntity;
+import dev.zsskayr.merlins_inferno.blockentity.PandoraBoxBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.HellForgeBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.HellForgePartBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
+import dev.zsskayr.merlins_inferno.blockentity.SacredAltarPartBlockEntity;
 
 /** Central registry for every {@code BlockEntityType} this mod adds. */
 public final class ModBlockEntityTypes {
@@ -25,8 +27,14 @@ public final class ModBlockEntityTypes {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SacredAltarBlockEntity>> SACRED_ALTAR = BLOCK_ENTITY_TYPES.register("sacred_altar",
             () -> BlockEntityType.Builder.of(SacredAltarBlockEntity::new, ModBlocks.SACRED_ALTAR.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SacredAltarPartBlockEntity>> SACRED_ALTAR_PART = BLOCK_ENTITY_TYPES.register("sacred_altar_part",
+            () -> BlockEntityType.Builder.of(SacredAltarPartBlockEntity::new, ModBlocks.SACRED_ALTAR_PART.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DryingRackBlockEntity>> DRYING_RACK = BLOCK_ENTITY_TYPES.register("drying_rack",
             () -> BlockEntityType.Builder.of(DryingRackBlockEntity::new, ModBlocks.DRYING_RACK.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PandoraBoxBlockEntity>> PANDORA_BOX = BLOCK_ENTITY_TYPES.register("pandora_box",
+            () -> BlockEntityType.Builder.of(PandoraBoxBlockEntity::new, ModBlocks.PANDORA_BOX.get()).build(null));
 
     private ModBlockEntityTypes() {
     }

@@ -15,6 +15,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
@@ -32,6 +33,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
 /**
  * Ostara, the Spring Deity - the Mundane (Druidic) path's Circle 1 boss.
  * <ul>
@@ -43,9 +51,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
  *     she fades away at dusk ({@link #isDawnBorn}); one at a time.</li>
  *     <li><b>Loot:</b> Eve's Secret, the key item of the Pandora Box ritual (data/.../loot_table/entities/ostara.json).</li>
  * </ul>
- * Drawn as a humanoid placeholder.
+ * Animated with GeckoLib (idle, giggle, attack); her model is made of meshes, drawn by {@code OstaraRenderer}.
  */
-public class OstaraEntity extends Monster {
+public class OstaraEntity extends Monster implements GeoEntity {
     public static final double MAX_HEALTH = 300.0;
     public static final double ATTACK_DAMAGE = 12.0;
     public static final double MOVEMENT_SPEED = 0.25;
@@ -60,6 +68,16 @@ public class OstaraEntity extends Monster {
     /** Time of day (ticks) from which she fades away. */
     private static final long DUSK = 12000L;
     private static final long NOT_DAWN_BORN = -1L;
+
+    /** Ticks between two attack clips: the melee goal swings every second, the clip lasts two. */
+    private static final int ATTACK_CLIP_COOLDOWN = 40;
+
+    private static final RawAnimation IDLE_ANIMATION = RawAnimation.begin().thenLoop("animation.ostara.idle");
+    private static final RawAnimation GIGGLE_ANIMATION = RawAnimation.begin().thenLoop("animation.ostara.idle_risadinha");
+    private static final RawAnimation ATTACK_ANIMATION = RawAnimation.begin().thenPlay("animation.ostara.attack");
+
+    private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
+    private int lastAttackAnimationTick = Integer.MIN_VALUE;
 
     /** The world day she was called on by the Rowanwood dawn ritual, or {@link #NOT_DAWN_BORN} (egg, command). */
     private long dawnDay = NOT_DAWN_BORN;
@@ -151,7 +169,37 @@ public class OstaraEntity extends Monster {
         }
     }
 
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        this.announceAttack();
+        return super.doHurtTarget(target);
+    }
+
+    private void announceAttack() {
+        if (!this.level().isClientSide && this.tickCount - this.lastAttackAnimationTick >= ATTACK_CLIP_COOLDOWN) {
+            this.lastAttackAnimationTick = this.tickCount;
+            this.triggerAnim("move", "attack");
+        }
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // Animation: one controller owns the pose; the attack clip is a triggered one-shot.
+    // ------------------------------------------------------------------------------------------
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "move", 4,
+                state -> state.setAndContinue(this.isAggressive() ? IDLE_ANIMATION : GIGGLE_ANIMATION))
+                .triggerableAnim("attack", ATTACK_ANIMATION));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.animationCache;
+    }
+
     private void flingPetals(ServerLevel level, LivingEntity target) {
+        this.announceAttack();
         target.hurt(this.damageSources().indirectMagic(this, this), PETAL_DAMAGE);
         target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0));
         target.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0));

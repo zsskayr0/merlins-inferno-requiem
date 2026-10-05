@@ -28,8 +28,12 @@ public final class ModParticles {
             () -> SANCTIFIED_TYPE);
 
     // Oblivion portal runes: drawn with the enchanting-table glyph particle class (see client.ModEntityRenderers),
-    // in dark, desaturated glyph textures (assets/.../particles/oblivion_rune.json).
+    // in the white rune sprites tinted dark blue-purple (assets/.../particles/oblivion_rune.json).
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> OBLIVION_RUNE = PARTICLE_TYPES.register("oblivion_rune",
+            () -> new SimpleParticleType(false));
+
+    // Pandora Box runes: the same glyphs in a full-bright scale from vivid purple to blue (client.RuneParticle).
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> PANDORA_RUNE = PARTICLE_TYPES.register("pandora_rune",
             () -> new SimpleParticleType(false));
 
     private ModParticles() {

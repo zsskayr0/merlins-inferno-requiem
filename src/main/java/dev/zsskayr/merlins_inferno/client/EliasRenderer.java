@@ -6,7 +6,7 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 import dev.zsskayr.merlins_inferno.entity.EliasEntity;
 
-/** Renders {@link EliasEntity} with {@link EliasModel}. His Seraphium Sword is baked into the model, not a held item. */
+/** Renders {@link EliasEntity} with {@link EliasModel}. His two swords are baked into the model, not held items. */
 public class EliasRenderer extends GeoEntityRenderer<EliasEntity> {
     public EliasRenderer(EntityRendererProvider.Context context) {
         super(context, new EliasModel());

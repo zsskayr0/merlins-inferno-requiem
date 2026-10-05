@@ -36,7 +36,7 @@ import dev.zsskayr.merlins_inferno.blockentity.DryingRackBlockEntity;
 import dev.zsskayr.merlins_inferno.registry.ModBlockEntityTypes;
 
 /**
- * A half-slab rack that sticks to a wall (the wall is on the {@link #FACING} side). Three items sit stacked on its
+ * A 16x8x8 rack (the notch a stair leaves out), high on the wall, that sticks to a wall (the wall is on the {@link #FACING} side). Three items sit side by side on its
  * front face, drawn like item frames: right-click a spot with any item to put one there, right-click an occupied
  * spot to take it back. Raw Edenweed dries into Dried Edenweed with time (see {@link DryingRackBlockEntity}).
  */
@@ -44,10 +44,10 @@ public class DryingRackBlock extends BaseEntityBlock {
     public static final MapCodec<DryingRackBlock> CODEC = simpleCodec(DryingRackBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    private static final VoxelShape SHAPE_NORTH = Block.box(0, 0, 0, 16, 16, 8);
-    private static final VoxelShape SHAPE_SOUTH = Block.box(0, 0, 8, 16, 16, 16);
-    private static final VoxelShape SHAPE_WEST = Block.box(0, 0, 0, 8, 16, 16);
-    private static final VoxelShape SHAPE_EAST = Block.box(8, 0, 0, 16, 16, 16);
+    private static final VoxelShape SHAPE_NORTH = Block.box(0, 8, 0, 16, 16, 8);
+    private static final VoxelShape SHAPE_SOUTH = Block.box(0, 8, 8, 16, 16, 16);
+    private static final VoxelShape SHAPE_WEST = Block.box(0, 8, 0, 8, 16, 16);
+    private static final VoxelShape SHAPE_EAST = Block.box(8, 8, 0, 16, 16, 16);
 
     public DryingRackBlock(Properties properties) {
         super(properties);
@@ -127,13 +127,18 @@ public class DryingRackBlock extends BaseEntityBlock {
         return level.isClientSide ? null : createTickerHelper(type, ModBlockEntityTypes.DRYING_RACK.get(), DryingRackBlockEntity::serverTick);
     }
 
-    /** The slot under the cursor (0 = top, 2 = bottom), or -1 when the click was not on the front face. */
+    /** The slot under the cursor (0 = left, 2 = right as seen from the front), or -1 when not on the front face. */
     private static int slotAt(BlockState state, BlockPos pos, BlockHitResult hit) {
-        if (hit.getDirection() != state.getValue(FACING).getOpposite()) {
+        Direction out = state.getValue(FACING).getOpposite();
+        if (hit.getDirection() != out || hit.getLocation().y - pos.getY() < 0.5) {
             return -1;
         }
-        double y = hit.getLocation().y - pos.getY();
-        return y >= 2.0 / 3.0 ? 0 : y >= 1.0 / 3.0 ? 1 : 2;
+        Direction right = out.getCounterClockWise();
+        double along = right.getStepX() != 0 ? hit.getLocation().x - pos.getX() : hit.getLocation().z - pos.getZ();
+        if (right.getAxisDirection() == Direction.AxisDirection.NEGATIVE) {
+            along = 1.0 - along;
+        }
+        return Math.min(2, Math.max(0, (int) (along * 3.0)));
     }
 
     @Override

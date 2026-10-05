@@ -1,6 +1,8 @@
 package dev.zsskayr.merlins_inferno.entity;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -13,12 +15,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -26,7 +30,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -47,6 +50,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
 import dev.zsskayr.merlins_inferno.registry.ModEffects;
+import dev.zsskayr.merlins_inferno.registry.ModTags;
 import dev.zsskayr.merlins_inferno.worldgen.structure.GreatBell;
 
 /**
@@ -59,7 +63,8 @@ import dev.zsskayr.merlins_inferno.worldgen.structure.GreatBell;
  *     makes him stronger and lets him regenerate more, but he also takes more damage. On the seventh toll - or
  *     when his health drops below 30% - the bell shatters and he goes into <b>fury</b>: faster, hitting harder,
  *     no longer regenerating, and taking normal damage again. See {@link GreatBell}.</li>
- *     <li><b>Sanctified (explicit exception):</b> every blow he lands raises Sanctified on a player by a level.
+ *     <li><b>Sanctified (explicit exception):</b> every blow he lands raises Sanctified on whoever it hits - player or
+ *     creature - by a level.
  *     The rule elsewhere is that mobs never spread it ({@code SanctifiedCombatHandler}); he does it
  *     deliberately, here, and nowhere else. Milk clears it.</li>
  *     <li><b>Fury:</b> the Sanctified effect climbs one level higher.</li>
@@ -67,10 +72,11 @@ import dev.zsskayr.merlins_inferno.worldgen.structure.GreatBell;
  * </ul>
  * Death starts the altar's cooldown; a diamond on the altar wakes the next one.
  * <p>
- * Animated with GeckoLib ({@code geo/elias.geo.json}, {@code animations/elias.animation.json}): the same clip set
- * the Sacred Priest has (idle/idle_hands_on_hips/walk/run/attack/pray_start/pray/pray_end/death - he too kneels
- * in vigil, Seraphium Sword planted, when left in peace), plus a fury-only moveset once {@link #enraged} is set:
- * idle_fury, run_fury and a wider, harder two-handed attack_fury.
+ * Animated with GeckoLib ({@code geo/elias.geo.json}, {@code animations/elias.animation.json}): a weary knight
+ * who fights because he was ordered to. Clips: idle, walk, run, hurt, death and six attacks - three light
+ * (right blade, left blade, both blades crossing) and three heavy (one blade overhead, both blades overhead,
+ * a spin). The attack goal picks one, plays it, and lands the damage at the clip's impact frame, so a
+ * well-timed dodge makes him whiff. Besides players he hunts undead and demons on sight.
  */
 public class EliasEntity extends Monster implements GeoEntity {
     public static final double MAX_HEALTH = 400.0;
@@ -96,6 +102,9 @@ public class EliasEntity extends Monster implements GeoEntity {
     /** Fury: extra attack damage on top of what the tolls gave him. */
     private static final double FURY_STRENGTH = 0.25;
     private static final int TOLL_NOTICE_RADIUS = 48;
+    /** Baseline recovery, independent of the bell (an Elias without an altar has none): per BELL_PERIOD. */
+    private static final float IDLE_REGEN_PER_PERIOD = 2.0F;     // 4 health/s once he has lost his target
+    private static final float COMBAT_REGEN_PER_PERIOD = 0.25F;  // 0.5 health/s mid-fight, none in fury
 
     // --- Sanctified per blow ---
     private static final int SANCTIFIED_DURATION = 200;
@@ -121,22 +130,70 @@ public class EliasEntity extends Monster implements GeoEntity {
     private boolean enraged;
 
     // --- GeckoLib animation ---
-    private static final double WALK_SPEED_SQR = 0.0016;
-    private static final double WALK_HYSTERESIS_SQR = 0.0006;
+    private static final String ANIM = "animation.elias_mk2.";
+    /** Walk/run switch on real movement; the low "off" threshold stops a standing Elias from sliding on the idle clip. */
+    private static final double MOVE_ON_SQR = 0.0005;
+    private static final double MOVE_OFF_SQR = 0.00015;
     private static final double RUN_SPEED_SQR = 0.02;
-    /** The death clip is 2.5 s; the body lingers a little past it so the last pose is held before it vanishes. */
-    private static final int DEATH_ANIMATION_TICKS = 55;
+    /** The death clip is 4 s (80 ticks); the body lingers a little past it so the last pose is held before it vanishes. */
+    private static final int DEATH_ANIMATION_TICKS = 90;
+    private static final int HURT_ANIMATION_GAP = 14;
 
-    private static final RawAnimation ATTACK_ANIMATION = RawAnimation.begin().thenPlay("animation.elias.attack");
-    private static final RawAnimation ATTACK_FURY_ANIMATION = RawAnimation.begin().thenPlay("animation.elias.attack_fury");
-    private static final RawAnimation DEATH_ANIMATION = RawAnimation.begin().thenPlayAndHold("animation.elias.death");
+    private static final ResourceLocation ATTACK_MULTIPLIER = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "elias_attack_multiplier");
+
+    /**
+     * The attack set. {@code hitTick} is the clip's impact frame (seconds * 20), {@code length} the clip length in
+     * ticks, {@code reach} how far past his body the blades bite, {@code radius} &gt; 0 makes it a sweep that hits
+     * everything around him instead of the one target.
+     */
+    enum Attack {
+        LIGHT_RIGHT("attack_light_right", 23, 10, 1.0, 3.2, 0.0, 0.2, 3.0, false, 8),
+        LIGHT_LEFT("attack_light_left", 23, 10, 1.0, 3.2, 0.0, 0.2, 3.0, false, 8),
+        LIGHT_DUAL("attack_light_dual", 26, 12, 1.35, 3.4, 0.0, 0.4, 2.0, false, 12),
+        HEAVY_SINGLE("attack_heavy_single", 42, 27, 1.9, 3.8, 0.0, 0.9, 2.0, true, 18),
+        HEAVY_DUAL("attack_heavy_dual", 50, 30, 2.3, 4.0, 1.6, 1.1, 1.2, true, 22),
+        HEAVY_SPIN("attack_heavy_spin", 50, 21, 1.45, 3.9, 3.9, 0.7, 1.0, true, 18);
+
+        final String clip;
+        final int length;
+        final int hitTick;
+        final double damage;
+        final double reach;
+        final double radius;
+        final double knockback;
+        final double weight;
+        final boolean heavy;
+        final int recovery;
+
+        Attack(String clip, int length, int hitTick, double damage, double reach, double radius, double knockback, double weight, boolean heavy, int recovery) {
+            this.clip = clip;
+            this.length = length;
+            this.hitTick = hitTick;
+            this.damage = damage;
+            this.reach = reach;
+            this.radius = radius;
+            this.knockback = knockback;
+            this.weight = weight;
+            this.heavy = heavy;
+            this.recovery = recovery;
+        }
+    }
+
+    /** Heavies are rationed: this many ticks between them (halved in fury). */
+    private static final int HEAVY_COOLDOWN = 110;
+    private static final int SPIN_COOLDOWN = 220;
+
+    private static final RawAnimation DEATH_ANIMATION = RawAnimation.begin().thenPlayAndHold(ANIM + "death");
 
     private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
     private String animationState;
-    private String pendingAnimationState;
-    private int pendingAnimationTick;
-    private RawAnimation loopAnimation = RawAnimation.begin().thenLoop("animation.elias.idle");
+    private RawAnimation loopAnimation = RawAnimation.begin().thenLoop(ANIM + "idle");
     private int deathTicks;
+    /** Server side: true from the moment an attack clip starts until it has fully played out. */
+    private boolean attacking;
+    private int heavyCooldown;
+    private int spinCooldown;
+    private int lastHurtAnimTick = -100;
 
     public EliasEntity(EntityType<? extends EliasEntity> type, Level level) {
         super(type, level);
@@ -167,13 +224,39 @@ public class EliasEntity extends Monster implements GeoEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
-        this.goalSelector.addGoal(3, new PrayGoal(this));
-        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.6));
+        this.goalSelector.addGoal(2, new EliasAttackGoal(this));
+        // He keeps vigil: long stretches standing still, an occasional slow wander (never the old restless stroll).
+        WaterAvoidingRandomStrollGoal stroll = new WaterAvoidingRandomStrollGoal(this, 0.5);
+        stroll.setInterval(360);
+        this.goalSelector.addGoal(7, stroll);
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 16.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // Ordered to purge the unholy: undead and demons are hunted on sight.
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 5, false, false, EliasEntity::isUnholy));
+    }
+
+    /** Imps are beneath his notice: never targeted, never swept, and not even a reason to fight back. */
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        return !(target instanceof ImpEntity) && super.canAttack(target);
+    }
+
+    /** Undead and demons are fair game for him (see {@link EntityTypeTags#UNDEAD} and the mod's demon tag). */
+    private static boolean isUnholy(LivingEntity living) {
+        return !(living instanceof ImpEntity) && (living.getType().is(EntityTypeTags.UNDEAD) || living.getType().is(ModTags.EntityTypes.DEMON));
+    }
+
+    /** Who a sweeping blade may hit: players and the unholy, never his own congregation or villagers. */
+    private boolean isEnemy(LivingEntity living) {
+        if (living == this || !living.isAlive()) {
+            return false;
+        }
+        if (living instanceof Player player) {
+            return !player.isCreative() && !player.isSpectator();
+        }
+        return !(living instanceof ImpEntity) && isUnholy(living);
     }
 
     @Override
@@ -181,21 +264,64 @@ public class EliasEntity extends Monster implements GeoEntity {
         return super.getAttackBoundingBox().inflate(CHAIN_REACH_BONUS, 0.0, CHAIN_REACH_BONUS);
     }
 
-    /** Every blow raises the player's Sanctified a level (see the class doc for why this is his alone). */
+    /** Every blow raises the victim's Sanctified a level - player or creature alike (see the class doc for why this is his alone). */
     @Override
     public boolean doHurtTarget(Entity target) {
-        this.level().playSound(null, this.blockPosition(), SoundEvents.CHAIN_BREAK, SoundSource.HOSTILE, 1.0F, 0.7F);
-        if (!this.level().isClientSide) {
-            this.triggerAnim("move", this.enraged ? "attack_fury" : "attack");
-        }
         boolean hit = super.doHurtTarget(target);
-        if (hit && target instanceof Player player) {
-            MobEffectInstance current = player.getEffect(ModEffects.SANCTIFIED);
+        if (hit && target instanceof LivingEntity victim) {
+            MobEffectInstance current = victim.getEffect(ModEffects.SANCTIFIED);
             int cap = this.enraged ? SANCTIFIED_MAX_AMPLIFIER_ENRAGED : SANCTIFIED_MAX_AMPLIFIER;
             int next = current == null ? 0 : Math.min(cap, current.getAmplifier() + 1);
-            player.addEffect(new MobEffectInstance(ModEffects.SANCTIFIED, SANCTIFIED_DURATION, next));
+            victim.addEffect(new MobEffectInstance(ModEffects.SANCTIFIED, SANCTIFIED_DURATION, next));
         }
         return hit;
+    }
+
+    /** One landed blow with a damage multiplier and a shove, via the normal melee path (so Sanctified still applies). */
+    private boolean hitWith(LivingEntity target, double damageMultiplier, double knockback) {
+        AttributeInstance damage = this.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (damage != null) {
+            damage.removeModifier(ATTACK_MULTIPLIER);
+            if (damageMultiplier != 1.0) {
+                damage.addTransientModifier(new AttributeModifier(ATTACK_MULTIPLIER, damageMultiplier - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+            }
+        }
+        boolean hit = this.doHurtTarget(target);
+        if (damage != null) {
+            damage.removeModifier(ATTACK_MULTIPLIER);
+        }
+        if (hit && knockback > 0.0) {
+            double dx = target.getX() - this.getX();
+            double dz = target.getZ() - this.getZ();
+            double len = Math.max(Math.sqrt(dx * dx + dz * dz), 1.0E-4);
+            target.knockback(knockback, -dx / len, -dz / len);
+        }
+        return hit;
+    }
+
+    /** The clip's impact frame: damage lands now, if the target is still in reach (so dodging works). */
+    private void strike(Attack attack, LivingEntity primary) {
+        float pitch = attack.heavy ? 0.6F : 0.9F;
+        this.level().playSound(null, this.blockPosition(), attack.heavy ? SoundEvents.MACE_SMASH_GROUND : SoundEvents.PLAYER_ATTACK_SWEEP,
+                SoundSource.HOSTILE, attack.heavy ? 1.0F : 0.9F, pitch);
+        List<LivingEntity> victims = new ArrayList<>();
+        if (attack.radius > 0.0) {
+            AABB area = this.getBoundingBox().inflate(attack.radius, 1.0, attack.radius);
+            for (LivingEntity living : this.level().getEntitiesOfClass(LivingEntity.class, area, this::isEnemy)) {
+                if (this.distanceTo(living) <= attack.radius + living.getBbWidth() * 0.5) {
+                    victims.add(living);
+                }
+            }
+        } else if (primary != null && this.isEnemy(primary) && this.canReach(primary, attack.reach + 0.6)) {
+            victims.add(primary);
+        }
+        for (LivingEntity victim : victims) {
+            this.hitWith(victim, attack.damage, attack.knockback);
+        }
+    }
+
+    private boolean canReach(LivingEntity target, double reach) {
+        return this.distanceTo(target) - target.getBbWidth() * 0.5 <= reach && Math.abs(target.getY() - this.getY()) < 2.8;
     }
 
     // ------------------------------------------------------------------------------------------
@@ -231,6 +357,18 @@ public class EliasEntity extends Monster implements GeoEntity {
         }
         if (this.tolls > 0 && this.getHealth() < this.getMaxHealth()) {
             this.heal(TOLL_HEAL_PER_PERIOD * this.tolls);
+        }
+    }
+
+    /** He always mends, bell or no bell: briskly once the fight is over, a trickle during it (nothing in fury). */
+    private void tickRegen() {
+        if (this.getHealth() >= this.getMaxHealth()) {
+            return;
+        }
+        if (this.getTarget() == null) {
+            this.heal(IDLE_REGEN_PER_PERIOD);
+        } else if (!this.enraged) {
+            this.heal(COMBAT_REGEN_PER_PERIOD);
         }
     }
 
@@ -274,11 +412,18 @@ public class EliasEntity extends Monster implements GeoEntity {
             return;
         }
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+        if (this.heavyCooldown > 0) {
+            this.heavyCooldown--;
+        }
+        if (this.spinCooldown > 0) {
+            this.spinCooldown--;
+        }
         if (!this.bellLooked) {
             this.findBell(serverLevel);
         }
         if (this.tickCount % BELL_PERIOD == 0 && this.isAlive()) {
             this.tickBell(serverLevel);
+            this.tickRegen();
         }
         if (!this.enraged && this.getHealth() < this.getMaxHealth() * ENRAGE_HEALTH_FRACTION) {
             this.fury(serverLevel);
@@ -318,7 +463,18 @@ public class EliasEntity extends Monster implements GeoEntity {
         if (!this.level().isClientSide && !this.enraged && this.tolls > 0) {
             amount *= 1.0F + TOLL_VULNERABILITY_EACH * this.tolls;
         }
-        return super.hurt(source, amount);
+        boolean hurt = super.hurt(source, amount);
+        if (hurt && !this.level().isClientSide && this.isAlive() && !this.attacking && this.tickCount - this.lastHurtAnimTick > HURT_ANIMATION_GAP) {
+            this.lastHurtAnimTick = this.tickCount;
+            this.triggerAnim("move", "hurt");
+        }
+        return hurt;
+    }
+
+    /** The blades and the long cape reach well past his hitbox: keep him drawn while any of that is on screen. */
+    @Override
+    public AABB getBoundingBoxForCulling() {
+        return super.getBoundingBoxForCulling().inflate(3.5, 0.5, 3.5);
     }
 
     @Override
@@ -346,64 +502,39 @@ public class EliasEntity extends Monster implements GeoEntity {
     }
 
     // ------------------------------------------------------------------------------------------
-    // GeckoLib animation: one controller owns the whole pose. Praying is read straight from the vanilla pose
-    // PrayGoal sets (disabled once enraged - see PrayGoal.canUse); the fury moveset takes over entirely once
-    // this.enraged is set, replacing idle/walk/run/attack outright rather than blending with them.
+    // GeckoLib animation: one controller owns the whole pose. Locomotion (idle/walk/run) is read from real
+    // movement; the attack goal and hurt() fire the one-shot clips through triggerAnim.
     // ------------------------------------------------------------------------------------------
 
     private String desiredAnimationState() {
-        if (this.getPose() == Pose.CROUCHING) {
-            return "pray";
-        }
         double dx = this.getX() - this.xOld;
         double dz = this.getZ() - this.zOld;
         double speedSqr = dx * dx + dz * dz;
-        boolean wasMoving = "walk".equals(this.animationState) || "run".equals(this.animationState) || "run_fury".equals(this.animationState);
-        boolean moving = speedSqr > (wasMoving ? WALK_HYSTERESIS_SQR : WALK_SPEED_SQR);
-        if (this.enraged) {
-            return moving ? "run_fury" : "idle_fury";
-        }
-        if (!moving) {
+        boolean wasMoving = "walk".equals(this.animationState) || "run".equals(this.animationState);
+        if (speedSqr <= (wasMoving ? MOVE_OFF_SQR : MOVE_ON_SQR)) {
             return "idle";
         }
-        return speedSqr > RUN_SPEED_SQR ? "run" : "walk";
+        return speedSqr > RUN_SPEED_SQR || (this.enraged && speedSqr > RUN_SPEED_SQR * 0.5) ? "run" : "walk";
     }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "move", 4, state -> {
+        AnimationController<EliasEntity> controller = new AnimationController<>(this, "move", 6, state -> {
             if (this.isDeadOrDying()) {
                 return state.setAndContinue(DEATH_ANIMATION);
             }
             String desired = this.desiredAnimationState();
-            if (this.animationState == null) {
+            if (!desired.equals(this.animationState)) {
                 this.animationState = desired;
-                this.loopAnimation = RawAnimation.begin().thenLoop("animation.elias." + desired);
-            } else if (!desired.equals(this.animationState)) {
-                // Only entering/leaving the kneeling prayer is debounced (it is the one state with bracket clips
-                // to protect from a one-tick flicker); idle/walk/run/fury states swap the moment the threshold
-                // does, so a slow, stop-start wander never gets stuck showing idle.
-                boolean bracketed = "pray".equals(desired) || "pray".equals(this.animationState);
-                if (bracketed) {
-                    if (!desired.equals(this.pendingAnimationState)) {
-                        this.pendingAnimationState = desired;
-                        this.pendingAnimationTick = this.tickCount;
-                        return state.setAndContinue(this.loopAnimation);
-                    } else if (this.tickCount - this.pendingAnimationTick < 3) {
-                        return state.setAndContinue(this.loopAnimation);
-                    }
-                }
-                RawAnimation next = RawAnimation.begin();
-                if ("pray".equals(desired)) {
-                    next = next.thenPlay("animation.elias.pray_start");
-                } else if ("pray".equals(this.animationState)) {
-                    next = next.thenPlay("animation.elias.pray_end");
-                }
-                this.loopAnimation = next.thenLoop("animation.elias." + desired);
-                this.animationState = desired;
+                this.loopAnimation = RawAnimation.begin().thenLoop(ANIM + desired);
             }
             return state.setAndContinue(this.loopAnimation);
-        }).triggerableAnim("attack", ATTACK_ANIMATION).triggerableAnim("attack_fury", ATTACK_FURY_ANIMATION));
+        });
+        for (Attack attack : Attack.values()) {
+            controller.triggerableAnim(attack.clip, RawAnimation.begin().thenPlay(ANIM + attack.clip));
+        }
+        controller.triggerableAnim("hurt", RawAnimation.begin().thenPlay(ANIM + "hurt"));
+        controllers.add(controller);
     }
 
     @Override
@@ -482,44 +613,148 @@ public class EliasEntity extends Monster implements GeoEntity {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundEvents.CHAIN_STEP, 0.4F, 0.8F);
+        this.playSound(SoundEvents.IRON_GOLEM_STEP, 0.5F, 0.7F);
     }
 
-    /** Kneels in silent vigil, sword planted, while left in peace - never once the bell has broken and fury has taken him. */
-    private static class PrayGoal extends Goal {
+    /**
+     * Chases the target, then picks and plays an attack. The picked clip is triggered on the client, he stands his
+     * ground while it plays, and the damage lands at the clip's impact frame (see {@link EliasEntity#strike}).
+     * Heavies are rationed by cooldown; the same attack never plays twice in a row; fury quickens everything.
+     */
+    private static class EliasAttackGoal extends Goal {
         private final EliasEntity elias;
-        private int ticksLeft;
+        @Nullable
+        private Attack current;
+        @Nullable
+        private Attack last;
+        private int ticks;
+        private int cooldown;
+        private int repath;
 
-        PrayGoal(EliasEntity elias) {
+        EliasAttackGoal(EliasEntity elias) {
             this.elias = elias;
-            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         }
 
         @Override
         public boolean canUse() {
-            return !this.elias.enraged && this.elias.getTarget() == null && this.elias.getRandom().nextInt(150) == 0;
+            LivingEntity target = this.elias.getTarget();
+            return target != null && target.isAlive();
         }
 
         @Override
         public boolean canContinueToUse() {
-            return this.ticksLeft > 0 && !this.elias.enraged && this.elias.getTarget() == null;
+            return this.current != null || this.canUse();
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
         }
 
         @Override
         public void start() {
-            this.ticksLeft = 300 + this.elias.getRandom().nextInt(400);
-            this.elias.getNavigation().stop();
-            this.elias.setPose(Pose.CROUCHING);
-        }
-
-        @Override
-        public void tick() {
-            this.ticksLeft--;
+            this.elias.setAggressive(true);
+            this.repath = 0;
+            this.cooldown = Math.max(this.cooldown, 12);
         }
 
         @Override
         public void stop() {
-            this.elias.setPose(Pose.STANDING);
+            this.elias.setAggressive(false);
+            this.elias.getNavigation().stop();
+            this.elias.attacking = this.current != null;
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity target = this.elias.getTarget();
+            if (this.current == null) {
+                if (target == null) {
+                    return;
+                }
+                this.elias.getLookControl().setLookAt(target, 30.0F, 30.0F);
+                if (this.cooldown > 0) {
+                    this.cooldown--;
+                }
+                if (--this.repath <= 0) {
+                    this.repath = 4 + this.elias.getRandom().nextInt(7);
+                    this.elias.getNavigation().moveTo(target, 1.0);
+                }
+                if (this.cooldown <= 0) {
+                    Attack pick = this.choose(target);
+                    if (pick != null) {
+                        this.begin(pick);
+                    }
+                }
+                return;
+            }
+            // mid-swing: plant his feet, keep the blades pointed at whoever he is cutting at
+            this.elias.getNavigation().stop();
+            if (target != null) {
+                this.elias.getLookControl().setLookAt(target, 40.0F, 40.0F);
+            }
+            this.ticks++;
+            if (this.ticks == this.current.hitTick) {
+                this.elias.strike(this.current, target);
+            }
+            if (this.ticks >= this.current.length) {
+                double pace = this.elias.enraged ? 0.65 : 1.0;
+                this.cooldown = (int) Math.round(this.current.recovery * pace);
+                this.last = this.current;
+                this.current = null;
+                this.elias.attacking = false;
+            }
+        }
+
+        private void begin(Attack attack) {
+            this.current = attack;
+            this.ticks = 0;
+            this.elias.attacking = true;
+            this.elias.getNavigation().stop();
+            if (attack.heavy) {
+                this.elias.heavyCooldown = this.elias.enraged ? HEAVY_COOLDOWN / 2 : HEAVY_COOLDOWN;
+            }
+            if (attack == Attack.HEAVY_SPIN) {
+                this.elias.spinCooldown = this.elias.enraged ? SPIN_COOLDOWN / 2 : SPIN_COOLDOWN;
+            }
+            this.elias.triggerAnim("move", attack.clip);
+        }
+
+        /** Weighted pick among the attacks that can reach the target right now. */
+        @Nullable
+        private Attack choose(LivingEntity target) {
+            List<Attack> pool = new ArrayList<>();
+            List<Double> weights = new ArrayList<>();
+            double total = 0.0;
+            int crowd = this.elias.level().getEntitiesOfClass(LivingEntity.class,
+                    this.elias.getBoundingBox().inflate(Attack.HEAVY_SPIN.radius, 1.0, Attack.HEAVY_SPIN.radius), this.elias::isEnemy).size();
+            for (Attack attack : Attack.values()) {
+                if (attack == this.last || !this.elias.canReach(target, attack.reach)) {
+                    continue;
+                }
+                if (attack.heavy && this.elias.heavyCooldown > 0) {
+                    continue;
+                }
+                if (attack == Attack.HEAVY_SPIN && (this.elias.spinCooldown > 0 || crowd < 2 && this.elias.getRandom().nextFloat() > 0.25F)) {
+                    continue;
+                }
+                double w = attack.weight * (attack.heavy && this.elias.enraged ? 1.6 : 1.0) * (attack == Attack.HEAVY_SPIN && crowd >= 2 ? 2.0 : 1.0);
+                pool.add(attack);
+                weights.add(w);
+                total += w;
+            }
+            if (pool.isEmpty()) {
+                return null;
+            }
+            double roll = this.elias.getRandom().nextDouble() * total;
+            for (int i = 0; i < pool.size(); i++) {
+                roll -= weights.get(i);
+                if (roll <= 0.0) {
+                    return pool.get(i);
+                }
+            }
+            return pool.get(pool.size() - 1);
         }
     }
 }

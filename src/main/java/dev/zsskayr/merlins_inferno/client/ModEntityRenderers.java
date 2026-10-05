@@ -1,6 +1,8 @@
 package dev.zsskayr.merlins_inferno.client;
 
 import net.minecraft.client.RecipeBookCategories;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
@@ -11,12 +13,16 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.item.ChampionSeekerItem;
+import dev.zsskayr.merlins_inferno.item.PandoraBoxItem;
 import dev.zsskayr.merlins_inferno.registry.ModBlockEntityTypes;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
@@ -45,14 +51,38 @@ public final class ModEntityRenderers {
         event.registerEntityRenderer(ModEntityTypes.STARVED.get(), StarvedRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.GRYMN.get(), GrymnRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.DULLAHAN.get(), DullahanRenderer::new);
-        event.registerEntityRenderer(ModEntityTypes.DULLAHAN_STEED.get(), DullahanSteedRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.ELIAS.get(), EliasRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.SACRED_CULTIST.get(), SacredCultistRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.SACRED_PRIEST.get(), SacredPriestRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.ANDRAS.get(), AndrasRenderer::new);
-        event.registerEntityRenderer(ModEntityTypes.OSTARA.get(), ctx -> new PlaceholderHumanoidRenderer<>(ctx, "ostara", 1.1F));
+        event.registerEntityRenderer(ModEntityTypes.OSTARA.get(), OstaraRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.HELL_FORGE.get(), HellForgeBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.DRYING_RACK.get(), DryingRackRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.PANDORA_BOX.get(), context -> new PandoraBoxRenderer());
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.SACRED_ALTAR.get(), context -> new CelestialAltarRenderer());
+    }
+
+    /** The Box item plays its idle clip only while the cursor is over it in an inventory screen. */
+    @SubscribeEvent
+    static void onScreenRender(ScreenEvent.Render.Pre event) {
+        PandoraBoxItem.hovered = event.getScreen() instanceof AbstractContainerScreen<?> screen
+                && screen.getSlotUnderMouse() != null
+                && screen.getSlotUnderMouse().getItem().is(ModItems.PANDORA_BOX.get());
+    }
+
+    @SubscribeEvent
+    static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerItem(new IClientItemExtensions() {
+            private PandoraBoxItemRenderer renderer;
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (this.renderer == null) {
+                    this.renderer = new PandoraBoxItemRenderer();
+                }
+                return this.renderer;
+            }
+        }, ModItems.PANDORA_BOX.get());
     }
 
     @SubscribeEvent
@@ -64,7 +94,8 @@ public final class ModEntityRenderers {
     @SubscribeEvent
     static void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ModParticles.SANCTIFIED_TYPE, SanctifiedParticle.Provider::new);
-        event.registerSpriteSet(ModParticles.OBLIVION_RUNE.get(), net.minecraft.client.particle.FlyTowardsPositionParticle.EnchantProvider::new);
+        event.registerSpriteSet(ModParticles.OBLIVION_RUNE.get(), RuneParticle.OblivionProvider::new);
+        event.registerSpriteSet(ModParticles.PANDORA_RUNE.get(), RuneParticle.PandoraProvider::new);
     }
 
     /**

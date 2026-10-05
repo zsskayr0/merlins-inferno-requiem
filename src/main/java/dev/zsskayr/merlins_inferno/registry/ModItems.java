@@ -407,7 +407,7 @@ public final class ModItems {
             new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
     // Found in the Sacred Church's chest. Survives death (see event.PandoraHandler).
     public static final DeferredItem<PandoraBoxItem> PANDORA_BOX = ITEMS.registerItem("pandora_box",
-            props -> new PandoraBoxItem(props.stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+            props -> new PandoraBoxItem(ModBlocks.PANDORA_BOX.get(), props.stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
     // Forged in the opened Pandora Box (Circle 2 only). Their portals are future content (Circle 2 dimensions).
     public static final DeferredItem<OblivionKeyItem> OBLIVION_KEY = ITEMS.registerItem("oblivion_key",
             props -> new OblivionKeyItem(props.durability(3).rarity(Rarity.RARE).fireResistant()));

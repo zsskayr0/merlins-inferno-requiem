@@ -7,6 +7,9 @@ import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.ItemCost;
+import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -48,6 +51,22 @@ public final class LyriumVillagerTrades {
                     holyBook,
                     2, 20, 0.05F));
         }
+    }
+
+    /**
+     * The Sacred Priest's stock - the very same offers the Cleric gets above (9 Impure Lyrium or 27 Diamond for a
+     * Refined Lyrium, and a Holy book for 3 Refined), all open from the start since he has no levels.
+     */
+    public static MerchantOffers priestOffers(net.minecraft.core.RegistryAccess registryAccess) {
+        MerchantOffers offers = new MerchantOffers();
+        ItemStack refined = new ItemStack(ModItems.LYRIUM_REFINED.get());
+        offers.add(new MerchantOffer(new ItemCost(ModItems.LYRIUM_IMPURE.get(), 9), refined.copy(), 4, 0, 0.05F));
+        offers.add(new MerchantOffer(new ItemCost(Items.DIAMOND, 27), refined.copy(), 4, 0, 0.05F));
+        ItemStack holyBook = createHolyBook(registryAccess, 1);
+        if (!holyBook.isEmpty()) {
+            offers.add(new MerchantOffer(new ItemCost(ModItems.LYRIUM_REFINED.get(), 3), holyBook, 2, 0, 0.05F));
+        }
+        return offers;
     }
 
     private static ItemStack createHolyBook(net.minecraft.core.RegistryAccess registryAccess, int level) {

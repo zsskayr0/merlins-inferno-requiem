@@ -38,12 +38,14 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.block.BlackNyliumBlock;
 import dev.zsskayr.merlins_inferno.block.CorruptedObsidianBlock;
 import dev.zsskayr.merlins_inferno.block.DryingRackBlock;
+import dev.zsskayr.merlins_inferno.block.PandoraBoxBlock;
 import dev.zsskayr.merlins_inferno.block.EdenweedBushBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgeBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumBlock;
 import dev.zsskayr.merlins_inferno.block.NetherDoublePlantBlock;
 import dev.zsskayr.merlins_inferno.block.NetherFlowerBlock;
 import dev.zsskayr.merlins_inferno.block.SacredAltarBlock;
+import dev.zsskayr.merlins_inferno.block.SacredAltarPartBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumClusterBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgePartBlock;
 import dev.zsskayr.merlins_inferno.block.RowanwoodLogBlock;
@@ -244,7 +246,12 @@ public final class ModBlocks {
     // drops nothing. The Great Bell that empowers Elias is built from vanilla blocks (see GreatBell). ---
     public static final DeferredBlock<SacredAltarBlock> SACRED_ALTAR = BLOCKS.registerBlock("sacred_altar",
             SacredAltarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CHISELED_QUARTZ_BLOCK).strength(-1.0F, 3600000.0F)
-                    .noLootTable().lightLevel(state -> 8).pushReaction(PushReaction.BLOCK));
+                    .noLootTable().lightLevel(state -> 8).pushReaction(PushReaction.BLOCK).noOcclusion());
+
+    // The invisible parts that give the altar its 3 x 3 x 2 hitbox, see SacredAltarPartBlock. No item, never placed by hand.
+    public static final DeferredBlock<SacredAltarPartBlock> SACRED_ALTAR_PART = BLOCKS.registerBlock("sacred_altar_part",
+            SacredAltarPartBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CHISELED_QUARTZ_BLOCK).strength(-1.0F, 3600000.0F)
+                    .noLootTable().pushReaction(PushReaction.BLOCK).noOcclusion());
 
     // The film of an Oblivion portal; lit with the Key of Oblivion (see OblivionKeyItem). No item, no drops.
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.OblivionPortalBlock> OBLIVION_PORTAL = BLOCKS.registerBlock("oblivion_portal",
@@ -337,6 +344,15 @@ public final class ModBlocks {
                     .sound(SoundType.WOOD)
                     .noOcclusion()
                     .ignitedByLava());
+
+    /** The placed Pandora Box (GeckoLib-animated lid). Its item is {@code ModItems.PANDORA_BOX}. */
+    public static final DeferredBlock<PandoraBoxBlock> PANDORA_BOX = BLOCKS.registerBlock("pandora_box",
+            PandoraBoxBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .strength(3.0F, 1200.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion());
 
     // Chain dyed with Nether Wart - same behaviour as the vanilla one.
     public static final DeferredBlock<ChainBlock> RED_CHAIN = BLOCKS.registerBlock("red_chain",
