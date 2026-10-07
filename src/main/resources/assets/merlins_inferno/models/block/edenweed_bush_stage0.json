@@ -1,7 +1,0 @@
-{
-  "render_type": "minecraft:cutout",
-  "parent": "minecraft:block/cross",
-  "textures": {
-    "cross": "merlins_inferno:block/edenweed_bush_stage0"
-  }
-}

@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/template_wall_post",
-  "textures": {
-    "wall": "merlins_inferno:block/netherrack_compressed"
-  }
-}

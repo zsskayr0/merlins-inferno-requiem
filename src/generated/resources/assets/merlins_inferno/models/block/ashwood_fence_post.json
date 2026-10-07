@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/fence_post",
-  "textures": {
-    "texture": "merlins_inferno:block/ashwood_planks"
-  }
-}

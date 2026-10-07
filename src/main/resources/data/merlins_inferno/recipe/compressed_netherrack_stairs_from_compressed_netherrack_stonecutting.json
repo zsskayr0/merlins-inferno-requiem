@@ -1,5 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": { "item": "merlins_inferno:compressed_netherrack" },
-  "result": { "count": 1, "id": "merlins_inferno:compressed_netherrack_stairs" }
-}

@@ -1,6 +1,0 @@
-{
-  "type": "merlins_inferno:ancient_battlefield",
-  "biomes": "#minecraft:is_nether",
-  "spawn_overrides": {},
-  "step": "top_layer_modification"
-}

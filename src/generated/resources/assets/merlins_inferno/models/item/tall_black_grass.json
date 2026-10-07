@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "merlins_inferno:block/tall_black_grass_top"
-  }
-}

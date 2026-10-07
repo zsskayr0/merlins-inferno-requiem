@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab",
-  "textures": {
-    "bottom": "merlins_inferno:block/flesh",
-    "side": "merlins_inferno:block/flesh",
-    "top": "merlins_inferno:block/flesh"
-  }
-}

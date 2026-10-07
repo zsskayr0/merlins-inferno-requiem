@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab",
-  "textures": {
-    "bottom": "merlins_inferno:block/netherrack_compressed",
-    "side": "merlins_inferno:block/netherrack_compressed",
-    "top": "merlins_inferno:block/netherrack_compressed"
-  }
-}

@@ -1,6 +1,0 @@
-{ "variants": {
-  "facing=north": { "model": "merlins_inferno:block/drying_rack", "y": 0 },
-  "facing=east": { "model": "merlins_inferno:block/drying_rack", "y": 90 },
-  "facing=south": { "model": "merlins_inferno:block/drying_rack", "y": 180 },
-  "facing=west": { "model": "merlins_inferno:block/drying_rack", "y": 270 }
-} }

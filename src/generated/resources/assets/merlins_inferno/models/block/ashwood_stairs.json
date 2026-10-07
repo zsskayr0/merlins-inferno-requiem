@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/stairs",
-  "textures": {
-    "bottom": "merlins_inferno:block/ashwood_planks",
-    "side": "merlins_inferno:block/ashwood_planks",
-    "top": "merlins_inferno:block/ashwood_planks"
-  }
-}
