@@ -59,7 +59,7 @@
   "enchantment.merlins_inferno.druids_touch.desc": "Picareta: mais Redstone, Lápis-lazúli, Esmeralda e Glowstone. Machado: desbloqueia material bruto de Rowanwood. Espada: mais XP/ouro e mais saque de criaturas mágicas.",
   "enchantment.merlins_inferno.druids_touch.description": "Picareta: mais Redstone, Lápis-lazúli, Esmeralda e Glowstone. Machado: desbloqueia material bruto de Rowanwood. Espada: mais XP/ouro e mais saque de criaturas mágicas.",
   "biome.merlins_inferno.hallowed_grove": "Bosque Sagrado",
-  "biome.merlins_inferno.oblivion_forest": "Floresta do Oblivion",
+  "biome.merlins_inferno.oblivion_forest": "Floresta Assombrada",
   "biome.merlins_inferno.ashen_fields": "Campos de Cinzas",
   "biome.merlins_inferno.ebony_spires": "Agulhas de Ébano",
   "block.merlins_inferno.black_stem": "Caule Negro",
@@ -409,5 +409,7 @@
   "block.merlins_inferno.hair": "Cabelo",
   "block.merlins_inferno.eyebulb": "Bulbo Ocular",
   "biome.merlins_inferno.carnal_heap": "Pilha Carnal",
-  "block.merlins_inferno.charred_flesh": "Carne Carbonizada"
+  "block.merlins_inferno.charred_flesh": "Carne Carbonizada",
+  "block.merlins_inferno.haunted_log": "Tronco Assombrado",
+  "block.merlins_inferno.haunted_leaves": "Folhas Assombradas"
 }

@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_nether",
+  "features": "merlins_inferno:giant_chain",
+  "step": "underground_decoration"
+}

@@ -1,0 +1,29 @@
+{
+  "type": "merlins_inferno:giant_chain",
+  "config": {
+    "palette": [
+      {
+        "state": {
+          "Name": "merlins_inferno:flesh_block"
+        },
+        "weight": 45
+      },
+      {
+        "state": {
+          "Name": "minecraft:netherrack"
+        },
+        "weight": 50
+      },
+      {
+        "state": {
+          "Name": "merlins_inferno:corrupted_obsidian"
+        },
+        "weight": 5
+      }
+    ],
+    "min_links": 4,
+    "max_links": 10,
+    "min_scale": 1,
+    "max_scale": 2
+  }
+}

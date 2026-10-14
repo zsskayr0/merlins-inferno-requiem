@@ -128,6 +128,8 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.COMPRESSED_NETHERRACK_SLAB_ITEM.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_WALL_ITEM.get());
                         output.accept(ModItems.FLESH_BLOCK_ITEM.get());
+                        output.accept(ModItems.HAUNTED_LOG_ITEM.get());
+                        output.accept(ModItems.HAUNTED_LEAVES_ITEM.get());
                         output.accept(ModItems.CHARRED_FLESH_ITEM.get());
                         output.accept(ModItems.POROUS_FLESH_ITEM.get());
                         output.accept(ModItems.FLESH_TENDONS_ITEM.get());

@@ -146,7 +146,10 @@ public final class ModEntityRenderers {
     private static LivingEntity getOrRefreshTarget(LivingEntity holder) {
         long tick = holder.level().getGameTime();
         boolean staleCache = cachedTarget != null && (!cachedTarget.isAlive() || cachedTarget.level() != holder.level());
-        if (staleCache || tick - lastScanTick >= RESCAN_INTERVAL_TICKS) {
+        // A boss shows its bar the moment the client starts tracking it, so with no target yet we
+        // rescan every tick: the needle locks on as soon as the bar appears.
+        boolean searching = cachedTarget == null && tick != lastScanTick;
+        if (staleCache || searching || tick - lastScanTick >= RESCAN_INTERVAL_TICKS || tick < lastScanTick) {
             cachedTarget = ChampionSeekerItem.findNearestBoss(holder, SEARCH_RADIUS);
             lastScanTick = tick;
         }

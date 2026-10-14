@@ -323,6 +323,13 @@ public final class ModBlocks {
     // --- Carnal Heap (the Oblivion's flesh biome): pitted flesh, hanging tendons, hair and the eyebulb. ---
     public static final DeferredBlock<Block> POROUS_FLESH = BLOCKS.registerBlock("porous_flesh",
             Block::new, fleshProperties());
+    // Haunted Forest trees (the Oblivion Forest biome): logs and the weeping leaves.
+    public static final DeferredBlock<net.minecraft.world.level.block.RotatedPillarBlock> HAUNTED_LOG = BLOCKS.registerBlock("haunted_log",
+            net.minecraft.world.level.block.RotatedPillarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_STEM)
+                    .mapColor(MapColor.COLOR_PURPLE));
+    public static final DeferredBlock<net.minecraft.world.level.block.LeavesBlock> HAUNTED_LEAVES = BLOCKS.registerBlock("haunted_leaves",
+            net.minecraft.world.level.block.LeavesBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
+                    .mapColor(MapColor.COLOR_RED));
     public static final DeferredBlock<Block> CHARRED_FLESH = BLOCKS.registerBlock("charred_flesh",
             Block::new, fleshProperties().mapColor(MapColor.COLOR_BLACK).strength(0.6F));
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.FleshTendonsBlock> FLESH_TENDONS = BLOCKS.registerBlock("flesh_tendons",

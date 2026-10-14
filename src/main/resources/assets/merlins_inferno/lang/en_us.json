@@ -59,7 +59,7 @@
   "enchantment.merlins_inferno.druids_touch.desc": "Pickaxe: more Redstone, Lapis, Emerald and Glowstone. Axe: unlocks Rowanwood's raw material. Sword: more XP/gold, more loot from magical mobs. Rare - usually only found via enchanting at level 30, or as loot.",
   "enchantment.merlins_inferno.druids_touch.description": "Pickaxe: more Redstone, Lapis, Emerald and Glowstone. Axe: unlocks Rowanwood's raw material. Sword: more XP/gold, more loot from magical mobs. Rare - usually only found via enchanting at level 30, or as loot.",
   "biome.merlins_inferno.hallowed_grove": "Hallowed Grove",
-  "biome.merlins_inferno.oblivion_forest": "Oblivion Forest",
+  "biome.merlins_inferno.oblivion_forest": "Haunted Forest",
   "biome.merlins_inferno.ashen_fields": "Ashen Fields",
   "biome.merlins_inferno.ebony_spires": "Ebony Spires",
   "block.merlins_inferno.black_stem": "Black Stem",
@@ -409,5 +409,7 @@
   "block.merlins_inferno.hair": "Hair",
   "block.merlins_inferno.eyebulb": "Eyebulb",
   "biome.merlins_inferno.carnal_heap": "Carnal Heap",
-  "block.merlins_inferno.charred_flesh": "Charred Flesh"
+  "block.merlins_inferno.charred_flesh": "Charred Flesh",
+  "block.merlins_inferno.haunted_log": "Haunted Log",
+  "block.merlins_inferno.haunted_leaves": "Haunted Leaves"
 }

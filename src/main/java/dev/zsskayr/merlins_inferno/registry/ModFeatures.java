@@ -42,6 +42,16 @@ public final class ModFeatures {
             FEATURES.register("lava_char", () -> new dev.zsskayr.merlins_inferno.worldgen.feature.LavaCharFeature(
                     dev.zsskayr.merlins_inferno.worldgen.feature.LavaCharFeature.Config.CODEC));
 
+    // Giant block chains hanging from ceilings across the Oblivion (flesh, netherrack, rarely corrupted obsidian).
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.GiantChainFeature> GIANT_CHAIN =
+            FEATURES.register("giant_chain", () -> new dev.zsskayr.merlins_inferno.worldgen.feature.GiantChainFeature(
+                    dev.zsskayr.merlins_inferno.worldgen.feature.GiantChainFeature.Config.CODEC));
+
+    // The Haunted Forest's twisting, weeping trees.
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.HauntedTreeFeature> HAUNTED_TREE =
+            FEATURES.register("haunted_tree", () -> new dev.zsskayr.merlins_inferno.worldgen.feature.HauntedTreeFeature(
+                    dev.zsskayr.merlins_inferno.worldgen.feature.HauntedTreeFeature.Config.CODEC));
+
     private ModFeatures() {
     }
 

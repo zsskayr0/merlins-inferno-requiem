@@ -1,0 +1,21 @@
+{
+  "type": "merlins_inferno:haunted_tree",
+  "config": {
+    "log": {
+      "Name": "merlins_inferno:haunted_log",
+      "Properties": {
+        "axis": "y"
+      }
+    },
+    "leaves": {
+      "Name": "merlins_inferno:haunted_leaves",
+      "Properties": {
+        "distance": "1",
+        "persistent": "true",
+        "waterlogged": "false"
+      }
+    },
+    "min_height": 16,
+    "max_height": 28
+  }
+}
