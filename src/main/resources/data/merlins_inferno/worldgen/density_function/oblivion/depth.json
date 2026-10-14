@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:add",
+  "argument1": {
+    "type": "minecraft:y_clamped_gradient",
+    "from_y": 40,
+    "to_y": 190,
+    "from_value": 0.9,
+    "to_value": -0.2
+  },
+  "argument2": {
+    "type": "minecraft:mul",
+    "argument1": 0.05,
+    "argument2": {
+      "type": "minecraft:noise",
+      "noise": "merlins_inferno:oblivion/depth_jitter",
+      "xz_scale": 1.0,
+      "y_scale": 0.0
+    }
+  }
+}
