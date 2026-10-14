@@ -2,16 +2,8 @@
   "type": "minecraft:add",
   "argument1": {
     "type": "minecraft:min",
-    "argument1": {
-      "type": "minecraft:min",
-      "argument1": {
-        "type": "minecraft:min",
-        "argument1": "merlins_inferno:oblivion/surface",
-        "argument2": "merlins_inferno:oblivion/caves"
-      },
-      "argument2": "merlins_inferno:oblivion/rifts"
-    },
-    "argument2": "merlins_inferno:oblivion/shafts"
+    "argument1": "merlins_inferno:oblivion/surface",
+    "argument2": "merlins_inferno:oblivion/caves"
   },
   "argument2": {
     "type": "minecraft:y_clamped_gradient",

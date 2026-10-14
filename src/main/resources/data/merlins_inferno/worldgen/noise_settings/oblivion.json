@@ -15,7 +15,7 @@
     "min_y": 0,
     "height": 256,
     "size_horizontal": 1,
-    "size_vertical": 2
+    "size_vertical": 1
   },
   "noise_router": {
     "barrier": 0.0,
@@ -28,11 +28,15 @@
         "type": "minecraft:mul",
         "argument1": 0.64,
         "argument2": {
-          "type": "minecraft:interpolated",
-          "argument": {
-            "type": "minecraft:blend_density",
-            "argument": "merlins_inferno:oblivion/final"
-          }
+          "type": "minecraft:min",
+          "argument1": {
+            "type": "minecraft:interpolated",
+            "argument": {
+              "type": "minecraft:blend_density",
+              "argument": "merlins_inferno:oblivion/final"
+            }
+          },
+          "argument2": "merlins_inferno:oblivion/carve"
         }
       }
     },
