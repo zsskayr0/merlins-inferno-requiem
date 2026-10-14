@@ -1,0 +1,18 @@
+{
+  "type": "merlins_inferno:spire",
+  "config": {
+    "state": {
+      "Name": "minecraft:basalt",
+      "Properties": {
+        "axis": "y"
+      }
+    },
+    "accent_state": {
+      "Name": "merlins_inferno:ebony_debris"
+    },
+    "min_height": 28,
+    "max_height": 56,
+    "base_radius": 4,
+    "accent_chance": 0.18
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:add",
+  "argument1": {
+    "type": "minecraft:y_clamped_gradient",
+    "from_y": 0,
+    "to_y": 255,
+    "from_value": 1.5,
+    "to_value": -1.5
+  },
+  "argument2": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:mul",
+      "argument1": 0.011764705882352941,
+      "argument2": "merlins_inferno:oblivion/target_y"
+    },
+    "argument2": -1.5
+  }
+}

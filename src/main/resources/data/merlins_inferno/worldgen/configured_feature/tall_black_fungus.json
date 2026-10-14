@@ -1,0 +1,19 @@
+{
+  "type": "merlins_inferno:tall_fungus",
+  "config": {
+    "stem_state": {
+      "Name": "merlins_inferno:black_stem",
+      "Properties": {
+        "axis": "y"
+      }
+    },
+    "hat_state": {
+      "Name": "merlins_inferno:black_wart_block"
+    },
+    "decor_state": {
+      "Name": "merlins_inferno:oblivion_shroomlight"
+    },
+    "min_height": 14,
+    "max_height": 30
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "merlins_inferno:spire",
+  "config": {
+    "state": {
+      "Name": "minecraft:blackstone"
+    },
+    "accent_state": {
+      "Name": "minecraft:basalt",
+      "Properties": {
+        "axis": "y"
+      }
+    },
+    "min_height": 9,
+    "max_height": 20,
+    "base_radius": 2,
+    "accent_chance": 0.12
+  }
+}
