@@ -11,12 +11,12 @@
           "type": "minecraft:y_clamped_gradient",
           "from_y": 50,
           "to_y": 190,
-          "from_value": 0.55,
-          "to_value": 0.3
+          "from_value": 0.52,
+          "to_value": 0.4
         },
         "argument2": {
           "type": "minecraft:mul",
-          "argument1": 0.12,
+          "argument1": 0.04,
           "argument2": {
             "type": "minecraft:noise",
             "noise": "merlins_inferno:oblivion/rift_wall",

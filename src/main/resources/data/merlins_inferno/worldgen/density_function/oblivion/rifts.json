@@ -22,7 +22,7 @@
             },
             "argument2": {
               "type": "minecraft:mul",
-              "argument1": 0.05,
+              "argument1": 0.03,
               "argument2": {
                 "type": "minecraft:noise",
                 "noise": "merlins_inferno:oblivion/rift_wall",
