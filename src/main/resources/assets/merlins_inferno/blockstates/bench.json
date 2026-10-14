@@ -1,0 +1,68 @@
+{
+  "variants": {
+    "facing=north,left=false,right=false": {
+      "model": "merlins_inferno:block/bench_single",
+      "y": 0
+    },
+    "facing=north,left=true,right=false": {
+      "model": "merlins_inferno:block/bench_left",
+      "y": 0
+    },
+    "facing=north,left=false,right=true": {
+      "model": "merlins_inferno:block/bench_right",
+      "y": 0
+    },
+    "facing=north,left=true,right=true": {
+      "model": "merlins_inferno:block/bench_middle",
+      "y": 0
+    },
+    "facing=east,left=false,right=false": {
+      "model": "merlins_inferno:block/bench_single",
+      "y": 90
+    },
+    "facing=east,left=true,right=false": {
+      "model": "merlins_inferno:block/bench_left",
+      "y": 90
+    },
+    "facing=east,left=false,right=true": {
+      "model": "merlins_inferno:block/bench_right",
+      "y": 90
+    },
+    "facing=east,left=true,right=true": {
+      "model": "merlins_inferno:block/bench_middle",
+      "y": 90
+    },
+    "facing=south,left=false,right=false": {
+      "model": "merlins_inferno:block/bench_single",
+      "y": 180
+    },
+    "facing=south,left=true,right=false": {
+      "model": "merlins_inferno:block/bench_left",
+      "y": 180
+    },
+    "facing=south,left=false,right=true": {
+      "model": "merlins_inferno:block/bench_right",
+      "y": 180
+    },
+    "facing=south,left=true,right=true": {
+      "model": "merlins_inferno:block/bench_middle",
+      "y": 180
+    },
+    "facing=west,left=false,right=false": {
+      "model": "merlins_inferno:block/bench_single",
+      "y": 270
+    },
+    "facing=west,left=true,right=false": {
+      "model": "merlins_inferno:block/bench_left",
+      "y": 270
+    },
+    "facing=west,left=false,right=true": {
+      "model": "merlins_inferno:block/bench_right",
+      "y": 270
+    },
+    "facing=west,left=true,right=true": {
+      "model": "merlins_inferno:block/bench_middle",
+      "y": 270
+    }
+  }
+}
