@@ -1,0 +1,84 @@
+{
+  "type": "minecraft:cache_2d",
+  "argument": {
+    "type": "minecraft:spline",
+    "spline": {
+      "coordinate": "merlins_inferno:oblivion/continents",
+      "points": [
+        {
+          "location": -1.0,
+          "value": 108.0,
+          "derivative": 0.0
+        },
+        {
+          "location": -0.35,
+          "value": 112.0,
+          "derivative": 0.0
+        },
+        {
+          "location": 0.1,
+          "value": {
+            "coordinate": "merlins_inferno:oblivion/erosion",
+            "points": [
+              {
+                "location": -1.0,
+                "value": 158.0,
+                "derivative": 0.0
+              },
+              {
+                "location": -0.2,
+                "value": 152.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.4,
+                "value": 142.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 1.0,
+                "value": 140.0,
+                "derivative": 0.0
+              }
+            ]
+          },
+          "derivative": 0.0
+        },
+        {
+          "location": 0.6,
+          "value": {
+            "coordinate": "merlins_inferno:oblivion/erosion",
+            "points": [
+              {
+                "location": -1.0,
+                "value": 188.0,
+                "derivative": 0.0
+              },
+              {
+                "location": -0.3,
+                "value": 180.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.3,
+                "value": 160.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.55,
+                "value": 152.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 1.0,
+                "value": 150.0,
+                "derivative": 0.0
+              }
+            ]
+          },
+          "derivative": 0.0
+        }
+      ]
+    }
+  }
+}
