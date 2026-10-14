@@ -54,7 +54,9 @@ public class ChampionSeekerItem extends Item {
     public static float getAngle(LivingEntity holder, Vec3 target) {
         double dx = target.x - holder.getX();
         double dz = target.z - holder.getZ();
-        double directionTerm = 0.5D - (Mth.atan2(dz, dx) / (Math.PI * 2));
-        return (float) Mth.positiveModulo(directionTerm - holder.getYRot() / 360.0D, 1.0D);
+        // Same maths as vanilla's CompassItemPropertyFunction: yaw 0 faces +Z, atan2 measures from +X.
+        double targetAngle = Mth.atan2(dz, dx) / (Math.PI * 2);
+        double facing = Mth.positiveModulo(holder.getYRot() / 360.0D, 1.0D);
+        return (float) Mth.positiveModulo(0.5D - (facing - 0.25D - targetAngle), 1.0D);
     }
 }

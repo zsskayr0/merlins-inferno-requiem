@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
 /**
- * A key forged in the opened Pandora Box (Oblivion or Purgatory). The portals they open are Circle 2 content that
+ * A key forged in the opened Pandora Box (the Forest). The portals they open are Circle 2 content that
  * does not exist yet, so for now this is only a marker item with a tooltip saying so.
  */
 public class PortalKeyItem extends Item {

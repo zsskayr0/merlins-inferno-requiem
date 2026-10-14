@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "merlins_inferno:blocks/eyebulb",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "merlins_inferno:eyebulb"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "merlins_inferno:eyebulb",
+          "properties": {
+            "half": "lower"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

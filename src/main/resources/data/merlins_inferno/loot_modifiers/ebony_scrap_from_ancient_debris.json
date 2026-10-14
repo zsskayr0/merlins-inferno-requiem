@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_table",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:blocks/ancient_debris"
+    }
+  ],
+  "table": "merlins_inferno:inject/ebony_scrap_from_ancient_debris"
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "merlins_inferno:item/dark_coven_6"
+  }
+}

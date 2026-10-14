@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "half=lower": {
+      "model": "merlins_inferno:block/eyebulb_bottom"
+    },
+    "half=upper": {
+      "model": "merlins_inferno:block/eyebulb_top"
+    }
+  }
+}

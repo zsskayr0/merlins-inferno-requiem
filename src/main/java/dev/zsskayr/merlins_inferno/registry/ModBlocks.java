@@ -281,13 +281,17 @@ public final class ModBlocks {
                     .noLootTable()); // breaking a part drops via HellForgePartBlock's own logic, not loot tables
 
     // --- Corrupted Obsidian: crying obsidian's demonic cousin, red instead of purple. Andras' Ancient Battlefield's boss room
-    // uses it for its portal frame - decorative only for now (the Purgatory dimension it's meant to open onto is
-    // future content). Unbreakable in Circle 1 (see CorruptedObsidianBlock); from Circle 2 on it's minable, at
+    // uses it for its portal frame - decorative only for now (the Oblivion portal frame, which it is
+    // meant to become, is wired up separately). Unbreakable in Circle 1 (see CorruptedObsidianBlock); from Circle 2 on it's minable, at
     // 3x Obsidian's hardness and gated behind a tool tier above Netherite that doesn't exist yet (see
     // data/minecraft/tags/block/incorrect_for_netherite_tool.json). Not craftable - only found generated. ---
     public static final DeferredBlock<CorruptedObsidianBlock> CORRUPTED_OBSIDIAN = BLOCKS.registerBlock("corrupted_obsidian",
             CorruptedObsidianBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CRYING_OBSIDIAN)
                     .strength(CorruptedObsidianBlock.HARDNESS, 1200.0F).requiresCorrectToolForDrops());
+
+    // --- Ebony Debris: Circle 2's answer to Ancient Debris, found in Oblivion. Drops Ebony Scrap (Silk Touch keeps the block). ---
+    public static final DeferredBlock<Block> EBONY_DEBRIS = BLOCKS.registerBlock("ebony_debris",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.ANCIENT_DEBRIS));
 
     // --- Petrified Skull: crafted from Wither Skulls, Withered Bone and Compressed Netherrack. Obsidian's own
     // hardness/blast resistance ("a resistência de obsidian"), nothing else special yet. ---
@@ -315,6 +319,20 @@ public final class ModBlocks {
                     .strength(0.1F)
                     .sound(SoundType.NETHERRACK)
                     .pushReaction(PushReaction.DESTROY));
+
+    // --- Carnal Heap (the Oblivion's flesh biome): pitted flesh, hanging tendons, hair and the eyebulb. ---
+    public static final DeferredBlock<Block> POROUS_FLESH = BLOCKS.registerBlock("porous_flesh",
+            Block::new, fleshProperties());
+    public static final DeferredBlock<Block> CHARRED_FLESH = BLOCKS.registerBlock("charred_flesh",
+            Block::new, fleshProperties().mapColor(MapColor.COLOR_BLACK).strength(0.6F));
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.FleshTendonsBlock> FLESH_TENDONS = BLOCKS.registerBlock("flesh_tendons",
+            dev.zsskayr.merlins_inferno.block.FleshTendonsBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED).noCollission().instabreak().sound(SoundType.WEEPING_VINES)
+                    .pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<net.minecraft.world.level.block.NetherSproutsBlock> HAIR = BLOCKS.registerBlock("hair",
+            net.minecraft.world.level.block.NetherSproutsBlock::new, netherPlantProperties(MapColor.COLOR_RED));
+    public static final DeferredBlock<NetherDoublePlantBlock> EYEBULB = BLOCKS.registerBlock("eyebulb",
+            NetherDoublePlantBlock::new, netherPlantProperties(MapColor.COLOR_RED).lightLevel(state -> 6));
 
     private static BlockBehaviour.Properties fleshProperties() {
         return BlockBehaviour.Properties.of()
@@ -372,6 +390,45 @@ public final class ModBlocks {
                     .strength(0.4F)
                     .sound(SoundType.NYLIUM)
                     .randomTicks());
+
+    // --- The Oblivion Forest's fungus: crimson's stem and wart block in black, plus black roots (see TallFungusFeature). ---
+    public static final DeferredBlock<net.minecraft.world.level.block.RotatedPillarBlock> BLACK_STEM = BLOCKS.registerBlock("black_stem",
+            net.minecraft.world.level.block.RotatedPillarBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.STEM));
+    public static final DeferredBlock<Block> BLACK_WART_BLOCK = BLOCKS.registerBlock("black_wart_block",
+            Block::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(1.0F).sound(SoundType.WART_BLOCK));
+    public static final DeferredBlock<net.minecraft.world.level.block.RootsBlock> BLACK_ROOTS = BLOCKS.registerBlock("black_roots",
+            net.minecraft.world.level.block.RootsBlock::new, netherPlantProperties(MapColor.COLOR_BLACK));
+
+    // Planted by bonemeal into the Oblivion Forest's tall fungus (worldgen/configured_feature/tall_black_fungus.json).
+    public static final DeferredBlock<net.minecraft.world.level.block.FungusBlock> BLACK_FUNGUS = BLOCKS.registerBlock("black_fungus",
+            props -> new net.minecraft.world.level.block.FungusBlock(net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.CONFIGURED_FEATURE,
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("merlins_inferno", "tall_black_fungus")),
+                    BLACK_NYLIUM.get(), props),
+            netherPlantProperties(MapColor.COLOR_BLACK).lightLevel(state -> 3));
+    // Short black grass (the texture was already in the pack as black_nylium_grass.png); the low plant of the undergrowth.
+    public static final DeferredBlock<net.minecraft.world.level.block.NetherSproutsBlock> BLACK_GRASS = BLOCKS.registerBlock("black_grass",
+            net.minecraft.world.level.block.NetherSproutsBlock::new, netherPlantProperties(MapColor.COLOR_BLACK));
+    public static final DeferredBlock<net.minecraft.world.level.block.NetherSproutsBlock> BLACK_SPROUTS = BLOCKS.registerBlock("black_sprouts",
+            net.minecraft.world.level.block.NetherSproutsBlock::new, netherPlantProperties(MapColor.COLOR_BLACK));
+
+    // Black vines: weeping vines in black, hanging under the Oblivion Forest's fungus; and a shroomlight of the Oblivion.
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.BlackVinesBlock> BLACK_VINES = BLOCKS.registerBlock("black_vines",
+            dev.zsskayr.merlins_inferno.block.BlackVinesBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK).randomTicks().noCollission().instabreak()
+                    .sound(SoundType.WEEPING_VINES).pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.BlackVinesPlantBlock> BLACK_VINES_PLANT = BLOCKS.registerBlock("black_vines_plant",
+            dev.zsskayr.merlins_inferno.block.BlackVinesPlantBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK).noCollission().instabreak()
+                    .sound(SoundType.WEEPING_VINES).pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<Block> OBLIVION_SHROOMLIGHT = BLOCKS.registerBlock("oblivion_shroomlight",
+            Block::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE).strength(1.0F)
+                    .sound(SoundType.SHROOMLIGHT).lightLevel(state -> 14));
+
+    // The ground of the Cinder Dunes: a soft, dry grey ash that does not fall (unlike sand).
+    public static final DeferredBlock<Block> ASH_BLOCK = BLOCKS.registerBlock("ash_block",
+            Block::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(0.5F).sound(SoundType.SAND));
 
     public static final DeferredBlock<NetherDoublePlantBlock> TALL_CRIMSON_ROOTS = BLOCKS.registerBlock("tall_crimson_roots",
             NetherDoublePlantBlock::new, netherPlantProperties(MapColor.COLOR_RED));

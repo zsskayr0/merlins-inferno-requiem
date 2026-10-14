@@ -1,5 +1,8 @@
 {
-  "type": "minecraft:min",
-  "argument1": "merlins_inferno:oblivion/rifts",
-  "argument2": "merlins_inferno:oblivion/shafts"
+  "type": "minecraft:cache_once",
+  "argument": {
+    "type": "minecraft:min",
+    "argument1": "merlins_inferno:oblivion/rifts",
+    "argument2": "merlins_inferno:oblivion/shafts"
+  }
 }

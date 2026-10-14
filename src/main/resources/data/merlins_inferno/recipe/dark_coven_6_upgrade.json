@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": {
+    "item": "merlins_inferno:withered_bone"
+  },
+  "base": {
+    "item": "merlins_inferno:dark_coven_5"
+  },
+  "addition": {
+    "item": "merlins_inferno:ebony_bar"
+  },
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:dark_coven_6"
+  }
+}

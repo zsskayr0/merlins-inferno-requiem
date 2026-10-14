@@ -13,7 +13,7 @@ A Minecraft mod for **NeoForge 1.21.1** built around three lineages of equipment
 | **Angelical** | Lyrium geodes in the mountains | Seraphium | The strongest of the three, and the hardest to earn. Every blow Sanctifies its target and is meant for evil: extra damage to demons and hostiles, much less to neutral and peaceful mobs. |
 
 ## Progression: the Circles
-You start in the **First Circle**. Each road has a Circle 1 boss who drops a key item: **Ostara** (Eve's Secret), **Andras** (Book of Contracts) and **Elias** (Flame of God). Lay the three keys around a Nether Star in **Pandora's Box**, found in the Sacred Church, to perform the ritual that opens the **Second Circle** (it costs your life outside Hardcore). Circle 2 brings doubled essence drops, monster leather, Starved in the Nether, hostile cultists, minable Corrupted Obsidian and the Oblivion and Purgatory keys, forged in the opened Box.
+You start in the **First Circle**. Each road has a Circle 1 boss who drops a key item: **Ostara** (Eve's Secret), **Andras** (Book of Contracts) and **Elias** (Flame of God). Lay the three keys around a Nether Star in **Pandora's Box**, found in the Sacred Church, to perform the ritual that opens the **Second Circle** (it costs your life outside Hardcore). Circle 2 brings doubled essence drops, monster leather, Starved in the Nether, hostile cultists, minable Corrupted Obsidian and the Oblivion and Forest keys, forged in the opened Box.
 
 ## What You'll Find
 
@@ -43,6 +43,13 @@ Look for a **Druid's Sanctuary** - a clearing ringed by wooden pillars, with a h
 
 ### The Legendary Swords
 Any boss or miniboss may, very rarely, drop a **Hollow Relic** - a Diamond-strong sword with one use, the core of the legendary swords. Put it in the centre of the crafting grid with four materials: **Eden's Thorn** (Druidic, a poisoning dagger), **Debt Collector** (Infernal, an axe that sets targets ablaze, with Evil I built in and bonus damage to anything weaker than you) and **Vigil's Sorrow** (Angelical, Sanctified II on every hit, Holy I built in, 1.5x damage to anything stronger than you). The **Hell Seal** needed for the Debt Collector drops from Grymns and Andras, or comes nine at a time from a Book of Contracts. Mythic weapons will follow in the Second Circle.
+
+### Ebony and the Dark Coven (Circle 2)
+**Ebony Debris** hides in Oblivion (and, very rarely, in Ancient Debris); its scrap, as well as the drops of Oblivion's bosses, is smelted into **Ebony Bars** in the Hell Forge. Ebony tools and armor sit above Seraphium, and the full armor set grants Fire Resistance IV.
+
+- **Cain, the First Immortal** - the Circle 2 Infernal boss. He carries the last form of the Dark Coven and withers whatever he strikes; once he is half dead he invokes his own pact.
+- **The Flesh Golem** - the Circle 2 Infernal miniboss: a towering horned mass that heals with every blow.
+- **The Dark Coven** - a legendary sword in seven stages. Right-click to invoke the coven (Strength, Speed and Night Vision, paid for with the Wither); each stage is a smithing step with a Withered Bone and an Ebony Bar, and the last one asks for a Nether Star and seals the Demonic Pact. The blade lights up with more runes at every stage.
 
 ### Other
 - **The Champion Seeker** - a compass that points at the nearest boss or miniboss.

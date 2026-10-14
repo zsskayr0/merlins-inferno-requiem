@@ -102,7 +102,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.FLAME_OF_GOD.get());
                         output.accept(ModItems.PANDORA_BOX.get());
                         output.accept(ModItems.OBLIVION_KEY.get());
-                        output.accept(ModItems.PURGATORY_KEY.get());
+                        output.accept(ModItems.FOREST_KEY.get());
                         output.accept(ModItems.CHAMPION_SEEKER.get());
                         output.accept(ModItems.RAW_EDENWEED.get());
                         output.accept(ModItems.DRIED_EDENWEED.get());
@@ -111,6 +111,15 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DRYING_RACK_ITEM.get());
                         output.accept(ModItems.SACRED_ALTAR_ITEM.get());
                         output.accept(ModItems.CORRUPTED_OBSIDIAN_ITEM.get());
+                        output.accept(ModItems.BLACK_STEM_ITEM.get());
+                        output.accept(ModItems.BLACK_WART_BLOCK_ITEM.get());
+                        output.accept(ModItems.BLACK_ROOTS_ITEM.get());
+                        output.accept(ModItems.BLACK_FUNGUS_ITEM.get());
+                        output.accept(ModItems.BLACK_GRASS_ITEM.get());
+                        output.accept(ModItems.BLACK_SPROUTS_ITEM.get());
+                        output.accept(ModItems.ASH_BLOCK_ITEM.get());
+                        output.accept(ModItems.BLACK_VINES_ITEM.get());
+                        output.accept(ModItems.OBLIVION_SHROOMLIGHT_ITEM.get());
                         output.accept(ModItems.PETRIFIED_SKULL_ITEM.get());
                         output.accept(ModItems.VOID_BLOCK_ITEM.get());
                         output.accept(ModItems.INFERNAL_ESSENCE.get());
@@ -119,6 +128,11 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.COMPRESSED_NETHERRACK_SLAB_ITEM.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_WALL_ITEM.get());
                         output.accept(ModItems.FLESH_BLOCK_ITEM.get());
+                        output.accept(ModItems.CHARRED_FLESH_ITEM.get());
+                        output.accept(ModItems.POROUS_FLESH_ITEM.get());
+                        output.accept(ModItems.FLESH_TENDONS_ITEM.get());
+                        output.accept(ModItems.HAIR_ITEM.get());
+                        output.accept(ModItems.EYEBULB_ITEM.get());
                         output.accept(ModItems.FLESH_SLAB_ITEM.get());
                         output.accept(ModItems.FLESH_CARPET_ITEM.get());
                         output.accept(ModItems.ORNATED_CARPET_ITEM.get());
@@ -151,6 +165,28 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.SERAPHIUM_CHESTPLATE.get());
                         output.accept(ModItems.SERAPHIUM_LEGGINGS.get());
                         output.accept(ModItems.SERAPHIUM_BOOTS.get());
+
+                        // Circle 2: Ebony and the Dark Coven
+                        output.accept(ModItems.EBONY_DEBRIS_ITEM.get());
+                        output.accept(ModItems.EBONY_SCRAP.get());
+                        output.accept(ModItems.EBONY_BAR.get());
+                        output.accept(ModItems.EBONY_AXE.get());
+                        output.accept(ModItems.EBONY_SHOVEL.get());
+                        output.accept(ModItems.EBONY_PICKAXE.get());
+                        output.accept(ModItems.EBONY_HOE.get());
+                        output.accept(ModItems.EBONY_HELMET.get());
+                        output.accept(ModItems.EBONY_CHESTPLATE.get());
+                        output.accept(ModItems.EBONY_LEGGINGS.get());
+                        output.accept(ModItems.EBONY_BOOTS.get());
+                        output.accept(ModItems.DARK_COVEN_I.get());
+                        output.accept(ModItems.DARK_COVEN_II.get());
+                        output.accept(ModItems.DARK_COVEN_III.get());
+                        output.accept(ModItems.DARK_COVEN_IV.get());
+                        output.accept(ModItems.DARK_COVEN_V.get());
+                        output.accept(ModItems.DARK_COVEN_VI.get());
+                        output.accept(ModItems.DARK_COVEN_VII.get());
+                        output.accept(ModItems.CAIN_SPAWN_EGG.get());
+                        output.accept(ModItems.FLESH_GOLEM_SPAWN_EGG.get());
 
                         // Enchanted books at max level - the only way to get one of these
                         // otherwise is the enchanting table/anvil RNG, or an /enchant command.

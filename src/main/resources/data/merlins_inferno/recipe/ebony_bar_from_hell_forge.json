@@ -1,0 +1,13 @@
+{
+  "type": "merlins_inferno:hell_forge_smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 1.0,
+  "group": "ebony_bar",
+  "ingredient": {
+    "item": "merlins_inferno:ebony_scrap"
+  },
+  "result": {
+    "id": "merlins_inferno:ebony_bar"
+  }
+}

@@ -78,6 +78,12 @@ public class AncientBattlefieldStructure extends Structure {
 
     @Override
     public Optional<Structure.GenerationStub> findGenerationPoint(Structure.GenerationContext context) {
+        // Oblivion shares the Nether's biomes, so a biome list cannot keep the battlefield out of it: check its terrain.
+        if (context.chunkGenerator() instanceof net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator noise
+                && noise.generatorSettings().is(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(
+                        dev.zsskayr.merlins_inferno.Merlins_inferno.MODID, "oblivion"))) {
+            return Optional.empty();
+        }
         StructureTemplateManager templateManager = context.structureTemplateManager();
         Vec3i size = templateManager.getOrCreate(AncientBattlefieldPiece.TEMPLATE).getSize();
 

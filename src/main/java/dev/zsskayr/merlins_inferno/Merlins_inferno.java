@@ -60,6 +60,7 @@ public class Merlins_inferno {
         // ArmorMaterials go first since ModItems' armor pieces reference them.
         ModArmorMaterials.register(modEventBus);
         ModParticles.register(modEventBus);
+        dev.zsskayr.merlins_inferno.registry.ModPlacementModifiers.register(modEventBus);
         ModEffects.register(modEventBus);
         ModAttachments.register(modEventBus);
         dev.zsskayr.merlins_inferno.registry.ModLootModifiers.register(modEventBus);
@@ -80,8 +81,10 @@ public class Merlins_inferno {
         // Register ourselves for server and other game events we are interested in.
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(new DemonbloodCombatHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.OblivionSpawnBias());
         NeoForge.EVENT_BUS.register(new DebtCollectorHandler());
         NeoForge.EVENT_BUS.register(new VigilsSorrowHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EbonyArmorHandler());
         NeoForge.EVENT_BUS.register(new RowanwoodCombatHandler());
         NeoForge.EVENT_BUS.register(new DruidsTouchHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.AntivenomHandler());
@@ -96,9 +99,9 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EssenceDropHandler());
         NeoForge.EVENT_BUS.register(new BossRewardChestHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.MonsterLeatherDropHandler());
-        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.OblivionSpawnHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.OstaraSpawnHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EdenweedHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.command.DebugCommands());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }

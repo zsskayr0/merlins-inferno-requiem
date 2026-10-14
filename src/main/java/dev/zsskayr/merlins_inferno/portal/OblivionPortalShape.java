@@ -15,7 +15,7 @@ import dev.zsskayr.merlins_inferno.block.OblivionPortalBlock;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 
 /**
- * The shape of an Oblivion portal: the Nether portal's rules exactly (a Void Block rectangle, 2-21 wide and 3-21 tall
+ * The shape of an Oblivion portal: the Nether portal's rules exactly (a Corrupted Obsidian rectangle, 2-21 wide and 3-21 tall
  * inside), filled with Oblivion portal blocks instead. A trimmed copy of vanilla's {@code PortalShape}, which is
  * hard-wired to the Nether portal block.
  */
@@ -141,7 +141,7 @@ public class OblivionPortalShape {
     }
 
     private static boolean isFrame(BlockState state) {
-        return state.is(ModBlocks.VOID_BLOCK.get());
+        return state.is(ModBlocks.CORRUPTED_OBSIDIAN.get());
     }
 
     private static boolean isEmpty(BlockState state) {

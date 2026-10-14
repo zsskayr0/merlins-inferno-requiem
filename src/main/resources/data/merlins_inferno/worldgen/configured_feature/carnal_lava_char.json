@@ -1,0 +1,10 @@
+{
+  "type": "merlins_inferno:lava_char",
+  "config": {
+    "state": {
+      "Name": "merlins_inferno:charred_flesh"
+    },
+    "biome": "merlins_inferno:carnal_heap",
+    "radius": 2
+  }
+}

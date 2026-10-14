@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "merlins_inferno:blocks/black_vines_plant",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "merlins_inferno:black_vines"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

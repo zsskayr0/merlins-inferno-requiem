@@ -21,7 +21,7 @@ import net.minecraft.world.level.Level;
 import dev.zsskayr.merlins_inferno.portal.OblivionPortalShape;
 
 /**
- * The Key of Oblivion, forged in the opened Pandora Box. Used on an obsidian frame it lights an Oblivion portal, the
+ * The Key of Oblivion, forged in the opened Pandora Box. Used on a Corrupted Obsidian frame it lights an Oblivion portal, the
  * way flint and steel lights a Nether portal; it has three uses.
  */
 public class OblivionKeyItem extends Item {
@@ -32,6 +32,14 @@ public class OblivionKeyItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
+        Player user = context.getPlayer();
+        if (user != null && !dev.zsskayr.merlins_inferno.attachment.ProgressionHelper.hasReached(user,
+                dev.zsskayr.merlins_inferno.attachment.ProgressionHelper.SECOND_CIRCLE)) {
+            if (!level.isClientSide) {
+                user.displayClientMessage(Component.translatable("message.merlins_inferno.oblivion_locked"), true);
+            }
+            return InteractionResult.FAIL;
+        }
         BlockPos pos = context.getClickedPos().relative(context.getClickedFace());
         Optional<OblivionPortalShape> shape = OblivionPortalShape.findEmptyPortalShape(level, pos, Direction.Axis.X);
         if (shape.isEmpty()) {

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "merlins_inferno:block/ebony_debris_top",
+    "side": "merlins_inferno:block/ebony_debris_side"
+  }
+}

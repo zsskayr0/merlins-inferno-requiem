@@ -42,8 +42,8 @@ import dev.zsskayr.merlins_inferno.registry.ModParticles;
 
 /**
  * The film of an Oblivion portal, behaving like a Nether portal: it lives in an obsidian frame, vanishes when the
- * frame breaks, and teleports players who stand in it. Entering carries you to the hub in Oblivion (remembering where
- * you came from); the hub's portal brings you back to that spot. Only players travel.
+ * frame breaks, and teleports players who stand in it. Entering carries you to the portal in Oblivion (remembering where
+ * you came from); that portal brings you back to that spot. Only players travel.
  */
 public class OblivionPortalBlock extends Block implements Portal {
     public static final MapCodec<OblivionPortalBlock> CODEC = simpleCodec(OblivionPortalBlock::new);
@@ -109,9 +109,14 @@ public class OblivionPortalBlock extends Block implements Portal {
             if (oblivion == null) {
                 return null;
             }
+            // Oblivion is Circle 2 content: the way in stays shut until the Pandora Box has been opened.
+            if (!dev.zsskayr.merlins_inferno.attachment.ProgressionHelper.hasReached(player,
+                    dev.zsskayr.merlins_inferno.attachment.ProgressionHelper.SECOND_CIRCLE)) {
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.merlins_inferno.oblivion_locked"), true);
+                return null;
+            }
             player.setData(ModAttachments.OBLIVION_ORIGIN, GlobalPos.of(level.dimension(), player.blockPosition()));
-            OblivionDimension.ensureHub(oblivion);
-            return new DimensionTransition(oblivion, Vec3.atBottomCenterOf(OblivionDimension.ARRIVAL), Vec3.ZERO, 180.0F, 0.0F,
+            return new DimensionTransition(oblivion, Vec3.atBottomCenterOf(OblivionDimension.ensureArrival(oblivion, player.blockPosition())), Vec3.ZERO, 180.0F, 0.0F,
                     DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET));
         }
         GlobalPos origin = player.getExistingData(ModAttachments.OBLIVION_ORIGIN).orElse(null);

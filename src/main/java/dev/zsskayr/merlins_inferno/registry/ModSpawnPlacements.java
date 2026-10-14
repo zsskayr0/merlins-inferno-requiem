@@ -58,5 +58,11 @@ public final class ModSpawnPlacements {
         // Sacred Cultists also wander the world (biome_modifier/sacred_cultist_spawns.json); the church places its own.
         event.register(ModEntityTypes.SACRED_CULTIST.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+
+        // Cain and the Flesh Golem: Circle 2 only (the rule carries the gate); which biomes list them is Oblivion's own data.
+        event.register(ModEntityTypes.CAIN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                dev.zsskayr.merlins_inferno.entity.CainEntity::checkCainSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(ModEntityTypes.FLESH_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                dev.zsskayr.merlins_inferno.entity.FleshGolemEntity::checkFleshGolemSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 }

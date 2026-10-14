@@ -11,7 +11,7 @@ import net.minecraft.util.RandomSource;
 
 /**
  * An enchanting-table glyph drawn from the white rune sprites in {@code textures/particle/rune/}, tinted per use:
- * the Oblivion portal's void navy, or the Pandora Box's full-bright range from vivid purple to blue.
+ * the Oblivion portal's blood red, or the Pandora Box's full-bright range from vivid purple to blue.
  */
 public class RuneParticle extends FlyTowardsPositionParticle {
     private final boolean fullBright;
@@ -27,9 +27,9 @@ public class RuneParticle extends FlyTowardsPositionParticle {
         return this.fullBright ? LightTexture.FULL_BRIGHT : super.getLightColor(partialTick);
     }
 
-    /** Deep navy, taken from the Void Block's texture. */
+    /** Deep blood red, matching the Corrupted Obsidian frame. */
     public static class OblivionProvider implements ParticleProvider<SimpleParticleType> {
-        private static final float[] COLOR = { 0.16F, 0.23F, 0.48F };
+        private static final float[] COLOR = { 0.48F, 0.16F, 0.12F };
         private final SpriteSet sprites;
 
         public OblivionProvider(SpriteSet sprites) {

@@ -109,7 +109,9 @@ public class GrymnEntity extends Monster implements GeoEntity {
                 || !level.getBlockState(pos).getCollisionShape(level, pos).isEmpty()) {
             return false;
         }
-        if (pos.getY() > MAX_SPAWN_Y || level.getBrightness(LightLayer.BLOCK, pos) > MAX_SPAWN_BLOCK_LIGHT) {
+        // Oblivion has no ceiling and its ground sits well above the Nether's, so the height cap would never let one in.
+        boolean oblivion = level.getLevel().dimension() == dev.zsskayr.merlins_inferno.portal.OblivionDimension.LEVEL;
+        if ((!oblivion && pos.getY() > MAX_SPAWN_Y) || level.getBrightness(LightLayer.BLOCK, pos) > MAX_SPAWN_BLOCK_LIGHT) {
             return false;
         }
         return level.getEntitiesOfClass(GrymnEntity.class, new AABB(pos).inflate(SOLITARY_RADIUS)).isEmpty();

@@ -34,6 +34,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.item.AntidoteItem;
 import dev.zsskayr.merlins_inferno.item.ChampionSeekerItem;
+import dev.zsskayr.merlins_inferno.item.DarkCovenItem;
 import dev.zsskayr.merlins_inferno.item.MinorSightPotionItem;
 import dev.zsskayr.merlins_inferno.item.GrimmoriumItem;
 import dev.zsskayr.merlins_inferno.item.OblivionKeyItem;
@@ -351,6 +352,12 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> COMPRESSED_NETHERRACK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_SLAB);
     public static final DeferredItem<BlockItem> COMPRESSED_NETHERRACK_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_WALL);
     public static final DeferredItem<BlockItem> FLESH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_BLOCK);
+    public static final DeferredItem<BlockItem> CHARRED_FLESH_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CHARRED_FLESH);
+    public static final DeferredItem<BlockItem> POROUS_FLESH_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.POROUS_FLESH);
+    public static final DeferredItem<BlockItem> FLESH_TENDONS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_TENDONS);
+    public static final DeferredItem<BlockItem> HAIR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAIR);
+    public static final DeferredItem<DoubleHighBlockItem> EYEBULB_ITEM = ITEMS.registerItem("eyebulb",
+            props -> new DoubleHighBlockItem(ModBlocks.EYEBULB.get(), props));
     public static final DeferredItem<BlockItem> FLESH_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_SLAB);
     public static final DeferredItem<BlockItem> ORNATED_CARPET_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ORNATED_CARPET);
     public static final DeferredItem<BlockItem> FLESH_CARPET_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_CARPET);
@@ -411,8 +418,8 @@ public final class ModItems {
     // Forged in the opened Pandora Box (Circle 2 only). Their portals are future content (Circle 2 dimensions).
     public static final DeferredItem<OblivionKeyItem> OBLIVION_KEY = ITEMS.registerItem("oblivion_key",
             props -> new OblivionKeyItem(props.durability(3).rarity(Rarity.RARE).fireResistant()));
-    public static final DeferredItem<PortalKeyItem> PURGATORY_KEY = ITEMS.registerItem("purgatory_key",
-            props -> new PortalKeyItem(props.stacksTo(1).rarity(Rarity.RARE).fireResistant(), "purgatory"));
+    public static final DeferredItem<PortalKeyItem> FOREST_KEY = ITEMS.registerItem("forest_key",
+            props -> new PortalKeyItem(props.stacksTo(1).rarity(Rarity.RARE).fireResistant(), "forest"));
 
     // --- Circle 1 legendary swords (one per route, equal power): the Hollow Relic (very rare boss/miniboss drop, one use) is the crafting core of each. ---
     public static final DeferredItem<SwordItem> HOLLOW_RELIC = ITEMS.registerItem("hollow_relic",
@@ -462,6 +469,59 @@ public final class ModItems {
                     tooltip.add(Component.translatable("item.merlins_inferno.vigils_sorrow.tooltip.strong").withStyle(ChatFormatting.YELLOW));
                 }
             });
+
+    // --- Circle 2: Ebony (Cain, the Flesh Golem and the Ebony Debris of Oblivion) and the Dark Coven. The scrap comes from
+    // Ebony Debris, rarely from Ancient Debris, and from Oblivion's bosses; the Hell Forge turns it into the bar (one to one).
+    // Tools use Withered Bone as the handle, like the other sets; see ModTiers.EBONY / ModArmorMaterials.EBONY. ---
+    public static final DeferredItem<Item> EBONY_SCRAP = ITEMS.registerSimpleItem("ebony_scrap", new Item.Properties().fireResistant());
+    public static final DeferredItem<Item> EBONY_BAR = ITEMS.registerSimpleItem("ebony_bar", new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> BLACK_STEM_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_STEM);
+    public static final DeferredItem<BlockItem> BLACK_WART_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_WART_BLOCK);
+    public static final DeferredItem<BlockItem> BLACK_FUNGUS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_FUNGUS);
+    public static final DeferredItem<BlockItem> BLACK_GRASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_GRASS);
+    public static final DeferredItem<BlockItem> BLACK_VINES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_VINES);
+    public static final DeferredItem<BlockItem> OBLIVION_SHROOMLIGHT_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.OBLIVION_SHROOMLIGHT);
+    public static final DeferredItem<BlockItem> ASH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASH_BLOCK);
+    public static final DeferredItem<BlockItem> BLACK_SPROUTS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_SPROUTS);
+    public static final DeferredItem<BlockItem> BLACK_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_ROOTS);
+    public static final DeferredItem<BlockItem> EBONY_DEBRIS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.EBONY_DEBRIS, new Item.Properties().fireResistant());
+
+    public static final DeferredItem<AxeItem> EBONY_AXE = ITEMS.registerItem("ebony_axe",
+            props -> new AxeItem(ModTiers.EBONY, props.fireResistant().attributes(AxeItem.createAttributes(ModTiers.EBONY, 5.0F, -3.0F))));
+    public static final DeferredItem<ShovelItem> EBONY_SHOVEL = ITEMS.registerItem("ebony_shovel",
+            props -> new ShovelItem(ModTiers.EBONY, props.fireResistant().attributes(ShovelItem.createAttributes(ModTiers.EBONY, 1.5F, -3.0F))));
+    public static final DeferredItem<PickaxeItem> EBONY_PICKAXE = ITEMS.registerItem("ebony_pickaxe",
+            props -> new PickaxeItem(ModTiers.EBONY, props.fireResistant().attributes(PickaxeItem.createAttributes(ModTiers.EBONY, 1.0F, -2.8F))));
+    public static final DeferredItem<HoeItem> EBONY_HOE = ITEMS.registerItem("ebony_hoe",
+            props -> new HoeItem(ModTiers.EBONY, props.fireResistant().attributes(HoeItem.createAttributes(ModTiers.EBONY, -4.0F, 0.0F))));
+
+    public static final DeferredItem<ArmorItem> EBONY_HELMET = ITEMS.registerItem("ebony_helmet",
+            props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.HELMET, props.fireResistant().durability(ArmorItem.Type.HELMET.getDurability(42))));
+    public static final DeferredItem<ArmorItem> EBONY_CHESTPLATE = ITEMS.registerItem("ebony_chestplate",
+            props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.CHESTPLATE, props.fireResistant().durability(ArmorItem.Type.CHESTPLATE.getDurability(42))));
+    public static final DeferredItem<ArmorItem> EBONY_LEGGINGS = ITEMS.registerItem("ebony_leggings",
+            props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.LEGGINGS, props.fireResistant().durability(ArmorItem.Type.LEGGINGS.getDurability(42))));
+    public static final DeferredItem<ArmorItem> EBONY_BOOTS = ITEMS.registerItem("ebony_boots",
+            props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.BOOTS, props.fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(42))));
+
+    // The Dark Coven, stages I to VII: see item.DarkCovenItem. All are legendary (crafted, not found); upgrade at a smithing table.
+    public static final DeferredItem<DarkCovenItem> DARK_COVEN_I = registerDarkCoven("dark_coven", 0);
+    public static final DeferredItem<DarkCovenItem> DARK_COVEN_II = registerDarkCoven("dark_coven_2", 1);
+    public static final DeferredItem<DarkCovenItem> DARK_COVEN_III = registerDarkCoven("dark_coven_3", 2);
+    public static final DeferredItem<DarkCovenItem> DARK_COVEN_IV = registerDarkCoven("dark_coven_4", 3);
+    public static final DeferredItem<DarkCovenItem> DARK_COVEN_V = registerDarkCoven("dark_coven_5", 4);
+    public static final DeferredItem<DarkCovenItem> DARK_COVEN_VI = registerDarkCoven("dark_coven_6", 5);
+    public static final DeferredItem<DarkCovenItem> DARK_COVEN_VII = registerDarkCoven("dark_coven_7", 6);
+
+    private static DeferredItem<DarkCovenItem> registerDarkCoven(String name, int stage) {
+        return ITEMS.registerItem(name, props -> new DarkCovenItem(stage, props.rarity(Rarity.EPIC).fireResistant()
+                .attributes(SwordItem.createAttributes(ModTiers.LEGENDARY, 3 + stage, -2.4F))));
+    }
+
+    public static final DeferredItem<DeferredSpawnEggItem> CAIN_SPAWN_EGG = ITEMS.registerItem("cain_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.CAIN, 0x1A1420, 0x7A2BC9, props));
+    public static final DeferredItem<DeferredSpawnEggItem> FLESH_GOLEM_SPAWN_EGG = ITEMS.registerItem("flesh_golem_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.FLESH_GOLEM, 0x6B2A2A, 0xC9A66B, props));
 
     // --- Edenweed: Raw edenweed (found on the bush; eating it raw is weak) -> Drying Rack -> Dried Edenweed -> boiled
     // into a Minor Sight Potion, giving the Druidic Trance. ---

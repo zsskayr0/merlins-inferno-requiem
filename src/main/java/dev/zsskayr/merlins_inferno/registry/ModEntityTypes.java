@@ -129,6 +129,24 @@ public final class ModEntityTypes {
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":ostara"));
 
+    // Circle 2 Infernal boss - see CainEntity. A player-shaped humanoid, drawn 1.2x as big (see CainRenderer).
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.zsskayr.merlins_inferno.entity.CainEntity>> CAIN = ENTITY_TYPES.register("cain",
+            () -> EntityType.Builder.of(dev.zsskayr.merlins_inferno.entity.CainEntity::new, MobCategory.MONSTER)
+                    .sized(0.72F, 2.34F)
+                    .eyeHeight(2.1F)
+                    .fireImmune()
+                    .clientTrackingRange(10)
+                    .build(Merlins_inferno.MODID + ":cain"));
+
+    // Circle 2 Infernal miniboss - see FleshGolemEntity. The model is ~3 blocks tall (47 px), arms hanging wide.
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.zsskayr.merlins_inferno.entity.FleshGolemEntity>> FLESH_GOLEM = ENTITY_TYPES.register("flesh_golem",
+            () -> EntityType.Builder.of(dev.zsskayr.merlins_inferno.entity.FleshGolemEntity::new, MobCategory.MONSTER)
+                    .sized(1.2F, 3.0F)
+                    .eyeHeight(2.5F)
+                    .fireImmune()
+                    .clientTrackingRange(10)
+                    .build(Merlins_inferno.MODID + ":flesh_golem"));
+
     private ModEntityTypes() {
     }
 

@@ -136,7 +136,7 @@ public final class ModTiers {
 
     /**
      * The Circle 1 legendary swords - Eden's Thorn (Druidic), Debt Collector (Infernal) and Vigil's Sorrow (Angelical), one per
-     * route and all equally strong. The mythic tier above them is Circle 2 content.
+     * route and all equally strong. The mythic tier above them is not craftable (see the weapon-tier rules).
      */
     public static final Tier LEGENDARY = legendary(3500, 7.0F, 30);
 
@@ -173,6 +173,43 @@ public final class ModTiers {
             }
         };
     }
+
+    /**
+     * Design (per project decision): Circle 2's Ebony, the tier above Seraphium on every stat (the Infernal route's
+     * Oblivion material). Its signature - Fire Resistance IV with the full armor set - is in
+     * {@code event.EbonyArmorHandler}. The Dark Coven uses {@link #LEGENDARY}, not this tier.
+     */
+    public static final Tier EBONY = new Tier() {
+        @Override
+        public int getUses() {
+            return 3000; // above Seraphium's 2500
+        }
+
+        @Override
+        public float getSpeed() {
+            return 11.0F; // above Seraphium's 10.0
+        }
+
+        @Override
+        public float getAttackDamageBonus() {
+            return 6.0F; // above Seraphium's 5.0
+        }
+
+        @Override
+        public TagKey<Block> getIncorrectBlocksForDrops() {
+            return BlockTags.INCORRECT_FOR_NETHERITE_TOOL;
+        }
+
+        @Override
+        public int getEnchantmentValue() {
+            return 25;
+        }
+
+        @Override
+        public Ingredient getRepairIngredient() {
+            return Ingredient.of(ModItems.EBONY_BAR.get());
+        }
+    };
 
     private ModTiers() {
     }

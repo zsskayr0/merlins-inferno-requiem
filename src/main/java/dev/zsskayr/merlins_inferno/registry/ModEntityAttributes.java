@@ -34,5 +34,7 @@ public final class ModEntityAttributes {
         event.put(ModEntityTypes.SACRED_PRIEST.get(), SacredPriestEntity.createAttributes().build());
         event.put(ModEntityTypes.ANDRAS.get(), AndrasEntity.createAttributes().build());
         event.put(ModEntityTypes.OSTARA.get(), OstaraEntity.createAttributes().build());
+        event.put(ModEntityTypes.CAIN.get(), dev.zsskayr.merlins_inferno.entity.CainEntity.createAttributes().build());
+        event.put(ModEntityTypes.FLESH_GOLEM.get(), dev.zsskayr.merlins_inferno.entity.FleshGolemEntity.createAttributes().build());
     }
 }

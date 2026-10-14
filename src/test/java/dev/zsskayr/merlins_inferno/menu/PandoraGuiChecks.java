@@ -16,30 +16,30 @@ public final class PandoraGuiChecks {
     }
     public static void main(String[] args) {
         Ingredient[] awakening = {Ingredient.BOOK, Ingredient.EVE, Ingredient.FLAME};
-        Ingredient[] oblivion = {Ingredient.OTHERWORLD, Ingredient.INFERNAL, Ingredient.CELESTIAL};
-        Ingredient[] purgatory = {Ingredient.NETHERITE, Ingredient.INFERNAL, Ingredient.OTHERWORLD};
+        Ingredient[] forest = {Ingredient.OTHERWORLD, Ingredient.INFERNAL, Ingredient.CELESTIAL};
+        Ingredient[] oblivion = {Ingredient.NETHERITE, Ingredient.INFERNAL, Ingredient.OTHERWORLD};
         for (int a=0; a<3; a++) for (int b=0; b<3; b++) for (int c=0; c<3; c++) {
             boolean unique = a != b && b != c && a != c;
             check(match(false,Ingredient.STAR,awakening[a],awakening[b],awakening[c],1,1,1)
                     == (unique ? Recipe.AWAKENING : Recipe.NONE), "Awakening is unordered and rejects duplicates");
-            check(match(true,Ingredient.VOID,oblivion[a],oblivion[b],oblivion[c],64,16,20)
-                    == (unique ? Recipe.OBLIVION : Recipe.NONE), "Oblivion accepts surplus but no duplicates");
-            check(match(true,Ingredient.BOOK,purgatory[a],purgatory[b],purgatory[c],3,16,64)
-                    == (unique && a == 0 ? Recipe.PURGATORY : Recipe.NONE), "Purgatory counts follow the slot's item");
+            check(match(true,Ingredient.VOID,forest[a],forest[b],forest[c],64,16,20)
+                    == (unique ? Recipe.FOREST : Recipe.NONE), "Forest accepts surplus but no duplicates");
+            check(match(true,Ingredient.BOOK,oblivion[a],oblivion[b],oblivion[c],3,16,64)
+                    == (unique && a == 0 ? Recipe.OBLIVION : Recipe.NONE), "Oblivion counts follow the slot's item");
         }
         check(match(true,Ingredient.STAR,Ingredient.BOOK,Ingredient.EVE,Ingredient.FLAME,1,1,1)==Recipe.NONE,"No repeated awakening");
-        check(match(false,Ingredient.VOID,Ingredient.OTHERWORLD,Ingredient.INFERNAL,Ingredient.CELESTIAL,16,16,16)==Recipe.NONE,"Oblivion locked before circle 2");
+        check(match(false,Ingredient.VOID,Ingredient.OTHERWORLD,Ingredient.INFERNAL,Ingredient.CELESTIAL,16,16,16)==Recipe.NONE,"Forest locked before circle 2");
         check(match(true,Ingredient.EMPTY,Ingredient.OTHERWORLD,Ingredient.INFERNAL,Ingredient.CELESTIAL,16,16,16)==Recipe.NONE,"Catalyst required");
         check(match(true,Ingredient.VOID,Ingredient.OTHERWORLD,Ingredient.INFERNAL,Ingredient.CELESTIAL,16,0,16)==Recipe.NONE,"Every offering required");
-        check(match(true,Ingredient.VOID,Ingredient.OTHERWORLD,Ingredient.INFERNAL,Ingredient.CELESTIAL,16,15,16)==Recipe.NONE,"Oblivion needs 16 of each essence");
-        check(match(true,Ingredient.VOID,Ingredient.OTHERWORLD,Ingredient.INFERNAL,Ingredient.CELESTIAL,16,16,16)==Recipe.OBLIVION,"Oblivion with exactly 16 each");
-        check(match(true,Ingredient.BOOK,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,3,16,16)==Recipe.PURGATORY,"Purgatory recipe");
-        check(match(true,Ingredient.BOOK,Ingredient.OTHERWORLD,Ingredient.NETHERITE,Ingredient.INFERNAL,16,64,20)==Recipe.PURGATORY,"Purgatory is unordered and takes surplus");
-        check(match(true,Ingredient.BOOK,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,2,16,16)==Recipe.NONE,"Purgatory needs 3 netherite");
-        check(match(true,Ingredient.BOOK,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,3,15,16)==Recipe.NONE,"Purgatory needs 16 infernal");
+        check(match(true,Ingredient.VOID,Ingredient.OTHERWORLD,Ingredient.INFERNAL,Ingredient.CELESTIAL,16,15,16)==Recipe.NONE,"Forest needs 16 of each essence");
+        check(match(true,Ingredient.VOID,Ingredient.OTHERWORLD,Ingredient.INFERNAL,Ingredient.CELESTIAL,16,16,16)==Recipe.FOREST,"Forest with exactly 16 each");
+        check(match(true,Ingredient.BOOK,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,3,16,16)==Recipe.OBLIVION,"Oblivion recipe");
+        check(match(true,Ingredient.BOOK,Ingredient.OTHERWORLD,Ingredient.NETHERITE,Ingredient.INFERNAL,16,64,20)==Recipe.OBLIVION,"Oblivion is unordered and takes surplus");
+        check(match(true,Ingredient.BOOK,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,2,16,16)==Recipe.NONE,"Oblivion needs 3 netherite");
+        check(match(true,Ingredient.BOOK,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,3,15,16)==Recipe.NONE,"Oblivion needs 16 infernal");
         check(match(true,Ingredient.BOOK,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHER,3,16,16)==Recipe.NONE,"Extra unrelated items reject recipe");
-        check(match(false,Ingredient.BOOK,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,3,16,16)==Recipe.NONE,"Purgatory locked before circle 2");
-        check(required(Recipe.PURGATORY,Ingredient.NETHERITE)==3 && required(Recipe.PURGATORY,Ingredient.INFERNAL)==16 && required(Recipe.AWAKENING,Ingredient.BOOK)==1,"Consumed quantities");
+        check(match(false,Ingredient.BOOK,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,3,16,16)==Recipe.NONE,"Oblivion locked before circle 2");
+        check(required(Recipe.OBLIVION,Ingredient.NETHERITE)==3 && required(Recipe.OBLIVION,Ingredient.INFERNAL)==16 && required(Recipe.AWAKENING,Ingredient.BOOK)==1,"Consumed quantities");
         for(int degree=0;degree<360;degree++) {
             double angle=Math.toRadians(degree);
             for(int i=0;i<3;i++) {

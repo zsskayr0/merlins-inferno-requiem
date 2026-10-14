@@ -120,8 +120,8 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
 
     public static ItemStack result(Recipe recipe) {
         return switch (recipe) {
+            case FOREST -> new ItemStack(ModItems.FOREST_KEY.get());
             case OBLIVION -> new ItemStack(ModItems.OBLIVION_KEY.get());
-            case PURGATORY -> new ItemStack(ModItems.PURGATORY_KEY.get());
             default -> ItemStack.EMPTY;
         };
     }

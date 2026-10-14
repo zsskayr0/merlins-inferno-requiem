@@ -24,6 +24,24 @@ public final class ModFeatures {
     public static final DeferredHolder<Feature<?>, StructurePasteFeature> STRUCTURE_PASTE = FEATURES.register("structure_paste",
             () -> new StructurePasteFeature(StructurePasteConfiguration.CODEC));
 
+    // A taller, wider huge fungus for the Oblivion Forest (stem/hat/decor and height range are data).
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.TallFungusFeature> TALL_FUNGUS =
+            FEATURES.register("tall_fungus", () -> new dev.zsskayr.merlins_inferno.worldgen.feature.TallFungusFeature(
+                    dev.zsskayr.merlins_inferno.worldgen.feature.TallFungusFeature.Config.CODEC));
+
+    // Tapering spire and half-ellipse arch for the Oblivion's own biomes (ebony spires, bone ribs, ruined gateways).
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.SpireFeature> SPIRE =
+            FEATURES.register("spire", () -> new dev.zsskayr.merlins_inferno.worldgen.feature.SpireFeature(
+                    dev.zsskayr.merlins_inferno.worldgen.feature.SpireFeature.Config.CODEC));
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.ArchFeature> ARCH =
+            FEATURES.register("arch", () -> new dev.zsskayr.merlins_inferno.worldgen.feature.ArchFeature(
+                    dev.zsskayr.merlins_inferno.worldgen.feature.ArchFeature.Config.CODEC));
+
+    // Chars the flesh and stone around lava (Carnal Heap's burnt rims).
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.LavaCharFeature> LAVA_CHAR =
+            FEATURES.register("lava_char", () -> new dev.zsskayr.merlins_inferno.worldgen.feature.LavaCharFeature(
+                    dev.zsskayr.merlins_inferno.worldgen.feature.LavaCharFeature.Config.CODEC));
+
     private ModFeatures() {
     }
 

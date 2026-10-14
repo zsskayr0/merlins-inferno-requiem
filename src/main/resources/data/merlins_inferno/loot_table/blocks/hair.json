@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "merlins_inferno:blocks/hair",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "merlins_inferno:hair"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

@@ -91,6 +91,27 @@ public final class ModArmorMaterials {
             0.1F  // knockback resistance, matches Netherite/Demonblood
     ));
 
+    /**
+     * Design (per project decision): Ebony is Circle 2's armor, above Seraphium - 26 total defense (4/8/10/4) vs
+     * Seraphium's 24, toughness 5 vs 4. Its set bonus (Fire Resistance IV) is in {@code event.EbonyArmorHandler}.
+     * Worn-armor textures live at {@code textures/models/armor/ebony_layer_1.png} (and {@code _layer_2.png}).
+     */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> EBONY = ARMOR_MATERIALS.register("ebony", () -> new ArmorMaterial(
+            Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                map.put(ArmorItem.Type.BOOTS, 4);
+                map.put(ArmorItem.Type.LEGGINGS, 8);
+                map.put(ArmorItem.Type.CHESTPLATE, 10);
+                map.put(ArmorItem.Type.HELMET, 4);
+                map.put(ArmorItem.Type.BODY, 8);
+            }),
+            25,
+            SoundEvents.ARMOR_EQUIP_NETHERITE,
+            () -> Ingredient.of(ModItems.EBONY_BAR.get()),
+            List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "ebony"))),
+            5.0F, // toughness, above Seraphium's 4
+            0.15F // knockback resistance, above Netherite's 0.1
+    ));
+
     private ModArmorMaterials() {
     }
 

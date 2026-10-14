@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "merlins_inferno:blocks/oblivion_shroomlight",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "merlins_inferno:oblivion_shroomlight"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

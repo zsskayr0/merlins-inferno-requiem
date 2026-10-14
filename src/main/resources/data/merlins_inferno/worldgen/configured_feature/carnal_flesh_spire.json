@@ -1,0 +1,15 @@
+{
+  "type": "merlins_inferno:spire",
+  "config": {
+    "state": {
+      "Name": "merlins_inferno:flesh_block"
+    },
+    "accent_state": {
+      "Name": "merlins_inferno:porous_flesh"
+    },
+    "min_height": 10,
+    "max_height": 24,
+    "base_radius": 3,
+    "accent_chance": 0.3
+  }
+}

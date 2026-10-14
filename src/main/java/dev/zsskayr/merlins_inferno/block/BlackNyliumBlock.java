@@ -31,10 +31,10 @@ public class BlackNyliumBlock extends NyliumBlock {
             float roll = random.nextFloat();
             if (roll < 0.10F) {
                 level.setBlock(target, ModBlocks.LUST_FLOWER.get().defaultBlockState(), Block.UPDATE_ALL);
-            } else if (roll < 0.35F) {
-                level.setBlock(target, Blocks.CRIMSON_ROOTS.defaultBlockState(), Block.UPDATE_ALL);
+            } else if (roll < 0.60F) {
+                level.setBlock(target, ModBlocks.BLACK_ROOTS.get().defaultBlockState(), Block.UPDATE_ALL);
             } else if (level.getBlockState(target.above()).isAir()) {
-                Block tall = roll < 0.50F ? ModBlocks.TALL_CRIMSON_ROOTS.get() : ModBlocks.TALL_BLACK_GRASS.get();
+                Block tall = roll < 0.96F ? ModBlocks.TALL_CRIMSON_ROOTS.get() : ModBlocks.TALL_BLACK_GRASS.get();
                 DoublePlantBlock.placeAt(level, tall.defaultBlockState(), target, Block.UPDATE_ALL);
             }
         }
