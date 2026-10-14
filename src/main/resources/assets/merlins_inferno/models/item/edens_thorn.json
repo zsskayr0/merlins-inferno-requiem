@@ -1,0 +1,18 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "merlins_inferno:item/edens_thorn_hand"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "merlins_inferno:item/edens_thorn_icon"
+    },
+    "ground": {
+      "parent": "merlins_inferno:item/edens_thorn_icon"
+    },
+    "fixed": {
+      "parent": "merlins_inferno:item/edens_thorn_icon"
+    }
+  }
+}

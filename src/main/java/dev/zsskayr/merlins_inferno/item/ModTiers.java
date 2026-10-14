@@ -128,6 +128,52 @@ public final class ModTiers {
         }
     };
 
+    /**
+     * Design (per project decision): the Hollow Relic hits like a Diamond sword but has a single use - it only
+     * exists to be consumed in the legendary swords' recipes. No repair, no mining speed worth speaking of.
+     */
+    public static final Tier HOLLOW_RELIC = legendary(1, 3.0F, 10);
+
+    /**
+     * The Circle 1 legendary swords - Eden's Thorn (Druidic), Debt Collector (Infernal) and Vigil's Sorrow (Angelical), one per
+     * route and all equally strong. The mythic tier above them is Circle 2 content.
+     */
+    public static final Tier LEGENDARY = legendary(3500, 7.0F, 30);
+
+    private static Tier legendary(int uses, float attackBonus, int enchantability) {
+        return new Tier() {
+            @Override
+            public int getUses() {
+                return uses;
+            }
+
+            @Override
+            public float getSpeed() {
+                return 9.0F;
+            }
+
+            @Override
+            public float getAttackDamageBonus() {
+                return attackBonus;
+            }
+
+            @Override
+            public TagKey<Block> getIncorrectBlocksForDrops() {
+                return BlockTags.INCORRECT_FOR_NETHERITE_TOOL;
+            }
+
+            @Override
+            public int getEnchantmentValue() {
+                return enchantability;
+            }
+
+            @Override
+            public Ingredient getRepairIngredient() {
+                return Ingredient.EMPTY;
+            }
+        };
+    }
+
     private ModTiers() {
     }
 }

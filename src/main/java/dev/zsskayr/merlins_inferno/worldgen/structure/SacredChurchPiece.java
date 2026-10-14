@@ -22,8 +22,6 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
-import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -43,6 +41,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.block.BenchBlock;
 import dev.zsskayr.merlins_inferno.block.SacredAltarBlock;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarPartBlockEntity;
@@ -86,7 +85,7 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     private static final double PRIEST_FEET_OFFSET = 0.5; // the bottom slab he stands on
     /** Yaw facing west (the nave): 0 is south, 90 west, 180 north, 270 east. */
     private static final float FACE_WEST = 90.0F;
-    /** The pews: spruce stairs facing west (their backs to the nave, so a worshipper looks east at the altar) at floor level. */
+    /** The pews: benches facing east, towards the altar, at floor level (baked into the template). */
     private static final int PEW_MIN_X = 14, PEW_MAX_X = 36;
     /** The middle of the nave: where the congregation roams around by day (see {@link ChurchCongregation}). */
     private static final int NAVE_CENTER_X = 25, NAVE_CENTER_Z = 22;
@@ -167,8 +166,8 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     private List<BlockPos> pewSeats() {
         if (this.pewSeats == null) {
             int floor = this.templatePosition.getY() + NAVE_Y;
-            this.pewSeats = this.template.filterBlocks(this.templatePosition, makeSettings(), Blocks.SPRUCE_STAIRS).stream()
-                    .filter(info -> info.state().getValue(StairBlock.FACING) == Direction.WEST && info.state().getValue(StairBlock.HALF) == Half.BOTTOM
+            this.pewSeats = this.template.filterBlocks(this.templatePosition, makeSettings(), ModBlocks.BENCH.get()).stream()
+                    .filter(info -> info.state().getValue(BenchBlock.FACING) == Direction.EAST
                             && info.pos().getY() == floor
                             && info.pos().getX() >= this.templatePosition.getX() + PEW_MIN_X && info.pos().getX() <= this.templatePosition.getX() + PEW_MAX_X)
                     .map(info -> info.pos().immutable())

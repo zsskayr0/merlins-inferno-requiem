@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "merlins_inferno:hollow_relic"
+    },
+    "T": {
+      "item": "merlins_inferno:seraphium_bar"
+    },
+    "L": {
+      "item": "merlins_inferno:celestial_essence"
+    },
+    "R": {
+      "item": "merlins_inferno:lyrium_refined"
+    },
+    "B": {
+      "item": "minecraft:wither_rose"
+    }
+  },
+  "pattern": [
+    " T ",
+    "LFR",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:vigils_sorrow"
+  }
+}

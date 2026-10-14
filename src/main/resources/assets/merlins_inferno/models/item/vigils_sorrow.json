@@ -1,0 +1,18 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "merlins_inferno:item/vigils_sorrow_hand"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "merlins_inferno:item/vigils_sorrow_icon"
+    },
+    "ground": {
+      "parent": "merlins_inferno:item/vigils_sorrow_icon"
+    },
+    "fixed": {
+      "parent": "merlins_inferno:item/vigils_sorrow_icon"
+    }
+  }
+}

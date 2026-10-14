@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "merlins_inferno:hollow_relic"
+    },
+    "T": {
+      "item": "merlins_inferno:rowanwood_bar"
+    },
+    "L": {
+      "item": "merlins_inferno:fae_essence"
+    },
+    "R": {
+      "item": "merlins_inferno:otherworld_essence"
+    },
+    "B": {
+      "item": "minecraft:rose_bush"
+    }
+  },
+  "pattern": [
+    " T ",
+    "LFR",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:edens_thorn"
+  }
+}

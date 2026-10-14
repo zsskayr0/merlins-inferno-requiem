@@ -1,0 +1,18 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "merlins_inferno:item/debt_collector_hand"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "merlins_inferno:item/debt_collector_icon"
+    },
+    "ground": {
+      "parent": "merlins_inferno:item/debt_collector_icon"
+    },
+    "fixed": {
+      "parent": "merlins_inferno:item/debt_collector_icon"
+    }
+  }
+}

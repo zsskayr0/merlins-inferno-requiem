@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "merlins_inferno:hollow_relic"
+    },
+    "T": {
+      "item": "merlins_inferno:demonblood_bar"
+    },
+    "L": {
+      "item": "merlins_inferno:hell_seal"
+    },
+    "R": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "B": {
+      "item": "merlins_inferno:infernal_sinew"
+    }
+  },
+  "pattern": [
+    " T ",
+    "LFR",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:debt_collector"
+  }
+}

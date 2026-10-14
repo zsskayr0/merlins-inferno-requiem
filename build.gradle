@@ -58,6 +58,8 @@ neoForge {
         // By default, the server will crash when no gametests are provided.
         // The gametest system is also enabled by default for other run configs under the /test command.
         gameTestServer {
+            // Keep headless tests separate from client-only mods in run/mods.
+            gameDirectory = project.file("build/run-gametest")
             type = "gameTestServer"
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }

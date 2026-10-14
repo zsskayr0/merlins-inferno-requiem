@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "merlins_inferno:book_of_contracts"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "merlins_inferno:hell_seal"
+  }
+}

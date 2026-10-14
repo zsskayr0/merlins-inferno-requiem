@@ -18,6 +18,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.SignItem;
@@ -68,7 +69,7 @@ public final class ModItems {
     // The three essences (design decision):
     //  - Mundane Essence: early game, obtained from the Druids (DruidEntity#updateTrades - it's
     //    what they hand over, not a currency the player pays them with).
-    //  - Fae Essence: dropped by the Dullahan (not implemented yet); see below.
+    //  - Fae Essence: dropped by the Dullahan.
     //  - Mundane and Fae both craft the Rowanwood Scrap (data/.../recipe/rowanwood_scrap_from_*.json).
     //  - Otherworld Essence: something far more mystical, reserved for mid game and beyond - kept
     //    registered but deliberately has no source or recipe yet.
@@ -233,8 +234,7 @@ public final class ModItems {
     public static final DeferredItem<Item> LYRIUM_PURE = ITEMS.registerSimpleItem("lyrium_pure", new Item.Properties());
     public static final DeferredItem<Item> LYRIUM_TRUE = ITEMS.registerSimpleItem("lyrium_true", new Item.Properties());
 
-    // Obtainment method is a deliberate TODO per the design doc - registered now so the Seraphium
-    // Scrap recipe isn't blocked on it.
+    // Dropped by Elias (see loot_table/entities/elias.json); the Seraphium Scrap recipe needs it.
     public static final DeferredItem<Item> CELESTIAL_ESSENCE = ITEMS.registerSimpleItem("celestial_essence", new Item.Properties());
 
     // Mirrors Rowanwood's own 2-stage chain: refined Lyrium + Diamond + Celestial Essence crafts
@@ -414,6 +414,55 @@ public final class ModItems {
     public static final DeferredItem<PortalKeyItem> PURGATORY_KEY = ITEMS.registerItem("purgatory_key",
             props -> new PortalKeyItem(props.stacksTo(1).rarity(Rarity.RARE).fireResistant(), "purgatory"));
 
+    // --- Circle 1 legendary swords (one per route, equal power): the Hollow Relic (very rare boss/miniboss drop, one use) is the crafting core of each. ---
+    public static final DeferredItem<SwordItem> HOLLOW_RELIC = ITEMS.registerItem("hollow_relic",
+            props -> new SwordItem(ModTiers.HOLLOW_RELIC, props.rarity(Rarity.UNCOMMON).attributes(SwordItem.createAttributes(ModTiers.HOLLOW_RELIC, 3, -2.4F))));
+    /** Dropped by Grymn and Andras, or made from a Book of Contracts (nine per book). */
+    public static final DeferredItem<Item> HELL_SEAL = ITEMS.registerSimpleItem("hell_seal", new Item.Properties().rarity(Rarity.UNCOMMON).fireResistant());
+    /** An axe, not a sword: heavy and slow, burns what it hits, and bullies the weak - see DebtCollectorHandler. */
+    public static final DeferredItem<AxeItem> DEBT_COLLECTOR = ITEMS.registerItem("debt_collector",
+            props -> new AxeItem(ModTiers.LEGENDARY, props.rarity(Rarity.EPIC).fireResistant().attributes(AxeItem.createAttributes(ModTiers.LEGENDARY, 7.0F, -3.0F))) {
+                @Override
+                public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+                    target.igniteForSeconds(6);
+                    return super.hurtEnemy(stack, target, attacker);
+                }
+
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    tooltip.add(Component.translatable("item.merlins_inferno.debt_collector.tooltip.fire").withStyle(ChatFormatting.GOLD));
+                    tooltip.add(Component.translatable("item.merlins_inferno.debt_collector.tooltip.evil").withStyle(ChatFormatting.DARK_RED));
+                    tooltip.add(Component.translatable("item.merlins_inferno.debt_collector.tooltip.weak").withStyle(ChatFormatting.DARK_RED));
+                }
+            });
+    /** A dagger, not a sword: quick, light hits that poison what they cut. */
+    public static final DeferredItem<SwordItem> EDENS_THORN = ITEMS.registerItem("edens_thorn",
+            props -> new SwordItem(ModTiers.LEGENDARY, props.rarity(Rarity.EPIC).attributes(SwordItem.createAttributes(ModTiers.LEGENDARY, -2, -1.0F))) {
+                @Override
+                public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+                    target.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 1), attacker);
+                    return super.hurtEnemy(stack, target, attacker);
+                }
+
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    tooltip.add(Component.translatable("item.merlins_inferno.edens_thorn.tooltip").withStyle(ChatFormatting.DARK_GREEN));
+                }
+            });
+    /** Sanctified II on every hit, Holy I built in, and 1.5x damage to anything stronger than the wielder - see VigilsSorrowHandler. */
+    public static final DeferredItem<SwordItem> VIGILS_SORROW = ITEMS.registerItem("vigils_sorrow",
+            props -> new SwordItem(ModTiers.LEGENDARY, props.rarity(Rarity.EPIC).attributes(SwordItem.createAttributes(ModTiers.LEGENDARY, 3, -2.4F))) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    tooltip.add(Component.translatable("item.merlins_inferno.vigils_sorrow.tooltip.sanctified").withStyle(ChatFormatting.GOLD));
+                    tooltip.add(Component.translatable("item.merlins_inferno.vigils_sorrow.tooltip.holy").withStyle(ChatFormatting.YELLOW));
+                    tooltip.add(Component.translatable("item.merlins_inferno.vigils_sorrow.tooltip.strong").withStyle(ChatFormatting.YELLOW));
+                }
+            });
+
     // --- Edenweed: Raw edenweed (found on the bush; eating it raw is weak) -> Drying Rack -> Dried Edenweed -> boiled
     // into a Minor Sight Potion, giving the Druidic Trance. ---
     public static final DeferredItem<Item> RAW_EDENWEED = ITEMS.registerSimpleItem("raw_edenweed",
@@ -424,6 +473,8 @@ public final class ModItems {
     public static final DeferredItem<Item> DRIED_EDENWEED = ITEMS.registerSimpleItem("dried_edenweed", new Item.Properties());
     public static final DeferredItem<MinorSightPotionItem> MINOR_SIGHT_POTION = ITEMS.registerItem("minor_sight_potion",
             props -> new MinorSightPotionItem(props.stacksTo(16)));
+    public static final DeferredItem<BlockItem> BENCH = ITEMS.registerSimpleBlockItem(ModBlocks.BENCH);
+
     public static final DeferredItem<BlockItem> DRYING_RACK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DRYING_RACK);
 
     /** Points at the nearest boss/miniboss instead of world spawn - see ChampionSeekerItem and ModTags.EntityTypes.BOSS_COMPASS_TARGETS. */

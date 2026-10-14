@@ -34,6 +34,12 @@ import dev.zsskayr.merlins_inferno.entity.ImpEntity;
 public final class ModEntityTypes {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, Merlins_inferno.MODID);
 
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.zsskayr.merlins_inferno.entity.BenchSeatEntity>> BENCH_SEAT =
+            ENTITY_TYPES.register("bench_seat", () -> EntityType.Builder
+                    .of(dev.zsskayr.merlins_inferno.entity.BenchSeatEntity::new, MobCategory.MISC)
+                    .sized(0.1F, 0.1F).clientTrackingRange(8).updateInterval(20)
+                    .build(Merlins_inferno.MODID + ":bench_seat"));
+
     // Same hitbox as a Player/Zombie (both 0.6 x 1.95) - it's built on the same humanoid shape
     // for now (see ModEntityRenderers), no custom model yet.
     public static final DeferredHolder<EntityType<?>, EntityType<DruidEntity>> DRUID = ENTITY_TYPES.register("druid",

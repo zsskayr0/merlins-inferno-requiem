@@ -93,6 +93,11 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.ANDRAS_SPAWN_EGG.get());
                         output.accept(ModItems.OSTARA_SPAWN_EGG.get());
                         output.accept(ModItems.BOOK_OF_CONTRACTS.get());
+                        output.accept(ModItems.HOLLOW_RELIC.get());
+                        output.accept(ModItems.HELL_SEAL.get());
+                        output.accept(ModItems.EDENS_THORN.get());
+                        output.accept(ModItems.DEBT_COLLECTOR.get());
+                        output.accept(ModItems.VIGILS_SORROW.get());
                         output.accept(ModItems.EVES_SECRET.get());
                         output.accept(ModItems.FLAME_OF_GOD.get());
                         output.accept(ModItems.PANDORA_BOX.get());
@@ -102,6 +107,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.RAW_EDENWEED.get());
                         output.accept(ModItems.DRIED_EDENWEED.get());
                         output.accept(ModItems.MINOR_SIGHT_POTION.get());
+                        output.accept(ModItems.BENCH.get());
                         output.accept(ModItems.DRYING_RACK_ITEM.get());
                         output.accept(ModItems.SACRED_ALTAR_ITEM.get());
                         output.accept(ModItems.CORRUPTED_OBSIDIAN_ITEM.get());

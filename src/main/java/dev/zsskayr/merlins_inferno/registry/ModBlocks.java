@@ -336,6 +336,10 @@ public final class ModBlocks {
                     .sound(SoundType.SWEET_BERRY_BUSH)
                     .pushReaction(PushReaction.DESTROY));
 
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.BenchBlock> BENCH = BLOCKS.registerBlock("bench",
+            dev.zsskayr.merlins_inferno.block.BenchBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD).strength(2.0F, 3.0F).sound(SoundType.WOOD).noOcclusion());
+
     public static final DeferredBlock<DryingRackBlock> DRYING_RACK = BLOCKS.registerBlock("drying_rack",
             DryingRackBlock::new, BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)

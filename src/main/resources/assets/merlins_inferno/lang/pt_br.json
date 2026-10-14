@@ -343,5 +343,21 @@
   "patchouli.merlins_inferno.entry.edenweed.name": "Edenweed",
   "patchouli.merlins_inferno.entry.edenweed.page1": "$(bold)Edenweed$()$(br2)Um arbusto de folhas serrilhadas que cresce só nas raízes das Rowanwood do Bosque, com um leve brilho. Clique com o botão direito quando estiver crescido para colher os brotos - ele rebrota.",
   "patchouli.merlins_inferno.entry.edenweed.page2": "Edenweed crua faz pouco. Pendure-a em um $(bold)Varal de Secagem$() e, depois de alguns minutos, vira $(bold)Edenweed Seca$().$(br2)Ferva-a em uma $(bold)Poção Menor da Visão$() com uma garrafa de água.",
-  "patchouli.merlins_inferno.entry.edenweed.page3": "$(bold)Transe Druídico$()$(br2)Você anda e minera devagar e bate fraco - mas sofre 80% menos dano. A fome corrói; tudo que você come sacia o dobro e cura.$(br2)E você enxerga: minérios, baús e os espíritos do Bosque aparecem através das paredes."
+  "patchouli.merlins_inferno.entry.edenweed.page3": "$(bold)Transe Druídico$()$(br2)Você anda e minera devagar e bate fraco - mas sofre 80% menos dano. A fome corrói; tudo que você come sacia o dobro e cura.$(br2)E você enxerga: minérios, baús e os espíritos do Bosque aparecem através das paredes.",
+  "block.merlins_inferno.bench": "Banco de Madeira",
+  "item.merlins_inferno.hollow_relic": "Relíquia Oca",
+  "item.merlins_inferno.hell_seal": "Selo Infernal",
+  "item.merlins_inferno.debt_collector": "Cobrador de Dívidas",
+  "item.merlins_inferno.edens_thorn": "Espinho do Éden",
+  "item.merlins_inferno.vigils_sorrow": "Lamento da Vigília",
+  "patchouli.merlins_inferno.entry.legendary_swords.name": "As Espadas Lendárias",
+  "patchouli.merlins_inferno.entry.legendary_swords.page1": "$(bold)A Relíquia Oca$()$(br2)Qualquer boss ou miniboss pode, muito raramente, deixar uma $(bold)Relíquia Oca$(): uma espada que bate como o diamante, mas quebra no primeiro golpe. Não é uma arma - é o coração das três armas lendárias, uma por estrada.$(br2)$(bold)Selo Infernal$(): dropado por Grymns e Andras, ou feito nove por vez a partir de um Livro dos Contratos.",
+  "patchouli.merlins_inferno.entry.legendary_swords.page2": "Coloque a Relíquia Oca no centro da grade de criação, com quatro materiais ao redor:$(br2)$(bold)Espinho do Éden$() (adaga que envenena): Barra de Rowanwood, Essência Fae, Essência do Outro Mundo, Roseira.$(br)$(bold)Cobrador de Dívidas$() (machado que queima e esmaga os fracos): Barra de Demonblood, Selo Infernal, Barra de Netherite, Tendão Infernal.$(br)$(bold)Lamento da Vigília$(): Barra de Seraphium, Essência Celestial, Lyrium Refinado, Rosa Wither.",
+  "item.merlins_inferno.edens_thorn.tooltip": "Seus cortes envenenam.",
+  "item.merlins_inferno.debt_collector.tooltip.fire": "Ateia fogo no que atinge.",
+  "item.merlins_inferno.debt_collector.tooltip.evil": "Evil I: dano extra em mobs passivos e neutros.",
+  "item.merlins_inferno.debt_collector.tooltip.weak": "+50% de dano em quem tem menos vida que você.",
+  "item.merlins_inferno.vigils_sorrow.tooltip.sanctified": "Cada golpe aplica Sanctified II.",
+  "item.merlins_inferno.vigils_sorrow.tooltip.holy": "Holy I: dano extra em demônios, mortos-vivos e hostis.",
+  "item.merlins_inferno.vigils_sorrow.tooltip.strong": "+50% de dano em quem tem mais vida que você."
 }

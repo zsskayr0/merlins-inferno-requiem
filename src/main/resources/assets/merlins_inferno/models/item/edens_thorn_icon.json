@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "merlins_inferno:item/edens_thorn_icon"
+  }
+}

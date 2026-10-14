@@ -15,10 +15,12 @@ import org.slf4j.Logger;
 
 import dev.zsskayr.merlins_inferno.datagen.ModDataGenerators;
 import dev.zsskayr.merlins_inferno.event.BossRewardChestHandler;
+import dev.zsskayr.merlins_inferno.event.DebtCollectorHandler;
 import dev.zsskayr.merlins_inferno.event.DemonbloodCombatHandler;
 import dev.zsskayr.merlins_inferno.event.RowanwoodCombatHandler;
 import dev.zsskayr.merlins_inferno.event.DruidsTouchHandler;
 import dev.zsskayr.merlins_inferno.event.HolyCombatHandler;
+import dev.zsskayr.merlins_inferno.event.VigilsSorrowHandler;
 import dev.zsskayr.merlins_inferno.event.LyriumVillagerTrades;
 import dev.zsskayr.merlins_inferno.event.MarkOfDebtHandler;
 import dev.zsskayr.merlins_inferno.event.PandoraHandler;
@@ -78,6 +80,8 @@ public class Merlins_inferno {
         // Register ourselves for server and other game events we are interested in.
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(new DemonbloodCombatHandler());
+        NeoForge.EVENT_BUS.register(new DebtCollectorHandler());
+        NeoForge.EVENT_BUS.register(new VigilsSorrowHandler());
         NeoForge.EVENT_BUS.register(new RowanwoodCombatHandler());
         NeoForge.EVENT_BUS.register(new DruidsTouchHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.AntivenomHandler());
