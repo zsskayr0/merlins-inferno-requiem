@@ -39,7 +39,7 @@ import dev.zsskayr.merlins_inferno.registry.ModRecipeTypes;
  * The Hell Forge's block entity - a furnace/blast-furnace hybrid: it accepts either recipe type
  * for its input (checking {@link ModRecipeTypes#HELL_FORGE_SMELTING} first, then
  * {@link RecipeType#SMELTING}, then {@link RecipeType#BLASTING}) and cooks 30% faster than any of
- * them ({@link #COOK_TIME_MULTIPLIER}). Fuel is restricted to lava buckets and blaze powder
+ * them ({@link #COOK_TIME_MULTIPLIER}). Fuel is restricted to lava buckets, Haunted logs and blaze powder
  * ({@link #getBurnDuration}).
  * <p>
  * {@code HELL_FORGE_SMELTING} exists specifically for recipes that must NOT also work in a plain
@@ -83,6 +83,8 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
 
     /** Tank size, in ticks of burn time - exactly one lava bucket's worth. */
     public static final int FUEL_CAPACITY = 20000;
+    /** Haunted logs: not fuel for a vanilla furnace, but a strong one here. */
+    public static final int HAUNTED_LOG_BURN = 18000;
 
     private NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
     int storedFuel;
@@ -123,10 +125,12 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         super(ModBlockEntityTypes.HELL_FORGE.get(), pos, state);
     }
 
-    /** Only lava buckets and blaze powder count as fuel here - not vanilla's full fuel tag. */
+    /** Only lava buckets, Haunted logs and blaze powder count as fuel here - not vanilla's full fuel tag. */
     private static int getBurnDuration(ItemStack fuel) {
         if (fuel.is(Items.LAVA_BUCKET)) {
             return 20000; // same as a vanilla furnace - exactly fills an empty tank
+        } else if (fuel.is(dev.zsskayr.merlins_inferno.registry.ModItems.HAUNTED_LOG_ITEM.get())) {
+            return HAUNTED_LOG_BURN; // between a coal block (16000) and a lava bucket (20000)
         } else if (fuel.is(Items.BLAZE_POWDER)) {
             return 1200; // half a blaze rod's worth - blaze powder isn't a vanilla furnace fuel at all
         } else {

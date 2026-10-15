@@ -167,7 +167,8 @@ public class HellForgeMenu extends AbstractContainerMenu {
     }
 
     private static boolean isFuel(ItemStack stack) {
-        return stack.is(Items.LAVA_BUCKET) || stack.is(Items.BLAZE_POWDER);
+        return stack.is(Items.LAVA_BUCKET) || stack.is(Items.BLAZE_POWDER)
+                || stack.is(dev.zsskayr.merlins_inferno.registry.ModItems.HAUNTED_LOG_ITEM.get());
     }
 
     private static class FuelSlot extends Slot {
