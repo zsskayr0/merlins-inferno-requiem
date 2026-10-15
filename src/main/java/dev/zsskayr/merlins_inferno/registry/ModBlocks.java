@@ -42,6 +42,7 @@ import dev.zsskayr.merlins_inferno.block.PandoraBoxBlock;
 import dev.zsskayr.merlins_inferno.block.EdenweedBushBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgeBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumBlock;
+import dev.zsskayr.merlins_inferno.block.SoulShroomlightBlock;
 import dev.zsskayr.merlins_inferno.block.NetherDoublePlantBlock;
 import dev.zsskayr.merlins_inferno.block.NetherFlowerBlock;
 import dev.zsskayr.merlins_inferno.block.SacredAltarBlock;
@@ -472,7 +473,7 @@ public final class ModBlocks {
                     .mapColor(MapColor.COLOR_BLACK).noCollission().instabreak()
                     .sound(SoundType.WEEPING_VINES).pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<Block> OBLIVION_SHROOMLIGHT = BLOCKS.registerBlock("oblivion_shroomlight",
-            Block::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE).strength(1.0F)
+            SoulShroomlightBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE).strength(1.0F)
                     .sound(SoundType.SHROOMLIGHT).lightLevel(state -> 14));
 
     // The ground of the Cinder Dunes: a soft, dry grey ash that does not fall (unlike sand).
