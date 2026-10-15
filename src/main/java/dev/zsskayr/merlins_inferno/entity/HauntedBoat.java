@@ -1,5 +1,6 @@
 package dev.zsskayr.merlins_inferno.entity;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -14,6 +15,23 @@ import dev.zsskayr.merlins_inferno.registry.ModItems;
 public class HauntedBoat extends net.minecraft.world.entity.vehicle.Boat {
     public HauntedBoat(EntityType<? extends net.minecraft.world.entity.vehicle.Boat> type, Level level) {
         super(type, level);
+    }
+
+    /**
+     * Lava is not as buoyant as water in vanilla's boat physics terms: the hull settles with the rider's feet right at
+     * the surface, so they would stand in it. A small constant lift while the hull is in lava shifts that equilibrium
+     * up by about a quarter of a block, which keeps the deck (and the rider) clear of the lava.
+     */
+    private static final double LAVA_LIFT = 0.025D;
+
+    @Override
+    public void tick() {
+        super.tick();
+        BlockPos probe = BlockPos.containing(getX(), getBoundingBox().minY + 0.1D, getZ());
+        if (level().getFluidState(probe).is(FluidTags.LAVA)) {
+            net.minecraft.world.phys.Vec3 motion = getDeltaMovement();
+            setDeltaMovement(motion.x, motion.y + LAVA_LIFT, motion.z);
+        }
     }
 
     @Override
