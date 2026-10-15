@@ -328,6 +328,24 @@ public final class ModItems {
     public static final DeferredItem<HangingSignItem> ASHWOOD_HANGING_SIGN_ITEM = ITEMS.registerItem("ashwood_hanging_sign",
             props -> new HangingSignItem(ModBlocks.ASHWOOD_HANGING_SIGN.get(), ModBlocks.ASHWOOD_WALL_HANGING_SIGN.get(), props.stacksTo(16)));
 
+    // Haunted wood set (see ModBlocks); HAUNTED_LOG_ITEM / HAUNTED_LEAVES_ITEM are defined with the Carnal Heap blocks.
+    public static final DeferredItem<BlockItem> STRIPPED_HAUNTED_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.STRIPPED_HAUNTED_LOG);
+    public static final DeferredItem<BlockItem> HAUNTED_WOOD_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_WOOD);
+    public static final DeferredItem<BlockItem> STRIPPED_HAUNTED_WOOD_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.STRIPPED_HAUNTED_WOOD);
+    public static final DeferredItem<BlockItem> HAUNTED_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_PLANKS);
+    public static final DeferredItem<BlockItem> HAUNTED_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_STAIRS);
+    public static final DeferredItem<BlockItem> HAUNTED_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_SLAB);
+    public static final DeferredItem<BlockItem> HAUNTED_FENCE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_FENCE);
+    public static final DeferredItem<BlockItem> HAUNTED_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_FENCE_GATE);
+    public static final DeferredItem<BlockItem> HAUNTED_DOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_DOOR);
+    public static final DeferredItem<BlockItem> HAUNTED_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_TRAPDOOR);
+    public static final DeferredItem<BlockItem> HAUNTED_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_PRESSURE_PLATE);
+    public static final DeferredItem<BlockItem> HAUNTED_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_BUTTON);
+    public static final DeferredItem<SignItem> HAUNTED_SIGN_ITEM = ITEMS.registerItem("haunted_sign",
+            props -> new SignItem(props.stacksTo(16), ModBlocks.HAUNTED_SIGN.get(), ModBlocks.HAUNTED_WALL_SIGN.get()));
+    public static final DeferredItem<HangingSignItem> HAUNTED_HANGING_SIGN_ITEM = ITEMS.registerItem("haunted_hanging_sign",
+            props -> new HangingSignItem(ModBlocks.HAUNTED_HANGING_SIGN.get(), ModBlocks.HAUNTED_WALL_HANGING_SIGN.get(), props.stacksTo(16)));
+
     public static final DeferredItem<BlockItem> ROWANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LOG);
     public static final DeferredItem<BlockItem> ROWANWOOD_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LEAVES);
 

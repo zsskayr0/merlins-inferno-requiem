@@ -411,5 +411,21 @@
   "biome.merlins_inferno.carnal_heap": "Pilha Carnal",
   "block.merlins_inferno.charred_flesh": "Carne Carbonizada",
   "block.merlins_inferno.haunted_log": "Tronco Assombrado",
-  "block.merlins_inferno.haunted_leaves": "Folhas Assombradas"
+  "block.merlins_inferno.haunted_leaves": "Folhas Assombradas",
+  "block.merlins_inferno.stripped_haunted_log": "Tronco Assombrado Sem Casca",
+  "block.merlins_inferno.haunted_wood": "Madeira Assombrada",
+  "block.merlins_inferno.stripped_haunted_wood": "Madeira Assombrada Sem Casca",
+  "block.merlins_inferno.haunted_planks": "Tábuas Assombradas",
+  "block.merlins_inferno.haunted_stairs": "Escadas Assombradas",
+  "block.merlins_inferno.haunted_slab": "Laje Assombrada",
+  "block.merlins_inferno.haunted_fence": "Cerca Assombrada",
+  "block.merlins_inferno.haunted_fence_gate": "Portão Assombrado",
+  "block.merlins_inferno.haunted_door": "Porta Assombrada",
+  "block.merlins_inferno.haunted_trapdoor": "Alçapão Assombrado",
+  "block.merlins_inferno.haunted_pressure_plate": "Placa de Pressão Assombrada",
+  "block.merlins_inferno.haunted_button": "Botão Assombrado",
+  "block.merlins_inferno.haunted_sign": "Placa Assombrada",
+  "block.merlins_inferno.haunted_wall_sign": "Placa de Parede Assombrada",
+  "block.merlins_inferno.haunted_hanging_sign": "Placa Suspensa Assombrada",
+  "block.merlins_inferno.haunted_wall_hanging_sign": "Placa Suspensa de Parede Assombrada"
 }

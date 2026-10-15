@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "sign",
+  "key": {
+    "#": {
+      "item": "merlins_inferno:haunted_planks"
+    },
+    "X": { "tag": "c:rods/wooden" }
+  },
+  "pattern": [
+    "###",
+    "###",
+    " X "
+  ],
+  "result": {
+    "count": 3,
+    "id": "merlins_inferno:haunted_sign"
+  }
+}

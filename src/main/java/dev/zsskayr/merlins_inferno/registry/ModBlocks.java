@@ -164,6 +164,48 @@ public final class ModBlocks {
     public static final DeferredBlock<WallHangingSignBlock> ASHWOOD_WALL_HANGING_SIGN = BLOCKS.registerBlock("ashwood_wall_hanging_sign",
             props -> new WallHangingSignBlock(ModWoodTypes.ASHWOOD, props), wallSignProperties(ASHWOOD_HANGING_SIGN));
 
+    // --- Haunted wood: the Haunted Forest's full building set (log and leaves are defined further up). ---
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_HAUNTED_LOG = BLOCKS.registerBlock("stripped_haunted_log",
+            props -> new RotatedPillarBlock(props), hauntedWood(2.0F));
+    public static final DeferredBlock<RotatedPillarBlock> HAUNTED_WOOD = BLOCKS.registerBlock("haunted_wood",
+            props -> new RotatedPillarBlock(props), hauntedWood(2.0F));
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_HAUNTED_WOOD = BLOCKS.registerBlock("stripped_haunted_wood",
+            props -> new RotatedPillarBlock(props), hauntedWood(2.0F));
+    public static final DeferredBlock<Block> HAUNTED_PLANKS = BLOCKS.registerSimpleBlock("haunted_planks", hauntedWood(2.0F).strength(2.0F, 3.0F));
+    public static final DeferredBlock<StairBlock> HAUNTED_STAIRS = BLOCKS.registerBlock("haunted_stairs",
+            props -> new StairBlock(HAUNTED_PLANKS.get().defaultBlockState(), props), hauntedWood(2.0F).strength(2.0F, 3.0F));
+    public static final DeferredBlock<SlabBlock> HAUNTED_SLAB = BLOCKS.registerBlock("haunted_slab",
+            props -> new SlabBlock(props), hauntedWood(2.0F).strength(2.0F, 3.0F));
+    public static final DeferredBlock<FenceBlock> HAUNTED_FENCE = BLOCKS.registerBlock("haunted_fence",
+            props -> new FenceBlock(props), hauntedWood(2.0F).strength(2.0F, 3.0F));
+    public static final DeferredBlock<FenceGateBlock> HAUNTED_FENCE_GATE = BLOCKS.registerBlock("haunted_fence_gate",
+            props -> new FenceGateBlock(ModWoodTypes.HAUNTED, props), hauntedWood(2.0F).forceSolidOn().strength(2.0F, 3.0F));
+    public static final DeferredBlock<DoorBlock> HAUNTED_DOOR = BLOCKS.registerBlock("haunted_door",
+            props -> new DoorBlock(ModWoodTypes.HAUNTED_SET, props),
+            hauntedWood(3.0F).strength(3.0F).noOcclusion().pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<TrapDoorBlock> HAUNTED_TRAPDOOR = BLOCKS.registerBlock("haunted_trapdoor",
+            props -> new TrapDoorBlock(ModWoodTypes.HAUNTED_SET, props),
+            hauntedWood(3.0F).strength(3.0F).noOcclusion().isValidSpawn((state, level, pos, type) -> false));
+    public static final DeferredBlock<PressurePlateBlock> HAUNTED_PRESSURE_PLATE = BLOCKS.registerBlock("haunted_pressure_plate",
+            props -> new PressurePlateBlock(ModWoodTypes.HAUNTED_SET, props),
+            hauntedWood(0.5F).forceSolidOn().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<ButtonBlock> HAUNTED_BUTTON = BLOCKS.registerBlock("haunted_button",
+            props -> new ButtonBlock(ModWoodTypes.HAUNTED_SET, 30, props),
+            BlockBehaviour.Properties.of().noCollission().strength(0.5F).sound(SoundType.WOOD).pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<StandingSignBlock> HAUNTED_SIGN = BLOCKS.registerBlock("haunted_sign",
+            props -> new StandingSignBlock(ModWoodTypes.HAUNTED, props), signProperties().mapColor(MapColor.COLOR_PURPLE));
+    public static final DeferredBlock<WallSignBlock> HAUNTED_WALL_SIGN = BLOCKS.registerBlock("haunted_wall_sign",
+            props -> new WallSignBlock(ModWoodTypes.HAUNTED, props), wallSignProperties(HAUNTED_SIGN).mapColor(MapColor.COLOR_PURPLE));
+    public static final DeferredBlock<CeilingHangingSignBlock> HAUNTED_HANGING_SIGN = BLOCKS.registerBlock("haunted_hanging_sign",
+            props -> new CeilingHangingSignBlock(ModWoodTypes.HAUNTED, props), signProperties().mapColor(MapColor.COLOR_PURPLE));
+    public static final DeferredBlock<WallHangingSignBlock> HAUNTED_WALL_HANGING_SIGN = BLOCKS.registerBlock("haunted_wall_hanging_sign",
+            props -> new WallHangingSignBlock(ModWoodTypes.HAUNTED, props), wallSignProperties(HAUNTED_HANGING_SIGN).mapColor(MapColor.COLOR_PURPLE));
+
+    private static BlockBehaviour.Properties hauntedWood(float strength) {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).instrument(NoteBlockInstrument.BASS)
+                .strength(strength).sound(SoundType.WOOD).ignitedByLava();
+    }
+
     private static BlockBehaviour.Properties signProperties() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).forceSolidOn().instrument(NoteBlockInstrument.BASS)
                 .noCollission().strength(1.0F).sound(SoundType.WOOD).ignitedByLava();

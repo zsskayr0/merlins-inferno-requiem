@@ -116,6 +116,7 @@ public final class ModEntityRenderers {
     static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             Sheets.addWoodType(ModWoodTypes.ASHWOOD);
+            Sheets.addWoodType(ModWoodTypes.HAUNTED);
             ItemProperties.register(ModItems.CHAMPION_SEEKER.get(), ResourceLocation.withDefaultNamespace("angle"),
                     (stack, level, entity, seed) -> {
                         if (!(entity instanceof LivingEntity holder)) {

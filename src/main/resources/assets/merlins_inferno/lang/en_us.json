@@ -411,5 +411,21 @@
   "biome.merlins_inferno.carnal_heap": "Carnal Heap",
   "block.merlins_inferno.charred_flesh": "Charred Flesh",
   "block.merlins_inferno.haunted_log": "Haunted Log",
-  "block.merlins_inferno.haunted_leaves": "Haunted Leaves"
+  "block.merlins_inferno.haunted_leaves": "Haunted Leaves",
+  "block.merlins_inferno.stripped_haunted_log": "Stripped Haunted Log",
+  "block.merlins_inferno.haunted_wood": "Haunted Wood",
+  "block.merlins_inferno.stripped_haunted_wood": "Stripped Haunted Wood",
+  "block.merlins_inferno.haunted_planks": "Haunted Planks",
+  "block.merlins_inferno.haunted_stairs": "Haunted Stairs",
+  "block.merlins_inferno.haunted_slab": "Haunted Slab",
+  "block.merlins_inferno.haunted_fence": "Haunted Fence",
+  "block.merlins_inferno.haunted_fence_gate": "Haunted Fence Gate",
+  "block.merlins_inferno.haunted_door": "Haunted Door",
+  "block.merlins_inferno.haunted_trapdoor": "Haunted Trapdoor",
+  "block.merlins_inferno.haunted_pressure_plate": "Haunted Pressure Plate",
+  "block.merlins_inferno.haunted_button": "Haunted Button",
+  "block.merlins_inferno.haunted_sign": "Haunted Sign",
+  "block.merlins_inferno.haunted_wall_sign": "Haunted Wall Sign",
+  "block.merlins_inferno.haunted_hanging_sign": "Haunted Hanging Sign",
+  "block.merlins_inferno.haunted_wall_hanging_sign": "Haunted Wall Hanging Sign"
 }

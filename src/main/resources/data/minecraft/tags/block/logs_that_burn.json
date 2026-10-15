@@ -4,6 +4,10 @@
     "merlins_inferno:ashwood_log",
     "merlins_inferno:ashwood_wood",
     "merlins_inferno:stripped_ashwood_log",
-    "merlins_inferno:stripped_ashwood_wood"
+    "merlins_inferno:stripped_ashwood_wood",
+    "merlins_inferno:haunted_log",
+    "merlins_inferno:haunted_wood",
+    "merlins_inferno:stripped_haunted_log",
+    "merlins_inferno:stripped_haunted_wood"
   ]
 }

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "merlins_inferno:ashwood_wall_sign"
+    "merlins_inferno:ashwood_wall_sign",
+    "merlins_inferno:haunted_wall_sign"
   ]
 }

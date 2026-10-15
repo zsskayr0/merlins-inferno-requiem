@@ -21,6 +21,9 @@ public final class ModWoodTypes {
     public static final BlockSetType ASHWOOD_SET = BlockSetType.register(new BlockSetType(Merlins_inferno.MODID + ":ashwood"));
     public static final WoodType ASHWOOD = WoodType.register(new WoodType(Merlins_inferno.MODID + ":ashwood", ASHWOOD_SET));
 
+    public static final BlockSetType HAUNTED_SET = BlockSetType.register(new BlockSetType(Merlins_inferno.MODID + ":haunted"));
+    public static final WoodType HAUNTED = WoodType.register(new WoodType(Merlins_inferno.MODID + ":haunted", HAUNTED_SET));
+
     private ModWoodTypes() {
     }
 }

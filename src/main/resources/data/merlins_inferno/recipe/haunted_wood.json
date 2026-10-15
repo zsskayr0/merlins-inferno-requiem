@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "wood",
+  "key": {
+    "#": { "item": "merlins_inferno:haunted_log" }
+  },
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "result": {
+    "count": 3,
+    "id": "merlins_inferno:haunted_wood"
+  }
+}

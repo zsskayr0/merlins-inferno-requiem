@@ -28,8 +28,10 @@ public final class AshwoodWoodworkHandler {
 
         @SubscribeEvent
         static void onAddBlockEntityBlocks(BlockEntityTypeAddBlocksEvent event) {
-            event.modify(BlockEntityType.SIGN, ModBlocks.ASHWOOD_SIGN.get(), ModBlocks.ASHWOOD_WALL_SIGN.get());
-            event.modify(BlockEntityType.HANGING_SIGN, ModBlocks.ASHWOOD_HANGING_SIGN.get(), ModBlocks.ASHWOOD_WALL_HANGING_SIGN.get());
+            event.modify(BlockEntityType.SIGN, ModBlocks.ASHWOOD_SIGN.get(), ModBlocks.ASHWOOD_WALL_SIGN.get(),
+                    ModBlocks.HAUNTED_SIGN.get(), ModBlocks.HAUNTED_WALL_SIGN.get());
+            event.modify(BlockEntityType.HANGING_SIGN, ModBlocks.ASHWOOD_HANGING_SIGN.get(), ModBlocks.ASHWOOD_WALL_HANGING_SIGN.get(),
+                    ModBlocks.HAUNTED_HANGING_SIGN.get(), ModBlocks.HAUNTED_WALL_HANGING_SIGN.get());
         }
     }
 
@@ -49,6 +51,10 @@ public final class AshwoodWoodworkHandler {
                 event.setFinalState(stripped(ModBlocks.STRIPPED_ASHWOOD_LOG.get(), state));
             } else if (state.is(ModBlocks.ASHWOOD_WOOD.get())) {
                 event.setFinalState(stripped(ModBlocks.STRIPPED_ASHWOOD_WOOD.get(), state));
+            } else if (state.is(ModBlocks.HAUNTED_LOG.get())) {
+                event.setFinalState(stripped(ModBlocks.STRIPPED_HAUNTED_LOG.get(), state));
+            } else if (state.is(ModBlocks.HAUNTED_WOOD.get())) {
+                event.setFinalState(stripped(ModBlocks.STRIPPED_HAUNTED_WOOD.get(), state));
             }
         }
 
