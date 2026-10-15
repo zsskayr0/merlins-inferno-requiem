@@ -388,6 +388,11 @@ public final class ModBlocks {
             dev.zsskayr.merlins_inferno.block.FleshTendonsBlock::new, BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_RED).noCollission().instabreak().sound(SoundType.WEEPING_VINES)
                     .pushReaction(PushReaction.DESTROY));
+    // Lichen-like veins of flesh that cling to any face (Oblivion, mostly Carnal Heaps). Drops nothing for now.
+    public static final DeferredBlock<net.minecraft.world.level.block.GlowLichenBlock> FLESH_VEIN = BLOCKS.registerBlock("flesh_vein",
+            net.minecraft.world.level.block.GlowLichenBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED).replaceable().noCollission().strength(0.2F).sound(SoundType.WEEPING_VINES)
+                    .pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<net.minecraft.world.level.block.NetherSproutsBlock> HAIR = BLOCKS.registerBlock("hair",
             net.minecraft.world.level.block.NetherSproutsBlock::new, netherPlantProperties(MapColor.COLOR_RED));
     public static final DeferredBlock<NetherDoublePlantBlock> EYEBULB = BLOCKS.registerBlock("eyebulb",

@@ -149,6 +149,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.CHARRED_FLESH_ITEM.get());
                         output.accept(ModItems.POROUS_FLESH_ITEM.get());
                         output.accept(ModItems.FLESH_TENDONS_ITEM.get());
+                        output.accept(ModItems.FLESH_VEIN_ITEM.get());
                         output.accept(ModItems.HAIR_ITEM.get());
                         output.accept(ModItems.EYEBULB_ITEM.get());
                         output.accept(ModItems.FLESH_SLAB_ITEM.get());

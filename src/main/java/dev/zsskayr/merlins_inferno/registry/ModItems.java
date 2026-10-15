@@ -378,6 +378,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> HAUNTED_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_LEAVES, new Item.Properties().fireResistant());
     public static final DeferredItem<BlockItem> CHARRED_FLESH_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CHARRED_FLESH);
     public static final DeferredItem<BlockItem> POROUS_FLESH_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.POROUS_FLESH);
+    public static final DeferredItem<BlockItem> FLESH_VEIN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_VEIN);
     public static final DeferredItem<BlockItem> FLESH_TENDONS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_TENDONS);
     public static final DeferredItem<BlockItem> HAIR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAIR);
     public static final DeferredItem<DoubleHighBlockItem> EYEBULB_ITEM = ITEMS.registerItem("eyebulb",

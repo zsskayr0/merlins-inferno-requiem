@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "tries": 48,
+    "xz_spread": 6,
+    "y_spread": 3,
+    "feature": {
+      "feature": {
+        "type": "minecraft:multiface_growth",
+        "config": {
+          "block": "merlins_inferno:flesh_vein",
+          "search_range": 8,
+          "can_place_on_floor": true,
+          "can_place_on_ceiling": true,
+          "can_place_on_wall": true,
+          "chance_of_spreading": 0.9,
+          "can_be_placed_on": [
+            "merlins_inferno:flesh_block",
+            "merlins_inferno:porous_flesh",
+            "merlins_inferno:charred_flesh",
+            "minecraft:netherrack"
+          ]
+        }
+      },
+      "placement": [
+        {
+          "type": "minecraft:block_predicate_filter",
+          "predicate": { "type": "minecraft:matching_blocks", "blocks": "minecraft:air" }
+        }
+      ]
+    }
+  }
+}
