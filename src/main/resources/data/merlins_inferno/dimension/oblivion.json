@@ -67,7 +67,7 @@
           }
         },
         {
-          "biome": "merlins_inferno:ebony_spires",
+          "biome": "merlins_inferno:withered_hills",
           "parameters": {
             "temperature": -0.7,
             "humidity": -0.5,

@@ -51,7 +51,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.COMPRESSED_NETHERRACK_SLAB.get(), ModBlocks.COMPRESSED_NETHERRACK_WALL.get(),
                 ModBlocks.HELL_FORGE.get(),
                 ModBlocks.LYRIUM_ORE.get(), ModBlocks.DEEPSLATE_LYRIUM_ORE.get(), ModBlocks.LYRIUM_BLOCK.get(),
-                ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.VOID_BLOCK.get(),
+                ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.WITHERED_OBSIDIAN.get(),
                 ModBlocks.FLESH_BLOCK.get(), ModBlocks.FLESH_SLAB.get(), ModBlocks.FLESH_CARPET.get(), ModBlocks.RED_CHAIN.get(),
                 ModBlocks.BLACK_NYLIUM.get(), ModBlocks.TALL_CRIMSON_ROOTS.get(), ModBlocks.TALL_BLACK_GRASS.get(),
                 ModBlocks.LUST_FLOWER.get());
@@ -94,7 +94,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.COMPRESSED_NETHERRACK_WALL.get());
         dropSelf(ModBlocks.CORRUPTED_OBSIDIAN.get());
         dropSelf(ModBlocks.PETRIFIED_SKULL.get());
-        dropSelf(ModBlocks.VOID_BLOCK.get());
+        dropSelf(ModBlocks.WITHERED_OBSIDIAN.get());
         dropSelf(ModBlocks.FLESH_BLOCK.get());
         add(ModBlocks.FLESH_SLAB.get(), createSlabItemTable(ModBlocks.FLESH_SLAB.get()));
         dropSelf(ModBlocks.FLESH_CARPET.get());

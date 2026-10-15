@@ -136,7 +136,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.BLACK_VINES_ITEM.get());
                         output.accept(ModItems.OBLIVION_SHROOMLIGHT_ITEM.get());
                         output.accept(ModItems.PETRIFIED_SKULL_ITEM.get());
-                        output.accept(ModItems.VOID_BLOCK_ITEM.get());
+                        output.accept(ModItems.WITHERED_OBSIDIAN_ITEM.get());
                         output.accept(ModItems.INFERNAL_ESSENCE.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_ITEM.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_STAIRS_ITEM.get());

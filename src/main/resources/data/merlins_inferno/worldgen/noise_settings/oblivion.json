@@ -335,7 +335,7 @@
         "if_true": {
           "type": "minecraft:biome",
           "biome_is": [
-            "merlins_inferno:ebony_spires"
+            "merlins_inferno:withered_hills"
           ]
         },
         "then_run": {

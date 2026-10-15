@@ -113,7 +113,7 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
         if (stack.is(ModItems.OTHERWORLD_ESSENCE.get())) return Ingredient.OTHERWORLD;
         if (stack.is(ModItems.INFERNAL_ESSENCE.get())) return Ingredient.INFERNAL;
         if (stack.is(ModItems.CELESTIAL_ESSENCE.get())) return Ingredient.CELESTIAL;
-        if (stack.is(ModBlocks.VOID_BLOCK.get().asItem())) return Ingredient.VOID;
+        if (stack.is(ModBlocks.WITHERED_OBSIDIAN.get().asItem())) return Ingredient.VOID;
         if (stack.is(Items.NETHERITE_INGOT)) return Ingredient.NETHERITE;
         return Ingredient.OTHER;
     }

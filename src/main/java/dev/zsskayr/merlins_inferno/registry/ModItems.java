@@ -363,7 +363,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> SACRED_ALTAR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SACRED_ALTAR);
     public static final DeferredItem<BlockItem> CORRUPTED_OBSIDIAN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CORRUPTED_OBSIDIAN);
     public static final DeferredItem<BlockItem> PETRIFIED_SKULL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PETRIFIED_SKULL);
-    public static final DeferredItem<BlockItem> VOID_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.VOID_BLOCK);
+    public static final DeferredItem<BlockItem> WITHERED_OBSIDIAN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.WITHERED_OBSIDIAN);
 
     // --- Hell Forge ingredients + the block itself (see ModBlocks). ---
 

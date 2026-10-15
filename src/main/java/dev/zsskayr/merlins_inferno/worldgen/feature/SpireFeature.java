@@ -13,7 +13,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
 
 /**
  * A tall, tapering spire that rises from the ground to a point, leaning a little as it climbs. {@code accent_state}
- * shows through the stone here and there (the Ebony Spires' veins of ebony debris).
+ * shows through the stone here and there (the Withered Hills' veins of ebony debris).
  */
 public class SpireFeature extends Feature<SpireFeature.Config> {
     public record Config(BlockState state, BlockState accent, int minHeight, int maxHeight, int baseRadius, float accentChance)

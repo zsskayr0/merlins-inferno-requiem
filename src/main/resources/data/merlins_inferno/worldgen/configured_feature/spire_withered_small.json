@@ -2,13 +2,10 @@
   "type": "merlins_inferno:spire",
   "config": {
     "state": {
-      "Name": "minecraft:blackstone"
+      "Name": "merlins_inferno:withered_obsidian"
     },
     "accent_state": {
-      "Name": "minecraft:basalt",
-      "Properties": {
-        "axis": "y"
-      }
+      "Name": "merlins_inferno:withered_obsidian"
     },
     "min_height": 9,
     "max_height": 20,

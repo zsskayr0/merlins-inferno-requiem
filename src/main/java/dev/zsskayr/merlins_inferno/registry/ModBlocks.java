@@ -346,10 +346,12 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> PETRIFIED_SKULL = BLOCKS.registerBlock("petrified_skull",
             Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN));
 
-    // --- Void Block: crafted from Petrified Skull, Rowanwood, Lyrium and Otherworld Essence (see the recipe).
-    // No special behaviour yet - a material/decoration block for now, same as Petrified Skull. ---
-    public static final DeferredBlock<Block> VOID_BLOCK = BLOCKS.registerBlock("void_block",
-            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN));
+    // --- Withered Obsidian: crafted from Petrified Skull, Rowanwood, Lyrium and Otherworld Essence (see the recipe).
+    // Also builds the Withered Hills' spires. Far tougher than Obsidian: 5x its hardness and a blast resistance
+    // so high that no explosion, Wither or Ender Dragon breaks it, and pistons can't move it. ---
+    public static final DeferredBlock<Block> WITHERED_OBSIDIAN = BLOCKS.registerBlock("withered_obsidian",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
+                    .strength(250.0F, 3600000.0F).requiresCorrectToolForDrops().pushReaction(PushReaction.BLOCK));
 
     // --- Flesh: Netherrack-like, the Nether's answer to Moss Block (slab and carpet included). Not craftable -
     // only found in the world; the slab/carpet recipes go from and back to the block. ---

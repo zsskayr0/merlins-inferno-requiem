@@ -2,10 +2,7 @@
   "type": "merlins_inferno:spire",
   "config": {
     "state": {
-      "Name": "minecraft:basalt",
-      "Properties": {
-        "axis": "y"
-      }
+      "Name": "merlins_inferno:withered_obsidian"
     },
     "accent_state": {
       "Name": "merlins_inferno:ebony_debris"
