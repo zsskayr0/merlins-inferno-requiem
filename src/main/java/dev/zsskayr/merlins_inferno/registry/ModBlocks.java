@@ -194,17 +194,22 @@ public final class ModBlocks {
             props -> new ButtonBlock(ModWoodTypes.HAUNTED_SET, 30, props),
             BlockBehaviour.Properties.of().noCollission().strength(0.5F).sound(SoundType.WOOD).pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<StandingSignBlock> HAUNTED_SIGN = BLOCKS.registerBlock("haunted_sign",
-            props -> new StandingSignBlock(ModWoodTypes.HAUNTED, props), signProperties().mapColor(MapColor.COLOR_PURPLE));
+            props -> new StandingSignBlock(ModWoodTypes.HAUNTED, props), hauntedSignProperties());
     public static final DeferredBlock<WallSignBlock> HAUNTED_WALL_SIGN = BLOCKS.registerBlock("haunted_wall_sign",
-            props -> new WallSignBlock(ModWoodTypes.HAUNTED, props), wallSignProperties(HAUNTED_SIGN).mapColor(MapColor.COLOR_PURPLE));
+            props -> new WallSignBlock(ModWoodTypes.HAUNTED, props), hauntedSignProperties().lootFrom(HAUNTED_SIGN));
     public static final DeferredBlock<CeilingHangingSignBlock> HAUNTED_HANGING_SIGN = BLOCKS.registerBlock("haunted_hanging_sign",
-            props -> new CeilingHangingSignBlock(ModWoodTypes.HAUNTED, props), signProperties().mapColor(MapColor.COLOR_PURPLE));
+            props -> new CeilingHangingSignBlock(ModWoodTypes.HAUNTED, props), hauntedSignProperties());
     public static final DeferredBlock<WallHangingSignBlock> HAUNTED_WALL_HANGING_SIGN = BLOCKS.registerBlock("haunted_wall_hanging_sign",
-            props -> new WallHangingSignBlock(ModWoodTypes.HAUNTED, props), wallSignProperties(HAUNTED_HANGING_SIGN).mapColor(MapColor.COLOR_PURPLE));
+            props -> new WallHangingSignBlock(ModWoodTypes.HAUNTED, props), hauntedSignProperties().lootFrom(HAUNTED_HANGING_SIGN));
+
+    private static BlockBehaviour.Properties hauntedSignProperties() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).forceSolidOn().instrument(NoteBlockInstrument.BASS)
+                .noCollission().strength(1.0F).sound(SoundType.WOOD);
+    }
 
     private static BlockBehaviour.Properties hauntedWood(float strength) {
         return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).instrument(NoteBlockInstrument.BASS)
-                .strength(strength).sound(SoundType.WOOD).ignitedByLava();
+                .strength(strength).sound(SoundType.WOOD);
     }
 
     private static BlockBehaviour.Properties signProperties() {
@@ -371,8 +376,10 @@ public final class ModBlocks {
             net.minecraft.world.level.block.RotatedPillarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_STEM)
                     .mapColor(MapColor.COLOR_PURPLE));
     public static final DeferredBlock<net.minecraft.world.level.block.LeavesBlock> HAUNTED_LEAVES = BLOCKS.registerBlock("haunted_leaves",
-            net.minecraft.world.level.block.LeavesBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
-                    .mapColor(MapColor.COLOR_RED));
+            net.minecraft.world.level.block.LeavesBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(0.2F).randomTicks()
+                    .sound(SoundType.GRASS).noOcclusion().isValidSpawn((state, level, pos, type) -> false)
+                    .isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false)
+                    .isRedstoneConductor((state, level, pos) -> false).pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<Block> CHARRED_FLESH = BLOCKS.registerBlock("charred_flesh",
             Block::new, fleshProperties().mapColor(MapColor.COLOR_BLACK).strength(0.6F));
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.FleshTendonsBlock> FLESH_TENDONS = BLOCKS.registerBlock("flesh_tendons",

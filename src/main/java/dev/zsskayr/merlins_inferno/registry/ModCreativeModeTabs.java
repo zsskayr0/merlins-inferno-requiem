@@ -63,6 +63,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.HAUNTED_BUTTON_ITEM.get());
                         output.accept(ModItems.HAUNTED_SIGN_ITEM.get());
                         output.accept(ModItems.HAUNTED_HANGING_SIGN_ITEM.get());
+                        output.accept(ModItems.HAUNTED_BOAT.get());
                         output.accept(ModItems.ROWANWOOD_LOG_ITEM.get());
                         output.accept(ModItems.ROWANWOOD_LEAVES_ITEM.get());
                         output.accept(ModItems.ROWANWOOD_BAR.get());

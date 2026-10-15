@@ -329,22 +329,26 @@ public final class ModItems {
             props -> new HangingSignItem(ModBlocks.ASHWOOD_HANGING_SIGN.get(), ModBlocks.ASHWOOD_WALL_HANGING_SIGN.get(), props.stacksTo(16)));
 
     // Haunted wood set (see ModBlocks); HAUNTED_LOG_ITEM / HAUNTED_LEAVES_ITEM are defined with the Carnal Heap blocks.
-    public static final DeferredItem<BlockItem> STRIPPED_HAUNTED_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.STRIPPED_HAUNTED_LOG);
-    public static final DeferredItem<BlockItem> HAUNTED_WOOD_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_WOOD);
-    public static final DeferredItem<BlockItem> STRIPPED_HAUNTED_WOOD_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.STRIPPED_HAUNTED_WOOD);
-    public static final DeferredItem<BlockItem> HAUNTED_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_PLANKS);
-    public static final DeferredItem<BlockItem> HAUNTED_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_STAIRS);
-    public static final DeferredItem<BlockItem> HAUNTED_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_SLAB);
-    public static final DeferredItem<BlockItem> HAUNTED_FENCE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_FENCE);
-    public static final DeferredItem<BlockItem> HAUNTED_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_FENCE_GATE);
-    public static final DeferredItem<BlockItem> HAUNTED_DOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_DOOR);
-    public static final DeferredItem<BlockItem> HAUNTED_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_TRAPDOOR);
-    public static final DeferredItem<BlockItem> HAUNTED_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_PRESSURE_PLATE);
-    public static final DeferredItem<BlockItem> HAUNTED_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_BUTTON);
+    public static final DeferredItem<BlockItem> STRIPPED_HAUNTED_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.STRIPPED_HAUNTED_LOG, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> HAUNTED_WOOD_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_WOOD, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> STRIPPED_HAUNTED_WOOD_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.STRIPPED_HAUNTED_WOOD, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> HAUNTED_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_PLANKS, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> HAUNTED_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_STAIRS, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> HAUNTED_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_SLAB, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> HAUNTED_FENCE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_FENCE, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> HAUNTED_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_FENCE_GATE, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> HAUNTED_DOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_DOOR, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> HAUNTED_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_TRAPDOOR, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> HAUNTED_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_PRESSURE_PLATE, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> HAUNTED_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_BUTTON, new Item.Properties().fireResistant());
     public static final DeferredItem<SignItem> HAUNTED_SIGN_ITEM = ITEMS.registerItem("haunted_sign",
-            props -> new SignItem(props.stacksTo(16), ModBlocks.HAUNTED_SIGN.get(), ModBlocks.HAUNTED_WALL_SIGN.get()));
+            props -> new SignItem(props.stacksTo(16).fireResistant(), ModBlocks.HAUNTED_SIGN.get(), ModBlocks.HAUNTED_WALL_SIGN.get()));
     public static final DeferredItem<HangingSignItem> HAUNTED_HANGING_SIGN_ITEM = ITEMS.registerItem("haunted_hanging_sign",
-            props -> new HangingSignItem(ModBlocks.HAUNTED_HANGING_SIGN.get(), ModBlocks.HAUNTED_WALL_HANGING_SIGN.get(), props.stacksTo(16)));
+            props -> new HangingSignItem(ModBlocks.HAUNTED_HANGING_SIGN.get(), ModBlocks.HAUNTED_WALL_HANGING_SIGN.get(), props.stacksTo(16).fireResistant()));
+
+    // The Haunted boat sails on lava as well as water and never burns.
+    public static final DeferredItem<Item> HAUNTED_BOAT = ITEMS.registerItem("haunted_boat",
+            props -> new dev.zsskayr.merlins_inferno.item.HauntedBoatItem(props.stacksTo(1).fireResistant()));
 
     public static final DeferredItem<BlockItem> ROWANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LOG);
     public static final DeferredItem<BlockItem> ROWANWOOD_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ROWANWOOD_LEAVES);
@@ -370,8 +374,8 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> COMPRESSED_NETHERRACK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_SLAB);
     public static final DeferredItem<BlockItem> COMPRESSED_NETHERRACK_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_WALL);
     public static final DeferredItem<BlockItem> FLESH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_BLOCK);
-    public static final DeferredItem<BlockItem> HAUNTED_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_LOG);
-    public static final DeferredItem<BlockItem> HAUNTED_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_LEAVES);
+    public static final DeferredItem<BlockItem> HAUNTED_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_LOG, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> HAUNTED_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_LEAVES, new Item.Properties().fireResistant());
     public static final DeferredItem<BlockItem> CHARRED_FLESH_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CHARRED_FLESH);
     public static final DeferredItem<BlockItem> POROUS_FLESH_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.POROUS_FLESH);
     public static final DeferredItem<BlockItem> FLESH_TENDONS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_TENDONS);

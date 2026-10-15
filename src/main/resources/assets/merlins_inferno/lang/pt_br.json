@@ -427,5 +427,7 @@
   "block.merlins_inferno.haunted_sign": "Placa Assombrada",
   "block.merlins_inferno.haunted_wall_sign": "Placa de Parede Assombrada",
   "block.merlins_inferno.haunted_hanging_sign": "Placa Suspensa Assombrada",
-  "block.merlins_inferno.haunted_wall_hanging_sign": "Placa Suspensa de Parede Assombrada"
+  "block.merlins_inferno.haunted_wall_hanging_sign": "Placa Suspensa de Parede Assombrada",
+  "item.merlins_inferno.haunted_boat": "Barco Assombrado",
+  "entity.merlins_inferno.haunted_boat": "Barco Assombrado"
 }

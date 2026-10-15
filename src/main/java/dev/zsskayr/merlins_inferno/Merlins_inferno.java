@@ -127,16 +127,6 @@ public class Merlins_inferno {
         fire.setFlammable(ModBlocks.ASHWOOD_SLAB.get(), 5, 20);
         fire.setFlammable(ModBlocks.ASHWOOD_FENCE.get(), 5, 20);
         fire.setFlammable(ModBlocks.ASHWOOD_LEAVES.get(), 30, 60);
-        fire.setFlammable(ModBlocks.HAUNTED_LOG.get(), 5, 5);
-        fire.setFlammable(ModBlocks.HAUNTED_WOOD.get(), 5, 5);
-        fire.setFlammable(ModBlocks.STRIPPED_HAUNTED_LOG.get(), 5, 5);
-        fire.setFlammable(ModBlocks.STRIPPED_HAUNTED_WOOD.get(), 5, 5);
-        fire.setFlammable(ModBlocks.HAUNTED_FENCE_GATE.get(), 5, 20);
-        fire.setFlammable(ModBlocks.HAUNTED_PLANKS.get(), 5, 20);
-        fire.setFlammable(ModBlocks.HAUNTED_STAIRS.get(), 5, 20);
-        fire.setFlammable(ModBlocks.HAUNTED_SLAB.get(), 5, 20);
-        fire.setFlammable(ModBlocks.HAUNTED_FENCE.get(), 5, 20);
-        fire.setFlammable(ModBlocks.HAUNTED_LEAVES.get(), 30, 60);
     }
 
     @SubscribeEvent

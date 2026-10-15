@@ -427,5 +427,7 @@
   "block.merlins_inferno.haunted_sign": "Haunted Sign",
   "block.merlins_inferno.haunted_wall_sign": "Haunted Wall Sign",
   "block.merlins_inferno.haunted_hanging_sign": "Haunted Hanging Sign",
-  "block.merlins_inferno.haunted_wall_hanging_sign": "Haunted Wall Hanging Sign"
+  "block.merlins_inferno.haunted_wall_hanging_sign": "Haunted Wall Hanging Sign",
+  "item.merlins_inferno.haunted_boat": "Haunted Boat",
+  "entity.merlins_inferno.haunted_boat": "Haunted Boat"
 }

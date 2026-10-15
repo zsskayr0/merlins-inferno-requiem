@@ -42,6 +42,13 @@ public final class ModEntityTypes {
 
     // Same hitbox as a Player/Zombie (both 0.6 x 1.95) - it's built on the same humanoid shape
     // for now (see ModEntityRenderers), no custom model yet.
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.zsskayr.merlins_inferno.entity.HauntedBoat>> HAUNTED_BOAT =
+            ENTITY_TYPES.register("haunted_boat", () -> EntityType.Builder
+                    .<dev.zsskayr.merlins_inferno.entity.HauntedBoat>of(dev.zsskayr.merlins_inferno.entity.HauntedBoat::new,
+                            net.minecraft.world.entity.MobCategory.MISC)
+                    .sized(1.375F, 0.5625F).eyeHeight(0.5625F).clientTrackingRange(10).fireImmune()
+                    .build("haunted_boat"));
+
     public static final DeferredHolder<EntityType<?>, EntityType<DruidEntity>> DRUID = ENTITY_TYPES.register("druid",
             () -> EntityType.Builder.of(DruidEntity::new, MobCategory.CREATURE)
                     .sized(0.6F, 1.95F)

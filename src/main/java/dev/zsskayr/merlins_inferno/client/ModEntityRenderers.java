@@ -48,6 +48,7 @@ public final class ModEntityRenderers {
     @SubscribeEvent
     static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntityTypes.BENCH_SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.HAUNTED_BOAT.get(), HauntedBoatRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.DRUID.get(), DruidRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.IMP.get(), ImpRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.STARVED.get(), StarvedRenderer::new);
