@@ -1,0 +1,42 @@
+{
+  "variants": {
+    "facing=east": [
+      {
+        "model": "merlins_inferno:block/haunted_shelf_shroom_0",
+        "y": 90
+      },
+      {
+        "model": "merlins_inferno:block/haunted_shelf_shroom_1",
+        "y": 90
+      }
+    ],
+    "facing=north": [
+      {
+        "model": "merlins_inferno:block/haunted_shelf_shroom_0"
+      },
+      {
+        "model": "merlins_inferno:block/haunted_shelf_shroom_1"
+      }
+    ],
+    "facing=south": [
+      {
+        "model": "merlins_inferno:block/haunted_shelf_shroom_0",
+        "y": 180
+      },
+      {
+        "model": "merlins_inferno:block/haunted_shelf_shroom_1",
+        "y": 180
+      }
+    ],
+    "facing=west": [
+      {
+        "model": "merlins_inferno:block/haunted_shelf_shroom_0",
+        "y": 270
+      },
+      {
+        "model": "merlins_inferno:block/haunted_shelf_shroom_1",
+        "y": 270
+      }
+    ]
+  }
+}

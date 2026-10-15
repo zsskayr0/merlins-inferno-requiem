@@ -87,6 +87,7 @@ public class HauntedTreeFeature extends Feature<HauntedTreeFeature.Config> {
             pos = pos.above();
         }
         BlockPos top = pos;
+        shelves(level, origin, height, random);
         // branches from the upper third, each ending in a canopy lobe
         int branches = 3 + random.nextInt(3);
         for (int i = 0; i < branches; i++) {
@@ -107,6 +108,21 @@ public class HauntedTreeFeature extends Feature<HauntedTreeFeature.Config> {
         }
         lobe(level, top, config, random, 4);
         return true;
+    }
+
+    /** Bracket fungi cling to the trunk's flanks, on the lower half of the tree. */
+    private static void shelves(WorldGenLevel level, BlockPos origin, int height, RandomSource random) {
+        BlockState shroom = dev.zsskayr.merlins_inferno.registry.ModBlocks.HAUNTED_SHELF_SHROOM.get().defaultBlockState();
+        int attempts = 6 + random.nextInt(6);
+        for (int i = 0; i < attempts; i++) {
+            BlockPos pos = origin.offset(random.nextInt(5) - 2, 1 + random.nextInt(Math.max(1, height * 2 / 3)), random.nextInt(5) - 2);
+            Direction facing = Direction.Plane.HORIZONTAL.getRandomDirection(random);
+            BlockState placed = shroom.setValue(dev.zsskayr.merlins_inferno.block.ShelfShroomBlock.FACING, facing);
+            if (level.getBlockState(pos).isAir() && placed.canSurvive(level, pos)
+                    && level.getBlockState(pos.relative(facing.getOpposite())).is(dev.zsskayr.merlins_inferno.registry.ModBlocks.HAUNTED_LOG.get())) {
+                level.setBlock(pos, placed, 2);
+            }
+        }
     }
 
     private static void lobe(WorldGenLevel level, BlockPos centre, Config config, RandomSource random, int radius) {

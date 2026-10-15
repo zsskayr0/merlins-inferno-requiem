@@ -1,0 +1,213 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "east": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "north": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "south": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "up": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "west": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        }
+      },
+      "from": [
+        2,
+        2,
+        9
+      ],
+      "to": [
+        9,
+        2.5,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "east": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "north": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "south": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "up": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "west": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        }
+      },
+      "from": [
+        8,
+        6,
+        10
+      ],
+      "to": [
+        15,
+        6.5,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "east": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "north": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "south": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "up": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        },
+        "west": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            7.0,
+            14.0,
+            14.0
+          ]
+        }
+      },
+      "from": [
+        4,
+        10,
+        11
+      ],
+      "to": [
+        9,
+        10.5,
+        16
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "cap": "merlins_inferno:block/haunted_shelf_shroom_0",
+    "particle": "merlins_inferno:block/haunted_shelf_shroom_0"
+  }
+}

@@ -117,6 +117,30 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         itemModels().withExistingParent("mouth_block", modLoc("block/mouth_block"));
     }
 
+    /** Bracket fungus on haunted trunks: three caps stacked up the wall, two texture variants. */
+    private void registerShelfShroom() {
+        ModelFile[] models = new ModelFile[2];
+        for (int v = 0; v < 2; v++) {
+            var tex = modLoc("block/haunted_shelf_shroom_" + v);
+            var m = models().getBuilder("haunted_shelf_shroom_" + v).renderType("cutout")
+                    .texture("cap", tex).texture("particle", tex);
+            float[][] caps = {{2, 2, 9, 9, 2.5f, 16}, {8, 6, 10, 15, 6.5f, 16}, {4, 10, 11, 9, 10.5f, 16}};
+            for (float[] c : caps) {
+                m.element().from(c[0], c[1], c[2]).to(c[3], c[4], c[5])
+                        .allFaces((dir, face) -> face.uvs(7, 7, 14, 14).texture("#cap")).end();
+            }
+            models[v] = m;
+        }
+        itemModels().withExistingParent("haunted_shelf_shroom", mcLoc("item/generated"))
+                .texture("layer0", modLoc("block/haunted_shelf_shroom_0"));
+        getVariantBuilder(ModBlocks.HAUNTED_SHELF_SHROOM.get()).forAllStates(state -> {
+            int yRot = ((int) state.getValue(dev.zsskayr.merlins_inferno.block.ShelfShroomBlock.FACING).toYRot() + 180) % 360;
+            return new ConfiguredModel[] {
+                    new ConfiguredModel(models[0], 0, yRot, false, 1),
+                    new ConfiguredModel(models[1], 0, yRot, false, 1)};
+        });
+    }
+
     /** Flesh vein: one thin plane per face, like glow lichen. */
     private void registerFleshVein() {
         var plane = models().getBuilder("viscera").renderType("cutout")
@@ -146,6 +170,7 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         itemModels().simpleBlockItem(ModBlocks.FLESH_BLOCK.get());
         registerMouthBlock(flesh);
         registerFleshVein();
+        registerShelfShroom();
         slabBlock(ModBlocks.FLESH_SLAB.get(), models().slab("flesh_slab", flesh, flesh, flesh),
                 models().slabTop("flesh_slab_top", flesh, flesh, flesh), full);
         itemModels().simpleBlockItem(ModBlocks.FLESH_SLAB.get());

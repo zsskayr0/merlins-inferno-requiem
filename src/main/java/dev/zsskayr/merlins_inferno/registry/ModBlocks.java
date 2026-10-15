@@ -380,6 +380,9 @@ public final class ModBlocks {
     public static final DeferredBlock<net.minecraft.world.level.block.RotatedPillarBlock> HAUNTED_LOG = BLOCKS.registerBlock("haunted_log",
             net.minecraft.world.level.block.RotatedPillarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_STEM)
                     .mapColor(MapColor.COLOR_PURPLE));
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.ShelfShroomBlock> HAUNTED_SHELF_SHROOM = BLOCKS.registerBlock("haunted_shelf_shroom",
+            dev.zsskayr.merlins_inferno.block.ShelfShroomBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
+                    .noCollission().instabreak().sound(SoundType.FUNGUS).noOcclusion().pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<net.minecraft.world.level.block.LeavesBlock> HAUNTED_LEAVES = BLOCKS.registerBlock("haunted_leaves",
             net.minecraft.world.level.block.LeavesBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(0.2F).randomTicks()
                     .sound(SoundType.GRASS).noOcclusion().isValidSpawn((state, level, pos, type) -> false)
