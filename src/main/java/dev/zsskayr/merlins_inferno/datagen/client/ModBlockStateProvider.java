@@ -91,27 +91,6 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         itemModels().withExistingParent("compressed_netherrack_wall", modLoc("block/compressed_netherrack_wall_inventory"));
     }
 
-    /** Flesh vein: one thin plane per face, like glow lichen. */
-    private void registerFleshVein() {
-        var plane = models().getBuilder("flesh_vein").renderType("cutout")
-                .texture("vein", modLoc("block/flesh_vein")).texture("particle", modLoc("block/flesh_vein"));
-        plane.element().from(0, 0, 15.9f).to(16, 16, 15.9f)
-                .face(net.minecraft.core.Direction.NORTH).uvs(0, 0, 16, 16).texture("#vein").end()
-                .face(net.minecraft.core.Direction.SOUTH).uvs(0, 0, 16, 16).texture("#vein").end().end();
-        var mp = getMultipartBuilder(ModBlocks.FLESH_VEIN.get());
-        record Side(net.minecraft.world.level.block.state.properties.BooleanProperty p, int x, int y) {}
-        for (Side s : new Side[]{
-                new Side(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.SOUTH), 0, 0),
-                new Side(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.WEST), 0, 90),
-                new Side(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.NORTH), 0, 180),
-                new Side(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.EAST), 0, 270),
-                new Side(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.UP), 90, 0),
-                new Side(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.DOWN), 270, 0)}) {
-            mp.part().modelFile(plane).rotationX(s.x()).rotationY(s.y()).uvLock(true).addModel().condition(s.p(), true).end();
-        }
-        itemModels().withExistingParent("flesh_vein", mcLoc("item/generated")).texture("layer0", modLoc("block/flesh_vein"));
-    }
-
     /** Mouth block: flesh cube with an idle maw on top; the floor of the open maw sinks in 2 px steps, with the mob. */
     private void registerMouthBlock(ResourceLocation flesh) {
         ResourceLocation maw = modLoc("block/mouth_block_open");
@@ -136,6 +115,27 @@ public final class ModBlockStateProvider extends BlockStateProvider {
                     .rotationY(yRot).build();
         });
         itemModels().withExistingParent("mouth_block", modLoc("block/mouth_block"));
+    }
+
+    /** Flesh vein: one thin plane per face, like glow lichen. */
+    private void registerFleshVein() {
+        var plane = models().getBuilder("viscera").renderType("cutout")
+                .texture("vein", modLoc("block/viscera")).texture("particle", modLoc("block/viscera"));
+        plane.element().from(0, 0, 15.9f).to(16, 16, 15.9f)
+                .face(net.minecraft.core.Direction.NORTH).uvs(0, 0, 16, 16).texture("#vein").end()
+                .face(net.minecraft.core.Direction.SOUTH).uvs(0, 0, 16, 16).texture("#vein").end().end();
+        var mp = getMultipartBuilder(ModBlocks.VISCERA.get());
+        record Side(net.minecraft.world.level.block.state.properties.BooleanProperty p, int x, int y) {}
+        for (Side s : new Side[]{
+                new Side(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.SOUTH), 0, 0),
+                new Side(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.WEST), 0, 90),
+                new Side(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.NORTH), 0, 180),
+                new Side(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.EAST), 0, 270),
+                new Side(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.UP), 90, 0),
+                new Side(net.minecraft.world.level.block.MultifaceBlock.getFaceProperty(net.minecraft.core.Direction.DOWN), 270, 0)}) {
+            mp.part().modelFile(plane).rotationX(s.x()).rotationY(s.y()).uvLock(true).addModel().condition(s.p(), true).end();
+        }
+        itemModels().withExistingParent("viscera", mcLoc("item/generated")).texture("layer0", modLoc("block/viscera"));
     }
 
     /** Flesh (block/slab/carpet), the red chain, black nylium and the Nether plants (texture names differ from block names). */

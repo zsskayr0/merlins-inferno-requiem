@@ -379,9 +379,16 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> HAUNTED_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_LEAVES, new Item.Properties().fireResistant());
     public static final DeferredItem<BlockItem> CHARRED_FLESH_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CHARRED_FLESH);
     public static final DeferredItem<BlockItem> POROUS_FLESH_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.POROUS_FLESH);
-    public static final DeferredItem<BlockItem> FLESH_VEIN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_VEIN);
-    public static final DeferredItem<BlockItem> FLESH_TENDONS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_TENDONS);
+    public static final DeferredItem<BlockItem> VISCERA_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.VISCERA);
+    public static final DeferredItem<BlockItem> TENDONS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.TENDONS);
     public static final DeferredItem<BlockItem> HAIR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAIR);
+    public static final DeferredItem<BlockItem> SMALL_EYEBULB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SMALL_EYEBULB);
+    public static final DeferredItem<BlockItem> SKIN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SKIN);
+    public static final DeferredItem<BlockItem> SPINE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SPINE);
+    public static final DeferredItem<BlockItem> NERVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.NERVES);
+    public static final DeferredItem<BlockItem> HEART_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HEART);
+    public static final DeferredItem<BlockItem> CAPILLARIES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CAPILLARIES);
+    public static final DeferredItem<BlockItem> ARTERIES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ARTERIES);
     public static final DeferredItem<DoubleHighBlockItem> EYEBULB_ITEM = ITEMS.registerItem("eyebulb",
             props -> new DoubleHighBlockItem(ModBlocks.EYEBULB.get(), props));
     public static final DeferredItem<BlockItem> FLESH_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_SLAB);

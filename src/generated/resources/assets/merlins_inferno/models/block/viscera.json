@@ -23,7 +23,7 @@
   ],
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "merlins_inferno:block/flesh_vein",
-    "vein": "merlins_inferno:block/flesh_vein"
+    "particle": "merlins_inferno:block/viscera",
+    "vein": "merlins_inferno:block/viscera"
   }
 }

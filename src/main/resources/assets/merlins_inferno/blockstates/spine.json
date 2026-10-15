@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "merlins_inferno:block/spine"
+    },
+    "axis=z": {
+      "model": "merlins_inferno:block/spine",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "merlins_inferno:block/spine",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

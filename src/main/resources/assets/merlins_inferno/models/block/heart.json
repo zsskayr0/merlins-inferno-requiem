@@ -2,6 +2,6 @@
   "parent": "minecraft:block/cross",
   "render_type": "minecraft:cutout",
   "textures": {
-    "cross": "merlins_inferno:block/flesh_tendons"
+    "cross": "merlins_inferno:block/heart"
   }
 }

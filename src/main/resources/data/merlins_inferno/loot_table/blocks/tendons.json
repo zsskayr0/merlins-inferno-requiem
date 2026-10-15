@@ -1,6 +1,6 @@
 {
   "type": "minecraft:block",
-  "random_sequence": "merlins_inferno:blocks/flesh_tendons",
+  "random_sequence": "merlins_inferno:blocks/tendons",
   "pools": [
     {
       "rolls": 1.0,
@@ -8,7 +8,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "merlins_inferno:flesh_tendons"
+          "name": "merlins_inferno:tendons"
         }
       ],
       "conditions": [

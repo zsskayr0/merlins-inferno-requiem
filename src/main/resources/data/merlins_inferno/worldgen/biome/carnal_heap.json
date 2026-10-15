@@ -64,14 +64,18 @@
     ],
     [],
     [
+      "merlins_inferno:carnal_skin_patch",
       "minecraft:spring_lava",
       "merlins_inferno:carnal_flesh_spire",
       "merlins_inferno:carnal_hanging_tendons",
       "merlins_inferno:carnal_hair",
       "merlins_inferno:carnal_eyebulb",
+      "merlins_inferno:carnal_viscera",
+      "merlins_inferno:carnal_viscera_ceiling",
       "merlins_inferno:carnal_mouth_blocks",
-      "merlins_inferno:carnal_flesh_vein",
-      "merlins_inferno:carnal_flesh_vein_ceiling"
+      "merlins_inferno:carnal_undergrowth",
+      "merlins_inferno:carnal_chains",
+      "merlins_inferno:carnal_spines"
     ],
     [
       "merlins_inferno:carnal_lava_char"

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:netherrack",
+    "merlins_inferno:flesh_block",
+    "merlins_inferno:porous_flesh",
+    "merlins_inferno:charred_flesh"
+  ]
+}

@@ -387,12 +387,12 @@ public final class ModBlocks {
                     .isRedstoneConductor((state, level, pos) -> false).pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<Block> CHARRED_FLESH = BLOCKS.registerBlock("charred_flesh",
             Block::new, fleshProperties().mapColor(MapColor.COLOR_BLACK).strength(0.6F));
-    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.FleshTendonsBlock> FLESH_TENDONS = BLOCKS.registerBlock("flesh_tendons",
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.FleshTendonsBlock> TENDONS = BLOCKS.registerBlock("tendons",
             dev.zsskayr.merlins_inferno.block.FleshTendonsBlock::new, BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_RED).noCollission().instabreak().sound(SoundType.WEEPING_VINES)
                     .pushReaction(PushReaction.DESTROY));
     // Lichen-like veins of flesh that cling to any face (Oblivion, mostly Carnal Heaps). Drops nothing for now.
-    public static final DeferredBlock<net.minecraft.world.level.block.GlowLichenBlock> FLESH_VEIN = BLOCKS.registerBlock("flesh_vein",
+    public static final DeferredBlock<net.minecraft.world.level.block.GlowLichenBlock> VISCERA = BLOCKS.registerBlock("viscera",
             net.minecraft.world.level.block.GlowLichenBlock::new, BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_RED).replaceable().noCollission().strength(0.2F).sound(SoundType.WEEPING_VINES)
                     .pushReaction(PushReaction.DESTROY));
@@ -400,6 +400,23 @@ public final class ModBlocks {
             net.minecraft.world.level.block.NetherSproutsBlock::new, netherPlantProperties(MapColor.COLOR_RED));
     public static final DeferredBlock<NetherDoublePlantBlock> EYEBULB = BLOCKS.registerBlock("eyebulb",
             NetherDoublePlantBlock::new, netherPlantProperties(MapColor.COLOR_RED).lightLevel(state -> 6));
+    // Short version of the eyebulb (one block): same stalk, no extra length.
+    public static final DeferredBlock<net.minecraft.world.level.block.NetherSproutsBlock> SMALL_EYEBULB = BLOCKS.registerBlock("small_eyebulb",
+            net.minecraft.world.level.block.NetherSproutsBlock::new, netherPlantProperties(MapColor.COLOR_RED).lightLevel(state -> 5));
+
+    // Carnal Heap undergrowth: skin ground, spines and body-part plants (textures recoloured from packs).
+    public static final DeferredBlock<Block> SKIN = BLOCKS.registerBlock("skin",
+            Block::new, fleshProperties().sound(SoundType.NYLIUM));
+    public static final DeferredBlock<net.minecraft.world.level.block.RotatedPillarBlock> SPINE = BLOCKS.registerBlock("spine",
+            net.minecraft.world.level.block.RotatedPillarBlock::new, fleshProperties().strength(1.0F));
+    public static final DeferredBlock<net.minecraft.world.level.block.NetherSproutsBlock> NERVES = BLOCKS.registerBlock("nerves",
+            net.minecraft.world.level.block.NetherSproutsBlock::new, netherPlantProperties(MapColor.COLOR_RED));
+    public static final DeferredBlock<net.minecraft.world.level.block.NetherSproutsBlock> HEART = BLOCKS.registerBlock("heart",
+            net.minecraft.world.level.block.NetherSproutsBlock::new, netherPlantProperties(MapColor.COLOR_RED));
+    public static final DeferredBlock<net.minecraft.world.level.block.NetherSproutsBlock> CAPILLARIES = BLOCKS.registerBlock("capillaries",
+            net.minecraft.world.level.block.NetherSproutsBlock::new, netherPlantProperties(MapColor.COLOR_RED));
+    public static final DeferredBlock<net.minecraft.world.level.block.NetherSproutsBlock> ARTERIES = BLOCKS.registerBlock("arteries",
+            net.minecraft.world.level.block.NetherSproutsBlock::new, netherPlantProperties(MapColor.COLOR_RED));
 
     private static BlockBehaviour.Properties fleshProperties() {
         return BlockBehaviour.Properties.of()

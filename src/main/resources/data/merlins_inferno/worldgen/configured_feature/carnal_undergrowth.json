@@ -1,0 +1,76 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "tries": 80,
+    "xz_spread": 7,
+    "y_spread": 3,
+    "feature": {
+      "feature": {
+        "type": "minecraft:simple_block",
+        "config": {
+          "to_place": {
+            "type": "minecraft:weighted_state_provider",
+            "entries": [
+              {
+                "data": {
+                  "Name": "merlins_inferno:nerves"
+                },
+                "weight": 4
+              },
+              {
+                "data": {
+                  "Name": "merlins_inferno:heart"
+                },
+                "weight": 2
+              },
+              {
+                "data": {
+                  "Name": "merlins_inferno:capillaries"
+                },
+                "weight": 3
+              },
+              {
+                "data": {
+                  "Name": "merlins_inferno:arteries"
+                },
+                "weight": 4
+              },
+              {
+                "data": {
+                  "Name": "merlins_inferno:hair"
+                },
+                "weight": 3
+              },
+              {
+                "data": {
+                  "Name": "merlins_inferno:small_eyebulb"
+                },
+                "weight": 3
+              }
+            ]
+          }
+        }
+      },
+      "placement": [
+        {
+          "type": "minecraft:block_predicate_filter",
+          "predicate": {
+            "type": "minecraft:all_of",
+            "predicates": [
+              {
+                "type": "minecraft:matching_blocks",
+                "blocks": "minecraft:air"
+              },
+              {
+                "type": "minecraft:would_survive",
+                "state": {
+                  "Name": "merlins_inferno:nerves"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

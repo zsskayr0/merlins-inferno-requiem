@@ -52,9 +52,10 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.HELL_FORGE.get(),
                 ModBlocks.LYRIUM_ORE.get(), ModBlocks.DEEPSLATE_LYRIUM_ORE.get(), ModBlocks.LYRIUM_BLOCK.get(),
                 ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.WITHERED_OBSIDIAN.get(),
-                ModBlocks.FLESH_BLOCK.get(), ModBlocks.MOUTH_BLOCK.get(), ModBlocks.FLESH_VEIN.get(), ModBlocks.FLESH_SLAB.get(), ModBlocks.FLESH_CARPET.get(), ModBlocks.RED_CHAIN.get(),
+                ModBlocks.FLESH_BLOCK.get(), ModBlocks.MOUTH_BLOCK.get(), ModBlocks.VISCERA.get(), ModBlocks.FLESH_SLAB.get(), ModBlocks.FLESH_CARPET.get(), ModBlocks.RED_CHAIN.get(),
                 ModBlocks.BLACK_NYLIUM.get(), ModBlocks.TALL_CRIMSON_ROOTS.get(), ModBlocks.TALL_BLACK_GRASS.get(),
-                ModBlocks.LUST_FLOWER.get());
+                ModBlocks.LUST_FLOWER.get(),
+                ModBlocks.SKIN.get(), ModBlocks.SPINE.get());
         // lyrium_cluster is hand-authored (data/merlins_inferno/loot_table/blocks/lyrium_cluster.json).
     }
 
@@ -97,9 +98,11 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.WITHERED_OBSIDIAN.get());
         dropSelf(ModBlocks.FLESH_BLOCK.get());
         dropSelf(ModBlocks.MOUTH_BLOCK.get());
-        add(ModBlocks.FLESH_VEIN.get(), noDrop());
+        add(ModBlocks.VISCERA.get(), noDrop());
         add(ModBlocks.FLESH_SLAB.get(), createSlabItemTable(ModBlocks.FLESH_SLAB.get()));
         dropSelf(ModBlocks.FLESH_CARPET.get());
+        dropSelf(ModBlocks.SPINE.get());
+        add(ModBlocks.SKIN.get(), createSingleItemTableWithSilkTouch(ModBlocks.SKIN.get(), Blocks.NETHERRACK));
         dropSelf(ModBlocks.RED_CHAIN.get());
         dropSelf(ModBlocks.LUST_FLOWER.get());
         // Like crimson nylium: netherrack unless Silk Touch.

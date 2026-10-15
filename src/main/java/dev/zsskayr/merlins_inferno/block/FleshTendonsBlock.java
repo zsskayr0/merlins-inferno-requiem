@@ -33,7 +33,7 @@ public class FleshTendonsBlock extends Block {
     private static boolean holds(LevelReader level, BlockPos pos, Direction dir) {
         BlockPos other = pos.relative(dir);
         BlockState state = level.getBlockState(other);
-        return state.is(dev.zsskayr.merlins_inferno.registry.ModBlocks.FLESH_TENDONS.get())
+        return state.is(dev.zsskayr.merlins_inferno.registry.ModBlocks.TENDONS.get())
                 || state.isFaceSturdy(level, other, dir.getOpposite());
     }
 

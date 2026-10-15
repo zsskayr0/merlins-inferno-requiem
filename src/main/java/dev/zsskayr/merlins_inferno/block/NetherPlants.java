@@ -14,7 +14,7 @@ public final class NetherPlants {
     /** Everything crimson roots can stand on (nylium, soul soil), plus netherrack and Flesh. */
     public static boolean canSustain(BlockState state) {
         return state.is(BlockTags.NYLIUM) || state.is(Blocks.NETHERRACK) || state.is(Blocks.SOUL_SOIL)
-                || state.is(ModBlocks.FLESH_BLOCK.get());
+                || state.is(ModBlocks.FLESH_BLOCK.get()) || state.is(ModBlocks.POROUS_FLESH.get());
     }
 
     /** Wither Rose extension: black nylium and Flesh only, vanilla nylium stays as it was. */
