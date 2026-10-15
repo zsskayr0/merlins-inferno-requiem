@@ -19,10 +19,12 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  * "lament" trees of Oh The Biomes You'll Go (used with the author's permission).
  */
 public class HauntedTreeFeature extends Feature<HauntedTreeFeature.Config> {
-    public record Config(BlockState log, BlockState leaves, int minHeight, int maxHeight) implements FeatureConfiguration {
+    public record Config(BlockState log, BlockState leaves, BlockState decor, float decorChance, int minHeight, int maxHeight) implements FeatureConfiguration {
         public static final Codec<Config> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BlockState.CODEC.fieldOf("log").forGetter(Config::log),
                 BlockState.CODEC.fieldOf("leaves").forGetter(Config::leaves),
+                BlockState.CODEC.fieldOf("decor").forGetter(Config::decor),
+                Codec.floatRange(0.0F, 1.0F).fieldOf("decor_chance").forGetter(Config::decorChance),
                 Codec.intRange(6, 40).fieldOf("min_height").forGetter(Config::minHeight),
                 Codec.intRange(6, 40).fieldOf("max_height").forGetter(Config::maxHeight)
         ).apply(instance, Config::new));
@@ -117,7 +119,9 @@ public class HauntedTreeFeature extends Feature<HauntedTreeFeature.Config> {
                     }
                     BlockPos pos = centre.offset(dx, dy, dz);
                     if (level.getBlockState(pos).canBeReplaced()) {
-                        level.setBlock(pos, config.leaves(), 2);
+                        // the underside of the canopy carries the glowing fruit
+                        boolean underside = dy <= -1 && level.getBlockState(pos.below()).isAir();
+                        level.setBlock(pos, underside && random.nextFloat() < config.decorChance() ? config.decor() : config.leaves(), 2);
                     }
                 }
             }
@@ -131,7 +135,8 @@ public class HauntedTreeFeature extends Feature<HauntedTreeFeature.Config> {
                 if (!level.getBlockState(pos).canBeReplaced()) {
                     break;
                 }
-                level.setBlock(pos, config.leaves(), 2);
+                boolean tip = y == length - 1 && random.nextFloat() < config.decorChance() * 2;
+                level.setBlock(pos, tip ? config.decor() : config.leaves(), 2);
             }
         }
     }

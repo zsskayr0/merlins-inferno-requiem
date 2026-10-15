@@ -16,6 +16,10 @@
       }
     },
     "min_height": 16,
-    "max_height": 28
+    "max_height": 28,
+    "decor": {
+      "Name": "merlins_inferno:oblivion_shroomlight"
+    },
+    "decor_chance": 0.04
   }
 }
