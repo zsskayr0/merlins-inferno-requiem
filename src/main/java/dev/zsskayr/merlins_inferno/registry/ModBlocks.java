@@ -357,6 +357,9 @@ public final class ModBlocks {
     // only found in the world; the slab/carpet recipes go from and back to the block. ---
     public static final DeferredBlock<Block> FLESH_BLOCK = BLOCKS.registerBlock("flesh_block",
             Block::new, fleshProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.MouthBlock> MOUTH_BLOCK =
+            BLOCKS.registerBlock("mouth_block", dev.zsskayr.merlins_inferno.block.MouthBlock::new,
+                    fleshProperties().noOcclusion().isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false));
     public static final DeferredBlock<SlabBlock> FLESH_SLAB = BLOCKS.registerBlock("flesh_slab",
             SlabBlock::new, fleshProperties());
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.OrnatedCarpetBlock> ORNATED_CARPET =

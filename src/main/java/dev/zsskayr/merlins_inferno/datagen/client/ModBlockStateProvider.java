@@ -112,12 +112,39 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         itemModels().withExistingParent("flesh_vein", mcLoc("item/generated")).texture("layer0", modLoc("block/flesh_vein"));
     }
 
+    /** Mouth block: flesh cube with an idle maw on top; the floor of the open maw sinks in 2 px steps, with the mob. */
+    private void registerMouthBlock(ResourceLocation flesh) {
+        ResourceLocation maw = modLoc("block/mouth_block_open");
+        ModelFile[] models = new ModelFile[dev.zsskayr.merlins_inferno.block.MouthBlock.MAX_DEPTH + 1];
+        models[0] = models().cubeBottomTop("mouth_block", flesh, flesh, modLoc("block/mouth_block_closed"));
+        for (int d = 1; d < models.length; d++) {
+            int floor = 16 - 2 * d;
+            var m = models().getBuilder("mouth_block_open_" + d)
+                    .texture("flesh", flesh).texture("maw", maw).texture("particle", flesh);
+            m.element().from(0, 0, 0).to(16, floor, 16)
+                    .allFaces((dir, face) -> face.texture(dir == net.minecraft.core.Direction.UP ? "#maw" : "#flesh")).end();
+            m.element().from(0, floor, 0).to(2, 16, 16).allFaces((dir, face) -> face.texture("#flesh")).end();
+            m.element().from(14, floor, 0).to(16, 16, 16).allFaces((dir, face) -> face.texture("#flesh")).end();
+            m.element().from(2, floor, 0).to(14, 16, 2).allFaces((dir, face) -> face.texture("#flesh")).end();
+            m.element().from(2, floor, 14).to(14, 16, 16).allFaces((dir, face) -> face.texture("#flesh")).end();
+            models[d] = m;
+        }
+        getVariantBuilder(ModBlocks.MOUTH_BLOCK.get()).forAllStates(state -> {
+            int yRot = ((int) state.getValue(dev.zsskayr.merlins_inferno.block.MouthBlock.FACING).toYRot() + 180) % 360;
+            return ConfiguredModel.builder()
+                    .modelFile(models[state.getValue(dev.zsskayr.merlins_inferno.block.MouthBlock.DEPTH)])
+                    .rotationY(yRot).build();
+        });
+        itemModels().withExistingParent("mouth_block", modLoc("block/mouth_block"));
+    }
+
     /** Flesh (block/slab/carpet), the red chain, black nylium and the Nether plants (texture names differ from block names). */
     private void registerFleshAndNetherFlora() {
         ResourceLocation flesh = modLoc("block/flesh");
         ModelFile full = models().cubeAll("flesh_block", flesh);
         simpleBlock(ModBlocks.FLESH_BLOCK.get(), full);
         itemModels().simpleBlockItem(ModBlocks.FLESH_BLOCK.get());
+        registerMouthBlock(flesh);
         registerFleshVein();
         slabBlock(ModBlocks.FLESH_SLAB.get(), models().slab("flesh_slab", flesh, flesh, flesh),
                 models().slabTop("flesh_slab_top", flesh, flesh, flesh), full);
