@@ -483,7 +483,7 @@ public final class ModBlocks {
                     .sound(SoundType.WEEPING_VINES).pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<Block> OBLIVION_SHROOMLIGHT = BLOCKS.registerBlock("oblivion_shroomlight",
             SoulShroomlightBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE).strength(1.0F)
-                    .sound(SoundType.SHROOMLIGHT).lightLevel(state -> 14));
+                    .sound(SoundType.SHROOMLIGHT).lightLevel(state -> 12));
 
     // The ground of the Cinder Dunes: a soft, dry grey ash that does not fall (unlike sand).
     public static final DeferredBlock<Block> ASH_BLOCK = BLOCKS.registerBlock("ash_block",
