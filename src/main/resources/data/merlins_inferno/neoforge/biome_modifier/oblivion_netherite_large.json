@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_nether",
+  "features": "merlins_inferno:oblivion_netherite_large",
+  "step": "underground_ores"
+}
