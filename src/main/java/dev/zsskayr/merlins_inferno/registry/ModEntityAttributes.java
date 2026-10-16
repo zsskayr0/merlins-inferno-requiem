@@ -24,6 +24,7 @@ public final class ModEntityAttributes {
 
     @SubscribeEvent
     static void onEntityAttributeCreation(EntityAttributeCreationEvent event) {
+        event.put(ModEntityTypes.CINDER.get(), dev.zsskayr.merlins_inferno.entity.CinderEntity.createAttributes().build());
         event.put(ModEntityTypes.DRUID.get(), DruidEntity.createAttributes().build());
         event.put(ModEntityTypes.IMP.get(), ImpEntity.createAttributes().build());
         event.put(ModEntityTypes.STARVED.get(), StarvedEntity.createAttributes().build());

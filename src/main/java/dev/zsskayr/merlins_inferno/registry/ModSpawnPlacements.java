@@ -63,6 +63,10 @@ public final class ModSpawnPlacements {
         event.register(ModEntityTypes.TEMPLAR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 dev.zsskayr.merlins_inferno.entity.TemplarEntity::checkTemplarSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
+        // Loaded lava lakes are populated by CinderSpawnHandler, rather than the ground spawn list.
+        event.register(ModEntityTypes.CINDER.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                dev.zsskayr.merlins_inferno.entity.CinderEntity::checkCinderSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+
         // Cain and the Flesh Golem: Circle 2 only (the rule carries the gate); which biomes list them is Oblivion's own data.
         event.register(ModEntityTypes.CAIN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 dev.zsskayr.merlins_inferno.entity.CainEntity::checkCainSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);

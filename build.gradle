@@ -200,3 +200,13 @@ tasks.register('verifyPandoraGui', JavaExec) {
     mainClass = 'dev.zsskayr.merlins_inferno.menu.PandoraGuiChecks'
 }
 tasks.named('check') { dependsOn tasks.named('verifyPandoraGui') }
+
+tasks.register('verifyCinder', JavaExec) {
+    group = 'verification'
+    description = 'Checks Cinder heat, uninterrupted submersion, regeneration cadence and weakening.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    mainClass = 'dev.zsskayr.merlins_inferno.entity.CinderChecks'
+}
+tasks.named('check') { dependsOn tasks.named('verifyCinder') }

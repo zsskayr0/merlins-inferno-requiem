@@ -162,6 +162,11 @@ public final class ModEntityTypes {
                     .clientTrackingRange(10)
                     .build(Merlins_inferno.MODID + ":flesh_golem"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.zsskayr.merlins_inferno.entity.CinderEntity>> CINDER = ENTITY_TYPES.register("cinder",
+            () -> EntityType.Builder.of(dev.zsskayr.merlins_inferno.entity.CinderEntity::new, MobCategory.MONSTER)
+                    .sized(1.25F, 1.0F).eyeHeight(.65F).fireImmune().clientTrackingRange(16).updateInterval(1)
+                    .build(Merlins_inferno.MODID + ":cinder"));
+
     private ModEntityTypes() {
     }
 

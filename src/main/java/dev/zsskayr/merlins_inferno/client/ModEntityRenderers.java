@@ -35,6 +35,10 @@ import dev.zsskayr.merlins_inferno.registry.ModWoodTypes;
 /** Client-only: model layers + renderers for every custom entity/block entity this mod adds. */
 @EventBusSubscriber(modid = Merlins_inferno.MODID, value = Dist.CLIENT)
 public final class ModEntityRenderers {
+    @SubscribeEvent
+    static void onCinderReload(net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener((net.minecraft.server.packs.resources.ResourceManagerReloadListener) manager -> CinderMeshes.invalidate());
+    }
     private ModEntityRenderers() {
     }
 
@@ -56,6 +60,7 @@ public final class ModEntityRenderers {
         event.registerEntityRenderer(ModEntityTypes.ELIAS.get(), EliasRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.SACRED_CULTIST.get(), SacredCultistRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.TEMPLAR.get(), TemplarRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.CINDER.get(), CinderRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.SACRED_PRIEST.get(), SacredPriestRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.ANDRAS.get(), AndrasRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.OSTARA.get(), OstaraRenderer::new);

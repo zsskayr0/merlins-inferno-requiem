@@ -442,5 +442,9 @@
   "block.merlins_inferno.haunted_hanging_sign": "Placa Suspensa Assombrada",
   "block.merlins_inferno.haunted_wall_hanging_sign": "Placa Suspensa de Parede Assombrada",
   "item.merlins_inferno.haunted_boat": "Barco Assombrado",
-  "entity.merlins_inferno.haunted_boat": "Barco Assombrado"
+  "entity.merlins_inferno.haunted_boat": "Barco Assombrado",
+  "entity.merlins_inferno.cinder": "Cinder",
+  "item.merlins_inferno.cinder_spawn_egg": "Ovo gerador de Cinder",
+  "death.attack.cinder_bite": "%1$s foi pego nas mandíbulas de um Cinder",
+  "death.attack.cinder_bite.player": "%1$s foi pego nas mandíbulas de um Cinder enquanto lutava contra %2$s"
 }

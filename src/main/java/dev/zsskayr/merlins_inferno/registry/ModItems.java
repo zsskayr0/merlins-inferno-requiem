@@ -419,6 +419,8 @@ public final class ModItems {
             props -> new DeferredSpawnEggItem(ModEntityTypes.ELIAS, 0xD9D2BC, 0x6FE3F5, props));
     public static final DeferredItem<DeferredSpawnEggItem> SACRED_CULTIST_SPAWN_EGG = ITEMS.registerItem("sacred_cultist_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.SACRED_CULTIST, 0x6B5A48, 0xE8D9A8, props));
+    public static final DeferredItem<DeferredSpawnEggItem> CINDER_SPAWN_EGG = ITEMS.registerItem("cinder_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntityTypes.CINDER, 0xA0967B, 0xE85A17, props));
     public static final DeferredItem<DeferredSpawnEggItem> TEMPLAR_SPAWN_EGG = ITEMS.registerItem("templar_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.TEMPLAR, 0xB8BCC4, 0x2E5FA8, props));
     public static final DeferredItem<DeferredSpawnEggItem> SACRED_PRIEST_SPAWN_EGG = ITEMS.registerItem("sacred_priest_spawn_egg",

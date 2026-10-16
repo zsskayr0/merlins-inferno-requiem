@@ -23,6 +23,7 @@ public class DebugCommands {
                     ServerPlayer player = context.getSource().getPlayerOrException();
                     return setCircle(player, ProgressionHelper.SECOND_CIRCLE);
                 }))
+                .then(Commands.literal("cinder").executes(context -> cinderStatus(context.getSource().getPlayerOrException())))
                 .then(Commands.literal("circle")
                         .then(Commands.argument("circle", IntegerArgumentType.integer(
                                 ProgressionHelper.FIRST_CIRCLE, ProgressionHelper.SECOND_CIRCLE))
@@ -34,5 +35,20 @@ public class DebugCommands {
         ProgressionHelper.setCircle(player, circle);
         player.sendSystemMessage(Component.literal("[Merlin's Inferno] Circle set to " + circle));
         return circle;
+    }
+    private static int cinderStatus(ServerPlayer player) {
+        boolean eligible = player.serverLevel().dimension() == dev.zsskayr.merlins_inferno.portal.OblivionDimension.LEVEL
+                && ProgressionHelper.hasReached(player, ProgressionHelper.SECOND_CIRCLE) && !player.isCreative() && !player.isSpectator()
+                && player.serverLevel().getDifficulty() != net.minecraft.world.Difficulty.PEACEFUL
+                && player.serverLevel().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING);
+        var nearby = player.serverLevel().getEntitiesOfClass(dev.zsskayr.merlins_inferno.entity.CinderEntity.class,
+                player.getBoundingBox().inflate(160), entity -> entity.isAlive());
+        player.sendSystemMessage(Component.literal("[Cinder] Natural spawn eligible: " + eligible
+                + "; Circle: " + ProgressionHelper.circle(player) + "; loaded within 160 blocks: " + nearby.size()
+                + "; spawn cooldown: " + Math.max(0, (player.getPersistentData().getLong("MerlinsCinderNextSpawn") - player.serverLevel().getGameTime()) / 20) + "s"));
+        nearby.stream().min(java.util.Comparator.comparingDouble(player::distanceToSqr)).ifPresent(c ->
+                player.sendSystemMessage(Component.literal("[Cinder] Nearest: " + c.blockPosition().toShortString()
+                        + "; action: " + c.action().clip + "; cold: " + c.coldTicks() + "/600; fully submerged: " + c.fullySubmerged())));
+        return nearby.size();
     }
 }
