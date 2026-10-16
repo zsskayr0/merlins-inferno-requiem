@@ -106,6 +106,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.SACRED_CULTIST_SPAWN_EGG.get());
                         output.accept(ModItems.TEMPLAR_SPAWN_EGG.get());
                         output.accept(ModItems.CINDER_SPAWN_EGG.get());
+                        output.accept(ModItems.LAVA_LENS.get());
                         output.accept(ModItems.SACRED_PRIEST_SPAWN_EGG.get());
                         output.accept(ModItems.ANDRAS_SPAWN_EGG.get());
                         output.accept(ModItems.OSTARA_SPAWN_EGG.get());

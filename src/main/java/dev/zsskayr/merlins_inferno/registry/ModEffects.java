@@ -15,6 +15,8 @@ import dev.zsskayr.merlins_inferno.effect.SanctifiedEffect;
 /** Central registry for every {@code MobEffect} this mod adds. */
 public final class ModEffects {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Merlins_inferno.MODID);
+    public static final DeferredHolder<MobEffect, MarkOfDebtEffect> LAVA_SIGHT = MOB_EFFECTS.register("lava_sight",
+            () -> new MarkOfDebtEffect(MobEffectCategory.BENEFICIAL, 0xCA651F));
 
     // Icy white-blue, matching Lyrium's palette. See SanctifiedEffect for the tick logic and
     // event.SanctifiedTickHandler/SanctifiedCombatHandler for how it's applied and what it does

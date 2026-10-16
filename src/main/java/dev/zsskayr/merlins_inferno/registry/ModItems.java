@@ -52,6 +52,8 @@ import dev.zsskayr.merlins_inferno.item.ModTiers;
  */
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Merlins_inferno.MODID);
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.LavaLensItem> LAVA_LENS = ITEMS.registerItem("lava_lens",
+            dev.zsskayr.merlins_inferno.item.LavaLensItem::new);
 
     // The mod's in-game guidebook - see item.GrimmoriumItem for what "using" it does
     // (data/merlins_inferno/patchouli_books/guide/) and compat.patchouli for why Patchouli being
