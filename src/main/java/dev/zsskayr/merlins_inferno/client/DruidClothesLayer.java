@@ -20,7 +20,7 @@ import dev.zsskayr.merlins_inferno.entity.DruidEntity;
  * Draws the druids' own clothes ({@code druid_armour}: a different geometry on a different 128x128 texture than the 64x64
  * skin) over the body. GeckoLib animates only the skin model, so each armour bone copies the pose of the skin bone it
  * dresses - both skeletons share the same hierarchy and pivots (see {@code src/Models/druid/build_druid.py}), which makes
- * the copy exact. A piece of clothing is left out where the druid wears real armour in that slot.
+ * the copy exact. Native leather/Rowanwood equipment keeps these clothes; other armour replaces the occupied slot.
  */
 public class DruidClothesLayer extends GeoRenderLayer<DruidEntity> {
     /** Armour bone -> the skin bone whose pose it copies (armour bones not listed inherit from their parent). */
@@ -51,10 +51,10 @@ public class DruidClothesLayer extends GeoRenderLayer<DruidEntity> {
                 to.updateScale(from.getScaleX(), from.getScaleY(), from.getScaleZ());
             }
         });
-        boolean head = druid.hasItemInSlot(EquipmentSlot.HEAD);
-        boolean chest = druid.hasItemInSlot(EquipmentSlot.CHEST);
-        boolean legs = druid.hasItemInSlot(EquipmentSlot.LEGS);
-        boolean feet = druid.hasItemInSlot(EquipmentSlot.FEET);
+        boolean head = !druid.usesNativeClothing(EquipmentSlot.HEAD);
+        boolean chest = !druid.usesNativeClothing(EquipmentSlot.CHEST);
+        boolean legs = !druid.usesNativeClothing(EquipmentSlot.LEGS);
+        boolean feet = !druid.usesNativeClothing(EquipmentSlot.FEET);
         hide(clothes, "armorHead", head);
         hide(clothes, "armorBody", chest);
         hide(clothes, "armorRightArm", chest);

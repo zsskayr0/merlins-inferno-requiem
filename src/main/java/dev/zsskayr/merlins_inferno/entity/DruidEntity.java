@@ -167,7 +167,7 @@ public class DruidEntity extends PathfinderMob implements Merchant, GeoEntity {
         return this.animationCache;
     }
 
-    private boolean isTradingSynced() {
+    public boolean isTradingSynced() {
         return this.entityData.get(DATA_TRADING);
     }
 
@@ -294,6 +294,19 @@ public class DruidEntity extends PathfinderMob implements Merchant, GeoEntity {
                     : (rowanwood ? ModItems.ROWANWOOD_AXE.get() : Items.IRON_AXE);
             equip(EquipmentSlot.MAINHAND, weapon, rowanwood);
         }
+    }
+
+    /** Native spawn equipment supplies stats; the druid's own model supplies its visible clothing. */
+    public boolean usesNativeClothing(EquipmentSlot slot) {
+        ItemStack stack = getItemBySlot(slot);
+        if (stack.isEmpty()) return true;
+        return switch (slot) {
+            case HEAD -> stack.is(Items.LEATHER_HELMET) || stack.is(ModItems.ROWANWOOD_HELMET.get());
+            case CHEST -> stack.is(Items.LEATHER_CHESTPLATE) || stack.is(ModItems.ROWANWOOD_CHESTPLATE.get());
+            case LEGS -> stack.is(Items.LEATHER_LEGGINGS) || stack.is(ModItems.ROWANWOOD_LEGGINGS.get());
+            case FEET -> stack.is(Items.LEATHER_BOOTS) || stack.is(ModItems.ROWANWOOD_BOOTS.get());
+            default -> false;
+        };
     }
 
     /**

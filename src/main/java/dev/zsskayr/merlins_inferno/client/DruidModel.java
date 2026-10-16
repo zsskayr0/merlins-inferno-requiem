@@ -58,5 +58,23 @@ public class DruidModel extends GeoModel<DruidEntity> {
             head.setRotX(head.getRotX() + Mth.clamp(data.headPitch(), -35.0F, 35.0F) * Mth.DEG_TO_RAD);
             head.setRotY(head.getRotY() + Mth.clamp(data.netHeadYaw(), -50.0F, 50.0F) * Mth.DEG_TO_RAD);
         });
+        if (druid.isDeadOrDying() || druid.isTradingSynced() || druid.getMainHandItem().isEmpty()) return;
+        var manager = druid.getAnimatableInstanceCache().getManagerForId(instanceId);
+        var gesture = manager.getAnimationControllers().get("gesture");
+        if (gesture != null && gesture.getAnimationState() != software.bernie.geckolib.animation.AnimationController.State.STOPPED) return;
+        float attack = druid.getAttackAnim(state.getPartialTick());
+        float yaw = Mth.sin(Mth.sqrt(attack) * Mth.TWO_PI) * .2F;
+        float pitch = data.headPitch() * Mth.DEG_TO_RAD;
+        float eased = 1 - (float)Math.pow(1 - attack, 4);
+        float swing = Mth.sin(eased * Mth.PI) * 1.2F + Mth.sin(attack * Mth.PI) * -(pitch - .7F) * .75F;
+        // Unlike the Templar, these arms inherit torso yaw and shoulder motion.
+        getBone("torso").ifPresent(b -> b.setRotY(b.getRotY() - yaw));
+        getBone("head").ifPresent(b -> b.setRotY(b.getRotY() + yaw));
+        getBone("right_arm").ifPresent(b -> {
+            b.setRotX(b.getRotX() * .5F + Mth.PI / 10 + swing);
+            b.setRotY(-yaw);
+            b.setRotZ(b.getRotZ() - Mth.sin(attack * Mth.PI) * .4F);
+        });
+        getBone("left_arm").ifPresent(b -> b.setRotX(b.getRotX() - yaw));
     }
 }

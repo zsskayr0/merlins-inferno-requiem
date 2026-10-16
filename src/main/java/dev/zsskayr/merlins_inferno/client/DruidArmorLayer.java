@@ -19,7 +19,7 @@ import software.bernie.geckolib.renderer.layer.ItemArmorGeoLayer;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 
 /**
- * Vanilla armour (leather, Rowanwood...) on the druid's skin-model bones. GeckoLib's own layer is built for bones modelled as
+ * Other equipped armour on the druid's skin-model bones; native leather/Rowanwood uses DruidClothesLayer. GeckoLib's own layer is built for bones modelled as
  * armour-sized cubes and rescales the vanilla piece to them; the druid's bones are the plain 8x12x4 body, so the piece keeps
  * vanilla's size and is only moved to the bone's pivot (the bone's pose is already on the matrix stack here). Body and legs
  * carry two slots (chest + leggings belt, leggings + boots), so those bones render twice.
@@ -37,7 +37,7 @@ public class DruidArmorLayer extends ItemArmorGeoLayer<DruidEntity> {
             VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
         for (EquipmentSlot slot : slotsFor(bone.getName())) {
             ItemStack stack = druid.getItemBySlot(slot);
-            if (!stack.isEmpty()) {
+            if (!stack.isEmpty() && !druid.usesNativeClothing(slot)) {
                 this.current = stack;
                 super.renderForBone(poseStack, druid, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
             }
