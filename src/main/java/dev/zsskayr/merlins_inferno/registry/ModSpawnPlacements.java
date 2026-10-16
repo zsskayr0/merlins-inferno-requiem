@@ -59,6 +59,10 @@ public final class ModSpawnPlacements {
         event.register(ModEntityTypes.SACRED_CULTIST.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
+        // Templars: Circle 2 patrols, rare (biome_modifier/templar_spawns.json); the rule carries the circle gate.
+        event.register(ModEntityTypes.TEMPLAR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                dev.zsskayr.merlins_inferno.entity.TemplarEntity::checkTemplarSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+
         // Cain and the Flesh Golem: Circle 2 only (the rule carries the gate); which biomes list them is Oblivion's own data.
         event.register(ModEntityTypes.CAIN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 dev.zsskayr.merlins_inferno.entity.CainEntity::checkCainSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);

@@ -244,6 +244,8 @@
   "message.merlins_inferno.elias.toll": "O Grande Sino toca (%1$s/%2$s)...",
   "message.merlins_inferno.elias.fury": "O sino se despedaça! Elias está furioso.",
   "message.merlins_inferno.sacred_altar.guarded": "O Sacerdote Sagrado ainda guarda esta igreja.",
+  "entity.merlins_inferno.templar": "Templário",
+  "item.merlins_inferno.templar_spawn_egg": "Ovo de Spawn do Templário",
   "entity.merlins_inferno.sacred_priest": "O Sacerdote Sagrado",
   "item.merlins_inferno.sacred_priest_spawn_egg": "Ovo de Spawn do Sacerdote Sagrado",
   "patchouli.merlins_inferno.entry.sacred_priest.name": "O Sacerdote Sagrado",

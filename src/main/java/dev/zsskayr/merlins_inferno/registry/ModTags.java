@@ -111,6 +111,10 @@ public final class ModTags {
         public static final TagKey<Item> DEMONBLOOD_TOOLS = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demonblood_tools"));
 
+        /** Anything demonic a player can carry - Templars turn on a player holding any of it (see TemplarEntity#isDemonic). */
+        public static final TagKey<Item> DEMONIC_ITEMS = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demonic_items"));
+
         /** Every Demonblood armor piece - grants the Demon's Fury trait (see DemonbloodCombatHandler). */
         public static final TagKey<Item> DEMONBLOOD_ARMOR = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demonblood_armor"));

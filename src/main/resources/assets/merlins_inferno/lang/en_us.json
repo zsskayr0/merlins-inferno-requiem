@@ -244,6 +244,8 @@
   "message.merlins_inferno.elias.toll": "The Great Bell tolls (%1$s/%2$s)...",
   "message.merlins_inferno.elias.fury": "The bell shatters! Elias is furious.",
   "message.merlins_inferno.sacred_altar.guarded": "The Sacred Priest still guards this church.",
+  "entity.merlins_inferno.templar": "Templar",
+  "item.merlins_inferno.templar_spawn_egg": "Templar Spawn Egg",
   "entity.merlins_inferno.sacred_priest": "The Sacred Priest",
   "item.merlins_inferno.sacred_priest_spawn_egg": "Sacred Priest Spawn Egg",
   "patchouli.merlins_inferno.entry.sacred_priest.name": "The Sacred Priest",

@@ -112,6 +112,14 @@ public final class ModEntityTypes {
                     .clientTrackingRange(8)
                     .build(Merlins_inferno.MODID + ":sacred_cultist"));
 
+    // Circle 2 only: rare patrols of three, neutral to the player unless they sense something demonic (see TemplarEntity).
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.zsskayr.merlins_inferno.entity.TemplarEntity>> TEMPLAR = ENTITY_TYPES.register("templar",
+            () -> EntityType.Builder.of(dev.zsskayr.merlins_inferno.entity.TemplarEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 2.0F)
+                    .eyeHeight(1.78F)
+                    .clientTrackingRange(8)
+                    .build(Merlins_inferno.MODID + ":templar"));
+
     public static final DeferredHolder<EntityType<?>, EntityType<SacredPriestEntity>> SACRED_PRIEST = ENTITY_TYPES.register("sacred_priest",
             () -> EntityType.Builder.of(SacredPriestEntity::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)

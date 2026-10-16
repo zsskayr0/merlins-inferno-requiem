@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "merlins_inferno:demonblood_scrap", "merlins_inferno:demonblood_bar",
+    "merlins_inferno:demonblood_sword", "merlins_inferno:demonblood_axe", "merlins_inferno:demonblood_shovel",
+    "merlins_inferno:demonblood_pickaxe", "merlins_inferno:demonblood_hoe",
+    "merlins_inferno:demonblood_helmet", "merlins_inferno:demonblood_chestplate",
+    "merlins_inferno:demonblood_leggings", "merlins_inferno:demonblood_boots",
+    "merlins_inferno:ebony_scrap", "merlins_inferno:ebony_bar",
+    "merlins_inferno:ebony_axe", "merlins_inferno:ebony_shovel", "merlins_inferno:ebony_pickaxe", "merlins_inferno:ebony_hoe",
+    "merlins_inferno:ebony_helmet", "merlins_inferno:ebony_chestplate", "merlins_inferno:ebony_leggings", "merlins_inferno:ebony_boots",
+    "merlins_inferno:infernal_essence", "merlins_inferno:infernal_sinew", "merlins_inferno:devil_flesh",
+    "merlins_inferno:dark_coven", "merlins_inferno:dark_coven_2", "merlins_inferno:dark_coven_3",
+    "merlins_inferno:dark_coven_4", "merlins_inferno:dark_coven_5",
+    { "id": "merlins_inferno:ebony_sword", "required": false },
+    { "id": "merlins_inferno:ebony_debris", "required": false }
+  ]
+}

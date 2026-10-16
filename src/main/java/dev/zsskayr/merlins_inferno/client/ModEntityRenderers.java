@@ -55,6 +55,7 @@ public final class ModEntityRenderers {
         event.registerEntityRenderer(ModEntityTypes.DULLAHAN.get(), DullahanRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.ELIAS.get(), EliasRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.SACRED_CULTIST.get(), SacredCultistRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.TEMPLAR.get(), TemplarRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.SACRED_PRIEST.get(), SacredPriestRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.ANDRAS.get(), AndrasRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.OSTARA.get(), OstaraRenderer::new);

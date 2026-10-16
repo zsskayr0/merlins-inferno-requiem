@@ -31,6 +31,7 @@ public final class ModEntityAttributes {
         event.put(ModEntityTypes.DULLAHAN.get(), DullahanEntity.createAttributes().build());
         event.put(ModEntityTypes.ELIAS.get(), EliasEntity.createAttributes().build());
         event.put(ModEntityTypes.SACRED_CULTIST.get(), SacredCultistEntity.createAttributes().build());
+        event.put(ModEntityTypes.TEMPLAR.get(), dev.zsskayr.merlins_inferno.entity.TemplarEntity.createAttributes().build());
         event.put(ModEntityTypes.SACRED_PRIEST.get(), SacredPriestEntity.createAttributes().build());
         event.put(ModEntityTypes.ANDRAS.get(), AndrasEntity.createAttributes().build());
         event.put(ModEntityTypes.OSTARA.get(), OstaraEntity.createAttributes().build());

@@ -5,6 +5,7 @@
     "minecraft:zombie_villager",
     "#minecraft:raiders",
     "merlins_inferno:sacred_cultist",
-    "merlins_inferno:sacred_priest"
+    "merlins_inferno:sacred_priest",
+    "merlins_inferno:templar"
   ]
 }
