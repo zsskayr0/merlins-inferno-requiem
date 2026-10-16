@@ -40,7 +40,6 @@ public final class ModEntityRenderers {
 
     @SubscribeEvent
     static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(DruidModel.LAYER_LOCATION, DruidModel::createBodyLayer);
         event.registerLayerDefinition(HellForgeModel.LAYER_LOCATION, HellForgeModel::createBodyLayer);
         event.registerLayerDefinition(FleshGolemModel.LAYER_LOCATION, FleshGolemModel::createBodyLayer);
     }

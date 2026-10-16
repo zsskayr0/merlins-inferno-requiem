@@ -52,6 +52,18 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
 import dev.zsskayr.merlins_inferno.registry.ModAttachments;
 import dev.zsskayr.merlins_inferno.registry.ModEnchantments;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
@@ -69,7 +81,7 @@ import dev.zsskayr.merlins_inferno.registry.ModItems;
  * an oversight. It does proactively hunt anything tagged {@link EntityTypeTags#UNDEAD} on sight -
  * except the {@link DullahanEntity}, which is far too strong for it: it flees from that one.
  * <p>
- * 3 skin variants (see {@link #getVariant()}), randomized on spawn - no actual textures yet.
+ * 3 skin variants (see {@link #getVariant()}), randomized on spawn. Animated with GeckoLib (see the animation notes below).
  * Implements {@link Merchant} directly (rather than extending {@code AbstractVillager}, which
  * drags in the profession/reputation/leveling system this doesn't need) for a single fixed trade -
  * emeralds for Otherworld Essence, see {@link #updateTrades()} - closing the loop the design doc
@@ -79,8 +91,10 @@ import dev.zsskayr.merlins_inferno.registry.ModItems;
  * to any other biome); a dedicated grove/sanctuary landmark structure to guarantee a spawn is
  * recommended but out of scope for now (design doc 4.3).
  */
-public class DruidEntity extends PathfinderMob implements Merchant {
+public class DruidEntity extends PathfinderMob implements Merchant, GeoEntity {
     private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(DruidEntity.class, EntityDataSerializers.INT);
+    /** Mirrors {@link #tradingPlayer} (server-only) so the client can play the welcoming pose. */
+    private static final EntityDataAccessor<Boolean> DATA_TRADING = SynchedEntityData.defineId(DruidEntity.class, EntityDataSerializers.BOOLEAN);
 
     @Nullable
     private Player tradingPlayer;
@@ -102,7 +116,109 @@ public class DruidEntity extends PathfinderMob implements Merchant {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_VARIANT, 0);
+        builder.define(DATA_TRADING, false);
     }
+
+    // --- Animation (GeckoLib, clips in animations/druid.animation.json; see src/Models/druid/animate_druid.py).
+    // One "move" controller owns the whole pose, decided fresh every frame; the blessing gesture is a one-shot on its own
+    // controller that only ever starts while the druid stands idle, and begins and ends on the idle pose, so it never pops. ---
+
+    private static final RawAnimation IDLE_ANIMATION = RawAnimation.begin().thenLoop("animation.druid.idle");
+    private static final RawAnimation WALK_ANIMATION = RawAnimation.begin().thenLoop("animation.druid.walk");
+    private static final RawAnimation STALK_ANIMATION = RawAnimation.begin().thenLoop("animation.druid.stalk");
+    private static final RawAnimation TRADE_ANIMATION = RawAnimation.begin().thenLoop("animation.druid.trade");
+    private static final RawAnimation ATTACK_ANIMATION = RawAnimation.begin().thenPlay("animation.druid.attack");
+    private static final RawAnimation DEATH_ANIMATION = RawAnimation.begin().thenPlayAndHold("animation.druid.death");
+    private static final RawAnimation BLESS_ANIMATION = RawAnimation.begin().thenPlay("animation.druid.bless");
+
+    private static final float MOVING_LIMB_SWING = 0.02F;
+    /** The attack clip lasts one second; the melee goal may swing sooner, which would restart it mid-strike. */
+    private static final int ATTACK_CLIP_TICKS = 20;
+    /** The death clip is 2.4 s; the body lingers a little past it so the last pose is held before it vanishes. */
+    private static final int DEATH_ANIMATION_TICKS = 50;
+    /** The blessing clip is 3.6 s (72 ticks). */
+    private static final int BLESS_CLIP_TICKS = 72;
+
+    private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
+    private int lastAttackClipTick = -ATTACK_CLIP_TICKS;
+    private int nextBlessTick = 600;
+    private int deathTicks;
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "move", 8, state -> {
+            if (this.isDeadOrDying()) {
+                return state.setAndContinue(DEATH_ANIMATION);
+            }
+            if (this.isTradingSynced()) {
+                return state.setAndContinue(TRADE_ANIMATION);
+            }
+            if (state.getLimbSwingAmount() > MOVING_LIMB_SWING) {
+                return state.setAndContinue(this.isAggressive() ? STALK_ANIMATION : WALK_ANIMATION);
+            }
+            return state.setAndContinue(IDLE_ANIMATION);
+        }).triggerableAnim("attack", ATTACK_ANIMATION));
+        controllers.add(new AnimationController<>(this, "gesture", 10, state -> PlayState.STOP)
+                .triggerableAnim("bless", BLESS_ANIMATION));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.animationCache;
+    }
+
+    private boolean isTradingSynced() {
+        return this.entityData.get(DATA_TRADING);
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        if (!this.level().isClientSide && this.tickCount - this.lastAttackClipTick >= ATTACK_CLIP_TICKS) {
+            this.lastAttackClipTick = this.tickCount;
+            this.triggerAnim("move", "attack");
+        }
+        return super.doHurtTarget(target);
+    }
+
+    /** Lingers for the whole death clip instead of vanilla's 20 ticks. */
+    @Override
+    protected void tickDeath() {
+        ++this.deathTicks;
+        if (this.deathTicks >= DEATH_ANIMATION_TICKS && !this.level().isClientSide() && !this.isRemoved()) {
+            this.level().broadcastEntityEvent(this, (byte) 60);
+            this.remove(Entity.RemovalReason.KILLED);
+        }
+    }
+
+    /** Every so often, while standing about doing nothing, a druid blesses the earth: arms to the sky, then hands to the ground. */
+    private void maybeBless() {
+        if (this.tickCount < this.nextBlessTick || !(this.level() instanceof ServerLevel level)) {
+            return;
+        }
+        this.nextBlessTick = this.tickCount + 600 + this.random.nextInt(900);
+        boolean idle = !this.isTrading() && this.getTarget() == null && this.getNavigation().isDone() && this.onGround()
+                && !this.isInWaterOrBubble() && this.getDeltaMovement().horizontalDistanceSqr() < 1.0E-4;
+        if (!idle) {
+            return;
+        }
+        this.triggerAnim("gesture", "bless");
+        this.blessUntil = this.tickCount + BLESS_CLIP_TICKS;
+        // The bow to the earth lands at about 2.5 s into the clip.
+        this.blessParticlesAt = this.tickCount + 50;
+    }
+
+    /** While the clip plays the druid stays put, and when the hands reach the ground a few green motes rise from it. */
+    private void tickBless() {
+        if (this.tickCount < this.blessUntil) {
+            this.getNavigation().stop();
+        }
+        if (this.tickCount == this.blessParticlesAt && this.level() instanceof ServerLevel level) {
+            level.sendParticles(ParticleTypes.HAPPY_VILLAGER, this.getX(), this.getY() + 0.2, this.getZ() - 0.1, 8, 0.45, 0.1, 0.45, 0.0);
+        }
+    }
+
+    private int blessUntil = Integer.MIN_VALUE;
+    private int blessParticlesAt = Integer.MIN_VALUE;
 
     /** Like vanilla animals: a wandering Druid in the grove never despawns just because the player walked off. */
     @Override
@@ -248,6 +364,8 @@ public class DruidEntity extends PathfinderMob implements Merchant {
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
+        this.maybeBless();
+        this.tickBless();
         if (this.tickCount % 100 == 0 && this.entries != null) {
             long day = this.level().getDayTime() / TICKS_PER_DAY;
             if (this.lastRestockDay == Long.MIN_VALUE) {
@@ -495,6 +613,7 @@ public class DruidEntity extends PathfinderMob implements Merchant {
     @Override
     public void setTradingPlayer(@Nullable Player tradingPlayer) {
         this.tradingPlayer = tradingPlayer;
+        this.entityData.set(DATA_TRADING, tradingPlayer != null);
     }
 
     @Nullable

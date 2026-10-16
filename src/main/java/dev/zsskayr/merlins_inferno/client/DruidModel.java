@@ -1,82 +1,62 @@
 package dev.zsskayr.merlins_inferno.client;
 
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.model.data.EntityModelData;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 
 /**
- * Cleaned up from the original Blockbench export (see git history) into a proper
- * {@link HumanoidModel} subclass instead of a raw {@link net.minecraft.client.model.EntityModel}.
- * That switch is what makes armor actually render: vanilla's {@code HumanoidArmorLayer} (see
- * {@link DruidRenderer}) only accepts a {@code HumanoidModel} - our first pass didn't extend it,
- * so equipped armor was silently invisible even though the entity really was wearing it (that's
- * the "some of them dropped armor but nothing showed" report).
- * <p>
- * The Blockbench box sizes/positions turned out to be pixel-identical to vanilla's own humanoid
- * mesh once the extra "Waist" wrapper bone is flattened out (its offset and each child's local
- * offset add up to vanilla's exact numbers) - only the per-part rotations differed, giving the
- * exported model its own static "stance". Those rotations are what's traded away here: once every
- * part is renamed to vanilla's own {@code head/body/right_arm/left_arm/right_leg/left_leg}
- * convention (required for {@code HumanoidModel} to find them, and for the armor layer to line
- * up), {@code HumanoidModel.setupAnim} drives them every frame with its own walk-cycle/head-look
- * logic and overwrites whatever static pose we set at bind time anyway - so keeping the custom
- * tilt would have been dead code. Net trade: lose the one-off pose, gain proper walking/head
- * tracking AND working armor, for free, from vanilla's own animation code.
+ * The Druid's GeckoLib model: {@code geo/druid_skin.geo.json} (a vanilla player-layout body, so any 64x64 Minecraft skin
+ * fits {@code textures/entity/druid/druid_skin_N.png}) and {@code animations/druid.animation.json}. The clothing is a second
+ * model ({@code druid_armour}) drawn by {@link DruidClothesLayer}. Sources and build scripts: {@code src/Models/druid}.
  */
-public class DruidModel extends HumanoidModel<DruidEntity> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "druid"), "main");
+public class DruidModel extends GeoModel<DruidEntity> {
+    public static final ResourceLocation ARMOUR_MODEL = id("geo/druid_armour.geo.json");
+    public static final ResourceLocation ARMOUR_TEXTURE = id("textures/entity/druid/druid_armour.png");
+    private static final ResourceLocation MODEL = id("geo/druid_skin.geo.json");
+    private static final ResourceLocation ANIMATION = id("animations/druid.animation.json");
+    private static final ResourceLocation[] SKINS = {
+            id("textures/entity/druid/druid_skin_0.png"),
+            id("textures/entity/druid/druid_skin_1.png"),
+            id("textures/entity/druid/druid_skin_2.png"),
+    };
 
-    public DruidModel(ModelPart root) {
-        super(root);
+    private static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, path);
     }
 
-    public static LayerDefinition createBodyLayer() {
-        MeshDefinition mesh = new MeshDefinition();
-        PartDefinition root = mesh.getRoot();
+    @Override
+    public ResourceLocation getModelResource(DruidEntity druid) {
+        return MODEL;
+    }
 
-        root.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, CubeDeformation.NONE),
-                PartPose.offset(0.0F, 0.0F, 0.0F));
-        root.addOrReplaceChild("hat",
-                CubeListBuilder.create().texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F)),
-                PartPose.offset(0.0F, 0.0F, 0.0F));
-        root.addOrReplaceChild("body",
-                CubeListBuilder.create()
-                        .texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, CubeDeformation.NONE)
-                        .texOffs(16, 32).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)),
-                PartPose.offset(0.0F, 0.0F, 0.0F));
-        root.addOrReplaceChild("right_arm",
-                CubeListBuilder.create()
-                        .texOffs(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, CubeDeformation.NONE)
-                        .texOffs(40, 32).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)),
-                PartPose.offset(-5.0F, 2.0F, 0.0F));
-        root.addOrReplaceChild("left_arm",
-                CubeListBuilder.create()
-                        .texOffs(32, 48).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, CubeDeformation.NONE)
-                        .texOffs(48, 48).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)),
-                PartPose.offset(5.0F, 2.0F, 0.0F));
-        root.addOrReplaceChild("right_leg",
-                CubeListBuilder.create()
-                        .texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, CubeDeformation.NONE)
-                        .texOffs(0, 32).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)),
-                PartPose.offset(-1.9F, 12.0F, 0.0F));
-        root.addOrReplaceChild("left_leg",
-                CubeListBuilder.create()
-                        .texOffs(16, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, CubeDeformation.NONE)
-                        .texOffs(0, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)),
-                PartPose.offset(1.9F, 12.0F, 0.0F));
+    @Override
+    public ResourceLocation getTextureResource(DruidEntity druid) {
+        return SKINS[Mth.clamp(druid.getVariant(), 0, SKINS.length - 1)];
+    }
 
-        return LayerDefinition.create(mesh, 64, 64);
+    @Override
+    public ResourceLocation getAnimationResource(DruidEntity druid) {
+        return ANIMATION;
+    }
+
+    /** Adds the entity's head look on top of whatever the animation does to the head bone. */
+    @Override
+    public void setCustomAnimations(DruidEntity druid, long instanceId, AnimationState<DruidEntity> state) {
+        super.setCustomAnimations(druid, instanceId, state);
+        EntityModelData data = state.getData(DataTickets.ENTITY_MODEL_DATA);
+        if (data == null) {
+            return;
+        }
+        this.getBone("head").ifPresent(head -> {
+            head.setRotX(head.getRotX() + Mth.clamp(data.headPitch(), -35.0F, 35.0F) * Mth.DEG_TO_RAD);
+            head.setRotY(head.getRotY() + Mth.clamp(data.netHeadYaw(), -50.0F, 50.0F) * Mth.DEG_TO_RAD);
+        });
     }
 }
