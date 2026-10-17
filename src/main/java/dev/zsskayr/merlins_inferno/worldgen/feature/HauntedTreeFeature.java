@@ -64,9 +64,9 @@ public class HauntedTreeFeature extends Feature<HauntedTreeFeature.Config> {
             int length = 3 + random.nextInt(3);
             for (int step = 1; step <= length; step++) {
                 BlockPos pos = origin.offset((int) Math.round(Math.cos(angle) * step), 1 - step / 2, (int) Math.round(Math.sin(angle) * step));
-                putLog(level, pos, upright, Direction.Axis.Y);
+                putLog(level, origin, pos, upright, Direction.Axis.Y);
                 for (int d = 1; d <= 3 && level.getBlockState(pos.below(d)).canBeReplaced(); d++) {
-                    putLog(level, pos.below(d), upright, Direction.Axis.Y);
+                    putLog(level, origin, pos.below(d), upright, Direction.Axis.Y);
                 }
             }
         }
@@ -74,15 +74,15 @@ public class HauntedTreeFeature extends Feature<HauntedTreeFeature.Config> {
         BlockPos pos = origin;
         int thick = height / 3;
         for (int y = 0; y < height; y++) {
-            putLog(level, pos, upright, Direction.Axis.Y);
+            putLog(level, origin, pos, upright, Direction.Axis.Y);
             if (y < thick) {
-                putLog(level, pos.east(), upright, Direction.Axis.Y);
-                putLog(level, pos.south(), upright, Direction.Axis.Y);
-                putLog(level, pos.east().south(), upright, Direction.Axis.Y);
+                putLog(level, origin, pos.east(), upright, Direction.Axis.Y);
+                putLog(level, origin, pos.south(), upright, Direction.Axis.Y);
+                putLog(level, origin, pos.east().south(), upright, Direction.Axis.Y);
             }
             if (y > 4 && random.nextInt(4) == 0) {
                 pos = pos.relative(Direction.Plane.HORIZONTAL.getRandomDirection(random));
-                putLog(level, pos, upright, Direction.Axis.Y);
+                putLog(level, origin, pos, upright, Direction.Axis.Y);
             }
             pos = pos.above();
         }
@@ -102,11 +102,11 @@ public class HauntedTreeFeature extends Feature<HauntedTreeFeature.Config> {
                 if (random.nextInt(3) == 0) {
                     cursor = cursor.relative(out.getClockWise());
                 }
-                putLog(level, cursor, upright, out.getAxis());
+                putLog(level, origin, cursor, upright, out.getAxis());
             }
-            lobe(level, cursor, config, random, 3 + random.nextInt(2));
+            lobe(level, origin, cursor, config, random, 3 + random.nextInt(2));
         }
-        lobe(level, top, config, random, 4);
+        lobe(level, origin, top, config, random, 4);
         return true;
     }
 
@@ -125,7 +125,7 @@ public class HauntedTreeFeature extends Feature<HauntedTreeFeature.Config> {
         }
     }
 
-    private static void lobe(WorldGenLevel level, BlockPos centre, Config config, RandomSource random, int radius) {
+    private static void lobe(WorldGenLevel level, BlockPos origin, BlockPos centre, Config config, RandomSource random, int radius) {
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dy = -2; dy <= 2; dy++) {
                 for (int dz = -radius; dz <= radius; dz++) {
@@ -134,7 +134,7 @@ public class HauntedTreeFeature extends Feature<HauntedTreeFeature.Config> {
                         continue;
                     }
                     BlockPos pos = centre.offset(dx, dy, dz);
-                    if (level.getBlockState(pos).canBeReplaced()) {
+                    if (inRegion(origin, pos) && level.getBlockState(pos).canBeReplaced()) {
                         // the underside of the canopy carries the glowing fruit
                         boolean underside = dy <= -1 && level.getBlockState(pos.below()).isAir();
                         level.setBlock(pos, underside && random.nextFloat() < config.decorChance() ? config.decor() : config.leaves(), 2);
@@ -148,7 +148,7 @@ public class HauntedTreeFeature extends Feature<HauntedTreeFeature.Config> {
             int length = 2 + random.nextInt(6);
             for (int y = 0; y < length; y++) {
                 BlockPos pos = start.below(y);
-                if (!level.getBlockState(pos).canBeReplaced()) {
+                if (!inRegion(origin, pos) || !level.getBlockState(pos).canBeReplaced()) {
                     break;
                 }
                 boolean tip = y == length - 1 && random.nextFloat() < config.decorChance() * 2;
@@ -157,8 +157,17 @@ public class HauntedTreeFeature extends Feature<HauntedTreeFeature.Config> {
         }
     }
 
-    private static void putLog(WorldGenLevel level, BlockPos pos, BlockState log, Direction.Axis axis) {
-        if (level.getBlockState(pos).canBeReplaced()) {
+    /** Worldgen may only touch the origin chunk and its neighbours; anything further out stalls chunk generation. */
+    private static boolean inRegion(BlockPos origin, BlockPos pos) {
+        int cx = origin.getX() >> 4;
+        int cz = origin.getZ() >> 4;
+        int px = pos.getX() >> 4;
+        int pz = pos.getZ() >> 4;
+        return Math.abs(px - cx) <= 1 && Math.abs(pz - cz) <= 1;
+    }
+
+    private static void putLog(WorldGenLevel level, BlockPos origin, BlockPos pos, BlockState log, Direction.Axis axis) {
+        if (inRegion(origin, pos) && level.getBlockState(pos).canBeReplaced()) {
             level.setBlock(pos, log.hasProperty(RotatedPillarBlock.AXIS) ? log.setValue(RotatedPillarBlock.AXIS, axis) : log, 2);
         }
     }
