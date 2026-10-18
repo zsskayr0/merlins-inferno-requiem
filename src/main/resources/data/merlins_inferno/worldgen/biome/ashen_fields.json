@@ -43,7 +43,9 @@
     [],
     [],
     [],
-    [],
+    [
+      "merlins_inferno:ashen_fields_grave_sand"
+    ],
     [
       "minecraft:spring_open",
       "minecraft:patch_fire",

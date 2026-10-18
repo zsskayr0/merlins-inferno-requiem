@@ -24,6 +24,9 @@
     "merlins_inferno:porous_flesh",
     "merlins_inferno:charred_flesh",
     "merlins_inferno:skin",
-    "merlins_inferno:spine"
+    "merlins_inferno:spine",
+    "merlins_inferno:hellglass",
+    "merlins_inferno:crypt_glass",
+    "merlins_inferno:grave_sandstone"
   ]
 }

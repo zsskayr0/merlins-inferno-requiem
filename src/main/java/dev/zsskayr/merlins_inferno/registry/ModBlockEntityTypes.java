@@ -11,6 +11,7 @@ import dev.zsskayr.merlins_inferno.blockentity.DryingRackBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.PandoraBoxBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.HellForgeBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.HellForgePartBlockEntity;
+import dev.zsskayr.merlins_inferno.blockentity.MouthBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarPartBlockEntity;
 
@@ -35,6 +36,9 @@ public final class ModBlockEntityTypes {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PandoraBoxBlockEntity>> PANDORA_BOX = BLOCK_ENTITY_TYPES.register("pandora_box",
             () -> BlockEntityType.Builder.of(PandoraBoxBlockEntity::new, ModBlocks.PANDORA_BOX.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MouthBlockEntity>> MOUTH_BLOCK = BLOCK_ENTITY_TYPES.register("mouth_block",
+            () -> BlockEntityType.Builder.of(MouthBlockEntity::new, ModBlocks.MOUTH_BLOCK.get()).build(null));
 
     private ModBlockEntityTypes() {
     }

@@ -5,11 +5,11 @@
       "Name": "merlins_inferno:withered_obsidian"
     },
     "accent_state": {
-      "Name": "merlins_inferno:withered_obsidian"
+      "Name": "merlins_inferno:ebony_debris"
     },
     "min_height": 9,
     "max_height": 20,
     "base_radius": 2,
-    "accent_chance": 0.12
+    "accent_chance": 0.08
   }
 }

@@ -38,7 +38,7 @@ public class DebugCommands {
     }
     private static int cinderStatus(ServerPlayer player) {
         boolean eligible = player.serverLevel().dimension() == dev.zsskayr.merlins_inferno.portal.OblivionDimension.LEVEL
-                && ProgressionHelper.hasReached(player, ProgressionHelper.SECOND_CIRCLE) && !player.isCreative() && !player.isSpectator()
+                && ProgressionHelper.hasReached(player, ProgressionHelper.SECOND_CIRCLE) && !player.isSpectator()
                 && player.serverLevel().getDifficulty() != net.minecraft.world.Difficulty.PEACEFUL
                 && player.serverLevel().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING);
         var nearby = player.serverLevel().getEntitiesOfClass(dev.zsskayr.merlins_inferno.entity.CinderEntity.class,

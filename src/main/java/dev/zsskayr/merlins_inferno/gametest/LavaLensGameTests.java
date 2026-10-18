@@ -33,8 +33,8 @@ public final class LavaLensGameTests {
         for(int i=0;i<20;i++)LavaLensHandler.refresh(player,true);
         h.assertTrue(player.hasEffect(ModEffects.LAVA_SIGHT) && lens.getDamageValue()==1,"Curios-only lens powers the effect and loses durability");
         type.getMethod("setEquippedCurio",String.class,int.class,ItemStack.class).invoke(handler,"charm",0,ItemStack.EMPTY);
-        LavaLensHandler.refresh(player,true);
-        h.assertTrue(!player.hasEffect(ModEffects.LAVA_SIGHT),"Unequipping disables the effect");h.succeed();
+        for(int i=0;i<70;i++)LavaLensHandler.refresh(player,true);
+        h.assertTrue(!player.hasEffect(ModEffects.LAVA_SIGHT),"Unequipping disables the effect once the grace period passes");h.succeed();
     }
     @GameTest(template="bench_empty")
     public static void toggleCarryWearAndRemoval(GameTestHelper h) {
@@ -52,7 +52,9 @@ public final class LavaLensGameTests {
         h.assertTrue(!player.hasEffect(MobEffects.NIGHT_VISION) && !player.hasEffect(MobEffects.FIRE_RESISTANCE),"Lens does not grant unrelated vision or fire protection");
         player.getInventory().setItem(12,ItemStack.EMPTY);
         LavaLensHandler.refresh(player,true);
-        h.assertTrue(!player.hasEffect(ModEffects.LAVA_SIGHT),"Removing the lens immediately disables the effect");h.succeed();
+        h.assertTrue(player.hasEffect(ModEffects.LAVA_SIGHT),"A lens that is briefly out of the inventory keeps the effect");
+        for(int i=0;i<70;i++)LavaLensHandler.refresh(player,true);
+        h.assertTrue(!player.hasEffect(ModEffects.LAVA_SIGHT),"Really losing the lens disables the effect");h.succeed();
     }
     @GameTest(template="bench_empty")
     public static void breakStopsEffectAndCopiesDoNotDoubleCharge(GameTestHelper h) {
@@ -63,7 +65,7 @@ public final class LavaLensGameTests {
         for(int i=0;i<20;i++)LavaLensHandler.refresh(player,true);
         h.assertTrue(first.getDamageValue()==1 && second.getDamageValue()==0,"Only one carried copy pays durability");
         player.getInventory().setItem(1,ItemStack.EMPTY);first.setDamageValue(first.getMaxDamage()-1);
-        for(int i=0;i<20;i++)LavaLensHandler.refresh(player,true);
+        for(int i=0;i<90;i++)LavaLensHandler.refresh(player,true);
         h.assertTrue(first.isEmpty() && !player.hasEffect(ModEffects.LAVA_SIGHT),"Breaking ends the effect");h.succeed();
     }
 }

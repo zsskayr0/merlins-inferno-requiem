@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "merlins_inferno:crypt_glass"
+    },
+    {
+      "item": "merlins_inferno:crypt_glass"
+    },
+    {
+      "item": "merlins_inferno:crypt_glass"
+    },
+    {
+      "item": "merlins_inferno:crypt_glass"
+    },
+    [
+      {
+        "item": "minecraft:netherrack"
+      },
+      {
+        "item": "merlins_inferno:flesh_block"
+      }
+    ]
+  ],
+  "result": {
+    "id": "merlins_inferno:hellglass",
+    "count": 4
+  }
+}

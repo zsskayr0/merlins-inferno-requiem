@@ -1,1 +1,27 @@
-{"type":"minecraft:crafting_shaped","category":"equipment","pattern":[" G ","MTM"," G "],"key":{"G":{"item":"minecraft:gold_ingot"},"M":{"item":"minecraft:magma_cream"},"T":{"item":"minecraft:tinted_glass"}},"result":{"id":"merlins_inferno:lava_lens","count":1}}
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " C ",
+    "IEI",
+    " H "
+  ],
+  "key": {
+    "C": {
+      "item": "merlins_inferno:red_chain"
+    },
+    "I": {
+      "item": "merlins_inferno:infernal_essence"
+    },
+    "E": {
+      "item": "merlins_inferno:weeping_eye"
+    },
+    "H": {
+      "item": "merlins_inferno:hellglass"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:lava_lens",
+    "count": 1
+  }
+}

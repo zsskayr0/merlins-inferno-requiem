@@ -450,11 +450,15 @@
   "item.merlins_inferno.cinder_spawn_egg": "Cinder Spawn Egg",
   "death.attack.cinder_bite": "%1$s was caught in a Cinder's jaws",
   "death.attack.cinder_bite.player": "%1$s was caught in a Cinder's jaws while fighting %2$s",
-  "item.merlins_inferno.lava_lens": "Lava Lens",
-  "effect.merlins_inferno.lava_sight": "Lava Sight",
-  "item.merlins_inferno.lava_lens.on": "Lava Lens enabled",
-  "item.merlins_inferno.lava_lens.off": "Lava Lens disabled",
-  "item.merlins_inferno.lava_lens.tooltip": "Right-click to toggle; then carry in inventory or a Curios slot.",
-  "item.merlins_inferno.lava_lens.wear": "Active: consumes 1 durability/second, even outside lava. Lasts 10 minutes.",
-  "item.merlins_inferno.lava_lens.protection": "Improves submerged lava visibility. Does not grant fire resistance."
+  "item.merlins_inferno.lava_lens": "Hell Sight",
+  "effect.merlins_inferno.lava_sight": "Hell Sight",
+  "item.merlins_inferno.lava_lens.on": "Hell Sight enabled",
+  "item.merlins_inferno.lava_lens.off": "Hell Sight disabled",
+  "item.merlins_inferno.lava_lens.tooltip": "Torn from a demon that never slept.",
+  "block.merlins_inferno.grave_sand": "Grave Sand",
+  "block.merlins_inferno.crypt_glass": "Crypt Glass",
+  "block.merlins_inferno.hellglass": "Hellglass",
+  "item.merlins_inferno.weeping_eye": "Weeping Eye",
+  "block.merlins_inferno.grave_sandstone": "Grave Sandstone",
+  "item.merlins_inferno.lava_lens.active": "Active"
 }

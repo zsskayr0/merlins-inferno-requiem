@@ -10,6 +10,6 @@
     "min_height": 28,
     "max_height": 56,
     "base_radius": 4,
-    "accent_chance": 0.18
+    "accent_chance": 0.28
   }
 }

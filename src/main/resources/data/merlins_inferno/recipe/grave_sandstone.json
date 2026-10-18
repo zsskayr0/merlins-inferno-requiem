@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "SS",
+    "SS"
+  ],
+  "key": {
+    "S": {
+      "item": "merlins_inferno:grave_sand"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:grave_sandstone",
+    "count": 1
+  }
+}

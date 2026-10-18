@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "SS",
+    "SC"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:soul_sand"
+    },
+    "C": {
+      "item": "merlins_inferno:charred_flesh"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:grave_sand",
+    "count": 4
+  }
+}

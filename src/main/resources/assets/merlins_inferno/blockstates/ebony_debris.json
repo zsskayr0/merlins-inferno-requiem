@@ -1,7 +1,25 @@
 {
   "variants": {
-    "": {
+    "host=none": {
       "model": "merlins_inferno:block/ebony_debris"
+    },
+    "host=netherrack": {
+      "model": "merlins_inferno:block/ebony_debris_netherrack"
+    },
+    "host=basalt": {
+      "model": "merlins_inferno:block/ebony_debris_basalt"
+    },
+    "host=blackstone": {
+      "model": "merlins_inferno:block/ebony_debris_blackstone"
+    },
+    "host=flesh": {
+      "model": "merlins_inferno:block/ebony_debris_flesh"
+    },
+    "host=porous_flesh": {
+      "model": "merlins_inferno:block/ebony_debris_porous_flesh"
+    },
+    "host=charred_flesh": {
+      "model": "merlins_inferno:block/ebony_debris_charred_flesh"
     }
   }
 }

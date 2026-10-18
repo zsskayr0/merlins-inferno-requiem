@@ -339,7 +339,7 @@ public final class ModBlocks {
 
     // --- Ebony Debris: Circle 2's answer to Ancient Debris, found in Oblivion. Drops Ebony Scrap (Silk Touch keeps the block). ---
     public static final DeferredBlock<Block> EBONY_DEBRIS = BLOCKS.registerBlock("ebony_debris",
-            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.ANCIENT_DEBRIS));
+            dev.zsskayr.merlins_inferno.block.EbonyDebrisBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.ANCIENT_DEBRIS));
 
     // --- Petrified Skull: crafted from Wither Skulls, Withered Bone and Compressed Netherrack. Obsidian's own
     // hardness/blast resistance ("a resistência de obsidian"), nothing else special yet. ---
@@ -388,6 +388,26 @@ public final class ModBlocks {
                     .sound(SoundType.GRASS).noOcclusion().isValidSpawn((state, level, pos, type) -> false)
                     .isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false)
                     .isRedstoneConductor((state, level, pos) -> false).pushReaction(PushReaction.DESTROY));
+    // Pale grave dust of the Carnal Heap. Smelts into Crypt Glass, which mixes with netherrack or flesh into Hellglass.
+    public static final DeferredBlock<net.minecraft.world.level.block.ColoredFallingBlock> GRAVE_SAND = BLOCKS.registerBlock("grave_sand",
+            props -> new net.minecraft.world.level.block.ColoredFallingBlock(new net.minecraft.util.ColorRGBA(0xA89F94), props),
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY).instrument(NoteBlockInstrument.SNARE)
+                    .strength(0.5F).sound(SoundType.SAND));
+    public static final DeferredBlock<Block> GRAVE_SANDSTONE = BLOCKS.registerBlock("grave_sandstone",
+            Block::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY).instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops().strength(0.8F));
+    public static final DeferredBlock<net.minecraft.world.level.block.TransparentBlock> CRYPT_GLASS = BLOCKS.registerBlock("crypt_glass",
+            net.minecraft.world.level.block.TransparentBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY)
+                    .instrument(NoteBlockInstrument.HAT).strength(0.3F).sound(SoundType.GLASS).noOcclusion()
+                    .isValidSpawn((s, l, p, t) -> false).isRedstoneConductor((s, l, p) -> false)
+                    .isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false));
+    // Obsidian-tough, and it does not need Silk Touch: a glass meant for building whole bases.
+    public static final DeferredBlock<net.minecraft.world.level.block.TransparentBlock> HELLGLASS = BLOCKS.registerBlock("hellglass",
+            net.minecraft.world.level.block.TransparentBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
+                    .instrument(NoteBlockInstrument.HAT).strength(5.0F, 1200.0F).requiresCorrectToolForDrops()
+                    .sound(SoundType.GLASS).noOcclusion().lightLevel(s -> 3)
+                    .isValidSpawn((s, l, p, t) -> false).isRedstoneConductor((s, l, p) -> false)
+                    .isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false));
     public static final DeferredBlock<Block> CHARRED_FLESH = BLOCKS.registerBlock("charred_flesh",
             Block::new, fleshProperties().mapColor(MapColor.COLOR_BLACK).strength(0.6F));
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.FleshTendonsBlock> TENDONS = BLOCKS.registerBlock("tendons",

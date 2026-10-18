@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "merlins_inferno:grave_sandstone"
+    }
+  ],
+  "result": {
+    "id": "merlins_inferno:grave_sand",
+    "count": 4
+  }
+}

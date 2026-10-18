@@ -1,78 +1,153 @@
 {
   "variants": {
-    "depth=0,facing=east": {
+    "depth=0,facing=east,full=false": {
       "model": "merlins_inferno:block/mouth_block",
       "y": 90
     },
-    "depth=0,facing=north": {
+    "depth=0,facing=east,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 90
+    },
+    "depth=0,facing=north,full=false": {
       "model": "merlins_inferno:block/mouth_block"
     },
-    "depth=0,facing=south": {
+    "depth=0,facing=north,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full"
+    },
+    "depth=0,facing=south,full=false": {
       "model": "merlins_inferno:block/mouth_block",
       "y": 180
     },
-    "depth=0,facing=west": {
+    "depth=0,facing=south,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 180
+    },
+    "depth=0,facing=west,full=false": {
       "model": "merlins_inferno:block/mouth_block",
       "y": 270
     },
-    "depth=1,facing=east": {
+    "depth=0,facing=west,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 270
+    },
+    "depth=1,facing=east,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_1",
       "y": 90
     },
-    "depth=1,facing=north": {
+    "depth=1,facing=east,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 90
+    },
+    "depth=1,facing=north,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_1"
     },
-    "depth=1,facing=south": {
+    "depth=1,facing=north,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full"
+    },
+    "depth=1,facing=south,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_1",
       "y": 180
     },
-    "depth=1,facing=west": {
+    "depth=1,facing=south,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 180
+    },
+    "depth=1,facing=west,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_1",
       "y": 270
     },
-    "depth=2,facing=east": {
+    "depth=1,facing=west,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 270
+    },
+    "depth=2,facing=east,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_2",
       "y": 90
     },
-    "depth=2,facing=north": {
+    "depth=2,facing=east,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 90
+    },
+    "depth=2,facing=north,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_2"
     },
-    "depth=2,facing=south": {
+    "depth=2,facing=north,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full"
+    },
+    "depth=2,facing=south,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_2",
       "y": 180
     },
-    "depth=2,facing=west": {
+    "depth=2,facing=south,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 180
+    },
+    "depth=2,facing=west,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_2",
       "y": 270
     },
-    "depth=3,facing=east": {
+    "depth=2,facing=west,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 270
+    },
+    "depth=3,facing=east,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_3",
       "y": 90
     },
-    "depth=3,facing=north": {
+    "depth=3,facing=east,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 90
+    },
+    "depth=3,facing=north,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_3"
     },
-    "depth=3,facing=south": {
+    "depth=3,facing=north,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full"
+    },
+    "depth=3,facing=south,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_3",
       "y": 180
     },
-    "depth=3,facing=west": {
+    "depth=3,facing=south,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 180
+    },
+    "depth=3,facing=west,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_3",
       "y": 270
     },
-    "depth=4,facing=east": {
+    "depth=3,facing=west,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 270
+    },
+    "depth=4,facing=east,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_4",
       "y": 90
     },
-    "depth=4,facing=north": {
+    "depth=4,facing=east,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 90
+    },
+    "depth=4,facing=north,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_4"
     },
-    "depth=4,facing=south": {
+    "depth=4,facing=north,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full"
+    },
+    "depth=4,facing=south,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_4",
       "y": 180
     },
-    "depth=4,facing=west": {
+    "depth=4,facing=south,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
+      "y": 180
+    },
+    "depth=4,facing=west,full=false": {
       "model": "merlins_inferno:block/mouth_block_open_4",
+      "y": 270
+    },
+    "depth=4,facing=west,full=true": {
+      "model": "merlins_inferno:block/mouth_block_full",
       "y": 270
     }
   }

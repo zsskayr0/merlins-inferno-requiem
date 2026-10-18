@@ -152,6 +152,11 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.HAUNTED_LEAVES_ITEM.get());
                         output.accept(ModItems.HAUNTED_SHELF_SHROOM_ITEM.get());
                         output.accept(ModItems.CHARRED_FLESH_ITEM.get());
+                        output.accept(ModItems.GRAVE_SAND_ITEM.get());
+                        output.accept(ModItems.GRAVE_SANDSTONE_ITEM.get());
+                        output.accept(ModItems.CRYPT_GLASS_ITEM.get());
+                        output.accept(ModItems.HELLGLASS_ITEM.get());
+                        output.accept(ModItems.WEEPING_EYE.get());
                         output.accept(ModItems.POROUS_FLESH_ITEM.get());
                         output.accept(ModItems.TENDONS_ITEM.get());
                         output.accept(ModItems.VISCERA_ITEM.get());

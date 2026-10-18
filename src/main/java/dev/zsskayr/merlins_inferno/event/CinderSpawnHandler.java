@@ -21,8 +21,8 @@ public final class CinderSpawnHandler {
                 || level.getDifficulty() == Difficulty.PEACEFUL || level.getGameTime() % 200 != 0
                 || !level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING)) return;
         for (var player : level.players()) {
-            if (player.isCreative() || player.isSpectator() || !ProgressionHelper.hasReached(player, ProgressionHelper.SECOND_CIRCLE)
-                    || player.getPersistentData().getLong(NEXT_SPAWN) > level.getGameTime() || level.random.nextInt(9) != 0) continue;
+            if (player.isSpectator() || !ProgressionHelper.hasReached(player, ProgressionHelper.SECOND_CIRCLE)
+                    || player.getPersistentData().getLong(NEXT_SPAWN) > level.getGameTime() || level.random.nextInt(4) != 0) continue;
             for (int attempt = 0; attempt < 24; attempt++) {
                 double angle = level.random.nextDouble() * Math.PI * 2;
                 double radius = 32 + level.random.nextDouble() * 32;
@@ -53,7 +53,7 @@ public final class CinderSpawnHandler {
     }
     private static boolean fitsLava(ServerLevel level, BlockPos pos, float yaw) {
         double angle = Math.toRadians(yaw);
-        for (int i = 0; i <= 15; i++) {
+        for (int i = 0; i <= 7; i++) {
             BlockPos sample = pos.offset((int)(Math.sin(angle)*i), 0, -(int)(Math.cos(angle)*i));
             if (!level.hasChunkAt(sample) || !level.getFluidState(sample).is(FluidTags.LAVA)
                     || !level.getFluidState(sample.below()).is(FluidTags.LAVA)) return false;

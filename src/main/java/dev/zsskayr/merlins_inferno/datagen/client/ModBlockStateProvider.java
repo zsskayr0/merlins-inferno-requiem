@@ -108,12 +108,14 @@ public final class ModBlockStateProvider extends BlockStateProvider {
             m.element().from(2, floor, 14).to(14, 16, 16).allFaces((dir, face) -> face.texture("#flesh")).end();
             models[d] = m;
         }
-        getVariantBuilder(ModBlocks.MOUTH_BLOCK.get()).forAllStates(state -> {
+        ModelFile sated = models().cubeBottomTop("mouth_block_full", flesh, flesh, modLoc("block/mouth_block_full"));
+        getVariantBuilder(ModBlocks.MOUTH_BLOCK.get()).forAllStatesExcept(state -> {
             int yRot = ((int) state.getValue(dev.zsskayr.merlins_inferno.block.MouthBlock.FACING).toYRot() + 180) % 360;
             return ConfiguredModel.builder()
-                    .modelFile(models[state.getValue(dev.zsskayr.merlins_inferno.block.MouthBlock.DEPTH)])
+                    .modelFile(state.getValue(dev.zsskayr.merlins_inferno.block.MouthBlock.FULL) ? sated
+                            : models[state.getValue(dev.zsskayr.merlins_inferno.block.MouthBlock.DEPTH)])
                     .rotationY(yRot).build();
-        });
+        }, dev.zsskayr.merlins_inferno.block.MouthBlock.CHEW);
         itemModels().withExistingParent("mouth_block", modLoc("block/mouth_block"));
     }
 

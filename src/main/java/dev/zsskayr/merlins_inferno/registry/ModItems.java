@@ -380,6 +380,12 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> HAUNTED_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_LOG, new Item.Properties().fireResistant());
     public static final DeferredItem<BlockItem> HAUNTED_SHELF_SHROOM_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_SHELF_SHROOM);
     public static final DeferredItem<BlockItem> HAUNTED_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_LEAVES, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> GRAVE_SAND_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.GRAVE_SAND);
+    public static final DeferredItem<BlockItem> GRAVE_SANDSTONE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.GRAVE_SANDSTONE);
+    public static final DeferredItem<BlockItem> CRYPT_GLASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CRYPT_GLASS);
+    public static final DeferredItem<BlockItem> HELLGLASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELLGLASS, new Item.Properties().fireResistant());
+    // Rare result of feeding the Mouth Block (see MouthBlock); the heart of the Hell Sight.
+    public static final DeferredItem<Item> WEEPING_EYE = ITEMS.registerSimpleItem("weeping_eye", new Item.Properties().rarity(Rarity.UNCOMMON).fireResistant());
     public static final DeferredItem<BlockItem> CHARRED_FLESH_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CHARRED_FLESH);
     public static final DeferredItem<BlockItem> POROUS_FLESH_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.POROUS_FLESH);
     public static final DeferredItem<BlockItem> VISCERA_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.VISCERA);

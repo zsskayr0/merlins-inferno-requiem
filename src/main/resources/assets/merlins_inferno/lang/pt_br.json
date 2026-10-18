@@ -450,11 +450,15 @@
   "item.merlins_inferno.cinder_spawn_egg": "Ovo gerador de Cinder",
   "death.attack.cinder_bite": "%1$s foi pego nas mandíbulas de um Cinder",
   "death.attack.cinder_bite.player": "%1$s foi pego nas mandíbulas de um Cinder enquanto lutava contra %2$s",
-  "item.merlins_inferno.lava_lens": "Lente de Lava",
-  "effect.merlins_inferno.lava_sight": "Visão na Lava",
-  "item.merlins_inferno.lava_lens.on": "Lente de Lava ativada",
-  "item.merlins_inferno.lava_lens.off": "Lente de Lava desativada",
-  "item.merlins_inferno.lava_lens.tooltip": "Clique direito para alternar; depois guarde no inventário ou em um slot Curios.",
-  "item.merlins_inferno.lava_lens.wear": "Ativa: gasta 1 durabilidade/segundo, mesmo fora da lava. Dura 10 minutos.",
-  "item.merlins_inferno.lava_lens.protection": "Melhora a visão submersa na lava. Não concede resistência ao fogo."
+  "item.merlins_inferno.lava_lens": "Visão do Inferno",
+  "effect.merlins_inferno.lava_sight": "Visão do Inferno",
+  "item.merlins_inferno.lava_lens.on": "Visão do Inferno ativada",
+  "item.merlins_inferno.lava_lens.off": "Visão do Inferno desativada",
+  "item.merlins_inferno.lava_lens.tooltip": "Arrancado de um demônio que nunca dormiu.",
+  "block.merlins_inferno.grave_sand": "Areia de Cova",
+  "block.merlins_inferno.crypt_glass": "Vidro de Cripta",
+  "block.merlins_inferno.hellglass": "Vidro Infernal",
+  "item.merlins_inferno.weeping_eye": "Olho Choroso",
+  "block.merlins_inferno.grave_sandstone": "Arenito de Cova",
+  "item.merlins_inferno.lava_lens.active": "Ativo"
 }

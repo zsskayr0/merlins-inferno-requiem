@@ -1,0 +1,81 @@
+{
+  "type": "minecraft:scattered_ore",
+  "config": {
+    "discard_chance_on_air_exposure": 0.0,
+    "size": 3,
+    "targets": [
+      {
+        "state": {
+          "Name": "merlins_inferno:ebony_debris",
+          "Properties": {
+            "host": "netherrack"
+          }
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:netherrack"
+        }
+      },
+      {
+        "state": {
+          "Name": "merlins_inferno:ebony_debris",
+          "Properties": {
+            "host": "basalt"
+          }
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:basalt"
+        }
+      },
+      {
+        "state": {
+          "Name": "merlins_inferno:ebony_debris",
+          "Properties": {
+            "host": "blackstone"
+          }
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:blackstone"
+        }
+      },
+      {
+        "state": {
+          "Name": "merlins_inferno:ebony_debris",
+          "Properties": {
+            "host": "flesh"
+          }
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "merlins_inferno:flesh_block"
+        }
+      },
+      {
+        "state": {
+          "Name": "merlins_inferno:ebony_debris",
+          "Properties": {
+            "host": "porous_flesh"
+          }
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "merlins_inferno:porous_flesh"
+        }
+      },
+      {
+        "state": {
+          "Name": "merlins_inferno:ebony_debris",
+          "Properties": {
+            "host": "charred_flesh"
+          }
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "merlins_inferno:charred_flesh"
+        }
+      }
+    ]
+  }
+}
