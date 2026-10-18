@@ -50,7 +50,7 @@ public class DoubleEssenceModifier extends LootModifier {
         return result;
     }
 
-    private static Player findPlayer(LootContext context) {
+    static Player findPlayer(LootContext context) {
         Player killer = context.getParamOrNull(LootContextParams.LAST_DAMAGE_PLAYER);
         if (killer != null) {
             return killer;

@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.loot.DoubleEssenceModifier;
+import dev.zsskayr.merlins_inferno.loot.ReapingBookModifier;
 
 public final class ModLootModifiers {
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> SERIALIZERS =
@@ -16,6 +17,8 @@ public final class ModLootModifiers {
 
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<DoubleEssenceModifier>> DOUBLE_ESSENCE =
             SERIALIZERS.register("double_essence", () -> DoubleEssenceModifier.CODEC);
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<ReapingBookModifier>> REAPING_BOOK =
+            SERIALIZERS.register("reaping_book", () -> ReapingBookModifier.CODEC);
 
     private ModLootModifiers() {
     }
