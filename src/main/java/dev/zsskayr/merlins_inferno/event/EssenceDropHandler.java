@@ -2,6 +2,7 @@ package dev.zsskayr.merlins_inferno.event;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
@@ -16,10 +17,11 @@ import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 import dev.zsskayr.merlins_inferno.entity.GrymnEntity;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
+import dev.zsskayr.merlins_inferno.registry.ModTags;
 
 /**
  * Extra essence drops for kills by a player (plus the Grymn's Circle 2 Otherworld Essence): Infernal Essence from Nether mobs (Circle 2 on) and Mundane Essence from
- * the Overworld's vanilla hostile mobs. These live here rather than in loot tables because the Circle is per player.
+ * the Overworld's vanilla hostile mobs (undead drop Otherworld Essence instead, from Circle 2 on; demons never drop Mundane). These live here rather than in loot tables because the Circle is per player.
  * The Circle 2 doubling of loot-table essences is {@link dev.zsskayr.merlins_inferno.loot.DoubleEssenceModifier};
  * drops added here are already past that point, so they are doubled directly.
  */
@@ -52,7 +54,13 @@ public final class EssenceDropHandler {
             }
         } else if (level.dimension() == Level.OVERWORLD && victim.getType().getCategory() == MobCategory.MONSTER
                 && "minecraft".equals(BuiltInRegistries.ENTITY_TYPE.getKey(victim.getType()).getNamespace())) {
-            essence = ModItems.MUNDANE_ESSENCE.get();
+            if (victim.getType().is(EntityTypeTags.UNDEAD)) {
+                if (circleTwo) {
+                    essence = ModItems.OTHERWORLD_ESSENCE.get();
+                }
+            } else if (!victim.getType().is(ModTags.EntityTypes.DEMON)) {
+                essence = ModItems.MUNDANE_ESSENCE.get();
+            }
         }
         if (essence != null) {
             ItemStack stack = new ItemStack(essence, circleTwo ? 2 : 1);
