@@ -224,6 +224,7 @@ public final class ModCreativeModeTabs {
                         HolderLookup.RegistryLookup<Enchantment> enchantments = parameters.holders().lookupOrThrow(Registries.ENCHANTMENT);
                         acceptEnchantedBook(output, enchantments, ModEnchantments.BANE_OF_HUMANITY, 5);
                         acceptEnchantedBook(output, enchantments, ModEnchantments.EVIL, 5);
+                        acceptEnchantedBook(output, enchantments, ModEnchantments.REAPING, 3);
                         acceptEnchantedBook(output, enchantments, ModEnchantments.HOLY, 3);
                         acceptEnchantedBook(output, enchantments, ModEnchantments.DRUIDS_TOUCH, 1);
                     })

@@ -37,6 +37,13 @@ public final class ModEnchantments {
     /** See {@code data/merlins_inferno/enchantment/druids_touch.json} for the anvil-cost/loot-source design; the actual per-tool effects are split across block/loot data (see the Rowanwood log loot table) and {@code event.DruidsTouchHandler}. */
     public static final ResourceKey<Enchantment> DRUIDS_TOUCH = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "druids_touch"));
+    /**
+     * Sword enchantment: slightly less damage than Sharpness against anything not {@code #minecraft:undead}
+     * (see {@code data/merlins_inferno/enchantment/reaping.json}), plus guaranteed essence drops - handled by
+     * {@code event.EssenceDropHandler}.
+     */
+    public static final ResourceKey<Enchantment> REAPING = ResourceKey.create(Registries.ENCHANTMENT,
+            ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "reaping"));
 
     private ModEnchantments() {
     }
@@ -49,6 +56,11 @@ public final class ModEnchantments {
     /** Resolves and checks {@link #HOLY}'s level on a stack in one call - 0 if absent. */
     public static int getHolyLevel(Level level, ItemStack stack) {
         return getLevel(level, stack, HOLY);
+    }
+
+    /** Resolves and checks {@link #REAPING}'s level on a stack in one call - 0 if absent. */
+    public static int getReapingLevel(Level level, ItemStack stack) {
+        return getLevel(level, stack, REAPING);
     }
 
     private static int getLevel(Level level, ItemStack stack, ResourceKey<Enchantment> key) {
