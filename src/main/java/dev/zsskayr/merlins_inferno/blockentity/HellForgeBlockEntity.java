@@ -103,6 +103,8 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
     private int coreTier;
     private Component structureError = Component.translatable("message.merlins_inferno.hell_forge.incomplete");
     private int structureCheckCountdown;
+    /** Set when loaded from disk: the first check after a load must not replay the "formed" effect. */
+    private boolean loadedFromDisk;
 
     private final ContainerData dataAccess = new ContainerData() {
         @Override
@@ -196,8 +198,19 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         }
         HellForgeStructure.Result result = HellForgeStructure.validate(this.level, this.worldPosition,
                 this.getBlockState().getValue(HellForgeControllerBlock.FACING));
+        boolean wasFormed = this.formed;
         this.formed = result.formed();
         this.coreTier = result.coreTier();
+        if (this.loadedFromDisk) {
+            this.loadedFromDisk = false; // first check after a load: just learn the state, no effect
+        } else if (this.formed != wasFormed && this.level instanceof ServerLevel serverLevel) {
+            BlockPos centre = HellForgeStructure.corePos(this.worldPosition, this.getBlockState().getValue(HellForgeControllerBlock.FACING));
+            if (this.formed) {
+                emitFormedEffect(serverLevel, centre);
+            } else {
+                serverLevel.playSound(null, centre, SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS, 0.8F, 0.8F);
+            }
+        }
         if (!result.formed()) {
             this.structureError = result.error();
         }
@@ -275,6 +288,39 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         setActive(level, pos, state, working);
         if (dirty) {
             setChanged(level, pos, state);
+        }
+    }
+
+    /**
+     * Played once when the structure closes (like a Mekanism multiblock forming): a power-up sound,
+     * flames bursting outwards along the 12 edges of the cube and a puff of smoke from each face.
+     */
+    private static void emitFormedEffect(ServerLevel level, BlockPos centre) {
+        double cx = centre.getX() + 0.5;
+        double cy = centre.getY() + 0.5;
+        double cz = centre.getZ() + 0.5;
+        level.playSound(null, centre, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 0.7F, 1.4F);
+        level.playSound(null, centre, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 0.8F, 0.7F);
+        double[] steps = {-1.5, -0.75, 0.0, 0.75, 1.5};
+        for (int axis = 0; axis < 3; axis++) {              // the axis the edge runs along
+            for (int a = -1; a <= 1; a += 2) {
+                for (int b = -1; b <= 1; b += 2) {          // the two fixed (outer) coordinates
+                    for (double t : steps) {
+                        double[] off = new double[3];
+                        off[axis] = t;
+                        off[(axis + 1) % 3] = a * 1.5;
+                        off[(axis + 2) % 3] = b * 1.5;
+                        double len = Math.sqrt(off[0] * off[0] + off[1] * off[1] + off[2] * off[2]);
+                        // count 0 = the offsets are the particle's direction: fly outwards from the centre
+                        level.sendParticles(ParticleTypes.FLAME, cx + off[0], cy + off[1], cz + off[2],
+                                0, off[0] / len, off[1] / len, off[2] / len, 0.12);
+                    }
+                }
+            }
+        }
+        for (Direction face : Direction.values()) {
+            level.sendParticles(ParticleTypes.LARGE_SMOKE, cx + face.getStepX() * 1.6, cy + face.getStepY() * 1.6, cz + face.getStepZ() * 1.6,
+                    0, face.getStepX(), face.getStepY(), face.getStepZ(), 0.05);
         }
     }
 
@@ -448,6 +494,7 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        this.loadedFromDisk = true;
         this.items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, this.items, registries);
         this.storedFuel = tag.getInt("StoredFuel");
