@@ -13,7 +13,6 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
  */
 public final class ModConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> ASHWOOD_TREE = key("ashwood_tree");
-    public static final ResourceKey<ConfiguredFeature<?, ?>> LYRIUM_ORE = key("lyrium_ore");
     public static final ResourceKey<ConfiguredFeature<?, ?>> LYRIUM_GEODE = key("lyrium_geode");
 
     // No Rowanwood entry here anymore - it's a real Structure now (see RowanwoodTreeStructure),

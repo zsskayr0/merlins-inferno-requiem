@@ -181,8 +181,6 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DEMONIC_CORE_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_VAULT_ITEM.get());
                         output.accept(ModItems.FORGE_WRENCH.get());
-                        output.accept(ModItems.LYRIUM_ORE_ITEM.get());
-                        output.accept(ModItems.DEEPSLATE_LYRIUM_ORE_ITEM.get());
                         output.accept(ModItems.LYRIUM_BLOCK_ITEM.get());
                         output.accept(ModItems.LYRIUM_CLUSTER_ITEM.get());
                         output.accept(ModItems.LYRIUM_SHARD.get());

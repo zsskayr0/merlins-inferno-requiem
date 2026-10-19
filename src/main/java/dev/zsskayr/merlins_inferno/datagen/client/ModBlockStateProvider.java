@@ -209,12 +209,8 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         itemModels().withExistingParent(name, "item/generated").texture("layer0", modLoc("block/" + name + "_top"));
     }
 
-    /** Ore, deepslate ore, lining block and the directional crystal cluster. */
+    /** Lining block and the directional crystal cluster. */
     private void registerLyrium() {
-        simpleBlock(ModBlocks.LYRIUM_ORE.get());
-        itemModels().simpleBlockItem(ModBlocks.LYRIUM_ORE.get());
-        simpleBlock(ModBlocks.DEEPSLATE_LYRIUM_ORE.get());
-        itemModels().simpleBlockItem(ModBlocks.DEEPSLATE_LYRIUM_ORE.get());
         simpleBlock(ModBlocks.LYRIUM_BLOCK.get());
         itemModels().simpleBlockItem(ModBlocks.LYRIUM_BLOCK.get());
 

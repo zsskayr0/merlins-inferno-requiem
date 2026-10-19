@@ -17,22 +17,17 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.GeodeBlockSettings;
 import net.minecraft.world.level.levelgen.GeodeCrackSettings;
 import net.minecraft.world.level.levelgen.GeodeLayerSettings;
-import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.GeodeConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
-import net.minecraft.world.level.levelgen.placement.CountPlacement;
-import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.placement.HeightmapPlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.RandomOffsetPlacement;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
-import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 import net.neoforged.neoforge.common.world.BiomeModifiers;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.common.world.BiomeModifier;
@@ -57,12 +52,6 @@ public final class ModLyriumProvider {
     }
 
     public static void bootstrapConfiguredFeatures(BootstrapContext<ConfiguredFeature<?, ?>> context) {
-        // Emerald-style: tiny veins (size 2) in stone or deepslate.
-        context.register(ModConfiguredFeatures.LYRIUM_ORE, new ConfiguredFeature<>(Feature.ORE, new OreConfiguration(List.of(
-                OreConfiguration.target(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES), ModBlocks.LYRIUM_ORE.get().defaultBlockState()),
-                OreConfiguration.target(new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES), ModBlocks.DEEPSLATE_LYRIUM_ORE.get().defaultBlockState())),
-                2)));
-
         // Amethyst-style geode: the vanilla amethyst geode's own numbers, with Lyrium Block as the
         // lining and Lyrium Clusters as the crystals. Clusters may grow from any lining block
         // ("placementsRequireLayer0Alternate" off) since there's no budding variant to gate them.
@@ -87,15 +76,6 @@ public final class ModLyriumProvider {
     public static void bootstrapPlacedFeatures(BootstrapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configured = context.lookup(Registries.CONFIGURED_FEATURE);
 
-        // "Scarce and rare": on average about two attempts every three chunks of mountain, each
-        // a vein of at most 2 blocks - well under emerald's density.
-        context.register(ModPlacedFeatures.LYRIUM_ORE_PLACED, new PlacedFeature(configured.getOrThrow(ModConfiguredFeatures.LYRIUM_ORE), List.of(
-                CountPlacement.of(2),
-                RarityFilter.onAverageOnceEvery(3),
-                InSquarePlacement.spread(),
-                HeightRangePlacement.uniform(VerticalAnchor.absolute(48), VerticalAnchor.absolute(300)),
-                BiomeFilter.biome())));
-
         // One in 16 chunks of mountain (vanilla's amethyst geode is one in 24, but it can generate
         // anywhere underground - this one only in mountains, so it has to be denser to be found). The origin goes
         // 24-30 blocks under the terrain surface rather than at a fixed height. Measured on generated worlds, the
@@ -117,10 +97,6 @@ public final class ModLyriumProvider {
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
         HolderGetter<PlacedFeature> placed = context.lookup(Registries.PLACED_FEATURE);
 
-        context.register(modifierKey("add_lyrium_ore"), new BiomeModifiers.AddFeaturesBiomeModifier(
-                biomes.getOrThrow(BiomeTags.IS_MOUNTAIN),
-                HolderSet.direct(placed.getOrThrow(ModPlacedFeatures.LYRIUM_ORE_PLACED)),
-                GenerationStep.Decoration.UNDERGROUND_ORES));
         context.register(modifierKey("add_lyrium_geode"), new BiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_MOUNTAIN),
                 HolderSet.direct(placed.getOrThrow(ModPlacedFeatures.LYRIUM_GEODE_PLACED)),

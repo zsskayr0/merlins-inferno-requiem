@@ -275,12 +275,8 @@ public final class ModBlocks {
     }
 
     // --- Lyrium (celestial): where Raw Lyrium comes from. Formed like amethyst (a geode lined with
-    // Lyrium Block and studded with Lyrium Clusters) and as rare emerald-style ores in mountains -
-    // see datagen.worldgen.ModLyriumProvider. Mined stats copy the emerald/amethyst equivalents. ---
-    public static final DeferredBlock<DropExperienceBlock> LYRIUM_ORE = BLOCKS.registerBlock("lyrium_ore",
-            props -> new DropExperienceBlock(UniformInt.of(3, 7), props), BlockBehaviour.Properties.ofFullCopy(Blocks.EMERALD_ORE));
-    public static final DeferredBlock<DropExperienceBlock> DEEPSLATE_LYRIUM_ORE = BLOCKS.registerBlock("deepslate_lyrium_ore",
-            props -> new DropExperienceBlock(UniformInt.of(3, 7), props), BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_EMERALD_ORE));
+    // Lyrium Block and studded with Lyrium Clusters) in mountains -
+    // see datagen.worldgen.ModLyriumProvider. Mined stats copy the amethyst equivalents. ---
     // The geode blocks blaze at the maximum light level and sanctify undead/demons around them
     // (random ticks - see block.LyriumRadiance) - but only the world's own blocks: see LyriumBlock#PLACED.
     // The lining is immovable for pistons so a natural block can't be shoved into a base.
