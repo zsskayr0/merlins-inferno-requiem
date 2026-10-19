@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": {
+      "item": "merlins_inferno:infernal_essence"
+    },
+    "N": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "D": {
+      "item": "merlins_inferno:demon_blood"
+    }
+  },
+  "pattern": [
+    "ENE",
+    "NDN",
+    "ENE"
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:demonic_core"
+  }
+}

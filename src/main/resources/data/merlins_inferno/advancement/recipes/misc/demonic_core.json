@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "merlins_inferno:hell_forge"
+        "recipe": "merlins_inferno:demonic_core"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "merlins_inferno:hell_forge"
+      "merlins_inferno:demonic_core"
     ]
   }
 }

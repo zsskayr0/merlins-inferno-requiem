@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "auto=false,mode=input": {
+      "model": "merlins_inferno:block/hell_forge_vault_input"
+    },
+    "auto=false,mode=output": {
+      "model": "merlins_inferno:block/hell_forge_vault_output"
+    },
+    "auto=false,mode=fuel": {
+      "model": "merlins_inferno:block/hell_forge_vault_fuel"
+    },
+    "auto=true,mode=input": {
+      "model": "merlins_inferno:block/hell_forge_vault_input"
+    },
+    "auto=true,mode=output": {
+      "model": "merlins_inferno:block/hell_forge_vault_output"
+    },
+    "auto=true,mode=fuel": {
+      "model": "merlins_inferno:block/hell_forge_vault_fuel"
+    }
+  }
+}

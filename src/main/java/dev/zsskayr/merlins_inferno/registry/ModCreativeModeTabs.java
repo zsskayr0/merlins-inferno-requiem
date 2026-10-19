@@ -177,7 +177,10 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.TALL_CRIMSON_ROOTS_ITEM.get());
                         output.accept(ModItems.TALL_BLACK_GRASS_ITEM.get());
                         output.accept(ModItems.LUST_FLOWER_ITEM.get());
-                        output.accept(ModItems.HELL_FORGE_ITEM.get());
+                        output.accept(ModItems.HELL_FORGE_CONTROLLER_ITEM.get());
+                        output.accept(ModItems.DEMONIC_CORE_ITEM.get());
+                        output.accept(ModItems.HELL_FORGE_VAULT_ITEM.get());
+                        output.accept(ModItems.FORGE_WRENCH.get());
                         output.accept(ModItems.LYRIUM_ORE_ITEM.get());
                         output.accept(ModItems.DEEPSLATE_LYRIUM_ORE_ITEM.get());
                         output.accept(ModItems.LYRIUM_BLOCK_ITEM.get());

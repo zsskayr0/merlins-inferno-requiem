@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "E": {
+      "item": "merlins_inferno:infernal_essence"
+    }
+  },
+  "pattern": [
+    "I I",
+    " E ",
+    " I "
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:forge_wrench"
+  }
+}

@@ -40,7 +40,9 @@ import dev.zsskayr.merlins_inferno.block.CorruptedObsidianBlock;
 import dev.zsskayr.merlins_inferno.block.DryingRackBlock;
 import dev.zsskayr.merlins_inferno.block.PandoraBoxBlock;
 import dev.zsskayr.merlins_inferno.block.EdenweedBushBlock;
-import dev.zsskayr.merlins_inferno.block.HellForgeBlock;
+import dev.zsskayr.merlins_inferno.block.HellForgeControllerBlock;
+import dev.zsskayr.merlins_inferno.block.HellForgeCoreBlock;
+import dev.zsskayr.merlins_inferno.block.HellForgeVaultBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumBlock;
 import dev.zsskayr.merlins_inferno.block.SoulShroomlightBlock;
 import dev.zsskayr.merlins_inferno.block.NetherDoublePlantBlock;
@@ -48,7 +50,6 @@ import dev.zsskayr.merlins_inferno.block.NetherFlowerBlock;
 import dev.zsskayr.merlins_inferno.block.SacredAltarBlock;
 import dev.zsskayr.merlins_inferno.block.SacredAltarPartBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumClusterBlock;
-import dev.zsskayr.merlins_inferno.block.HellForgePartBlock;
 import dev.zsskayr.merlins_inferno.block.RowanwoodLogBlock;
 import dev.zsskayr.merlins_inferno.worldgen.ModTreeGrowers;
 
@@ -306,27 +307,25 @@ public final class ModBlocks {
             dev.zsskayr.merlins_inferno.block.OblivionPortalBlock::new, BlockBehaviour.Properties.of().noCollission().strength(-1.0F)
                     .sound(SoundType.GLASS).lightLevel(state -> 5).pushReaction(PushReaction.BLOCK).noLootTable());
 
-    // --- Hell Forge: see HellForgeBlock's javadoc - block/blockentity exist for now purely to
-    // carry HellForgeModel's oversized (~2.5x2.5x2 block) geometry via a BlockEntityRenderer.
-    // No furnace/crafting-station behavior yet - that's a separate pass once this one (getting
-    // the block itself craftable and rendering) is confirmed working. ---
-    public static final DeferredBlock<HellForgeBlock> HELL_FORGE = BLOCKS.registerBlock("hell_forge",
-            HellForgeBlock::new, BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_BLACK)
-                    .strength(50.0F, 1200.0F) // Obsidian-tier blast resistance - meant to feel like a serious, rare structure
-                    .sound(SoundType.NETHERRACK)
-                    .lightLevel(state -> 7) // faint ambient glow, matches the "forge" theme
-                    .noOcclusion()); // its real silhouette (via the BER) doesn't fill the block's own cube, so neighbors shouldn't be culled against it
+    // --- Hell Forge multiblock (3x3x3, see HellForgeStructure): Controller (GUI + inventory, front
+    // face centre), Core (centre, sets the forge tier) and Vault (configurable automation port).
+    // The 20 edge/corner blocks are plain Compressed Netherrack. ---
+    public static final DeferredBlock<HellForgeControllerBlock> HELL_FORGE_CONTROLLER = BLOCKS.registerBlock("hell_forge_controller",
+            HellForgeControllerBlock::new, hellForgePartProperties().lightLevel(state -> 7)); // faint ambient glow, matches the "forge" theme
 
-    // --- Hell Forge part: invisible collision filler placed automatically around HELL_FORGE, see
-    // HellForgePartBlock's javadoc. No item - never placed/obtained by hand. ---
-    public static final DeferredBlock<HellForgePartBlock> HELL_FORGE_PART = BLOCKS.registerBlock("hell_forge_part",
-            HellForgePartBlock::new, BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_BLACK)
-                    .strength(50.0F, 1200.0F) // matches HELL_FORGE so every face takes the same effort to break
-                    .sound(SoundType.NETHERRACK)
-                    .noOcclusion()
-                    .noLootTable()); // breaking a part drops via HellForgePartBlock's own logic, not loot tables
+    public static final DeferredBlock<HellForgeCoreBlock> DEMONIC_CORE = BLOCKS.registerBlock("demonic_core",
+            props -> new HellForgeCoreBlock(props, 1), hellForgePartProperties());
+
+    public static final DeferredBlock<HellForgeVaultBlock> HELL_FORGE_VAULT = BLOCKS.registerBlock("hell_forge_vault",
+            HellForgeVaultBlock::new, hellForgePartProperties());
+
+    /** Shared by every structural Hell Forge block: Obsidian-tier blast resistance, meant to feel like a serious, rare structure. */
+    private static BlockBehaviour.Properties hellForgePartProperties() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.COLOR_BLACK)
+                .strength(50.0F, 1200.0F)
+                .sound(SoundType.NETHERRACK);
+    }
 
     // --- Corrupted Obsidian: crying obsidian's demonic cousin, red instead of purple. Andras' Ancient Battlefield's boss room
     // uses it for its portal frame - decorative only for now (the Oblivion portal frame, which it is

@@ -25,7 +25,7 @@ public class HellForgeRecipe extends AbstractCookingRecipe {
 
     @Override
     public ItemStack getToastSymbol() {
-        return new ItemStack(ModBlocks.HELL_FORGE.get());
+        return new ItemStack(ModBlocks.HELL_FORGE_CONTROLLER.get());
     }
 
     @Override

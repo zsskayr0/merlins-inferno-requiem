@@ -44,7 +44,6 @@ public final class ModEntityRenderers {
 
     @SubscribeEvent
     static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(HellForgeModel.LAYER_LOCATION, HellForgeModel::createBodyLayer);
         event.registerLayerDefinition(FleshGolemModel.LAYER_LOCATION, FleshGolemModel::createBodyLayer);
     }
 
@@ -66,7 +65,6 @@ public final class ModEntityRenderers {
         event.registerEntityRenderer(ModEntityTypes.OSTARA.get(), OstaraRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.CAIN.get(), CainRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.FLESH_GOLEM.get(), FleshGolemRenderer::new);
-        event.registerBlockEntityRenderer(ModBlockEntityTypes.HELL_FORGE.get(), HellForgeBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.DRYING_RACK.get(), DryingRackRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.PANDORA_BOX.get(), context -> new PandoraBoxRenderer());
         event.registerBlockEntityRenderer(ModBlockEntityTypes.SACRED_ALTAR.get(), context -> new CelestialAltarRenderer());

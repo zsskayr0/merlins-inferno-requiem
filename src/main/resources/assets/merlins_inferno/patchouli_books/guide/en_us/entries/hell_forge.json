@@ -1,9 +1,13 @@
 {
   "name": "patchouli.merlins_inferno.entry.hell_forge.name",
-  "icon": "merlins_inferno:hell_forge",
+  "icon": "merlins_inferno:hell_forge_controller",
   "category": "merlins_inferno:infernal_road",
   "sortnum": 3,
   "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.hell_forge.page0"
+    },
     {
       "type": "patchouli:crafting",
       "recipe": "merlins_inferno:compressed_netherrack",
@@ -11,7 +15,17 @@
     },
     {
       "type": "patchouli:crafting",
-      "recipe": "merlins_inferno:hell_forge"
+      "recipe": "merlins_inferno:hell_forge_controller"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "merlins_inferno:demonic_core"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "merlins_inferno:hell_forge_vault",
+      "recipe2": "merlins_inferno:forge_wrench",
+      "text": "patchouli.merlins_inferno.entry.hell_forge.page_vault"
     },
     {
       "type": "patchouli:text",

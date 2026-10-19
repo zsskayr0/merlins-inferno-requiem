@@ -28,8 +28,8 @@ import dev.zsskayr.merlins_inferno.menu.HellForgeMenu;
  * The panel already matches vanilla's own standard 176x166 layout for the player-inventory grid
  * (same {@code 8 + col*18}/{@code 84 + row*18}/{@code 142} coordinates), so unlike the previous
  * vanilla-furnace-texture version, no extra offset or title strip is needed - the whole GUI is
- * exactly as tall as the art. The "Hell Forge" title is intentionally not drawn at all (see
- * {@link #renderLabels}); the panel is meant to be read without one.
+ * exactly as tall as the art. Neither the "Hell Forge" title nor the "Inventory" label is drawn (see
+ * {@link #renderLabels}); the panel is meant to be read without them.
  */
 public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("merlins_inferno", "textures/gui/hellforge/hell_forge.png");
@@ -112,22 +112,22 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         guiGraphics.blit(BURN_FRAMES[frame], left, top, 0, 0, BURN_SIZE, BURN_SIZE, BURN_SIZE, BURN_SIZE);
     }
 
-    /** Skips the "Hell Forge" title entirely - the panel's own art carries the GUI, not a label. */
+    /** Draws no labels at all - neither the "Hell Forge" title nor "Inventory"; the panel's own art carries the GUI. */
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // No extra this.renderTooltip(...) call here - AbstractContainerScreen.render already ends
-        // with one (that's what draws hovered-slot tooltips); adding another just draws the same
-        // thing twice on top of itself every frame.
+        // In 1.21.1 AbstractContainerScreen.render does NOT draw the hovered-slot tooltip itself -
+        // each screen calls renderTooltip after it (as vanilla's furnace screens and the Pandora Box do).
         super.render(guiGraphics, mouseX, mouseY, partialTick);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
 
         int barLeft = this.leftPos + BAR_X;
         int barTop = this.topPos + BAR_Y;
-        if (mouseX >= barLeft && mouseX < barLeft + BAR_TEX_WIDTH && mouseY >= barTop && mouseY < barTop + BAR_TEX_HEIGHT) {
+        // The fuel slot sits on the bar, so a hovered slot's own tooltip wins over the tank's.
+        if (this.hoveredSlot == null && mouseX >= barLeft && mouseX < barLeft + BAR_TEX_WIDTH && mouseY >= barTop && mouseY < barTop + BAR_TEX_HEIGHT) {
             guiGraphics.renderTooltip(this.font,
                     List.of(Component.translatable("gui.merlins_inferno.hell_forge.fuel",
                             this.menu.getStoredFuel(), this.menu.getFuelCapacity())),

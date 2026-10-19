@@ -8,12 +8,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Items;
@@ -31,7 +37,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import dev.zsskayr.merlins_inferno.block.HellForgeControllerBlock;
 import dev.zsskayr.merlins_inferno.menu.HellForgeMenu;
+import dev.zsskayr.merlins_inferno.multiblock.HellForgeStructure;
 import dev.zsskayr.merlins_inferno.registry.ModBlockEntityTypes;
 import dev.zsskayr.merlins_inferno.registry.ModRecipeTypes;
 
@@ -66,15 +74,9 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
     public static final int RESULT_SLOT = 2;
     private static final int SLOT_COUNT = 3;
 
-    // Below only ever pulls the result - without WorldlyContainer, a plain Container lets a hopper
-    // underneath pull from whichever slot it reaches first in index order (0, the input slot),
-    // which was the original bug this fixes. Every other face is a feed face: FUEL_SLOT is tried
-    // first (so a lava bucket/blaze powder lands in the tank feed, not the input), and INPUT_SLOT
-    // second if the item isn't fuel - vanilla's own hopper insertion already walks this array in
-    // order and only advances past a slot once canPlaceItemThroughFace rejects it there, so this
-    // alone gives the "try fuel, then input, else stays in the hopper" fallback chain.
-    private static final int[] SLOTS_FOR_DOWN = new int[]{RESULT_SLOT};
-    private static final int[] SLOTS_FOR_FEED = new int[]{FUEL_SLOT, INPUT_SLOT};
+    // Kept as a WorldlyContainer (rather than a plain Container) so vanilla hoppers see no slots at
+    // all on the Controller; a plain Container would let them reach every slot from any side.
+    private static final int[] NO_SLOTS = new int[0];
 
     /** How much faster than a normal furnace/blast furnace this cooks - 30% faster. */
     private static final float COOK_TIME_MULTIPLIER = 0.7F;
@@ -83,13 +85,24 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
 
     /** Tank size, in ticks of burn time - exactly one lava bucket's worth. */
     public static final int FUEL_CAPACITY = 20000;
+    /** Burn time per millibucket of lava poured in as a fluid (a bucket is 1000 mB = 20000 ticks). */
+    public static final int FUEL_PER_MB = 20;
     /** Haunted logs: not fuel for a vanilla furnace, but a strong one here. */
     public static final int HAUNTED_LOG_BURN = 18000;
+
+    /** How often (ticks) the structure is re-validated while running - cheap, but not every tick. */
+    private static final int STRUCTURE_CHECK_INTERVAL = 20;
 
     private NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
     int storedFuel;
     int cookingProgress;
     int cookingTotalTime;
+
+    // Structure state is derived, never saved: it is re-checked on the first tick after load.
+    private boolean formed;
+    private int coreTier;
+    private Component structureError = Component.translatable("message.merlins_inferno.hell_forge.incomplete");
+    private int structureCheckCountdown;
 
     private final ContainerData dataAccess = new ContainerData() {
         @Override
@@ -162,8 +175,52 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         return found.map(holder -> (RecipeHolder<AbstractCookingRecipe>) holder);
     }
 
+    public boolean isFormed() {
+        return this.formed;
+    }
+
+    /** The tier of the Core in the centre (1 = Demonic); 0 while not formed. */
+    public int getCoreTier() {
+        return this.coreTier;
+    }
+
+    /** Why the structure is not formed - only meaningful while {@link #isFormed()} is false. */
+    public Component getStructureError() {
+        return this.structureError;
+    }
+
+    /** Re-checks the 3x3x3 structure now (server side). */
+    public void refreshStructure() {
+        if (this.level == null || this.level.isClientSide) {
+            return;
+        }
+        HellForgeStructure.Result result = HellForgeStructure.validate(this.level, this.worldPosition,
+                this.getBlockState().getValue(HellForgeControllerBlock.FACING));
+        this.formed = result.formed();
+        this.coreTier = result.coreTier();
+        if (!result.formed()) {
+            this.structureError = result.error();
+        }
+        this.structureCheckCountdown = STRUCTURE_CHECK_INTERVAL;
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return this.formed && super.stillValid(player);
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, HellForgeBlockEntity blockEntity) {
+        if (--blockEntity.structureCheckCountdown <= 0) {
+            blockEntity.refreshStructure();
+        }
+        // Without the full structure the forge is inert: no fuel absorbed, nothing cooked.
+        if (!blockEntity.formed) {
+            setActive(level, pos, state, false);
+            return;
+        }
+
         boolean dirty = false;
+        boolean working = false;
 
         // Absorb whatever's in the fuel slot into the tank the instant there's room for its full
         // value - it disappears from the slot right away rather than sitting there being burned
@@ -175,13 +232,20 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
             ItemStack remainder = fuel.hasCraftingRemainingItem() ? fuel.getCraftingRemainingItem() : ItemStack.EMPTY;
             fuel.shrink(1);
             if (!remainder.isEmpty()) {
-                ejectRemainder(level, pos, blockEntity, remainder);
+                if (fuel.isEmpty()) {
+                    // The empty bucket goes back where the lava bucket came from, so the result slot
+                    // stays clean for an output Vault; a Fuel Vault hands it back out (see HellForgeVaultHandler).
+                    blockEntity.items.set(FUEL_SLOT, remainder);
+                } else {
+                    ejectRemainder(level, pos, blockEntity, remainder);
+                }
             }
             dirty = true;
         }
 
         // No fuel and nothing half-cooked: no recipe can progress, so skip the lookup entirely.
         if (blockEntity.storedFuel <= 0 && blockEntity.cookingProgress <= 0) {
+            setActive(level, pos, state, false);
             if (dirty) {
                 setChanged(level, pos, state);
             }
@@ -195,6 +259,8 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         if (canBurn && blockEntity.storedFuel > 0) {
             blockEntity.storedFuel--;
             blockEntity.cookingProgress++;
+            working = true;
+            emitWorkingFeedback(level, pos, state);
             if (blockEntity.cookingProgress >= blockEntity.cookingTotalTime) {
                 blockEntity.cookingProgress = 0;
                 blockEntity.cookingTotalTime = getTotalCookTime(recipe);
@@ -206,8 +272,43 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
             dirty = true;
         }
 
+        setActive(level, pos, state, working);
         if (dirty) {
             setChanged(level, pos, state);
+        }
+    }
+
+    /**
+     * Drives the Controller's front-face animation and the Core's fireball animation: only changes
+     * a blockstate when it actually flips.
+     */
+    private static void setActive(Level level, BlockPos pos, BlockState state, boolean active) {
+        if (state.getValue(HellForgeControllerBlock.ACTIVE) != active) {
+            level.setBlock(pos, state.setValue(HellForgeControllerBlock.ACTIVE, active), 3);
+        }
+        HellForgeControllerBlock.setCoreActive(level, pos, state, active);
+    }
+
+    /**
+     * Furnace-style feedback while cooking, sent from the server: now and then a fire crackle from
+     * the centre and smoke/flame puffs on the outside of the whole 3x3x3 structure (not just the Controller).
+     */
+    private static void emitWorkingFeedback(Level level, BlockPos pos, BlockState state) {
+        RandomSource random = level.random;
+        BlockPos centre = HellForgeStructure.corePos(pos, state.getValue(HellForgeControllerBlock.FACING));
+        if (random.nextFloat() < 0.1F) {
+            level.playSound(null, centre, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 0.6F, 1.0F);
+        }
+        if (random.nextFloat() < 0.3F && level instanceof ServerLevel serverLevel) {
+            // A random point just outside one of the cube's six faces (the cube spans 1.5 blocks from its centre).
+            Direction face = Direction.getRandom(random);
+            double x = centre.getX() + 0.5 + (face.getAxis() == Direction.Axis.X ? face.getStepX() * 1.6 : random.nextDouble() * 3.0 - 1.5);
+            double y = centre.getY() + 0.5 + (face.getAxis() == Direction.Axis.Y ? face.getStepY() * 1.6 : random.nextDouble() * 3.0 - 1.5);
+            double z = centre.getZ() + 0.5 + (face.getAxis() == Direction.Axis.Z ? face.getStepZ() * 1.6 : random.nextDouble() * 3.0 - 1.5);
+            serverLevel.sendParticles(ParticleTypes.SMOKE, x, y, z, 1, 0.0, 0.0, 0.0, 0.0);
+            if (random.nextInt(3) == 0) {
+                serverLevel.sendParticles(ParticleTypes.FLAME, x, y, z, 1, 0.0, 0.0, 0.0, 0.0);
+            }
         }
     }
 
@@ -311,27 +412,23 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         };
     }
 
-    // --- WorldlyContainer (hopper/automation access, restricted by the side it's coming from) ---
+    // --- WorldlyContainer ---
+    // The Controller itself exposes no slots to hoppers: without Vaults the forge is fully manual.
+    // Automation goes through HellForgeVaultBlock's item handler (see HellForgeVaultHandler) instead.
 
     @Override
     public int[] getSlotsForFace(Direction side) {
-        return side == Direction.DOWN ? SLOTS_FOR_DOWN : SLOTS_FOR_FEED;
+        return NO_SLOTS;
     }
 
     @Override
     public boolean canPlaceItemThroughFace(int index, ItemStack stack, @Nullable Direction direction) {
-        return this.canPlaceItem(index, stack);
+        return false;
     }
 
     @Override
     public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
-        if (index == RESULT_SLOT) {
-            return true;
-        }
-        // The tank absorbs fuel instantly, leaving only a spent bucket behind (see serverTick) -
-        // that empty bucket can be pulled back out, mirroring vanilla's furnace fuel-slot
-        // exception, but unconverted fuel/input itself can't be siphoned back out mid-feed.
-        return index == FUEL_SLOT && stack.is(Items.BUCKET);
+        return false;
     }
 
     // --- MenuProvider / BaseContainerBlockEntity ---

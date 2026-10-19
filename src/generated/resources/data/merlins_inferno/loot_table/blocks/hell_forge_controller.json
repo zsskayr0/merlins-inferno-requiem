@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "merlins_inferno:hell_forge"
+          "name": "merlins_inferno:hell_forge_controller"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "merlins_inferno:blocks/hell_forge"
+  "random_sequence": "merlins_inferno:blocks/hell_forge_controller"
 }

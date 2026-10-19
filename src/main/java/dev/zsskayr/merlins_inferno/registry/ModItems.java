@@ -410,7 +410,12 @@ public final class ModItems {
             props -> new DoubleHighBlockItem(ModBlocks.TALL_CRIMSON_ROOTS.get(), props));
     public static final DeferredItem<DoubleHighBlockItem> TALL_BLACK_GRASS_ITEM = ITEMS.registerItem("tall_black_grass",
             props -> new DoubleHighBlockItem(ModBlocks.TALL_BLACK_GRASS.get(), props));
-    public static final DeferredItem<BlockItem> HELL_FORGE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE);
+    public static final DeferredItem<BlockItem> HELL_FORGE_CONTROLLER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_CONTROLLER);
+    public static final DeferredItem<BlockItem> DEMONIC_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DEMONIC_CORE);
+    public static final DeferredItem<BlockItem> HELL_FORGE_VAULT_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_VAULT);
+    /** Right-click a Hell Forge Vault to cycle its mode: input, output, fuel. */
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ForgeWrenchItem> FORGE_WRENCH = ITEMS.registerItem("forge_wrench",
+            dev.zsskayr.merlins_inferno.item.ForgeWrenchItem::new, new Item.Properties().stacksTo(1));
 
     // Testing/admin convenience - the Druid otherwise only ever appears via natural spawning in
     // the Hallowed Grove (see ModBiomeProvider). Background/highlight colors: mossy forest green

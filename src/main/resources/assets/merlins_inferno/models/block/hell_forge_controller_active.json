@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "merlins_inferno:block/netherrack_compressed",
+    "down": "merlins_inferno:block/netherrack_compressed",
+    "up": "merlins_inferno:block/netherrack_compressed",
+    "east": "merlins_inferno:block/netherrack_compressed",
+    "south": "merlins_inferno:block/netherrack_compressed",
+    "west": "merlins_inferno:block/netherrack_compressed",
+    "north": "merlins_inferno:block/hellforge_load_anim"
+  }
+}

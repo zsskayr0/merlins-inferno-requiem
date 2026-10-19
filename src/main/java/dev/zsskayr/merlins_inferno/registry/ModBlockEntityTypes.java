@@ -10,7 +10,6 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.blockentity.DryingRackBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.PandoraBoxBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.HellForgeBlockEntity;
-import dev.zsskayr.merlins_inferno.blockentity.HellForgePartBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.MouthBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarPartBlockEntity;
@@ -19,11 +18,8 @@ import dev.zsskayr.merlins_inferno.blockentity.SacredAltarPartBlockEntity;
 public final class ModBlockEntityTypes {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Merlins_inferno.MODID);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HellForgeBlockEntity>> HELL_FORGE = BLOCK_ENTITY_TYPES.register("hell_forge",
-            () -> BlockEntityType.Builder.of(HellForgeBlockEntity::new, ModBlocks.HELL_FORGE.get()).build(null));
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HellForgePartBlockEntity>> HELL_FORGE_PART = BLOCK_ENTITY_TYPES.register("hell_forge_part",
-            () -> BlockEntityType.Builder.of(HellForgePartBlockEntity::new, ModBlocks.HELL_FORGE_PART.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HellForgeBlockEntity>> HELL_FORGE = BLOCK_ENTITY_TYPES.register("hell_forge_controller",
+            () -> BlockEntityType.Builder.of(HellForgeBlockEntity::new, ModBlocks.HELL_FORGE_CONTROLLER.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SacredAltarBlockEntity>> SACRED_ALTAR = BLOCK_ENTITY_TYPES.register("sacred_altar",
             () -> BlockEntityType.Builder.of(SacredAltarBlockEntity::new, ModBlocks.SACRED_ALTAR.get()).build(null));
