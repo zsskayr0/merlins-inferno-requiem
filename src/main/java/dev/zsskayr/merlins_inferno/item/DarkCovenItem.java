@@ -28,7 +28,7 @@ import net.minecraft.world.level.Level;
 import org.joml.Vector3f;
 
 /**
- * The Dark Coven - the legendary sword of Cain, a Circle 2 weapon crafted from Ebony. It exists as seven items, one per
+ * The Dark Coven - the mythic sword of Cain (not craftable; he drops it very rarely), a Circle 2 weapon far above the ordinary Ebony Sword. It exists as seven items, one per
  * stage (I to VII): each stage is the next step of the same blade, reached at a smithing table with one Ebony Bar and a
  * Withered Bone as the template - the last step (VI to VII) asks for a Nether Star instead of the bar. Smithing keeps
  * the enchantments.
@@ -67,7 +67,7 @@ public class DarkCovenItem extends SwordItem {
     private final int stage;
 
     public DarkCovenItem(int stage, Properties properties) {
-        super(ModTiers.LEGENDARY, properties);
+        super(ModTiers.MYTHIC, properties);
         this.stage = stage;
     }
 
@@ -209,6 +209,7 @@ public class DarkCovenItem extends SwordItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
+        tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.mythic").withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.stage", ROMAN[this.stage], ROMAN[MAX_STAGE])
                 .withStyle(ChatFormatting.DARK_PURPLE));
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.invoke", this.getDurationTicks() / 20).withStyle(ChatFormatting.GRAY));

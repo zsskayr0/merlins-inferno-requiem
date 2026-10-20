@@ -537,6 +537,8 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> BLACK_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_ROOTS);
     public static final DeferredItem<BlockItem> EBONY_DEBRIS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.EBONY_DEBRIS, new Item.Properties().fireResistant());
 
+    public static final DeferredItem<SwordItem> EBONY_SWORD = ITEMS.registerItem("ebony_sword",
+            props -> new SwordItem(ModTiers.EBONY, props.fireResistant().attributes(SwordItem.createAttributes(ModTiers.EBONY, 3, -2.4F))));
     public static final DeferredItem<AxeItem> EBONY_AXE = ITEMS.registerItem("ebony_axe",
             props -> new AxeItem(ModTiers.EBONY, props.fireResistant().attributes(AxeItem.createAttributes(ModTiers.EBONY, 5.0F, -3.0F))));
     public static final DeferredItem<ShovelItem> EBONY_SHOVEL = ITEMS.registerItem("ebony_shovel",
@@ -555,7 +557,8 @@ public final class ModItems {
     public static final DeferredItem<ArmorItem> EBONY_BOOTS = ITEMS.registerItem("ebony_boots",
             props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.BOOTS, props.fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(42))));
 
-    // The Dark Coven, stages I to VII: see item.DarkCovenItem. All are legendary (crafted, not found); upgrade at a smithing table.
+    // The Dark Coven, stages I to VII: see item.DarkCovenItem. A MYTHIC sword (not craftable; Cain drops stage I very rarely),
+    // separate from the ordinary Ebony Sword; the stages are raised at a smithing table.
     public static final DeferredItem<DarkCovenItem> DARK_COVEN_I = registerDarkCoven("dark_coven", 0);
     public static final DeferredItem<DarkCovenItem> DARK_COVEN_II = registerDarkCoven("dark_coven_2", 1);
     public static final DeferredItem<DarkCovenItem> DARK_COVEN_III = registerDarkCoven("dark_coven_3", 2);
@@ -566,7 +569,7 @@ public final class ModItems {
 
     private static DeferredItem<DarkCovenItem> registerDarkCoven(String name, int stage) {
         return ITEMS.registerItem(name, props -> new DarkCovenItem(stage, props.rarity(Rarity.EPIC).fireResistant()
-                .attributes(SwordItem.createAttributes(ModTiers.LEGENDARY, 3 + stage, -2.4F))));
+                .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 3 + stage, -2.4F))));
     }
 
     public static final DeferredItem<DeferredSpawnEggItem> CAIN_SPAWN_EGG = ITEMS.registerItem("cain_spawn_egg",

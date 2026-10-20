@@ -5,20 +5,17 @@
     "X": {
       "item": "merlins_inferno:ebony_bar"
     },
-    "K": {
-      "item": "minecraft:wither_skeleton_skull"
-    },
     "S": {
       "item": "merlins_inferno:withered_bone"
     }
   },
   "pattern": [
     "X",
-    "K",
+    "X",
     "S"
   ],
   "result": {
     "count": 1,
-    "id": "merlins_inferno:dark_coven"
+    "id": "merlins_inferno:ebony_sword"
   }
 }

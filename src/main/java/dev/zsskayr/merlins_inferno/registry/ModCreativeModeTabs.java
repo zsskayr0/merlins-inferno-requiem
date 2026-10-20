@@ -207,6 +207,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.EBONY_DEBRIS_ITEM.get());
                         output.accept(ModItems.EBONY_SCRAP.get());
                         output.accept(ModItems.EBONY_BAR.get());
+                        output.accept(ModItems.EBONY_SWORD.get());
                         output.accept(ModItems.EBONY_AXE.get());
                         output.accept(ModItems.EBONY_SHOVEL.get());
                         output.accept(ModItems.EBONY_PICKAXE.get());

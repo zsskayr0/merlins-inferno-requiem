@@ -140,6 +140,9 @@ public final class ModTiers {
      */
     public static final Tier LEGENDARY = legendary(3500, 7.0F, 30);
 
+    /** The Dark Coven's tier: mythic, above {@link #LEGENDARY} in damage, durability and enchantability. Never craftable. */
+    public static final Tier MYTHIC = legendary(5000, 10.0F, 35);
+
     private static Tier legendary(int uses, float attackBonus, int enchantability) {
         return new Tier() {
             @Override
@@ -177,7 +180,7 @@ public final class ModTiers {
     /**
      * Design (per project decision): Circle 2's Ebony, the tier above Seraphium on every stat (the Infernal route's
      * Oblivion material). Its signature - Fire Resistance IV with the full armor set - is in
-     * {@code event.EbonyArmorHandler}. The Dark Coven uses {@link #LEGENDARY}, not this tier.
+     * {@code event.EbonyArmorHandler}. The Dark Coven uses {@link #MYTHIC}; the Ebony Sword is the ordinary sword of this tier.
      */
     public static final Tier EBONY = new Tier() {
         @Override
