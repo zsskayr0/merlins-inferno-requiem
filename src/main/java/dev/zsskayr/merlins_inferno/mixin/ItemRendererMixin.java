@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import dev.zsskayr.merlins_inferno.client.HellSightGlint;
+import dev.zsskayr.merlins_inferno.item.DarkCovenItem;
 import dev.zsskayr.merlins_inferno.item.LavaLensItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -20,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Draws the enchantment glint of an active Hell Sight in red. The stack being rendered is remembered for the duration of
+ * Draws the enchantment glint of an active Hell Sight (and of an active Dark Coven from stage IV, stronger) in red. The stack being rendered is remembered for the duration of
  * ItemRenderer.render, and the two glint buffer helpers hand out the red render types instead of the purple ones.
  * Every injector is optional so a changed ItemRenderer only loses the colour.
  */
@@ -33,7 +34,9 @@ public class ItemRendererMixin {
             at = @At("HEAD"), require = 0)
     private void merlins_inferno$remember(ItemStack stack, ItemDisplayContext context, boolean leftHand, PoseStack poseStack,
                                           MultiBufferSource buffer, int light, int overlay, BakedModel model, CallbackInfo ci) {
-        boolean active = stack.getItem() instanceof LavaLensItem && LavaLensItem.isActive(stack);
+        boolean coven = stack.getItem() instanceof DarkCovenItem sword && sword.getStage() >= 3 && DarkCovenItem.isInvoked(stack);
+        boolean active = coven || stack.getItem() instanceof LavaLensItem && LavaLensItem.isActive(stack);
+        HellSightGlint.STRONG.set(coven);
         if (active && !merlins_inferno$loggedRemember) {
             merlins_inferno$loggedRemember = true;
             LOGGER.info("Hell Sight glint: an active lens is being rendered (foil={})", stack.hasFoil());
@@ -46,6 +49,7 @@ public class ItemRendererMixin {
     private void merlins_inferno$forget(ItemStack stack, ItemDisplayContext context, boolean leftHand, PoseStack poseStack,
                                         MultiBufferSource buffer, int light, int overlay, BakedModel model, CallbackInfo ci) {
         HellSightGlint.ACTIVE.set(false);
+        HellSightGlint.STRONG.set(false);
     }
 
     @Inject(method = "getFoilBuffer", at = @At("HEAD"), cancellable = true, require = 0)
@@ -56,8 +60,11 @@ public class ItemRendererMixin {
             merlins_inferno$loggedFoil = true;
             LOGGER.info("Hell Sight glint: red glint buffer handed out (getFoilBuffer)");
         }
+        boolean strong = HellSightGlint.STRONG.get();
         RenderType red = Minecraft.useShaderTransparency() && renderType == Sheets.translucentItemSheet()
-                ? HellSightGlint.GLINT_TRANSLUCENT : isItem ? HellSightGlint.GLINT : HellSightGlint.ENTITY_GLINT;
+                ? (strong ? HellSightGlint.STRONG_GLINT_TRANSLUCENT : HellSightGlint.GLINT_TRANSLUCENT)
+                : isItem ? (strong ? HellSightGlint.STRONG_GLINT : HellSightGlint.GLINT)
+                : (strong ? HellSightGlint.STRONG_ENTITY_GLINT : HellSightGlint.ENTITY_GLINT);
         cir.setReturnValue(VertexMultiConsumer.create(buffer.getBuffer(red), buffer.getBuffer(renderType)));
     }
 
@@ -69,7 +76,9 @@ public class ItemRendererMixin {
             merlins_inferno$loggedFoil = true;
             LOGGER.info("Hell Sight glint: red glint buffer handed out (getFoilBufferDirect)");
         }
-        RenderType red = noEntity ? HellSightGlint.GLINT : HellSightGlint.ENTITY_GLINT;
+        boolean strong = HellSightGlint.STRONG.get();
+        RenderType red = noEntity ? (strong ? HellSightGlint.STRONG_GLINT : HellSightGlint.GLINT)
+                : (strong ? HellSightGlint.STRONG_ENTITY_GLINT : HellSightGlint.ENTITY_GLINT);
         cir.setReturnValue(VertexMultiConsumer.create(buffer.getBuffer(red), buffer.getBuffer(renderType)));
     }
 }
