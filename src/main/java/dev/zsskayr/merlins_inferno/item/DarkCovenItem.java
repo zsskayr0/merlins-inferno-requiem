@@ -189,6 +189,10 @@ public class DarkCovenItem extends SwordItem {
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
+        if (level instanceof ServerLevel serverLevel && entity instanceof Player swinger && swinger.swinging
+                && (isSelected || swinger.getOffhandItem() == stack)) {
+            this.swingTrail(serverLevel, swinger, isInvoked(stack));
+        }
         if (level.isClientSide || !(entity instanceof Player player) || !isInvoked(stack)) {
             return;
         }
@@ -199,6 +203,34 @@ public class DarkCovenItem extends SwordItem {
                 player.displayClientMessage(Component.translatable("item.merlins_inferno.dark_coven.dismissed").withStyle(ChatFormatting.GRAY), true);
             }
         }
+    }
+
+    /** A red ribbon along the blade's arc while it swings; the invoked coven adds soul fire to it. */
+    private void swingTrail(ServerLevel level, Player player, boolean invoked) {
+        float progress = Mth.clamp(player.swingTime / 6.0F, 0.0F, 1.0F);
+        double sweep = Math.toRadians(player.getYRot() + 70.0 - 140.0 * progress);
+        double pitch = Math.toRadians(-player.getXRot());
+        double eyeY = player.getEyeY() - 0.35;
+        DustParticleOptions blood = new DustParticleOptions(new Vector3f(0.75F, 0.02F, 0.06F), 1.3F);
+        for (int i = 1; i <= 4; i++) {
+            double reach = 0.8 + i * 0.4;
+            double x = player.getX() - Math.sin(sweep) * reach * Math.cos(pitch);
+            double z = player.getZ() + Math.cos(sweep) * reach * Math.cos(pitch);
+            double y = eyeY + Math.sin(pitch) * reach;
+            level.sendParticles(blood, x, y, z, 1, 0.03, 0.03, 0.03, 0.0);
+            if (invoked && i % 2 == 0) {
+                level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, x, y, z, 1, 0.02, 0.02, 0.02, 0.0);
+            }
+        }
+    }
+
+    @Override
+    public boolean hurtEnemy(ItemStack stack, net.minecraft.world.entity.LivingEntity target, net.minecraft.world.entity.LivingEntity attacker) {
+        if (attacker.level() instanceof ServerLevel level) {
+            level.sendParticles(new DustParticleOptions(new Vector3f(0.75F, 0.02F, 0.06F), 1.2F),
+                    target.getX(), target.getY(0.6), target.getZ(), 10, 0.25, 0.3, 0.25, 0.0);
+        }
+        return super.hurtEnemy(stack, target, attacker);
     }
 
     @Override

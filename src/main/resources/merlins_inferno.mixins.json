@@ -2,14 +2,17 @@
   "required": true,
   "package": "dev.zsskayr.merlins_inferno.mixin",
   "mixins": [
+    "LivingEntityMixin",
     "OverworldBiomeBuilderMixin",
+    "PlayerMixin",
     "WitherRoseBlockMixin"
   ],
   "client": [
     "MinecraftMixin",
     "CameraMixin",
     "ItemRendererMixin",
-    "EntityMixin"
+    "EntityMixin",
+    "LocalPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

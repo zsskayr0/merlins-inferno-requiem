@@ -115,6 +115,7 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
         if (stack.is(ModItems.CELESTIAL_ESSENCE.get())) return Ingredient.CELESTIAL;
         if (stack.is(ModBlocks.WITHERED_OBSIDIAN.get().asItem())) return Ingredient.VOID;
         if (stack.is(Items.NETHERITE_INGOT)) return Ingredient.NETHERITE;
+        if (stack.is(ModItems.TATTERED_WINGS.get())) return Ingredient.TATTERED_WINGS;
         return Ingredient.OTHER;
     }
 
@@ -122,6 +123,8 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
         return switch (recipe) {
             case FOREST -> new ItemStack(ModItems.FOREST_KEY.get());
             case OBLIVION -> new ItemStack(ModItems.OBLIVION_KEY.get());
+            case SERAPH_WINGS -> new ItemStack(ModItems.SERAPH_WINGS.get());
+            case FALLEN_WINGS -> new ItemStack(ModItems.FALLEN_WINGS.get());
             default -> ItemStack.EMPTY;
         };
     }
@@ -192,7 +195,7 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
             if (isCrafting()) return ItemStack.EMPTY;
             Ingredient kind = ingredient(stack);
             // The Book is an offering for the Awakening, but the catalyst once the Box is open.
-            boolean catalyst = kind == Ingredient.STAR || kind == Ingredient.VOID
+            boolean catalyst = kind == Ingredient.STAR || kind == Ingredient.VOID || kind == Ingredient.TATTERED_WINGS
                     || (kind == Ingredient.BOOK && getCircle() >= ProgressionHelper.SECOND_CIRCLE);
             if (catalyst && hasResult()) return ItemStack.EMPTY;
             if (!moveItemStackTo(stack, catalyst ? 3 : 0, catalyst ? 4 : 3, false)) return ItemStack.EMPTY;

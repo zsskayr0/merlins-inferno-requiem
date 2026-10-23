@@ -34,6 +34,10 @@ public final class PandoraGuiChecks {
         check(match(true,Ingredient.VOID,Ingredient.OTHERWORLD,Ingredient.INFERNAL,Ingredient.CELESTIAL,16,15,16)==Recipe.NONE,"Forest needs 16 of each essence");
         check(match(true,Ingredient.VOID,Ingredient.OTHERWORLD,Ingredient.INFERNAL,Ingredient.CELESTIAL,16,16,16)==Recipe.FOREST,"Forest with exactly 16 each");
         check(match(true,Ingredient.BOOK,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,3,16,16)==Recipe.OBLIVION,"Oblivion recipe");
+        check(match(true,Ingredient.TATTERED_WINGS,Ingredient.NETHERITE,Ingredient.CELESTIAL,Ingredient.OTHERWORLD,3,16,16)==Recipe.SERAPH_WINGS,"Tattered Wings become Seraph Wings");
+        check(match(true,Ingredient.TATTERED_WINGS,Ingredient.OTHERWORLD,Ingredient.INFERNAL,Ingredient.NETHERITE,16,16,3)==Recipe.FALLEN_WINGS,"Tattered Wings become Fallen Wings, in any order");
+        check(match(false,Ingredient.TATTERED_WINGS,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,3,16,16)==Recipe.NONE,"Wings recipes are locked before circle 2");
+        check(match(true,Ingredient.TATTERED_WINGS,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,2,16,16)==Recipe.NONE,"Wings recipes need 3 netherite");
         check(match(true,Ingredient.BOOK,Ingredient.OTHERWORLD,Ingredient.NETHERITE,Ingredient.INFERNAL,16,64,20)==Recipe.OBLIVION,"Oblivion is unordered and takes surplus");
         check(match(true,Ingredient.BOOK,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,2,16,16)==Recipe.NONE,"Oblivion needs 3 netherite");
         check(match(true,Ingredient.BOOK,Ingredient.NETHERITE,Ingredient.INFERNAL,Ingredient.OTHERWORLD,3,15,16)==Recipe.NONE,"Oblivion needs 16 infernal");

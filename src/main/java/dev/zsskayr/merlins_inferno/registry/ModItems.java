@@ -55,6 +55,43 @@ public final class ModItems {
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.LavaLensItem> LAVA_LENS = ITEMS.registerItem("lava_lens",
             dev.zsskayr.merlins_inferno.item.LavaLensItem::new);
 
+    // Elytra-style wings boosted by a keybind instead of fireworks (item.WingsItem; what sets each pair apart is its WingsProfile).
+    // Tattered Wings belong to the mundane (Druidic) route and cannot be mended; the Pandora Box turns them into the Seraph
+    // Wings (Angelical) or the Fallen Wings (Infernal). Durability is the elytra's 432, twice and three times that.
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.WingsItem> TATTERED_WINGS = ITEMS.registerItem("tattered_wings",
+            props -> new dev.zsskayr.merlins_inferno.item.WingsItem(props.rarity(Rarity.RARE).durability(432),
+                    new dev.zsskayr.merlins_inferno.item.WingsProfile(30 * 20, net.minecraft.core.particles.ParticleTypes.CLOUD,
+                            wingsTexture("tattered_wings"),
+                            new dev.zsskayr.merlins_inferno.item.WingsProfile.PerWorld(1, 1, 2),
+                            dev.zsskayr.merlins_inferno.item.WingsProfile.PerWorld.FLAT,
+                            ModTags.Items.MUNDANE_WINGS_ARMOR, null)));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.WingsItem> SERAPH_WINGS = ITEMS.registerItem("seraph_wings",
+            props -> new dev.zsskayr.merlins_inferno.item.WingsItem(props.rarity(Rarity.EPIC).durability(432 * 2),
+                    new dev.zsskayr.merlins_inferno.item.WingsProfile(12 * 20, net.minecraft.core.particles.ParticleTypes.END_ROD,
+                            wingsTexture("seraph_wings"),
+                            new dev.zsskayr.merlins_inferno.item.WingsProfile.PerWorld(1, 2, 2),
+                            new dev.zsskayr.merlins_inferno.item.WingsProfile.PerWorld(1, 0.75, 0.75),
+                            ModTags.Items.SERAPH_WINGS_ARMOR, ModItems.SERAPHIUM_BAR)));
+    // The Fallen Wings also count as an iron chestplate's worth of armour while worn in the chest slot.
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.WingsItem> FALLEN_WINGS = ITEMS.registerItem("fallen_wings",
+            props -> new dev.zsskayr.merlins_inferno.item.WingsItem(props.rarity(Rarity.EPIC).fireResistant().durability(432 * 3)
+                    .attributes(net.minecraft.world.item.component.ItemAttributeModifiers.builder().add(
+                            net.minecraft.world.entity.ai.attributes.Attributes.ARMOR,
+                            new net.minecraft.world.entity.ai.attributes.AttributeModifier(
+                                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "fallen_wings_armor"), 6.0,
+                                    net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),
+                            net.minecraft.world.entity.EquipmentSlotGroup.CHEST).build()),
+                    new dev.zsskayr.merlins_inferno.item.WingsProfile(16 * 20, net.minecraft.core.particles.ParticleTypes.SOUL_FIRE_FLAME,
+                            wingsTexture("fallen_wings"),
+                            new dev.zsskayr.merlins_inferno.item.WingsProfile.PerWorld(1.5, 0.5, 0.5),
+                            new dev.zsskayr.merlins_inferno.item.WingsProfile.PerWorld(1, 1.25, 1.25),
+                            new dev.zsskayr.merlins_inferno.item.WingsProfile.PerWorld(1, 1, 0.5),
+                            ModTags.Items.FALLEN_WINGS_ARMOR, ModItems.EBONY_BAR)));
+
+    private static net.minecraft.resources.ResourceLocation wingsTexture(String name) {
+        return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "textures/entity/wings/" + name + ".png");
+    }
+
     // The mod's in-game guidebook - see item.GrimmoriumItem for what "using" it does
     // (data/merlins_inferno/patchouli_books/guide/) and compat.patchouli for why Patchouli being
     // absent doesn't break this item.

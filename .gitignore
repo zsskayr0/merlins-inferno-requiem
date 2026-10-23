@@ -47,3 +47,6 @@ backups/
 handoff/
 tools/
 __pycache__/
+
+# Compile-only copies of third-party mod jars (not redistributed)
+/libs/

@@ -472,5 +472,21 @@
   "patchouli.merlins_inferno.entry.hell_forge.page0": "The forge is a fixed $(bold)3x3x3$() structure. Corners and edges are Compressed Netherrack. The centre is a $(bold)Demonic Core$(). The middle of each face is Compressed Netherrack, a $(bold)Vault$() or - from Circle 2 - $(bold)Hellglass$(), a window onto the Core, except the front face, which holds the $(bold)Controller$().",
   "patchouli.merlins_inferno.entry.hell_forge.page_vault": "A $(bold)Vault$() lets a hopper or pipe reach the forge. Right-click it with the $(bold)Forge Wrench$() to cycle it between Input, Output and Fuel - its texture shows which.$(br2)Sneak and right-click to switch on $(bold)auto transfer$(): the Vault then pulls from, or pushes into, an inventory next to it by itself.",
   "message.merlins_inferno.hell_forge.vault_auto.on": "Vault: Auto transfer on",
-  "message.merlins_inferno.hell_forge.vault_auto.off": "Vault: Auto transfer off"
+  "message.merlins_inferno.hell_forge.vault_auto.off": "Vault: Auto transfer off",
+  "item.merlins_inferno.fallen_wings": "Fallen Wings",
+  "item.merlins_inferno.wings.boost": "Press %s while gliding to boost.",
+  "item.merlins_inferno.wings.cooldown": "Cooldown: %s s",
+  "key.merlins_inferno.wings_boost": "Wings Boost",
+  "key.categories.merlins_inferno": "Merlin's Inferno",
+  "item.merlins_inferno.tattered_wings": "Tattered Wings",
+  "item.merlins_inferno.seraph_wings": "Seraph Wings",
+  "item.merlins_inferno.tattered_wings.tooltip": "Torn and past mending. Wears twice as fast in Oblivion.",
+  "item.merlins_inferno.seraph_wings.tooltip": "Slower and costlier in the Nether and Oblivion. Slowed on the back or beside foreign armour.",
+  "item.merlins_inferno.fallen_wings.tooltip": "Faster and cheaper in the Nether and Oblivion, costlier at home. Slowed on the back or beside foreign armour.",
+  "jei.merlins_inferno.pandora_box": "Pandora's Box",
+  "jei.merlins_inferno.pandora_box.catalyst": "Catalyst",
+  "jei.merlins_inferno.pandora_box.offerings": "Offerings",
+  "jei.merlins_inferno.pandora_box.requires_opened": "The box must already be opened",
+  "item.merlins_inferno.wings.cooldown_oblivion": "Cooldown in Oblivion: %s s",
+  "item.merlins_inferno.wings.ground_recharge": "Recharges twice as fast on the ground"
 }

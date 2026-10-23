@@ -118,6 +118,10 @@ public final class ModEntityRenderers {
     /** Adds Ashwood's sign textures to the sign atlas; {@code Sheets.addWoodType} isn't thread-safe, hence enqueueWork. */
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
+        // before Epic Fight builds its patched renderers (its AddLayers listener runs after client setup)
+        if (net.neoforged.fml.ModList.get().isLoaded("epicfight")) {
+            dev.zsskayr.merlins_inferno.compat.epicfight.EpicFightWingsCompat.register();
+        }
         event.enqueueWork(() -> {
             Sheets.addWoodType(ModWoodTypes.ASHWOOD);
             Sheets.addWoodType(ModWoodTypes.HAUNTED);

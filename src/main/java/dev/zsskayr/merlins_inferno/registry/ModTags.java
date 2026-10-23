@@ -107,6 +107,17 @@ public final class ModTags {
     }
 
     public static final class Items {
+        /**
+         * The armour each wings route is at home with: wings of that route are slowed by any other armour stronger than iron
+         * (see WingsItem). Mundane is the Druidic road, Seraph the Angelical one, Fallen the Infernal one.
+         */
+        public static final TagKey<Item> MUNDANE_WINGS_ARMOR = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "mundane_wings_armor"));
+        public static final TagKey<Item> SERAPH_WINGS_ARMOR = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "seraph_wings_armor"));
+        public static final TagKey<Item> FALLEN_WINGS_ARMOR = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "fallen_wings_armor"));
+
         /** Every Demonblood tool/weapon - grants the intrinsic +10% damage bonus vs {@link EntityTypes#HUMANS}. */
         public static final TagKey<Item> DEMONBLOOD_TOOLS = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "demonblood_tools"));

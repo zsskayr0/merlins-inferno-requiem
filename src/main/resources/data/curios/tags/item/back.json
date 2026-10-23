@@ -1,0 +1,5 @@
+{"replace": false, "values": [
+  {"id": "merlins_inferno:tattered_wings", "required": false},
+  {"id": "merlins_inferno:seraph_wings", "required": false},
+  {"id": "merlins_inferno:fallen_wings", "required": false}
+]}

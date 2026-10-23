@@ -472,5 +472,21 @@
   "patchouli.merlins_inferno.entry.hell_forge.page0": "A forja é uma estrutura fixa de $(bold)3x3x3$(). Cantos e arestas são Compressed Netherrack. O centro é um $(bold)Núcleo Demoníaco$(). O meio de cada face é Compressed Netherrack, um $(bold)Cofre$() ou - a partir do Circle 2 - $(bold)Hellglass$(), uma janela para o Núcleo, exceto a face da frente, que leva o $(bold)Controlador$().",
   "patchouli.merlins_inferno.entry.hell_forge.page_vault": "Um $(bold)Cofre$() deixa um funil ou cano alcançar a forja. Clique com o botão direito nele com a $(bold)Chave da Forja$() para alternar entre Entrada, Saída e Combustível - a textura mostra qual.$(br2)Agachado, clique com o botão direito para ligar a $(bold)transferência automática$(): o Cofre passa a puxar de, ou empurrar para, um inventário ao lado dele sozinho.",
   "message.merlins_inferno.hell_forge.vault_auto.on": "Cofre: Transferência automática ligada",
-  "message.merlins_inferno.hell_forge.vault_auto.off": "Cofre: Transferência automática desligada"
+  "message.merlins_inferno.hell_forge.vault_auto.off": "Cofre: Transferência automática desligada",
+  "item.merlins_inferno.fallen_wings": "Asas Caídas",
+  "item.merlins_inferno.wings.boost": "Pressione %s enquanto plana para impulsionar.",
+  "item.merlins_inferno.wings.cooldown": "Recarga: %s s",
+  "key.merlins_inferno.wings_boost": "Impulso das Asas",
+  "key.categories.merlins_inferno": "Merlin's Inferno",
+  "item.merlins_inferno.tattered_wings": "Asas Esfarrapadas",
+  "item.merlins_inferno.seraph_wings": "Asas de Serafim",
+  "item.merlins_inferno.tattered_wings.tooltip": "Rasgadas demais para conserto. Gastam o dobro em Oblivion.",
+  "item.merlins_inferno.seraph_wings.tooltip": "Mais lentas e caras no Nether e em Oblivion. Perdem força nas costas ou com armadura de outra rota.",
+  "item.merlins_inferno.fallen_wings.tooltip": "Mais rápidas e baratas no Nether e em Oblivion, mais caras em casa. Perdem força nas costas ou com armadura de outra rota.",
+  "jei.merlins_inferno.pandora_box": "Caixa de Pandora",
+  "jei.merlins_inferno.pandora_box.catalyst": "Catalisador",
+  "jei.merlins_inferno.pandora_box.offerings": "Oferendas",
+  "jei.merlins_inferno.pandora_box.requires_opened": "A caixa precisa já estar aberta",
+  "item.merlins_inferno.wings.cooldown_oblivion": "Recarga em Oblivion: %s s",
+  "item.merlins_inferno.wings.ground_recharge": "Recarrega o dobro da velocidade no chão"
 }

@@ -42,6 +42,13 @@ public final class ModAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> OSTARA_LAST_DAY =
             ATTACHMENT_TYPES.register("ostara_last_day", () -> AttachmentType.builder(() -> -1L).serialize(Codec.LONG).build());
 
+    /** Ticks of wings boost a player still has left (see WingsItem). Throwaway state: not saved. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> WINGS_BOOST_TICKS =
+            ATTACHMENT_TYPES.register("wings_boost_ticks", () -> AttachmentType.builder(() -> 0).build());
+    /** Game time at which the wings' cooldown ends, kept so it can run faster on the ground (see WingsItem). Not saved. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> WINGS_READY_AT =
+            ATTACHMENT_TYPES.register("wings_ready_at", () -> AttachmentType.builder(() -> 0L).build());
+
     private ModAttachments() {
     }
 

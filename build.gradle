@@ -132,10 +132,20 @@ dependencies {
     // warning) - the full jar is a soft runtime dependency, not bundled, since the book itself is
     // pure data (data/merlins_inferno/patchouli_books/...) that only needs Patchouli present to
     // render; it doesn't have to be installed for the rest of the mod to work.
+    // Epic Fight: compile-time only, from a local copy in libs/ (git-ignored, never bundled). Used by compat/epicfight.
+    compileOnly files("libs/epic-fight-21.17.3.1-mc1.21.1-neoforge.jar")
+
+    // JEI: compile-time API only; the Pandora's Box category lives in compat/jei and is only loaded by JEI itself.
+    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:19.21.0.247"
+
     compileOnly "vazkii.patchouli:Patchouli:1.21.1-93-NEOFORGE:api"
     runtimeOnly "vazkii.patchouli:Patchouli:1.21.1-93-NEOFORGE"
     // GeckoLib: the Imp's animated model (assets/merlins_inferno/geo + animations).
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:4.8.4"
+
+    // MixinExtras' @WrapOperation for the wings' gliding mixins. Compile-time only: NeoForge already ships (jar-in-jar) the
+    // same version at runtime, so nothing extra is bundled.
+    compileOnly "io.github.llamalad7:mixinextras-common:0.5.3"
 
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
