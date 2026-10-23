@@ -38,7 +38,7 @@ public final class WingsLayer extends RenderLayer<AbstractClientPlayer, PlayerMo
     @Override
     public void render(PoseStack pose, MultiBufferSource buffer, int light, AbstractClientPlayer player, float limbSwing,
                        float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
-        ItemStack stack = WingsItem.find(player);
+        ItemStack stack = WingsItem.findVisible(player);
         if (!(stack.getItem() instanceof WingsItem wings)) return;
         pose.pushPose();
         pose.translate(0.0F, 0.0F, 0.125F);

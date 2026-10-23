@@ -60,6 +60,14 @@ public final class WingsItem extends Item implements Equipable {
         return ItemStack.EMPTY;
     }
 
+    /** The wings to draw: like {@link #find}, but Curios wings hidden with the slot's eye toggle are skipped. */
+    public static ItemStack findVisible(LivingEntity entity) {
+        ItemStack chest = entity.getItemBySlot(EquipmentSlot.CHEST);
+        if (chest.getItem() instanceof WingsItem) return chest;
+        for (ItemStack stack : OptionalCurios.visible(entity)) if (stack.getItem() instanceof WingsItem) return stack;
+        return ItemStack.EMPTY;
+    }
+
     /** What the vanilla glide checks should treat as the elytra: the chest stack, unless Curios wings take its place. */
     public static ItemStack glideStack(LivingEntity entity, ItemStack chest) {
         if (chest.canElytraFly(entity)) return chest;

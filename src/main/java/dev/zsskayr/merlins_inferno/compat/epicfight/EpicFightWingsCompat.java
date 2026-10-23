@@ -40,7 +40,7 @@ public final class EpicFightWingsCompat {
         protected void renderLayer(AbstractClientPlayerPatch<AbstractClientPlayer> patch, AbstractClientPlayer player,
                                    WingsLayer layer, PoseStack pose, MultiBufferSource buffer, int light, OpenMatrix4f[] poses,
                                    float ageInTicks, float netHeadYaw, float headPitch, float partialTick) {
-            if (!(WingsItem.find(player).getItem() instanceof WingsItem)) return;
+            if (!(WingsItem.findVisible(player).getItem() instanceof WingsItem)) return;
             OpenMatrix4f transform = new OpenMatrix4f()
                     .scale(new Vec3f(-0.9F, -0.9F, 0.9F))
                     .translate(new Vec3f(0.0F, -0.5F, -0.1F))
