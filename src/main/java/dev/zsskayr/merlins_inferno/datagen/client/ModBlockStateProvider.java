@@ -54,6 +54,7 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         registerLyrium();
         registerSacredChurch();
         registerCompressedNetherrack();
+        registerBlightstone();
         registerFleshAndNetherFlora();
 
         // Rowanwood
@@ -89,6 +90,40 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         wallBlock(ModBlocks.COMPRESSED_NETHERRACK_WALL.get(), texture);
         models().singleTexture("compressed_netherrack_wall_inventory", mcLoc("block/wall_inventory"), "wall", texture);
         itemModels().withExistingParent("compressed_netherrack_wall", modLoc("block/compressed_netherrack_wall_inventory"));
+    }
+
+    /** Blightstone: plain and brick forms get the full set, cracked and chiseled are plain cubes. */
+    private void registerBlightstone() {
+        registerStoneSet(ModBlocks.BLIGHTSTONE.get(), ModBlocks.BLIGHTSTONE_STAIRS.get(), ModBlocks.BLIGHTSTONE_SLAB.get(),
+                ModBlocks.BLIGHTSTONE_WALL.get(), "blightstone");
+        registerStoneSet(ModBlocks.BLIGHTSTONE_BRICKS.get(), ModBlocks.BLIGHTSTONE_BRICK_STAIRS.get(),
+                ModBlocks.BLIGHTSTONE_BRICK_SLAB.get(), ModBlocks.BLIGHTSTONE_BRICK_WALL.get(), "blightstone_bricks");
+        registerStoneSet(ModBlocks.POLISHED_BLIGHTSTONE.get(), ModBlocks.POLISHED_BLIGHTSTONE_STAIRS.get(),
+                ModBlocks.POLISHED_BLIGHTSTONE_SLAB.get(), ModBlocks.POLISHED_BLIGHTSTONE_WALL.get(), "polished_blightstone");
+        simpleBlock(ModBlocks.CHISELED_POLISHED_BLIGHTSTONE.get());
+        itemModels().simpleBlockItem(ModBlocks.CHISELED_POLISHED_BLIGHTSTONE.get());
+        registerStoneSet(ModBlocks.BLIGHTSTONE_SMALL_BRICKS.get(), ModBlocks.BLIGHTSTONE_SMALL_BRICK_STAIRS.get(),
+                ModBlocks.BLIGHTSTONE_SMALL_BRICK_SLAB.get(), ModBlocks.BLIGHTSTONE_SMALL_BRICK_WALL.get(), "blightstone_small_bricks");
+        simpleBlock(ModBlocks.CRACKED_BLIGHTSTONE_BRICKS.get());
+        itemModels().simpleBlockItem(ModBlocks.CRACKED_BLIGHTSTONE_BRICKS.get());
+    }
+
+    private void registerStoneSet(Block full, net.minecraft.world.level.block.StairBlock stairs,
+                                  net.minecraft.world.level.block.SlabBlock slab,
+                                  net.minecraft.world.level.block.WallBlock wall, String textureName) {
+        ResourceLocation texture = modLoc("block/" + textureName);
+        String setName = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(slab).getPath().replace("_slab", "");
+        ModelFile cube = models().cubeAll(textureName, texture);
+        simpleBlock(full, cube);
+        itemModels().simpleBlockItem(full);
+        stairsBlock(stairs, texture);
+        itemModels().simpleBlockItem(stairs);
+        slabBlock(slab, models().slab(setName + "_slab", texture, texture, texture),
+                models().slabTop(setName + "_slab_top", texture, texture, texture), cube);
+        itemModels().simpleBlockItem(slab);
+        wallBlock(wall, texture);
+        models().singleTexture(setName + "_wall_inventory", mcLoc("block/wall_inventory"), "wall", texture);
+        itemModels().withExistingParent(setName + "_wall", modLoc("block/" + setName + "_wall_inventory"));
     }
 
     /** Mouth block: flesh cube with an idle maw on top; the floor of the open maw sinks in 2 px steps, with the mob. */
@@ -191,6 +226,10 @@ public final class ModBlockStateProvider extends BlockStateProvider {
                 mcLoc("block/netherrack"), modLoc("block/black_nylium_top"));
         simpleBlock(ModBlocks.BLACK_NYLIUM.get(), nylium);
         itemModels().simpleBlockItem(ModBlocks.BLACK_NYLIUM.get());
+        ModelFile blightNylium = models().cubeBottomTop("blightstone_nylium", modLoc("block/blightstone_nylium_side"),
+                modLoc("block/blightstone"), modLoc("block/black_nylium_top"));
+        simpleBlock(ModBlocks.BLIGHTSTONE_NYLIUM.get(), blightNylium);
+        itemModels().simpleBlockItem(ModBlocks.BLIGHTSTONE_NYLIUM.get());
 
         ModelFile lust = models().cross("lust_flower", modLoc("block/lust_rose")).renderType("cutout");
         simpleBlock(ModBlocks.LUST_FLOWER.get(), lust);

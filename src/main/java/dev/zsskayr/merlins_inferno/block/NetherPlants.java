@@ -19,6 +19,7 @@ public final class NetherPlants {
 
     /** Wither Rose extension: black nylium and Flesh only, vanilla nylium stays as it was. */
     public static boolean canSustainWitherRose(BlockState state) {
-        return state.is(ModBlocks.BLACK_NYLIUM.get()) || state.is(ModBlocks.FLESH_BLOCK.get());
+        return state.is(ModBlocks.BLACK_NYLIUM.get()) || state.is(ModBlocks.BLIGHTSTONE_NYLIUM.get())
+                || state.is(ModBlocks.FLESH_BLOCK.get());
     }
 }

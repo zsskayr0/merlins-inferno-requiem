@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "merlins_inferno:block/blightstone",
+    "side": "merlins_inferno:block/blightstone",
+    "top": "merlins_inferno:block/blightstone"
+  }
+}

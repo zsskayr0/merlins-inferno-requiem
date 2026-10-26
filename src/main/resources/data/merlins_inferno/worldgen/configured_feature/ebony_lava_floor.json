@@ -20,6 +20,18 @@
         "state": {
           "Name": "merlins_inferno:ebony_debris",
           "Properties": {
+            "host": "blightstone"
+          }
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "merlins_inferno:blightstone"
+        }
+      },
+      {
+        "state": {
+          "Name": "merlins_inferno:ebony_debris",
+          "Properties": {
             "host": "basalt"
           }
         },

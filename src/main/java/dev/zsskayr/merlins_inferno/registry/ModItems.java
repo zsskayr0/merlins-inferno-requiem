@@ -410,7 +410,25 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> COMPRESSED_NETHERRACK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_STAIRS);
     public static final DeferredItem<BlockItem> COMPRESSED_NETHERRACK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_SLAB);
     public static final DeferredItem<BlockItem> COMPRESSED_NETHERRACK_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.COMPRESSED_NETHERRACK_WALL);
-    public static final DeferredItem<BlockItem> MOUTH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.MOUTH_BLOCK);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_STAIRS);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_SLAB);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_WALL);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_BRICKS);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> POLISHED_BLIGHTSTONE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.POLISHED_BLIGHTSTONE);
+    public static final DeferredItem<BlockItem> POLISHED_BLIGHTSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.POLISHED_BLIGHTSTONE_STAIRS);
+    public static final DeferredItem<BlockItem> POLISHED_BLIGHTSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.POLISHED_BLIGHTSTONE_SLAB);
+    public static final DeferredItem<BlockItem> POLISHED_BLIGHTSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.POLISHED_BLIGHTSTONE_WALL);
+    public static final DeferredItem<BlockItem> CHISELED_POLISHED_BLIGHTSTONE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CHISELED_POLISHED_BLIGHTSTONE);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_SMALL_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_SMALL_BRICKS);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_SMALL_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_SMALL_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_SMALL_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_SMALL_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_SMALL_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_SMALL_BRICK_WALL);
+    public static final DeferredItem<BlockItem> CRACKED_BLIGHTSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CRACKED_BLIGHTSTONE_BRICKS);
+    public static final DeferredItem<BlockItem> MOUTH_BLOCK_ITEM =ITEMS.registerSimpleBlockItem(ModBlocks.MOUTH_BLOCK);
     public static final DeferredItem<BlockItem> FLESH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_BLOCK);
     public static final DeferredItem<BlockItem> HAUNTED_LOG_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_LOG, new Item.Properties().fireResistant());
     public static final DeferredItem<BlockItem> HAUNTED_SHELF_SHROOM_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_SHELF_SHROOM);
@@ -440,6 +458,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> FLESH_CARPET_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FLESH_CARPET);
     public static final DeferredItem<BlockItem> RED_CHAIN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.RED_CHAIN);
     public static final DeferredItem<BlockItem> BLACK_NYLIUM_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_NYLIUM);
+    public static final DeferredItem<BlockItem> BLIGHTSTONE_NYLIUM_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_NYLIUM);
     public static final DeferredItem<BlockItem> LUST_FLOWER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LUST_FLOWER);
     public static final DeferredItem<DoubleHighBlockItem> TALL_CRIMSON_ROOTS_ITEM = ITEMS.registerItem("tall_crimson_roots",
             props -> new DoubleHighBlockItem(ModBlocks.TALL_CRIMSON_ROOTS.get(), props));

@@ -24,7 +24,7 @@ public class EbonyDebrisBlock extends Block {
 
     public enum Host implements StringRepresentable {
         NONE("none"), NETHERRACK("netherrack"), BASALT("basalt"), BLACKSTONE("blackstone"),
-        FLESH("flesh"), POROUS_FLESH("porous_flesh"), CHARRED_FLESH("charred_flesh");
+        FLESH("flesh"), POROUS_FLESH("porous_flesh"), CHARRED_FLESH("charred_flesh"), BLIGHTSTONE("blightstone");
 
         private final String id;
         Host(String id) { this.id = id; }
@@ -43,6 +43,7 @@ public class EbonyDebrisBlock extends Block {
 
     private static Host hostOf(BlockState state) {
         if (state.is(Blocks.NETHERRACK)) return Host.NETHERRACK;
+        if (state.is(ModBlocks.BLIGHTSTONE.get())) return Host.BLIGHTSTONE;
         if (state.is(Blocks.BASALT)) return Host.BASALT;
         if (state.is(Blocks.BLACKSTONE)) return Host.BLACKSTONE;
         if (state.is(ModBlocks.FLESH_BLOCK.get())) return Host.FLESH;

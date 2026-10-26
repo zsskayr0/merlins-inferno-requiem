@@ -71,7 +71,7 @@
                   -1,
                   0
                 ],
-                "blocks": "merlins_inferno:black_nylium"
+                "blocks": ["merlins_inferno:black_nylium", "merlins_inferno:blightstone_nylium"]
               }
             ]
           }

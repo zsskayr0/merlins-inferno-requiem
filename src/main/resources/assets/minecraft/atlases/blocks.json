@@ -1,0 +1,8 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/polished_blightstone_connected"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "merlins_inferno:block/blightstone_slab"
+    },
+    "type=double": {
+      "model": "merlins_inferno:block/blightstone"
+    },
+    "type=top": {
+      "model": "merlins_inferno:block/blightstone_slab_top"
+    }
+  }
+}

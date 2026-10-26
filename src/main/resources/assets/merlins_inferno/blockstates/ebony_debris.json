@@ -20,6 +20,9 @@
     },
     "host=charred_flesh": {
       "model": "merlins_inferno:block/ebony_debris_charred_flesh"
+    },
+    "host=blightstone": {
+      "model": "merlins_inferno:block/ebony_debris_blightstone"
     }
   }
 }

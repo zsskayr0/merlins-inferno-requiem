@@ -2,6 +2,10 @@
   "replace": false,
   "values": [
     "merlins_inferno:compressed_netherrack_slab",
-    "merlins_inferno:flesh_slab"
+    "merlins_inferno:flesh_slab",
+    "merlins_inferno:blightstone_slab",
+    "merlins_inferno:blightstone_brick_slab",
+    "merlins_inferno:blightstone_small_brick_slab",
+    "merlins_inferno:polished_blightstone_slab"
   ]
 }

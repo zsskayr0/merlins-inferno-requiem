@@ -49,11 +49,20 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.ROWANWOOD_LEAVES.get(),
                 ModBlocks.COMPRESSED_NETHERRACK.get(), ModBlocks.COMPRESSED_NETHERRACK_STAIRS.get(),
                 ModBlocks.COMPRESSED_NETHERRACK_SLAB.get(), ModBlocks.COMPRESSED_NETHERRACK_WALL.get(),
+                ModBlocks.BLIGHTSTONE.get(), ModBlocks.BLIGHTSTONE_STAIRS.get(), ModBlocks.BLIGHTSTONE_SLAB.get(),
+                ModBlocks.BLIGHTSTONE_WALL.get(), ModBlocks.BLIGHTSTONE_BRICKS.get(), ModBlocks.BLIGHTSTONE_BRICK_STAIRS.get(),
+                ModBlocks.BLIGHTSTONE_BRICK_SLAB.get(), ModBlocks.BLIGHTSTONE_BRICK_WALL.get(),
+                ModBlocks.POLISHED_BLIGHTSTONE.get(), ModBlocks.POLISHED_BLIGHTSTONE_STAIRS.get(),
+                ModBlocks.POLISHED_BLIGHTSTONE_SLAB.get(), ModBlocks.POLISHED_BLIGHTSTONE_WALL.get(),
+                ModBlocks.CHISELED_POLISHED_BLIGHTSTONE.get(),
+                ModBlocks.BLIGHTSTONE_SMALL_BRICKS.get(), ModBlocks.BLIGHTSTONE_SMALL_BRICK_STAIRS.get(),
+                ModBlocks.BLIGHTSTONE_SMALL_BRICK_SLAB.get(), ModBlocks.BLIGHTSTONE_SMALL_BRICK_WALL.get(),
+                ModBlocks.CRACKED_BLIGHTSTONE_BRICKS.get(),
                 ModBlocks.HELL_FORGE_CONTROLLER.get(), ModBlocks.DEMONIC_CORE.get(), ModBlocks.HELL_FORGE_VAULT.get(),
                 ModBlocks.LYRIUM_BLOCK.get(),
                 ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.WITHERED_OBSIDIAN.get(),
                 ModBlocks.FLESH_BLOCK.get(), ModBlocks.MOUTH_BLOCK.get(), ModBlocks.VISCERA.get(), ModBlocks.FLESH_SLAB.get(), ModBlocks.FLESH_CARPET.get(), ModBlocks.RED_CHAIN.get(),
-                ModBlocks.BLACK_NYLIUM.get(), ModBlocks.TALL_CRIMSON_ROOTS.get(), ModBlocks.TALL_BLACK_GRASS.get(),
+                ModBlocks.BLACK_NYLIUM.get(), ModBlocks.BLIGHTSTONE_NYLIUM.get(), ModBlocks.TALL_CRIMSON_ROOTS.get(), ModBlocks.TALL_BLACK_GRASS.get(),
                 ModBlocks.LUST_FLOWER.get(),
                 ModBlocks.SKIN.get(), ModBlocks.SPINE.get());
         // lyrium_cluster is hand-authored (data/merlins_inferno/loot_table/blocks/lyrium_cluster.json).
@@ -93,6 +102,24 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.COMPRESSED_NETHERRACK_STAIRS.get());
         add(ModBlocks.COMPRESSED_NETHERRACK_SLAB.get(), createSlabItemTable(ModBlocks.COMPRESSED_NETHERRACK_SLAB.get()));
         dropSelf(ModBlocks.COMPRESSED_NETHERRACK_WALL.get());
+        dropSelf(ModBlocks.BLIGHTSTONE.get());
+        dropSelf(ModBlocks.BLIGHTSTONE_STAIRS.get());
+        add(ModBlocks.BLIGHTSTONE_SLAB.get(), createSlabItemTable(ModBlocks.BLIGHTSTONE_SLAB.get()));
+        dropSelf(ModBlocks.BLIGHTSTONE_WALL.get());
+        dropSelf(ModBlocks.BLIGHTSTONE_BRICKS.get());
+        dropSelf(ModBlocks.BLIGHTSTONE_BRICK_STAIRS.get());
+        add(ModBlocks.BLIGHTSTONE_BRICK_SLAB.get(), createSlabItemTable(ModBlocks.BLIGHTSTONE_BRICK_SLAB.get()));
+        dropSelf(ModBlocks.BLIGHTSTONE_BRICK_WALL.get());
+        dropSelf(ModBlocks.POLISHED_BLIGHTSTONE.get());
+        dropSelf(ModBlocks.POLISHED_BLIGHTSTONE_STAIRS.get());
+        add(ModBlocks.POLISHED_BLIGHTSTONE_SLAB.get(), createSlabItemTable(ModBlocks.POLISHED_BLIGHTSTONE_SLAB.get()));
+        dropSelf(ModBlocks.POLISHED_BLIGHTSTONE_WALL.get());
+        dropSelf(ModBlocks.CHISELED_POLISHED_BLIGHTSTONE.get());
+        dropSelf(ModBlocks.BLIGHTSTONE_SMALL_BRICKS.get());
+        dropSelf(ModBlocks.BLIGHTSTONE_SMALL_BRICK_STAIRS.get());
+        add(ModBlocks.BLIGHTSTONE_SMALL_BRICK_SLAB.get(), createSlabItemTable(ModBlocks.BLIGHTSTONE_SMALL_BRICK_SLAB.get()));
+        dropSelf(ModBlocks.BLIGHTSTONE_SMALL_BRICK_WALL.get());
+        dropSelf(ModBlocks.CRACKED_BLIGHTSTONE_BRICKS.get());
         dropSelf(ModBlocks.CORRUPTED_OBSIDIAN.get());
         dropSelf(ModBlocks.PETRIFIED_SKULL.get());
         dropSelf(ModBlocks.WITHERED_OBSIDIAN.get());
@@ -107,6 +134,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.LUST_FLOWER.get());
         // Like crimson nylium: netherrack unless Silk Touch.
         add(ModBlocks.BLACK_NYLIUM.get(), createSingleItemTableWithSilkTouch(ModBlocks.BLACK_NYLIUM.get(), Blocks.NETHERRACK));
+        add(ModBlocks.BLIGHTSTONE_NYLIUM.get(), createSingleItemTableWithSilkTouch(ModBlocks.BLIGHTSTONE_NYLIUM.get(), ModBlocks.BLIGHTSTONE.get()));
         // Only the lower half drops, so a plant isn't refunded twice.
         add(ModBlocks.TALL_CRIMSON_ROOTS.get(), createSinglePropConditionTable(ModBlocks.TALL_CRIMSON_ROOTS.get(), DoublePlantBlock.HALF, DoubleBlockHalf.LOWER));
         add(ModBlocks.TALL_BLACK_GRASS.get(), createSinglePropConditionTable(ModBlocks.TALL_BLACK_GRASS.get(), DoublePlantBlock.HALF, DoubleBlockHalf.LOWER));

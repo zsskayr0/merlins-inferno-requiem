@@ -15,7 +15,9 @@
       "blocks": [
         "merlins_inferno:black_nylium",
         "minecraft:blackstone",
-        "minecraft:netherrack"
+        "minecraft:netherrack",
+        "merlins_inferno:blightstone",
+        "merlins_inferno:blightstone_nylium"
       ]
     },
     "radius": {

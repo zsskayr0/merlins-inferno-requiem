@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "merlins_inferno:block/blightstone_bricks",
+    "side": "merlins_inferno:block/blightstone_bricks",
+    "top": "merlins_inferno:block/blightstone_bricks"
+  }
+}

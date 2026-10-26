@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "ingredient": {
+    "item": "merlins_inferno:blightstone_bricks"
+  },
+  "result": {
+    "id": "merlins_inferno:cracked_blightstone_bricks"
+  },
+  "experience": 0.1,
+  "cookingtime": 200
+}

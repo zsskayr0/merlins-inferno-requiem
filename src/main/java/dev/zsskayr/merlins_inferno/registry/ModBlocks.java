@@ -36,6 +36,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.block.BlackNyliumBlock;
+import dev.zsskayr.merlins_inferno.block.BlightstoneNyliumBlock;
 import dev.zsskayr.merlins_inferno.block.CorruptedObsidianBlock;
 import dev.zsskayr.merlins_inferno.block.DryingRackBlock;
 import dev.zsskayr.merlins_inferno.block.PandoraBoxBlock;
@@ -266,6 +267,54 @@ public final class ModBlocks {
     public static final DeferredBlock<WallBlock> COMPRESSED_NETHERRACK_WALL = BLOCKS.registerBlock("compressed_netherrack_wall",
             WallBlock::new, compressedNetherrackProperties().forceSolidOn());
 
+    // --- Blightstone: Oblivion's charcoal-grey building stone (plain, bricks, cracked, chiseled, plus
+    // stairs/slab/wall for the plain and brick forms). Blackstone-tough, no special tool needed. ---
+    public static final DeferredBlock<Block> BLIGHTSTONE = BLOCKS.registerBlock("blightstone",
+            Block::new, blightstoneProperties());
+    public static final DeferredBlock<StairBlock> BLIGHTSTONE_STAIRS = BLOCKS.registerBlock("blightstone_stairs",
+            props -> new StairBlock(BLIGHTSTONE.get().defaultBlockState(), props), blightstoneProperties());
+    public static final DeferredBlock<SlabBlock> BLIGHTSTONE_SLAB = BLOCKS.registerBlock("blightstone_slab",
+            SlabBlock::new, blightstoneProperties());
+    public static final DeferredBlock<WallBlock> BLIGHTSTONE_WALL = BLOCKS.registerBlock("blightstone_wall",
+            WallBlock::new, blightstoneProperties().forceSolidOn());
+    public static final DeferredBlock<Block> BLIGHTSTONE_BRICKS = BLOCKS.registerBlock("blightstone_bricks",
+            Block::new, blightstoneProperties());
+    public static final DeferredBlock<StairBlock> BLIGHTSTONE_BRICK_STAIRS = BLOCKS.registerBlock("blightstone_brick_stairs",
+            props -> new StairBlock(BLIGHTSTONE_BRICKS.get().defaultBlockState(), props), blightstoneProperties());
+    public static final DeferredBlock<SlabBlock> BLIGHTSTONE_BRICK_SLAB = BLOCKS.registerBlock("blightstone_brick_slab",
+            SlabBlock::new, blightstoneProperties());
+    public static final DeferredBlock<WallBlock> BLIGHTSTONE_BRICK_WALL = BLOCKS.registerBlock("blightstone_brick_wall",
+            WallBlock::new, blightstoneProperties().forceSolidOn());
+    public static final DeferredBlock<Block> POLISHED_BLIGHTSTONE = BLOCKS.registerBlock("polished_blightstone",
+            Block::new, blightstoneProperties());
+    public static final DeferredBlock<StairBlock> POLISHED_BLIGHTSTONE_STAIRS = BLOCKS.registerBlock("polished_blightstone_stairs",
+            props -> new StairBlock(POLISHED_BLIGHTSTONE.get().defaultBlockState(), props), blightstoneProperties());
+    public static final DeferredBlock<SlabBlock> POLISHED_BLIGHTSTONE_SLAB = BLOCKS.registerBlock("polished_blightstone_slab",
+            SlabBlock::new, blightstoneProperties());
+    public static final DeferredBlock<WallBlock> POLISHED_BLIGHTSTONE_WALL = BLOCKS.registerBlock("polished_blightstone_wall",
+            WallBlock::new, blightstoneProperties().forceSolidOn());
+    public static final DeferredBlock<Block> CHISELED_POLISHED_BLIGHTSTONE = BLOCKS.registerBlock("chiseled_polished_blightstone",
+            Block::new, blightstoneProperties());
+    public static final DeferredBlock<Block> BLIGHTSTONE_SMALL_BRICKS = BLOCKS.registerBlock("blightstone_small_bricks",
+            Block::new, blightstoneProperties());
+    public static final DeferredBlock<StairBlock> BLIGHTSTONE_SMALL_BRICK_STAIRS = BLOCKS.registerBlock("blightstone_small_brick_stairs",
+            props -> new StairBlock(BLIGHTSTONE_SMALL_BRICKS.get().defaultBlockState(), props), blightstoneProperties());
+    public static final DeferredBlock<SlabBlock> BLIGHTSTONE_SMALL_BRICK_SLAB = BLOCKS.registerBlock("blightstone_small_brick_slab",
+            SlabBlock::new, blightstoneProperties());
+    public static final DeferredBlock<WallBlock> BLIGHTSTONE_SMALL_BRICK_WALL = BLOCKS.registerBlock("blightstone_small_brick_wall",
+            WallBlock::new, blightstoneProperties().forceSolidOn());
+    public static final DeferredBlock<Block> CRACKED_BLIGHTSTONE_BRICKS = BLOCKS.registerBlock("cracked_blightstone_bricks",
+            Block::new, blightstoneProperties());
+
+    private static BlockBehaviour.Properties blightstoneProperties() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.COLOR_BLACK)
+                .instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops()
+                .strength(1.5F, 6.0F)
+                .sound(SoundType.DEEPSLATE_BRICKS);
+    }
+
     private static BlockBehaviour.Properties compressedNetherrackProperties() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.NETHER)
@@ -493,6 +542,16 @@ public final class ModBlocks {
                     .sound(SoundType.NYLIUM)
                     .randomTicks());
 
+    // Black nylium's twin over Blightstone, the ground of the Oblivion: it turns back into Blightstone, not netherrack.
+    public static final DeferredBlock<BlightstoneNyliumBlock> BLIGHTSTONE_NYLIUM = BLOCKS.registerBlock("blightstone_nylium",
+            BlightstoneNyliumBlock::new, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .strength(0.4F)
+                    .sound(SoundType.NYLIUM)
+                    .randomTicks());
+
     // --- The Oblivion Forest's fungus: crimson's stem and wart block in black, plus black roots (see TallFungusFeature). ---
     public static final DeferredBlock<net.minecraft.world.level.block.RotatedPillarBlock> BLACK_STEM = BLOCKS.registerBlock("black_stem",
             net.minecraft.world.level.block.RotatedPillarBlock::new, BlockBehaviour.Properties.of()
@@ -504,7 +563,7 @@ public final class ModBlocks {
 
     // Planted by bonemeal into the Oblivion Forest's tall fungus (worldgen/configured_feature/tall_black_fungus.json).
     public static final DeferredBlock<net.minecraft.world.level.block.FungusBlock> BLACK_FUNGUS = BLOCKS.registerBlock("black_fungus",
-            props -> new net.minecraft.world.level.block.FungusBlock(net.minecraft.resources.ResourceKey.create(
+            props -> new dev.zsskayr.merlins_inferno.block.BlackFungusBlock(net.minecraft.resources.ResourceKey.create(
                     net.minecraft.core.registries.Registries.CONFIGURED_FEATURE,
                     net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("merlins_inferno", "tall_black_fungus")),
                     BLACK_NYLIUM.get(), props),

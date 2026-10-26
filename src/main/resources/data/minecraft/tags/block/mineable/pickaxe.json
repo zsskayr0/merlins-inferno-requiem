@@ -26,6 +26,25 @@
     "merlins_inferno:spine",
     "merlins_inferno:hellglass",
     "merlins_inferno:crypt_glass",
-    "merlins_inferno:grave_sandstone"
+    "merlins_inferno:grave_sandstone",
+    "merlins_inferno:blightstone",
+    "merlins_inferno:blightstone_stairs",
+    "merlins_inferno:blightstone_slab",
+    "merlins_inferno:blightstone_wall",
+    "merlins_inferno:blightstone_bricks",
+    "merlins_inferno:blightstone_brick_stairs",
+    "merlins_inferno:blightstone_brick_slab",
+    "merlins_inferno:blightstone_brick_wall",
+    "merlins_inferno:cracked_blightstone_bricks",
+    "merlins_inferno:blightstone_small_bricks",
+    "merlins_inferno:blightstone_small_brick_stairs",
+    "merlins_inferno:blightstone_small_brick_slab",
+    "merlins_inferno:blightstone_small_brick_wall",
+    "merlins_inferno:polished_blightstone",
+    "merlins_inferno:polished_blightstone_stairs",
+    "merlins_inferno:polished_blightstone_slab",
+    "merlins_inferno:polished_blightstone_wall",
+    "merlins_inferno:blightstone_nylium",
+    "merlins_inferno:chiseled_polished_blightstone"
   ]
 }
