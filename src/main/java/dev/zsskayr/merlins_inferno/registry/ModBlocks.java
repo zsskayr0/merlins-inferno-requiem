@@ -455,6 +455,9 @@ public final class ModBlocks {
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.ChurchCandelabreBlock> CHURCH_CANDELABRE = BLOCKS.registerBlock("church_candelabre",
             dev.zsskayr.merlins_inferno.block.ChurchCandelabreBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.METAL)
                     .strength(1.0F).sound(SoundType.LANTERN).noOcclusion().lightLevel(s -> 14).pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.ChurchTombstoneBlock> CHURCH_TOMBSTONE = BLOCKS.registerBlock("church_tombstone",
+            dev.zsskayr.merlins_inferno.block.ChurchTombstoneBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
+                    .strength(1.5F, 6.0F).sound(SoundType.STONE).noOcclusion().pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<Block> CHARRED_FLESH = BLOCKS.registerBlock("charred_flesh",
             Block::new, fleshProperties().mapColor(MapColor.COLOR_BLACK).strength(0.6F));
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.FleshTendonsBlock> TENDONS = BLOCKS.registerBlock("tendons",
