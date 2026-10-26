@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "hanging=true,facing=north": { "model": "merlins_inferno:block/church_candelabre_hanging" },
+    "hanging=true,facing=east": { "model": "merlins_inferno:block/church_candelabre_hanging" },
+    "hanging=true,facing=south": { "model": "merlins_inferno:block/church_candelabre_hanging" },
+    "hanging=true,facing=west": { "model": "merlins_inferno:block/church_candelabre_hanging" },
+    "hanging=false,facing=north": { "model": "merlins_inferno:block/church_candelabre_wall" },
+    "hanging=false,facing=east": { "model": "merlins_inferno:block/church_candelabre_wall", "y": 90 },
+    "hanging=false,facing=south": { "model": "merlins_inferno:block/church_candelabre_wall", "y": 180 },
+    "hanging=false,facing=west": { "model": "merlins_inferno:block/church_candelabre_wall", "y": 270 }
+  }
+}

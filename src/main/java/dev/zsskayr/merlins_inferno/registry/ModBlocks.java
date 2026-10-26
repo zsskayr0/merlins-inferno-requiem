@@ -452,6 +452,9 @@ public final class ModBlocks {
                     .sound(SoundType.GLASS).noOcclusion().lightLevel(s -> 3)
                     .isValidSpawn((s, l, p, t) -> false).isRedstoneConductor((s, l, p) -> false)
                     .isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false));
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.ChurchCandelabreBlock> CHURCH_CANDELABRE = BLOCKS.registerBlock("church_candelabre",
+            dev.zsskayr.merlins_inferno.block.ChurchCandelabreBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.METAL)
+                    .strength(1.0F).sound(SoundType.LANTERN).noOcclusion().lightLevel(s -> 14).pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<Block> CHARRED_FLESH = BLOCKS.registerBlock("charred_flesh",
             Block::new, fleshProperties().mapColor(MapColor.COLOR_BLACK).strength(0.6F));
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.FleshTendonsBlock> TENDONS = BLOCKS.registerBlock("tendons",
