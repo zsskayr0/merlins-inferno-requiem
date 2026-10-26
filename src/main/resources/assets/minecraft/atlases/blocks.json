@@ -11,6 +11,10 @@
     {
       "type": "minecraft:single",
       "resource": "merlins_inferno:block/hellglass_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/crypt_glass_pane_connected"
     }
   ]
 }

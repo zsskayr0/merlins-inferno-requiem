@@ -50,10 +50,17 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
     }
 
     private final TextureAtlasSprite sheet;
+    /** When set, only the quads that use this sprite are remapped (a pane's edge keeps its own texture). */
+    private final @Nullable TextureAtlasSprite only;
 
     public ConnectedBlockModel(BakedModel original, TextureAtlasSprite sheet) {
+        this(original, sheet, null);
+    }
+
+    public ConnectedBlockModel(BakedModel original, TextureAtlasSprite sheet, @Nullable TextureAtlasSprite only) {
         super(original);
         this.sheet = sheet;
+        this.only = only;
     }
 
     /** Drops the diagonal bits whose two sides are not both connected. */
@@ -84,7 +91,7 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
                 }
             }
         }
-        return data.derive().with(NEIGHBOURS, bits).with(POS, pos.immutable()).build();
+        return super.getModelData(level, pos, state, data).derive().with(NEIGHBOURS, bits).with(POS, pos.immutable()).build();
     }
 
     @Override
@@ -98,7 +105,7 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
         }
         List<BakedQuad> out = new ArrayList<>(quads.size());
         for (BakedQuad quad : quads) {
-            out.add(remap(quad, bits, pos));
+            out.add(only == null || quad.getSprite() == only ? remap(quad, bits, pos) : quad);
         }
         return out;
     }

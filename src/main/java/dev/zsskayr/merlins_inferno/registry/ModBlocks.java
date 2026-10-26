@@ -452,6 +452,13 @@ public final class ModBlocks {
                     .sound(SoundType.GLASS).noOcclusion().lightLevel(s -> 3)
                     .isValidSpawn((s, l, p, t) -> false).isRedstoneConductor((s, l, p) -> false)
                     .isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false));
+    public static final DeferredBlock<net.minecraft.world.level.block.IronBarsBlock> CRYPT_GLASS_PANE = BLOCKS.registerBlock("crypt_glass_pane",
+            net.minecraft.world.level.block.IronBarsBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY)
+                    .instrument(NoteBlockInstrument.HAT).strength(0.3F).sound(SoundType.GLASS).noOcclusion());
+    public static final DeferredBlock<net.minecraft.world.level.block.IronBarsBlock> HELLGLASS_PANE = BLOCKS.registerBlock("hellglass_pane",
+            net.minecraft.world.level.block.IronBarsBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
+                    .instrument(NoteBlockInstrument.HAT).strength(5.0F, 1200.0F).requiresCorrectToolForDrops()
+                    .sound(SoundType.GLASS).noOcclusion().lightLevel(s -> 3));
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.ChurchCandelabreBlock> CHURCH_CANDELABRE = BLOCKS.registerBlock("church_candelabre",
             dev.zsskayr.merlins_inferno.block.ChurchCandelabreBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.METAL)
                     .strength(1.0F).sound(SoundType.LANTERN).noOcclusion().lightLevel(s -> 14).pushReaction(PushReaction.DESTROY));

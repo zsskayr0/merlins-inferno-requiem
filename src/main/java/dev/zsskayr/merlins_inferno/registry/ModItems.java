@@ -437,6 +437,8 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> GRAVE_SANDSTONE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.GRAVE_SANDSTONE);
     public static final DeferredItem<BlockItem> CRYPT_GLASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CRYPT_GLASS);
     public static final DeferredItem<BlockItem> HELLGLASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELLGLASS, new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> CRYPT_GLASS_PANE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CRYPT_GLASS_PANE);
+    public static final DeferredItem<BlockItem> HELLGLASS_PANE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELLGLASS_PANE, new Item.Properties().fireResistant());
     public static final DeferredItem<BlockItem> CHURCH_CANDELABRE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CHURCH_CANDELABRE);
     public static final DeferredItem<BlockItem> CHURCH_TOMBSTONE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CHURCH_TOMBSTONE);
     // Rare result of feeding the Mouth Block (see MouthBlock); the heart of the Hell Sight.

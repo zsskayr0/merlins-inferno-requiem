@@ -177,6 +177,8 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.GRAVE_SANDSTONE_ITEM.get());
                         output.accept(ModItems.CRYPT_GLASS_ITEM.get());
                         output.accept(ModItems.HELLGLASS_ITEM.get());
+                        output.accept(ModItems.CRYPT_GLASS_PANE_ITEM.get());
+                        output.accept(ModItems.HELLGLASS_PANE_ITEM.get());
                         output.accept(ModItems.CHURCH_CANDELABRE_ITEM.get());
                         output.accept(ModItems.CHURCH_TOMBSTONE_ITEM.get());
                         output.accept(ModItems.WEEPING_EYE.get());

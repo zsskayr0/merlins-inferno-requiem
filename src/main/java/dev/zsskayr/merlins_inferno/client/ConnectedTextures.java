@@ -30,6 +30,8 @@ public final class ConnectedTextures {
         wrap(event, ModBlocks.POLISHED_BLIGHTSTONE.get(), "block/polished_blightstone_connected");
         wrap(event, ModBlocks.CRYPT_GLASS.get(), "block/crypt_glass_connected");
         wrap(event, ModBlocks.HELLGLASS.get(), "block/hellglass_connected");
+        wrapPane(event, ModBlocks.CRYPT_GLASS_PANE.get(), "block/crypt_glass_pane_connected", "block/crypt_glass_pane");
+        wrapPane(event, ModBlocks.HELLGLASS_PANE.get(), "block/hellglass_connected", "block/hellglass");
         vanillaTranslucentItem(event, ModBlocks.CRYPT_GLASS.getId());
         vanillaTranslucentItem(event, ModBlocks.HELLGLASS.getId());
     }
@@ -49,6 +51,21 @@ public final class ConnectedTextures {
                     return List.of(RenderTypeHelper.getEntityRenderType(RenderType.translucent(), fabulous));
                 }
             });
+        }
+    }
+
+    /** A pane shows the glass's own sheet on its faces; only the quads with the glass texture are remapped, not the edge. */
+    private static void wrapPane(ModelEvent.ModifyBakingResult event, Block block, String sheetPath, String facePath) {
+        var sheet = event.getTextureGetter().apply(new Material(TextureAtlas.LOCATION_BLOCKS,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, sheetPath)));
+        var face = event.getTextureGetter().apply(new Material(TextureAtlas.LOCATION_BLOCKS,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, facePath)));
+        for (BlockState state : block.getStateDefinition().getPossibleStates()) {
+            ModelResourceLocation key = BlockModelShaper.stateToModelLocation(state);
+            BakedModel model = event.getModels().get(key);
+            if (model != null) {
+                event.getModels().put(key, new ConnectedBlockModel(model, sheet, face));
+            }
         }
     }
 
