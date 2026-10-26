@@ -23,6 +23,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -99,6 +100,16 @@ public class SacredChurchPiece extends TemplateStructurePiece {
     private static final int[][] CHESTS = {{34, 6}, {12, 13}, {12, 31}, {12, 17}, {12, 27}, {32, 38}, {40, 6}, {55, 33}, {59, 33}, {41, 12}, {41, 32}};
     /** Candidate nooks behind the east hall for the hidden vault chest (Pandora Box, see the hidden loot table); one is picked per church. */
     private static final int[][] HIDDEN_CHESTS = {{68, 19}, {68, 25}, {67, 17}, {67, 27}};
+    /** The cauldrons that stand on the floor of the side shrines (x, z, the way the shrine faces): each may be a loot chest instead. */
+    private static final Object[][] SHRINE_CAULDRONS = {
+            {51, 31, Direction.NORTH}, {51, 13, Direction.SOUTH}, {57, 13, Direction.SOUTH}, {69, 22, Direction.WEST}};
+    private static final double SHRINE_CHEST_CHANCE = 0.35;
+    /** The churchyard graves, one per headstone: {x, z, dx, dz}, the way the body lies from the stone. Each may hide a double chest under it. */
+    private static final int[][] GRAVES = {{44, 40, 1, 0}, {44, 42, 1, 0}, {48, 37, 0, 1}, {48, 42, 1, 0}, {50, 34, 0, 1}, {50, 38, 1, 0}, {50, 40, 1, 0}, {52, 34, 0, 1}, {62, 34, 0, 1}, {63, 42, -1, 0}, {64, 34, 0, 1}, {64, 40, -1, 0}, {66, 33, 0, 1}, {66, 38, -1, 0}};
+    private static final double GRAVE_CHEST_CHANCE = 0.4;
+    /** Corners of the nave, transepts and east hall where a pot may stand: {x, z} on the floor (y = 2). Each one is only a chance. */
+    private static final int[][] POT_SPOTS = {{17, 8}, {17, 36}, {19, 8}, {19, 36}, {23, 8}, {23, 36}, {25, 8}, {25, 36}, {29, 8}, {29, 36}, {30, 13}, {30, 31}, {31, 7}, {31, 12}, {31, 14}, {31, 30}, {31, 32}, {31, 37}, {32, 6}, {32, 13}, {32, 31}, {32, 38}, {33, 2}, {33, 5}, {33, 39}, {33, 42}, {34, 4}, {34, 40}, {38, 4}, {38, 40}, {39, 2}, {39, 5}, {39, 39}, {39, 42}, {40, 6}, {40, 13}, {40, 31}, {40, 38}, {41, 7}, {41, 12}, {41, 14}, {41, 30}, {41, 32}, {41, 37}, {42, 13}, {42, 31}, {47, 12}, {61, 14}, {62, 17}, {62, 27}, {63, 14}, {64, 18}, {64, 26}, {65, 15}, {65, 20}, {65, 24}, {65, 29}, {66, 16}, {66, 28}};
+    private static final double POT_CHANCE = 0.2;
     /** Chance for each entry of {@link #CHESTS} after the first to actually exist. */
     private static final double CHEST_CHANCE = 0.7;
     /** The template's two eyed End portal frames, replaced by plain slabs. */
@@ -106,6 +117,10 @@ public class SacredChurchPiece extends TemplateStructurePiece {
 
     private static final ResourceKey<LootTable> LOOT = ResourceKey.create(Registries.LOOT_TABLE,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/sacred_church"));
+    private static final ResourceKey<LootTable> POT_LOOT = ResourceKey.create(Registries.LOOT_TABLE,
+            ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/sacred_church_pot"));
+    private static final ResourceKey<LootTable> GRAVE_LOOT = ResourceKey.create(Registries.LOOT_TABLE,
+            ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/sacred_church_grave"));
     private static final ResourceKey<LootTable> HIDDEN_LOOT = ResourceKey.create(Registries.LOOT_TABLE,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/sacred_church_hidden"));
 
@@ -429,8 +444,46 @@ public class SacredChurchPiece extends TemplateStructurePiece {
                 this.placeChest(level, chunkBox, random, CHESTS[i][0], CHESTS[i][1], LOOT);
             }
         }
+        for (int i = 0; i < SHRINE_CAULDRONS.length; i++) {
+            int x = (Integer) SHRINE_CAULDRONS[i][0], z = (Integer) SHRINE_CAULDRONS[i][1];
+            BlockPos cauldron = this.at(x, NAVE_Y, z);
+            if (chunkBox.isInside(cauldron) && level.getBlockState(cauldron).is(Blocks.CAULDRON) && this.roll(x, z, 500 + i) < SHRINE_CHEST_CHANCE) {
+                level.setBlock(cauldron, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, (Direction) SHRINE_CAULDRONS[i][2]), Block.UPDATE_CLIENTS);
+                RandomizableContainer.setBlockEntityLootTable(level, random, cauldron, LOOT);
+            }
+        }
+        for (int i = 0; i < GRAVES.length; i++) {
+            if (this.roll(GRAVES[i][0], GRAVES[i][1], 600 + i) < GRAVE_CHEST_CHANCE) {
+                this.placeGraveChest(level, chunkBox, random, GRAVES[i]);
+            }
+        }
+        for (int i = 0; i < POT_SPOTS.length; i++) {
+            int x = POT_SPOTS[i][0], z = POT_SPOTS[i][1];
+            BlockPos pot = this.at(x, NAVE_Y, z);
+            if (chunkBox.isInside(pot) && level.getBlockState(pot).isAir() && this.roll(x, z, 700 + i) < POT_CHANCE) {
+                Direction facing = Direction.from2DDataValue((int) (this.roll(x, z, 800 + i) * 4));
+                level.setBlock(pot, Blocks.DECORATED_POT.defaultBlockState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING, facing), Block.UPDATE_CLIENTS);
+                RandomizableContainer.setBlockEntityLootTable(level, random, pot, POT_LOOT);
+            }
+        }
         int[] hidden = HIDDEN_CHESTS[(int) (this.roll(0, 0, 400) * HIDDEN_CHESTS.length)];
         this.placeChest(level, chunkBox, random, hidden[0], hidden[1], HIDDEN_LOOT);
+    }
+
+    /** A double chest buried one block under the two cells where the body lies, with the loot on one half. */
+    private void placeGraveChest(WorldGenLevel level, BoundingBox chunkBox, RandomSource random, int[] grave) {
+        Direction along = grave[2] > 0 ? Direction.EAST : grave[2] < 0 ? Direction.WEST : grave[3] > 0 ? Direction.SOUTH : Direction.NORTH;
+        Direction facing = along.getCounterClockWise(); // the right half's partner then lies one step along the grave
+        BlockPos right = this.at(grave[0] + grave[2], -1, grave[1] + grave[3]);
+        BlockPos left = this.at(grave[0] + 2 * grave[2], -1, grave[1] + 2 * grave[3]);
+        BlockState base = Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, facing);
+        if (chunkBox.isInside(right)) {
+            level.setBlock(right, base.setValue(ChestBlock.TYPE, ChestType.RIGHT), Block.UPDATE_CLIENTS);
+            RandomizableContainer.setBlockEntityLootTable(level, random, right, GRAVE_LOOT);
+        }
+        if (chunkBox.isInside(left)) {
+            level.setBlock(left, base.setValue(ChestBlock.TYPE, ChestType.LEFT), Block.UPDATE_CLIENTS);
+        }
     }
 
     /** Places a loot chest at floor level facing the first open side (away from the nook's walls). */
