@@ -2,6 +2,7 @@ package dev.zsskayr.merlins_inferno.worldgen.structure;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +29,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
@@ -67,6 +69,10 @@ public class SacredChurchPiece extends TemplateStructurePiece {
 
     /** How far under the church's y = 0 layer the foundation is filled down to reach solid ground. */
     public static final int DEPTH_BELOW = 10;
+    /** How far around the church the ground is graded, at most, from the church's floor level back to the natural terrain. */
+    private static final int BLEND = 30;
+    /** The steepest the graded ground may climb or drop: blocks of height per block of distance from the church. */
+    private static final double SLOPE = 0.5;
 
     // Local coordinates in the template.
     private static final int ALTAR_X = 41, ALTAR_Y = 3, ALTAR_Z = 22;
@@ -256,15 +262,98 @@ public class SacredChurchPiece extends TemplateStructurePiece {
         return this.templatePosition.offset(lx, ly, lz);
     }
 
+    /** The grading ring reaches past the template, so the chunks it covers have to ask this piece to place itself too. */
+    @Override
+    public BoundingBox getBoundingBox() {
+        return super.getBoundingBox().inflatedBy(BLEND);
+    }
+
     @Override
     public void postProcess(WorldGenLevel level, StructureManager structureManager, ChunkGenerator generator, RandomSource random,
             BoundingBox chunkBox, ChunkPos chunkPos, BlockPos pos) {
+        this.blendTerrain(level, chunkBox);
+        this.clearGround(level, chunkBox);
         this.foundation(level, chunkBox);
         super.postProcess(level, structureManager, generator, random, chunkBox, chunkPos, pos);
         this.chancel(level, chunkBox);
         this.sacredCarpets(level, chunkBox);
         this.chests(level, chunkBox, random);
         this.spawnInhabitants(level, chunkBox);
+        // Grass, flowers and trees are placed afterwards from the world-generation heightmaps, which setBlock does not
+        // update: without this they would still aim at the old ground and skip everything the church re-shaped.
+        Heightmap.primeHeightmaps(level.getChunk(chunkPos.x, chunkPos.z), EnumSet.of(Heightmap.Types.WORLD_SURFACE_WG, Heightmap.Types.OCEAN_FLOOR_WG));
+    }
+
+    /**
+     * Digs away the terrain that stands above the church's floor inside its footprint. The template only saves air where
+     * its buildings are, so out in the churchyard the natural ground above the platform would stay and bury the graves.
+     */
+    private void clearGround(WorldGenLevel level, BoundingBox chunkBox) {
+        int minX = this.templatePosition.getX(), minZ = this.templatePosition.getZ();
+        int maxX = minX + this.template.getSize().getX() - 1, maxZ = minZ + this.template.getSize().getZ() - 1;
+        int floorY = this.templatePosition.getY();
+        BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
+        for (int x = Math.max(chunkBox.minX(), minX); x <= Math.min(chunkBox.maxX(), maxX); x++) {
+            for (int z = Math.max(chunkBox.minZ(), minZ); z <= Math.min(chunkBox.maxZ(), maxZ); z++) {
+                int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
+                if (surface != level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z)) {
+                    continue; // water over this column
+                }
+                // the real surface, not the world-generation one: it also holds the grass, flowers and trees already growing here
+                for (int y = level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z) - 1; y > floorY; y--) {
+                    level.setBlock(at.set(x, y, z), Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+                }
+            }
+        }
+    }
+
+    /**
+     * Grades the ground around the church. The template is a flat platform, so where the land is higher or lower than the
+     * church's floor it would end in a sheer wall of dirt. Each column within {@link #BLEND} blocks of the platform is
+     * instead moved towards the natural height by at most {@link #SLOPE} blocks per block of distance from the platform:
+     * the ground climbs (or drops) in one-block steps from the floor level until it meets the natural terrain, however
+     * far that is, filled up with dirt where the land is lower and dug down where it is higher.
+     */
+    private void blendTerrain(WorldGenLevel level, BoundingBox chunkBox) {
+        int minX = this.templatePosition.getX(), minZ = this.templatePosition.getZ();
+        int maxX = minX + this.template.getSize().getX() - 1, maxZ = minZ + this.template.getSize().getZ() - 1;
+        int floorY = this.templatePosition.getY();
+        BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
+        for (int x = Math.max(chunkBox.minX(), minX - BLEND); x <= Math.min(chunkBox.maxX(), maxX + BLEND); x++) {
+            for (int z = Math.max(chunkBox.minZ(), minZ - BLEND); z <= Math.min(chunkBox.maxZ(), maxZ + BLEND); z++) {
+                int dx = Math.max(Math.max(minX - x, 0), x - maxX), dz = Math.max(Math.max(minZ - z, 0), z - maxZ);
+                if (dx == 0 && dz == 0) {
+                    continue; // under the template itself
+                }
+                double distance = Math.sqrt(dx * dx + dz * dz);
+                if (distance > BLEND) {
+                    continue;
+                }
+                int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
+                if (surface != level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z)) {
+                    continue; // water over this column
+                }
+                int natural = surface - 1;
+                int reach = (int) Math.floor(distance * SLOPE);
+                int target = floorY + Math.max(-reach, Math.min(reach, natural - floorY));
+                if (target == natural) {
+                    continue;
+                }
+                BlockState top = level.getBlockState(at.set(x, natural, z));
+                BlockState filling = top.is(Blocks.GRASS_BLOCK) ? Blocks.DIRT.defaultBlockState() : top;
+                // everything above the new ground goes, plants and trees included (the real surface sees them)
+                for (int y = level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z) - 1; y > target; y--) {
+                    level.setBlock(at.set(x, y, z), Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+                }
+                if (target > natural) {
+                    level.setBlock(at.set(x, natural, z), filling, Block.UPDATE_CLIENTS);
+                    for (int y = natural + 1; y < target; y++) {
+                        level.setBlock(at.set(x, y, z), filling, Block.UPDATE_CLIENTS);
+                    }
+                }
+                level.setBlock(at.set(x, target, z), top, Block.UPDATE_CLIENTS);
+            }
+        }
     }
 
     /** Fills the gaps under the template's ground layer, down to solid ground. */
