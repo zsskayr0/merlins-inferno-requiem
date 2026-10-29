@@ -155,7 +155,7 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         simpleBlock(ModBlocks.POLISHED_PORCELAIN.get(), polishedCube);
         itemModels().simpleBlockItem(ModBlocks.POLISHED_PORCELAIN.get());
         registerStairsAndSlab(ModBlocks.POLISHED_PORCELAIN.get(), ModBlocks.POLISHED_PORCELAIN_STAIRS.get(),
-                ModBlocks.POLISHED_PORCELAIN_SLAB.get(), polishedCube, "polished_porcelain");
+                ModBlocks.POLISHED_PORCELAIN_SLAB.get(), polishedCube, "polished_porcelain", "polished_porcelain_step");
 
         ResourceLocation clusterTexture = modLoc("block/quartz_cluster");
         directionalBlock(ModBlocks.QUARTZ_CLUSTER.get(), models().cross("quartz_cluster", clusterTexture).renderType("cutout"));
@@ -164,7 +164,14 @@ public final class ModBlockStateProvider extends BlockStateProvider {
 
     private void registerStairsAndSlab(Block full, net.minecraft.world.level.block.StairBlock stairs,
                                        net.minecraft.world.level.block.SlabBlock slab, ModelFile fullModel, String textureName) {
-        ResourceLocation texture = modLoc("block/" + textureName);
+        registerStairsAndSlab(full, stairs, slab, fullModel, textureName, textureName);
+    }
+
+    /** The stairs and slab wear {@code partTexture}: a block with a framed tile would have it cut across their partial faces. */
+    private void registerStairsAndSlab(Block full, net.minecraft.world.level.block.StairBlock stairs,
+                                       net.minecraft.world.level.block.SlabBlock slab, ModelFile fullModel, String textureName,
+                                       String partTexture) {
+        ResourceLocation texture = modLoc("block/" + partTexture);
         stairsBlock(stairs, texture);
         itemModels().simpleBlockItem(stairs);
         slabBlock(slab, models().slab(textureName + "_slab", texture, texture, texture),
