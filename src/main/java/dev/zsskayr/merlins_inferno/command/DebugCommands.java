@@ -14,7 +14,7 @@ import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 
 /**
  * Debug commands (op level 2). {@code /mi_debug circle <C1|C2|C3>} sets the world's Circle, up or down (the only
- * way down); without an argument it shows the current one. {@code /mi_circle} shows the same to anyone, no op needed.
+ * way down). {@code /mi_circle} shows the current one to anyone, no op needed.
  */
 public class DebugCommands {
     @SubscribeEvent
@@ -24,7 +24,6 @@ public class DebugCommands {
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("cinder").executes(context -> cinderStatus(context.getSource().getPlayerOrException())))
                 .then(Commands.literal("circle")
-                        .executes(context -> showCircle(context.getSource()))
                         .then(Commands.argument("circle", StringArgumentType.word())
                                 .suggests((context, builder) -> SharedSuggestionProvider.suggest(new String[] {"C1", "C2", "C3"}, builder))
                                 .executes(context -> setCircle(context.getSource(), StringArgumentType.getString(context, "circle"))))));
