@@ -1,0 +1,13 @@
+{
+  "type": "merlins_inferno:hell_forge_smelting",
+  "category": "blocks",
+  "group": "tiled_porcelain",
+  "cookingtime": 80,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "merlins_inferno:tiled_porcelain_dust"
+  },
+  "result": {
+    "id": "merlins_inferno:tiled_porcelain"
+  }
+}

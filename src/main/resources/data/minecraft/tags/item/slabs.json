@@ -6,6 +6,10 @@
     "merlins_inferno:blightstone_slab",
     "merlins_inferno:blightstone_brick_slab",
     "merlins_inferno:blightstone_small_brick_slab",
-    "merlins_inferno:polished_blightstone_slab"
+    "merlins_inferno:polished_blightstone_slab",
+    "merlins_inferno:arganite_slab",
+    "merlins_inferno:arganite_bricks_slab",
+    "merlins_inferno:porcelain_slab",
+    "merlins_inferno:polished_porcelain_slab"
   ]
 }

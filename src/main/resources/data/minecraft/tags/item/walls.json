@@ -5,6 +5,8 @@
     "merlins_inferno:blightstone_wall",
     "merlins_inferno:blightstone_brick_wall",
     "merlins_inferno:blightstone_small_brick_wall",
-    "merlins_inferno:polished_blightstone_wall"
+    "merlins_inferno:polished_blightstone_wall",
+    "merlins_inferno:arganite_wall",
+    "merlins_inferno:arganite_bricks_wall"
   ]
 }

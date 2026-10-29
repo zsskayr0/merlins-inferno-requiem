@@ -47,6 +47,23 @@
     "merlins_inferno:blightstone_nylium",
     "merlins_inferno:chiseled_polished_blightstone",
     "merlins_inferno:crypt_glass_pane",
-    "merlins_inferno:hellglass_pane"
+    "merlins_inferno:hellglass_pane",
+    "merlins_inferno:arganite",
+    "merlins_inferno:arganite_bricks",
+    "merlins_inferno:quartzite",
+    "merlins_inferno:quartz_cluster",
+    "merlins_inferno:porcelain",
+    "merlins_inferno:polished_porcelain",
+    "merlins_inferno:tiled_porcelain",
+    "merlins_inferno:arganite_stairs",
+    "merlins_inferno:arganite_bricks_stairs",
+    "merlins_inferno:porcelain_stairs",
+    "merlins_inferno:polished_porcelain_stairs",
+    "merlins_inferno:arganite_slab",
+    "merlins_inferno:arganite_bricks_slab",
+    "merlins_inferno:porcelain_slab",
+    "merlins_inferno:polished_porcelain_slab",
+    "merlins_inferno:arganite_wall",
+    "merlins_inferno:arganite_bricks_wall"
   ]
 }

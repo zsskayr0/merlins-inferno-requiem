@@ -28,6 +28,7 @@ public final class ConnectedTextures {
     @SubscribeEvent
     public static void onBake(ModelEvent.ModifyBakingResult event) {
         wrap(event, ModBlocks.POLISHED_BLIGHTSTONE.get(), "block/polished_blightstone_connected");
+        wrap(event, ModBlocks.POLISHED_PORCELAIN.get(), "block/polished_porcelain_connected");
         wrap(event, ModBlocks.CRYPT_GLASS.get(), "block/crypt_glass_connected");
         wrap(event, ModBlocks.HELLGLASS.get(), "block/hellglass_connected");
         wrapPane(event, ModBlocks.CRYPT_GLASS_PANE.get(), "block/crypt_glass_pane_connected", "block/crypt_glass_pane");

@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "merlins_inferno:arganite_bricks"
+  },
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:arganite_bricks_wall"
+  }
+}

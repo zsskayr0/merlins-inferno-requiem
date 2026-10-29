@@ -55,6 +55,7 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         registerSacredChurch();
         registerCompressedNetherrack();
         registerBlightstone();
+        registerArganiteAndPorcelain();
         registerFleshAndNetherFlora();
 
         // Rowanwood
@@ -106,6 +107,51 @@ public final class ModBlockStateProvider extends BlockStateProvider {
                 ModBlocks.BLIGHTSTONE_SMALL_BRICK_SLAB.get(), ModBlocks.BLIGHTSTONE_SMALL_BRICK_WALL.get(), "blightstone_small_bricks");
         simpleBlock(ModBlocks.CRACKED_BLIGHTSTONE_BRICKS.get());
         itemModels().simpleBlockItem(ModBlocks.CRACKED_BLIGHTSTONE_BRICKS.get());
+    }
+
+    /** Arganite and Quartzite as plain stone, Porcelain with three weighted variants, Polished Porcelain (connected at bake time) and Tiled Porcelain. */
+    private void registerArganiteAndPorcelain() {
+        registerStoneSet(ModBlocks.ARGANITE.get(), ModBlocks.ARGANITE_STAIRS.get(), ModBlocks.ARGANITE_SLAB.get(),
+                ModBlocks.ARGANITE_WALL.get(), "arganite");
+        registerStoneSet(ModBlocks.ARGANITE_BRICKS.get(), ModBlocks.ARGANITE_BRICKS_STAIRS.get(),
+                ModBlocks.ARGANITE_BRICKS_SLAB.get(), ModBlocks.ARGANITE_BRICKS_WALL.get(), "arganite_bricks");
+        simpleBlock(ModBlocks.QUARTZITE.get());
+        itemModels().simpleBlockItem(ModBlocks.QUARTZITE.get());
+        simpleBlock(ModBlocks.TILED_PORCELAIN.get());
+        itemModels().simpleBlockItem(ModBlocks.TILED_PORCELAIN.get());
+
+        // Porcelain: three equally weighted slabs, no rotation, so a big floor never repeats visibly. The item uses the first.
+        ModelFile[] variants = new ModelFile[3];
+        for (int i = 0; i < 3; i++) {
+            String name = i == 0 ? "porcelain" : "porcelain_" + i;
+            variants[i] = models().cubeAll(name, modLoc("block/" + name));
+        }
+        getVariantBuilder(ModBlocks.PORCELAIN.get()).partialState().setModels(
+                new ConfiguredModel(variants[0]), new ConfiguredModel(variants[1]), new ConfiguredModel(variants[2]));
+        itemModels().withExistingParent("porcelain", modLoc("block/porcelain"));
+        registerStairsAndSlab(ModBlocks.PORCELAIN.get(), ModBlocks.PORCELAIN_STAIRS.get(), ModBlocks.PORCELAIN_SLAB.get(),
+                variants[0], "porcelain");
+
+        ResourceLocation polished = modLoc("block/polished_porcelain");
+        ModelFile polishedCube = models().cubeAll("polished_porcelain", polished);
+        simpleBlock(ModBlocks.POLISHED_PORCELAIN.get(), polishedCube);
+        itemModels().simpleBlockItem(ModBlocks.POLISHED_PORCELAIN.get());
+        registerStairsAndSlab(ModBlocks.POLISHED_PORCELAIN.get(), ModBlocks.POLISHED_PORCELAIN_STAIRS.get(),
+                ModBlocks.POLISHED_PORCELAIN_SLAB.get(), polishedCube, "polished_porcelain");
+
+        ResourceLocation clusterTexture = modLoc("block/quartz_cluster");
+        directionalBlock(ModBlocks.QUARTZ_CLUSTER.get(), models().cross("quartz_cluster", clusterTexture).renderType("cutout"));
+        itemModels().withExistingParent("quartz_cluster", "item/generated").texture("layer0", clusterTexture);
+    }
+
+    private void registerStairsAndSlab(Block full, net.minecraft.world.level.block.StairBlock stairs,
+                                       net.minecraft.world.level.block.SlabBlock slab, ModelFile fullModel, String textureName) {
+        ResourceLocation texture = modLoc("block/" + textureName);
+        stairsBlock(stairs, texture);
+        itemModels().simpleBlockItem(stairs);
+        slabBlock(slab, models().slab(textureName + "_slab", texture, texture, texture),
+                models().slabTop(textureName + "_slab_top", texture, texture, texture), fullModel);
+        itemModels().simpleBlockItem(slab);
     }
 
     private void registerStoneSet(Block full, net.minecraft.world.level.block.StairBlock stairs,

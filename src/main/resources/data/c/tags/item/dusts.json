@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "#c:dusts/arganite",
+    "#c:dusts/calcite",
+    "#c:dusts/quartz",
+    "#c:dusts/porcelain",
+    "#c:dusts/polished_porcelain",
+    "#c:dusts/tiled_porcelain"
+  ]
+}

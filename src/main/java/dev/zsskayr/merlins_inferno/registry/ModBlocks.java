@@ -306,6 +306,65 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> CRACKED_BLIGHTSTONE_BRICKS = BLOCKS.registerBlock("cracked_blightstone_bricks",
             Block::new, blightstoneProperties());
 
+    // --- Arganite & Porcelain: the angelic realm's pale rock (Arganite, Quartzite) and the porcelain built from it
+    // (ground, mixed into dusts, smelted). Arganite hurts to land on (x2), porcelain is gentle (x0.2). ---
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.ArganiteBlock> ARGANITE = BLOCKS.registerBlock("arganite",
+            dev.zsskayr.merlins_inferno.block.ArganiteBlock::new, arganiteProperties());
+    public static final DeferredBlock<StairBlock> ARGANITE_STAIRS = BLOCKS.registerBlock("arganite_stairs",
+            props -> new StairBlock(ARGANITE.get().defaultBlockState(), props), arganiteProperties());
+    public static final DeferredBlock<SlabBlock> ARGANITE_SLAB = BLOCKS.registerBlock("arganite_slab",
+            SlabBlock::new, arganiteProperties());
+    public static final DeferredBlock<WallBlock> ARGANITE_WALL = BLOCKS.registerBlock("arganite_wall",
+            WallBlock::new, arganiteProperties().forceSolidOn());
+    public static final DeferredBlock<Block> ARGANITE_BRICKS = BLOCKS.registerBlock("arganite_bricks",
+            Block::new, arganiteProperties());
+    public static final DeferredBlock<StairBlock> ARGANITE_BRICKS_STAIRS = BLOCKS.registerBlock("arganite_bricks_stairs",
+            props -> new StairBlock(ARGANITE_BRICKS.get().defaultBlockState(), props), arganiteProperties());
+    public static final DeferredBlock<SlabBlock> ARGANITE_BRICKS_SLAB = BLOCKS.registerBlock("arganite_bricks_slab",
+            SlabBlock::new, arganiteProperties());
+    public static final DeferredBlock<WallBlock> ARGANITE_BRICKS_WALL = BLOCKS.registerBlock("arganite_bricks_wall",
+            WallBlock::new, arganiteProperties().forceSolidOn());
+    public static final DeferredBlock<Block> QUARTZITE = BLOCKS.registerBlock("quartzite",
+            Block::new, quartziteProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.PorcelainBlock> PORCELAIN = BLOCKS.registerBlock("porcelain",
+            dev.zsskayr.merlins_inferno.block.PorcelainBlock::new, porcelainProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.PorcelainStairBlock> PORCELAIN_STAIRS = BLOCKS.registerBlock("porcelain_stairs",
+            props -> new dev.zsskayr.merlins_inferno.block.PorcelainStairBlock(PORCELAIN.get().defaultBlockState(), props), porcelainProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.PorcelainSlabBlock> PORCELAIN_SLAB = BLOCKS.registerBlock("porcelain_slab",
+            dev.zsskayr.merlins_inferno.block.PorcelainSlabBlock::new, porcelainProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.PorcelainBlock> POLISHED_PORCELAIN = BLOCKS.registerBlock("polished_porcelain",
+            dev.zsskayr.merlins_inferno.block.PorcelainBlock::new, porcelainProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.PorcelainStairBlock> POLISHED_PORCELAIN_STAIRS = BLOCKS.registerBlock("polished_porcelain_stairs",
+            props -> new dev.zsskayr.merlins_inferno.block.PorcelainStairBlock(POLISHED_PORCELAIN.get().defaultBlockState(), props), porcelainProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.PorcelainSlabBlock> POLISHED_PORCELAIN_SLAB = BLOCKS.registerBlock("polished_porcelain_slab",
+            dev.zsskayr.merlins_inferno.block.PorcelainSlabBlock::new, porcelainProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.PorcelainBlock> TILED_PORCELAIN = BLOCKS.registerBlock("tiled_porcelain",
+            dev.zsskayr.merlins_inferno.block.PorcelainBlock::new, tiledPorcelainProperties());
+    // Crystal on Quartzite: an amethyst cluster's shape, no light, no regrowth. Loot table is hand-authored.
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.QuartzClusterBlock> QUARTZ_CLUSTER = BLOCKS.registerBlock("quartz_cluster",
+            props -> new dev.zsskayr.merlins_inferno.block.QuartzClusterBlock(7.0F, 3.0F, props),
+            BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_CLUSTER).lightLevel(state -> 0).mapColor(MapColor.QUARTZ));
+
+    private static BlockBehaviour.Properties arganiteProperties() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY).instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE);
+    }
+
+    private static BlockBehaviour.Properties quartziteProperties() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ).instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE);
+    }
+
+    private static BlockBehaviour.Properties porcelainProperties() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.SNOW).instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.DEEPSLATE_BRICKS);
+    }
+
+    private static BlockBehaviour.Properties tiledPorcelainProperties() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.DEEPSLATE_BRICKS);
+    }
+
     private static BlockBehaviour.Properties blightstoneProperties() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.COLOR_BLACK)

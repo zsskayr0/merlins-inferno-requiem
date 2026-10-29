@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "merlins_inferno:block/arganite_bricks",
+    "side": "merlins_inferno:block/arganite_bricks",
+    "top": "merlins_inferno:block/arganite_bricks"
+  }
+}

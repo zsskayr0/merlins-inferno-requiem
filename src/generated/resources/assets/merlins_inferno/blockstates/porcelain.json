@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "merlins_inferno:block/porcelain"
+      },
+      {
+        "model": "merlins_inferno:block/porcelain_1"
+      },
+      {
+        "model": "merlins_inferno:block/porcelain_2"
+      }
+    ]
+  }
+}

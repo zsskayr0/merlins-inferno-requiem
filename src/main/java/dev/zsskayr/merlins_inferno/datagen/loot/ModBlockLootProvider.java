@@ -58,6 +58,22 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.BLIGHTSTONE_SMALL_BRICKS.get(), ModBlocks.BLIGHTSTONE_SMALL_BRICK_STAIRS.get(),
                 ModBlocks.BLIGHTSTONE_SMALL_BRICK_SLAB.get(), ModBlocks.BLIGHTSTONE_SMALL_BRICK_WALL.get(),
                 ModBlocks.CRACKED_BLIGHTSTONE_BRICKS.get(),
+                ModBlocks.ARGANITE.get(),
+                ModBlocks.ARGANITE_STAIRS.get(),
+                ModBlocks.ARGANITE_WALL.get(),
+                ModBlocks.ARGANITE_BRICKS.get(),
+                ModBlocks.ARGANITE_BRICKS_STAIRS.get(),
+                ModBlocks.ARGANITE_BRICKS_WALL.get(),
+                ModBlocks.QUARTZITE.get(),
+                ModBlocks.PORCELAIN.get(),
+                ModBlocks.PORCELAIN_STAIRS.get(),
+                ModBlocks.POLISHED_PORCELAIN.get(),
+                ModBlocks.POLISHED_PORCELAIN_STAIRS.get(),
+                ModBlocks.TILED_PORCELAIN.get(),
+                ModBlocks.ARGANITE_SLAB.get(),
+                ModBlocks.ARGANITE_BRICKS_SLAB.get(),
+                ModBlocks.PORCELAIN_SLAB.get(),
+                ModBlocks.POLISHED_PORCELAIN_SLAB.get(),
                 ModBlocks.HELL_FORGE_CONTROLLER.get(), ModBlocks.DEMONIC_CORE.get(), ModBlocks.HELL_FORGE_VAULT.get(),
                 ModBlocks.LYRIUM_BLOCK.get(),
                 ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.WITHERED_OBSIDIAN.get(),
@@ -120,6 +136,23 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         add(ModBlocks.BLIGHTSTONE_SMALL_BRICK_SLAB.get(), createSlabItemTable(ModBlocks.BLIGHTSTONE_SMALL_BRICK_SLAB.get()));
         dropSelf(ModBlocks.BLIGHTSTONE_SMALL_BRICK_WALL.get());
         dropSelf(ModBlocks.CRACKED_BLIGHTSTONE_BRICKS.get());
+        dropSelf(ModBlocks.ARGANITE.get());
+        dropSelf(ModBlocks.ARGANITE_STAIRS.get());
+        dropSelf(ModBlocks.ARGANITE_WALL.get());
+        dropSelf(ModBlocks.ARGANITE_BRICKS.get());
+        dropSelf(ModBlocks.ARGANITE_BRICKS_STAIRS.get());
+        dropSelf(ModBlocks.ARGANITE_BRICKS_WALL.get());
+        dropSelf(ModBlocks.QUARTZITE.get());
+        dropSelf(ModBlocks.PORCELAIN.get());
+        dropSelf(ModBlocks.PORCELAIN_STAIRS.get());
+        dropSelf(ModBlocks.POLISHED_PORCELAIN.get());
+        dropSelf(ModBlocks.POLISHED_PORCELAIN_STAIRS.get());
+        dropSelf(ModBlocks.TILED_PORCELAIN.get());
+        add(ModBlocks.ARGANITE_SLAB.get(), createSlabItemTable(ModBlocks.ARGANITE_SLAB.get()));
+        add(ModBlocks.ARGANITE_BRICKS_SLAB.get(), createSlabItemTable(ModBlocks.ARGANITE_BRICKS_SLAB.get()));
+        add(ModBlocks.PORCELAIN_SLAB.get(), createSlabItemTable(ModBlocks.PORCELAIN_SLAB.get()));
+        add(ModBlocks.POLISHED_PORCELAIN_SLAB.get(), createSlabItemTable(ModBlocks.POLISHED_PORCELAIN_SLAB.get()));
+        // quartz_cluster is hand-authored (data/merlins_inferno/loot_table/blocks/quartz_cluster.json).
         dropSelf(ModBlocks.CORRUPTED_OBSIDIAN.get());
         dropSelf(ModBlocks.PETRIFIED_SKULL.get());
         dropSelf(ModBlocks.WITHERED_OBSIDIAN.get());

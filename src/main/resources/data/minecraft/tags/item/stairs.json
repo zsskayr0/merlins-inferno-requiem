@@ -5,6 +5,10 @@
     "merlins_inferno:blightstone_stairs",
     "merlins_inferno:blightstone_brick_stairs",
     "merlins_inferno:blightstone_small_brick_stairs",
-    "merlins_inferno:polished_blightstone_stairs"
+    "merlins_inferno:polished_blightstone_stairs",
+    "merlins_inferno:arganite_stairs",
+    "merlins_inferno:arganite_bricks_stairs",
+    "merlins_inferno:porcelain_stairs",
+    "merlins_inferno:polished_porcelain_stairs"
   ]
 }

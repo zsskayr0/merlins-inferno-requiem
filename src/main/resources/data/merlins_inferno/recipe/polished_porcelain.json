@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "group": "polished_porcelain",
+  "cookingtime": 160,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "merlins_inferno:polished_porcelain_dust"
+  },
+  "result": {
+    "id": "merlins_inferno:polished_porcelain"
+  }
+}
