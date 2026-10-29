@@ -345,6 +345,11 @@ public final class ModBlocks {
             props -> new dev.zsskayr.merlins_inferno.block.QuartzClusterBlock(7.0F, 3.0F, props),
             BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_CLUSTER).lightLevel(state -> 0).mapColor(MapColor.QUARTZ));
 
+    // Sacred white fire: infinite over Arganite (infiniburn tag), burns out elsewhere, never spreads. Lit with flint and steel on Arganite.
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GraceFireBlock> GRACE_FIRE = BLOCKS.registerBlock("grace_fire",
+            dev.zsskayr.merlins_inferno.block.GraceFireBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.SNOW).replaceable()
+                    .noCollission().instabreak().lightLevel(state -> 10).sound(SoundType.WOOL).pushReaction(PushReaction.DESTROY));
+
     private static BlockBehaviour.Properties arganiteProperties() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY).instrument(NoteBlockInstrument.BASEDRUM)
                 .requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE);

@@ -56,6 +56,7 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         registerCompressedNetherrack();
         registerBlightstone();
         registerArganiteAndPorcelain();
+        registerGraceFire();
         registerFleshAndNetherFlora();
 
         // Rowanwood
@@ -107,6 +108,23 @@ public final class ModBlockStateProvider extends BlockStateProvider {
                 ModBlocks.BLIGHTSTONE_SMALL_BRICK_SLAB.get(), ModBlocks.BLIGHTSTONE_SMALL_BRICK_WALL.get(), "blightstone_small_bricks");
         simpleBlock(ModBlocks.CRACKED_BLIGHTSTONE_BRICKS.get());
         itemModels().simpleBlockItem(ModBlocks.CRACKED_BLIGHTSTONE_BRICKS.get());
+    }
+
+    /** Grace Fire: vanilla's fire shapes (floor, side and alternate side flames) in white, two animated textures chosen at random. */
+    private void registerGraceFire() {
+        var part = getMultipartBuilder(ModBlocks.GRACE_FIRE.get());
+        for (String shape : new String[] {"template_fire_floor", "template_fire_side", "template_fire_side_alt"}) {
+            String name = shape.replace("template_fire_", "grace_fire_");
+            ModelFile[] variants = new ModelFile[2];
+            for (int i = 0; i < 2; i++) {
+                variants[i] = models().withExistingParent(name + i, mcLoc("block/" + shape))
+                        .texture("fire", modLoc("block/grace_fire_" + i)).renderType("cutout");
+            }
+            int[] turns = shape.equals("template_fire_floor") ? new int[] {0} : new int[] {0, 90, 180, 270};
+            for (int turn : turns) {
+                part.part().modelFile(variants[0]).rotationY(turn).weight(1).nextModel().modelFile(variants[1]).rotationY(turn).weight(1).addModel().end();
+            }
+        }
     }
 
     /** Arganite and Quartzite as plain stone, Porcelain with three weighted variants, Polished Porcelain (connected at bake time) and Tiled Porcelain. */

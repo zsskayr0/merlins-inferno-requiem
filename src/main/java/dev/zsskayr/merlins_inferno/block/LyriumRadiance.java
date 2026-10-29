@@ -55,6 +55,11 @@ public final class LyriumRadiance {
     }
 
     private static boolean isAffected(LivingEntity entity) {
-        return entity.isAlive() && (entity.getType().is(EntityTypeTags.UNDEAD) || entity.getType().is(ModTags.EntityTypes.DEMON));
+        return entity.isAlive() && isUnholy(entity);
+    }
+
+    /** Undead and demons: what sacred things (the geode, Grace Fire) act on. */
+    public static boolean isUnholy(LivingEntity entity) {
+        return entity.getType().is(EntityTypeTags.UNDEAD) || entity.getType().is(ModTags.EntityTypes.DEMON);
     }
 }

@@ -534,5 +534,7 @@
   "item.merlins_inferno.quartz_dust": "Pó de Quartzo",
   "item.merlins_inferno.porcelain_dust": "Pó de Porcelana",
   "item.merlins_inferno.polished_porcelain_dust": "Pó de Porcelana Polida",
-  "item.merlins_inferno.tiled_porcelain_dust": "Pó de Porcelana Ladrilhada"
+  "item.merlins_inferno.tiled_porcelain_dust": "Pó de Porcelana Ladrilhada",
+  "block.merlins_inferno.grace_fire": "Fogo da Graça",
+  "death.attack.grace_fire": "%1$s foi purificado pelo Fogo da Graça"
 }
