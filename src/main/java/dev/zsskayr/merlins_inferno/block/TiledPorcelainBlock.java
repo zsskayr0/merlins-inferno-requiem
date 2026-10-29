@@ -2,9 +2,6 @@ package dev.zsskayr.merlins_inferno.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,10 +10,11 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 /**
  * Tiled Porcelain reads as big 2x2 tiles, and where a tile starts is up to the builder, not the world's coordinates.
- * On each axis a block is either the first or the second half of its pair ({@code second_x/y/z}); a placed block looks
- * at its neighbours on that axis and completes a lone block next to it, so a row begun anywhere pairs up from there on.
- * The model only joins two blocks that are halves of the same pair on every axis they differ on (and share the other
- * flags), see {@code ConnectedBlockModel}. Blocks placed without a player (commands, structures) are all first halves.
+ * On each axis a block is either the first or the second half of its pair ({@code second_x/y/z}); a block set in the
+ * world looks at its neighbours on that axis and completes a lone block next to it, so a row begun anywhere pairs up
+ * from there on, however it was set (a player, a command, a paste that runs block updates). The model only joins two
+ * blocks that are halves of the same pair on every axis they differ on (and share the other flags), see
+ * {@code ConnectedBlockModel}. World generation and tools that write chunks directly skip this, leaving first halves.
  */
 public class TiledPorcelainBlock extends PorcelainBlock {
     public static final BooleanProperty SECOND_X = BooleanProperty.create("second_x");
@@ -42,25 +40,30 @@ public class TiledPorcelainBlock extends PorcelainBlock {
         builder.add(SECOND_X, SECOND_Y, SECOND_Z);
     }
 
+    /**
+     * Pairs the block up whenever it is set in the world, by whatever means: a player, a command, a paste. A lone neighbour
+     * that was a second half where it should be a first (or the other way round) is flipped to pair with this block.
+     */
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockState state = this.defaultBlockState();
-        for (Direction.Axis axis : AXES) {
-            state = state.setValue(second(axis), chooseSecond(context.getLevel(), context.getClickedPos(), axis));
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        if (level.isClientSide || movedByPiston || oldState.is(this)) {
+            return;
         }
-        return state;
-    }
-
-    /** After placing, a lone neighbour that was a second half where it should be a first (or the other way round) is flipped to pair with this block. */
-    @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+        BlockState paired = state;
+        for (Direction.Axis axis : AXES) {
+            paired = paired.setValue(second(axis), chooseSecond(level, pos, axis));
+        }
+        if (paired != state) {
+            level.setBlock(pos, paired, Block.UPDATE_ALL);
+        }
         for (Direction.Axis axis : AXES) {
             BooleanProperty property = second(axis);
-            Direction toPartner = Direction.fromAxisAndDirection(axis, state.getValue(property) ? Direction.AxisDirection.NEGATIVE : Direction.AxisDirection.POSITIVE);
+            Direction toPartner = Direction.fromAxisAndDirection(axis, paired.getValue(property) ? Direction.AxisDirection.NEGATIVE : Direction.AxisDirection.POSITIVE);
             BlockPos partnerPos = pos.relative(toPartner);
             BlockState partner = level.getBlockState(partnerPos);
-            if (partner.is(this) && partner.getValue(property) == state.getValue(property)) {
-                level.setBlock(partnerPos, partner.setValue(property, !state.getValue(property)), Block.UPDATE_ALL);
+            if (partner.is(this) && partner.getValue(property) == paired.getValue(property)) {
+                level.setBlock(partnerPos, partner.setValue(property, !paired.getValue(property)), Block.UPDATE_ALL);
             }
         }
     }
@@ -71,10 +74,10 @@ public class TiledPorcelainBlock extends PorcelainBlock {
         BlockPos after = pos.relative(Direction.fromAxisAndDirection(axis, Direction.AxisDirection.POSITIVE));
         BlockState low = level.getBlockState(before);
         BlockState high = level.getBlockState(after);
-        if (low.is(this) && isLone(level, before, low, property, axis)) {
+        if (low.is(this) && isLone(level, before, low, property, axis, pos)) {
             return true;  // finish the lone block behind: it becomes the first half, this the second
         }
-        if (high.is(this) && isLone(level, after, high, property, axis)) {
+        if (high.is(this) && isLone(level, after, high, property, axis, pos)) {
             return false; // finish the lone block ahead
         }
         if (low.is(this)) {
@@ -95,10 +98,11 @@ public class TiledPorcelainBlock extends PorcelainBlock {
         return false;
     }
 
-    /** A block whose partner position on the axis holds no block that is its other half. */
-    private boolean isLone(Level level, BlockPos pos, BlockState state, BooleanProperty property, Direction.Axis axis) {
+    /** A block whose partner position on the axis holds no block that is its other half; {@code placing}, the block being set, does not count. */
+    private boolean isLone(Level level, BlockPos pos, BlockState state, BooleanProperty property, Direction.Axis axis, BlockPos placing) {
         Direction toPartner = Direction.fromAxisAndDirection(axis, state.getValue(property) ? Direction.AxisDirection.NEGATIVE : Direction.AxisDirection.POSITIVE);
-        BlockState partner = level.getBlockState(pos.relative(toPartner));
-        return !(partner.is(this) && partner.getValue(property) != state.getValue(property));
+        BlockPos partnerPos = pos.relative(toPartner);
+        BlockState partner = level.getBlockState(partnerPos);
+        return partnerPos.equals(placing) || !(partner.is(this) && partner.getValue(property) != state.getValue(property));
     }
 }
