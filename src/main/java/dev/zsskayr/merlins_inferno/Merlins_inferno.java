@@ -105,7 +105,6 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.OstaraSpawnHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.CinderSpawnHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EdenweedHandler());
-        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.command.DebugCommands());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
