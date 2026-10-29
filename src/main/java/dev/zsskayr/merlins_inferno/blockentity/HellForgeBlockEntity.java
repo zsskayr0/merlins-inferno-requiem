@@ -45,9 +45,9 @@ import dev.zsskayr.merlins_inferno.registry.ModRecipeTypes;
 
 /**
  * The Hell Forge's block entity - a furnace/blast-furnace hybrid: it accepts either recipe type
- * for its input (checking {@link ModRecipeTypes#HELL_FORGE_SMELTING} first, then
- * {@link RecipeType#SMELTING}, then {@link RecipeType#BLASTING}) and cooks 30% faster than any of
- * them ({@link #COOK_TIME_MULTIPLIER}). Fuel is restricted to lava buckets, Haunted logs and blaze powder
+ * for its input (checking {@link ModRecipeTypes#HELL_FORGE_SMELTING} first, then whichever of
+ * {@link RecipeType#SMELTING} and {@link RecipeType#BLASTING} is quicker) and cooks 30% faster than the
+ * recipe it picked ({@link #COOK_TIME_MULTIPLIER}). Fuel is restricted to lava buckets, Haunted logs and blaze powder
  * ({@link #getBurnDuration}).
  * <p>
  * {@code HELL_FORGE_SMELTING} exists specifically for recipes that must NOT also work in a plain
@@ -169,10 +169,15 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         SingleRecipeInput recipeInput = new SingleRecipeInput(input);
         Optional<? extends RecipeHolder<? extends AbstractCookingRecipe>> found = this.forgeCheck.getRecipeFor(recipeInput, level);
         if (found.isEmpty()) {
-            found = this.smeltingCheck.getRecipeFor(recipeInput, level);
-        }
-        if (found.isEmpty()) {
-            found = this.blastingCheck.getRecipeFor(recipeInput, level);
+            // Both vanilla types match most ores, and blasting is half the smelting time: take the quicker one, so the
+            // forge is never slower than a Blast Furnace (smelting first would make it 140 ticks for iron against 100).
+            Optional<? extends RecipeHolder<? extends AbstractCookingRecipe>> smelting = this.smeltingCheck.getRecipeFor(recipeInput, level);
+            Optional<? extends RecipeHolder<? extends AbstractCookingRecipe>> blasting = this.blastingCheck.getRecipeFor(recipeInput, level);
+            if (smelting.isPresent() && blasting.isPresent()) {
+                found = blasting.get().value().getCookingTime() <= smelting.get().value().getCookingTime() ? blasting : smelting;
+            } else {
+                found = smelting.isPresent() ? smelting : blasting;
+            }
         }
         return found.map(holder -> (RecipeHolder<AbstractCookingRecipe>) holder);
     }
