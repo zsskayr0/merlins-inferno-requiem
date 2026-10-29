@@ -14,11 +14,12 @@ import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 
 /**
  * Debug commands (op level 2). {@code /mi_debug circle <C1|C2|C3>} sets the world's Circle, up or down (the only
- * way down); without an argument it shows the current one.
+ * way down); without an argument it shows the current one. {@code /mi_circle} shows the same to anyone, no op needed.
  */
 public class DebugCommands {
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
+        event.getDispatcher().register(Commands.literal("mi_circle").executes(context -> showCircle(context.getSource())));
         event.getDispatcher().register(Commands.literal("mi_debug")
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("cinder").executes(context -> cinderStatus(context.getSource().getPlayerOrException())))
