@@ -19,8 +19,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class ChurchTombstoneBlock extends Block {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    private static final VoxelShape NS = Block.box(3.5, 0, 5, 12.5, 12.5, 11);
-    private static final VoxelShape EW = Block.box(5, 0, 3.5, 11, 12.5, 12.5);
+    private static final VoxelShape NS = Block.box(1, 0, 3.3, 15, 19.5, 12.7);
+    private static final VoxelShape EW = Block.box(3.3, 0, 1, 12.7, 19.5, 15);
 
     public ChurchTombstoneBlock(Properties properties) {
         super(properties);
