@@ -1,4 +1,6 @@
 {
+  "gamerule.circle": "Circle",
+  "gamerule.circle.description": "A Circle do mundo (1-3). O ritual da Pandora's Box a leva para 2.",
   "block.merlins_inferno.ornated_carpet": "Carpete Ornamentado",
   "itemGroup.merlins_inferno": "Merlin's Inferno",
   "entity.merlins_inferno.druid": "Druida",

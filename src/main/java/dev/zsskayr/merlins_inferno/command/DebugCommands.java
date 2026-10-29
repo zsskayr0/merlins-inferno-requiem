@@ -1,9 +1,5 @@
 package dev.zsskayr.merlins_inferno.command;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
-
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,43 +8,13 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 
-/**
- * Debug commands (op level 2). {@code /mi_debug circle <C1|C2|C3>} sets the world's Circle, up or down (the only
- * way down). {@code /mi_circle} shows the current one to anyone, no op needed.
- */
+/** Debug commands (op level 2). The world's Circle is the {@code circle} game rule: {@code /gamerule circle <1-3>}. */
 public class DebugCommands {
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
-        event.getDispatcher().register(Commands.literal("mi_circle").executes(context -> showCircle(context.getSource())));
         event.getDispatcher().register(Commands.literal("mi_debug")
                 .requires(source -> source.hasPermission(2))
-                .then(Commands.literal("cinder").executes(context -> cinderStatus(context.getSource().getPlayerOrException())))
-                .then(Commands.literal("circle")
-                        .then(Commands.argument("circle", StringArgumentType.word())
-                                .suggests((context, builder) -> SharedSuggestionProvider.suggest(new String[] {"C1", "C2", "C3"}, builder))
-                                .executes(context -> setCircle(context.getSource(), StringArgumentType.getString(context, "circle"))))));
-    }
-
-    private static int showCircle(CommandSourceStack source) {
-        int circle = ProgressionHelper.circle(source.getServer());
-        source.sendSuccess(() -> Component.literal("[Merlin's Inferno] World Circle: C" + circle), false);
-        return circle;
-    }
-
-    private static int setCircle(CommandSourceStack source, String text) {
-        int circle = switch (text.toUpperCase(java.util.Locale.ROOT)) {
-            case "C1" -> ProgressionHelper.FIRST_CIRCLE;
-            case "C2" -> ProgressionHelper.SECOND_CIRCLE;
-            case "C3" -> ProgressionHelper.THIRD_CIRCLE;
-            default -> 0;
-        };
-        if (circle == 0) {
-            source.sendFailure(Component.literal("[Merlin's Inferno] Unknown Circle '" + text + "' - use C1, C2 or C3"));
-            return 0;
-        }
-        boolean changed = ProgressionHelper.forceCircle(source.getServer(), circle);
-        source.sendSuccess(() -> Component.literal("[Merlin's Inferno] World Circle " + (changed ? "set to C" : "already C") + circle), true);
-        return circle;
+                .then(Commands.literal("cinder").executes(context -> cinderStatus(context.getSource().getPlayerOrException()))));
     }
 
     private static int cinderStatus(ServerPlayer player) {
