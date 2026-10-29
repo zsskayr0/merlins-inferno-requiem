@@ -2,6 +2,7 @@ package dev.zsskayr.merlins_inferno.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import dev.zsskayr.merlins_inferno.block.TiledPorcelainBlock;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -33,8 +34,8 @@ import org.jetbrains.annotations.Nullable;
  * ModelData and shows the plain framed tile.
  *
  * <p>In {@code pairs} mode (Tiled Porcelain) a block only counts as connected to a neighbour that shares its 2x2 group,
- * the groups being aligned to even world coordinates on each axis, so a flat area reads as big two-by-two tiles with a
- * border around each one; a lone block is a fully framed tile.
+ * the groups being the first/second halves its blocks carry on each axis (see {@link TiledPorcelainBlock}), so a flat
+ * area reads as big two-by-two tiles with a border around each one; a lone block is a fully framed tile.
  */
 public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
     /** Bit {@code (dx+1) + 3*(dy+1) + 9*(dz+1)}: the block at that offset is the same block. */
@@ -91,11 +92,16 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
     public @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state,
                                            @NotNull ModelData data) {
         int bits = 0;
+        boolean grouped = pairs && state.hasProperty(TiledPorcelainBlock.SECOND_X);
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 for (int dz = -1; dz <= 1; dz++) {
-                    if ((dx | dy | dz) != 0 && level.getBlockState(at.setWithOffset(pos, dx, dy, dz)).is(state.getBlock())) {
+                    if ((dx | dy | dz) == 0) {
+                        continue;
+                    }
+                    BlockState other = level.getBlockState(at.setWithOffset(pos, dx, dy, dz));
+                    if (other.is(state.getBlock()) && (!grouped || sameGroup(state, other, dx, dy, dz))) {
                         bits |= bit(dx, dy, dz);
                     }
                 }
@@ -186,12 +192,22 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
         if ((neighbours & bit(dx, dy, dz)) == 0) {
             return false;
         }
-        return !pairs || (sameGroup(pos.getX(), dx) && sameGroup(pos.getY(), dy) && sameGroup(pos.getZ(), dz));
+        return true;
     }
 
-    /** On one axis, a step of {@code d} stays inside the 2x2 group: groups are {2k, 2k+1}, so even coordinates pair upwards. */
-    private static boolean sameGroup(int coordinate, int d) {
-        return d == 0 || (Math.floorMod(coordinate, 2) == 0) == (d > 0);
+    /**
+     * Whether two Tiled Porcelain blocks, {@code (dx, dy, dz)} apart, are halves of the same group: on every axis they
+     * differ on this one must be the first half and the other the second, and on the axes they share the halves match.
+     */
+    private static boolean sameGroup(BlockState state, BlockState other, int dx, int dy, int dz) {
+        return sameGroup(state, other, Direction.Axis.X, dx) && sameGroup(state, other, Direction.Axis.Y, dy)
+                && sameGroup(state, other, Direction.Axis.Z, dz);
+    }
+
+    private static boolean sameGroup(BlockState state, BlockState other, Direction.Axis axis, int d) {
+        boolean second = state.getValue(TiledPorcelainBlock.second(axis));
+        boolean otherSecond = other.getValue(TiledPorcelainBlock.second(axis));
+        return d == 0 ? second == otherSecond : (second == (d < 0) && otherSecond != second);
     }
 
     /** The axis direction a vector mostly points along. */

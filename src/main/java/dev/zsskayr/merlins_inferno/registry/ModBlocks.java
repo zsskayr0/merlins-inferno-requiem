@@ -338,8 +338,8 @@ public final class ModBlocks {
             props -> new dev.zsskayr.merlins_inferno.block.PorcelainStairBlock(POLISHED_PORCELAIN.get().defaultBlockState(), props), porcelainProperties());
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.PorcelainSlabBlock> POLISHED_PORCELAIN_SLAB = BLOCKS.registerBlock("polished_porcelain_slab",
             dev.zsskayr.merlins_inferno.block.PorcelainSlabBlock::new, porcelainProperties());
-    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.PorcelainBlock> TILED_PORCELAIN = BLOCKS.registerBlock("tiled_porcelain",
-            dev.zsskayr.merlins_inferno.block.PorcelainBlock::new, tiledPorcelainProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.TiledPorcelainBlock> TILED_PORCELAIN = BLOCKS.registerBlock("tiled_porcelain",
+            dev.zsskayr.merlins_inferno.block.TiledPorcelainBlock::new, tiledPorcelainProperties());
     // Crystal on Quartzite: an amethyst cluster's shape, no light, no regrowth. Loot table is hand-authored.
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.QuartzClusterBlock> QUARTZ_CLUSTER = BLOCKS.registerBlock("quartz_cluster",
             props -> new dev.zsskayr.merlins_inferno.block.QuartzClusterBlock(7.0F, 3.0F, props),

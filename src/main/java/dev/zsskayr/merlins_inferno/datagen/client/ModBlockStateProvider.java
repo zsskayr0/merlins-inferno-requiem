@@ -135,7 +135,9 @@ public final class ModBlockStateProvider extends BlockStateProvider {
                 ModBlocks.ARGANITE_BRICKS_SLAB.get(), ModBlocks.ARGANITE_BRICKS_WALL.get(), "arganite_bricks");
         simpleBlock(ModBlocks.QUARTZITE.get());
         itemModels().simpleBlockItem(ModBlocks.QUARTZITE.get());
-        simpleBlock(ModBlocks.TILED_PORCELAIN.get());
+        // the second_x/y/z halves only change how the model connects, not the model, so every state shares it
+        ModelFile tiledPorcelain = cubeAll(ModBlocks.TILED_PORCELAIN.get());
+        getVariantBuilder(ModBlocks.TILED_PORCELAIN.get()).forAllStates(state -> ConfiguredModel.builder().modelFile(tiledPorcelain).build());
         itemModels().simpleBlockItem(ModBlocks.TILED_PORCELAIN.get());
 
         // Porcelain: three equally weighted slabs, no rotation, so a big floor never repeats visibly. The item uses the first.
