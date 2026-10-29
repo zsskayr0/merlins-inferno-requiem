@@ -31,6 +31,10 @@ import org.jetbrains.annotations.Nullable;
  * <p>The whole 3x3x3 neighbourhood is collected per block in {@link #getModelData}; the key is built per quad from the
  * quad's own geometry (which way its U and V run in the world), so it works for any face. The item model has no
  * ModelData and shows the plain framed tile.
+ *
+ * <p>In {@code pairs} mode (Tiled Porcelain) a block only counts as connected to a neighbour that shares its 2x2 group,
+ * the groups being aligned to even world coordinates on each axis, so a flat area reads as big two-by-two tiles with a
+ * border around each one; a lone block is a fully framed tile.
  */
 public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
     /** Bit {@code (dx+1) + 3*(dy+1) + 9*(dz+1)}: the block at that offset is the same block. */
@@ -52,15 +56,21 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
     private final TextureAtlasSprite sheet;
     /** When set, only the quads that use this sprite are remapped (a pane's edge keeps its own texture). */
     private final @Nullable TextureAtlasSprite only;
+    private final boolean pairs;
 
     public ConnectedBlockModel(BakedModel original, TextureAtlasSprite sheet) {
-        this(original, sheet, null);
+        this(original, sheet, null, false);
     }
 
     public ConnectedBlockModel(BakedModel original, TextureAtlasSprite sheet, @Nullable TextureAtlasSprite only) {
+        this(original, sheet, only, false);
+    }
+
+    public ConnectedBlockModel(BakedModel original, TextureAtlasSprite sheet, @Nullable TextureAtlasSprite only, boolean pairs) {
         super(original);
         this.sheet = sheet;
         this.only = only;
+        this.pairs = pairs;
     }
 
     /** Drops the diagonal bits whose two sides are not both connected. */
@@ -141,14 +151,14 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
         Direction right = along(ux, uy, uz);
         Direction down = along(vx, vy, vz);
 
-        int key = (at(neighbours, right, down, -1, 0) ? 1 : 0)
-                | (at(neighbours, right, down, 1, 0) ? 2 : 0)
-                | (at(neighbours, right, down, 0, -1) ? 4 : 0)
-                | (at(neighbours, right, down, 0, 1) ? 8 : 0)
-                | (at(neighbours, right, down, -1, -1) ? 16 : 0)
-                | (at(neighbours, right, down, 1, -1) ? 32 : 0)
-                | (at(neighbours, right, down, -1, 1) ? 64 : 0)
-                | (at(neighbours, right, down, 1, 1) ? 128 : 0);
+        int key = (at(neighbours, pos, right, down, -1, 0) ? 1 : 0)
+                | (at(neighbours, pos, right, down, 1, 0) ? 2 : 0)
+                | (at(neighbours, pos, right, down, 0, -1) ? 4 : 0)
+                | (at(neighbours, pos, right, down, 0, 1) ? 8 : 0)
+                | (at(neighbours, pos, right, down, -1, -1) ? 16 : 0)
+                | (at(neighbours, pos, right, down, 1, -1) ? 32 : 0)
+                | (at(neighbours, pos, right, down, -1, 1) ? 64 : 0)
+                | (at(neighbours, pos, right, down, 1, 1) ? 128 : 0);
         int tile = TILE_OF_KEY[fold(key)];
         // Which window of the face pattern: the block's place along the face's own right and down, wrapping every 4.
         int across = Math.floorMod(pos.getX() * right.getStepX() + pos.getY() * right.getStepY() + pos.getZ() * right.getStepZ(), 4);
@@ -165,12 +175,23 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
         return new BakedQuad(v, quad.getTintIndex(), quad.getDirection(), sheet, quad.isShade(), quad.hasAmbientOcclusion());
     }
 
-    /** Whether the block {@code r} steps along the face's right and {@code d} steps along its down is the same block. */
-    private static boolean at(int neighbours, Direction right, Direction down, int r, int d) {
+    /**
+     * Whether the block {@code r} steps along the face's right and {@code d} steps along its down counts as connected:
+     * it is the same block and, in pairs mode, lies in the same 2x2 group as this one.
+     */
+    private boolean at(int neighbours, BlockPos pos, Direction right, Direction down, int r, int d) {
         int dx = right.getStepX() * r + down.getStepX() * d;
         int dy = right.getStepY() * r + down.getStepY() * d;
         int dz = right.getStepZ() * r + down.getStepZ() * d;
-        return (neighbours & bit(dx, dy, dz)) != 0;
+        if ((neighbours & bit(dx, dy, dz)) == 0) {
+            return false;
+        }
+        return !pairs || (sameGroup(pos.getX(), dx) && sameGroup(pos.getY(), dy) && sameGroup(pos.getZ(), dz));
+    }
+
+    /** On one axis, a step of {@code d} stays inside the 2x2 group: groups are {2k, 2k+1}, so even coordinates pair upwards. */
+    private static boolean sameGroup(int coordinate, int d) {
+        return d == 0 || (Math.floorMod(coordinate, 2) == 0) == (d > 0);
     }
 
     /** The axis direction a vector mostly points along. */

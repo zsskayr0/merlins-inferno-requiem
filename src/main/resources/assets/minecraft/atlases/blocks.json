@@ -19,6 +19,10 @@
     {
       "type": "minecraft:single",
       "resource": "merlins_inferno:block/polished_porcelain_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/tiled_porcelain_connected"
     }
   ]
 }
