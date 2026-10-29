@@ -39,7 +39,7 @@ import dev.zsskayr.merlins_inferno.worldgen.ModPlacedFeatures;
 
 /**
  * Where Raw Lyrium comes from in the world (design decision): it forms like amethyst - a geode
- * with a calcite/basalt shell, a Lyrium Block lining and Lyrium Clusters growing inward - and it
+ * with an arganite/basalt shell, a Lyrium Block lining and Lyrium Clusters growing inward - and it
  * also turns up as scarce, rare single-block ores, the way emeralds do. Lyrium is the celestial
  * material ("high, sacred"), so both are added to mountain biomes only, above the usual cave
  * depths.
@@ -61,7 +61,7 @@ public final class ModLyriumProvider {
                         BlockStateProvider.simple(Blocks.AIR),
                         lining,
                         lining,
-                        BlockStateProvider.simple(Blocks.CALCITE),
+                        BlockStateProvider.simple(ModBlocks.ARGANITE.get()),
                         BlockStateProvider.simple(Blocks.SMOOTH_BASALT),
                         List.of(ModBlocks.LYRIUM_CLUSTER.get().defaultBlockState()),
                         BlockTags.FEATURES_CANNOT_REPLACE,
