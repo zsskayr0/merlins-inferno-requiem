@@ -21,10 +21,6 @@ public final class ModAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<SanctifiedProgress>> SANCTIFIED_PROGRESS =
             ATTACHMENT_TYPES.register("sanctified_progress", () -> AttachmentType.builder(SanctifiedProgress::new).build());
 
-    /** The player's Circle (1 or 2) - see {@link dev.zsskayr.merlins_inferno.attachment.ProgressionHelper}. Kept through death. */
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> CIRCLE =
-            ATTACHMENT_TYPES.register("circle", () -> AttachmentType.builder(() -> 1).serialize(Codec.INT).copyOnDeath().build());
-
     /** Set when the player died holding a Pandora Box: it is handed back on respawn (see PandoraHandler). */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> RETURN_PANDORA_BOX =
             ATTACHMENT_TYPES.register("return_pandora_box", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).copyOnDeath().build());

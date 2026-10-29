@@ -80,6 +80,7 @@ public class Merlins_inferno {
 
         // Register ourselves for server and other game events we are interested in.
         NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.CircleSyncHandler());
         NeoForge.EVENT_BUS.register(new DemonbloodCombatHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.OblivionSpawnBias());
         NeoForge.EVENT_BUS.register(new DebtCollectorHandler());
