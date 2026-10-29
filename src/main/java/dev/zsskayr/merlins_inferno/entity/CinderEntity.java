@@ -469,8 +469,7 @@ public class CinderEntity extends Monster implements GeoEntity {
     public static boolean checkCinderSpawnRules(EntityType<CinderEntity> type, ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
         if (reason == MobSpawnType.SPAWN_EGG || reason == MobSpawnType.COMMAND || reason == MobSpawnType.SPAWNER) return true;
         if (!(level instanceof ServerLevel server) || server.dimension() != OblivionDimension.LEVEL || server.getDifficulty() == Difficulty.PEACEFUL) return false;
-        return server.getNearestPlayer(pos.getX(), pos.getY(), pos.getZ(), 80,
-                e -> e instanceof Player p && !p.isSpectator() && ProgressionHelper.hasReached(p, ProgressionHelper.SECOND_CIRCLE)) != null
+        return ProgressionHelper.hasReached(server, ProgressionHelper.SECOND_CIRCLE)
                 && level.getFluidState(pos).is(FluidTags.LAVA) && level.getFluidState(pos.below()).is(FluidTags.LAVA);
     }
 }

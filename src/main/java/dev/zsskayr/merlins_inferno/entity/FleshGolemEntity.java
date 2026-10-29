@@ -44,7 +44,6 @@ public class FleshGolemEntity extends Monster {
     public static final double MOVEMENT_SPEED = 0.24;
 
     private static final float HEAL_PER_HIT = 6.0F;
-    private static final double CIRCLE_CHECK_RADIUS = 64.0;
 
     public FleshGolemEntity(EntityType<? extends FleshGolemEntity> type, Level level) {
         super(type, level);
@@ -82,8 +81,7 @@ public class FleshGolemEntity extends Monster {
         if (!(level instanceof ServerLevel serverLevel)) {
             return false;
         }
-        Player nearest = serverLevel.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, CIRCLE_CHECK_RADIUS, false);
-        return nearest != null && ProgressionHelper.hasReached(nearest, ProgressionHelper.SECOND_CIRCLE);
+        return ProgressionHelper.hasReached(serverLevel, ProgressionHelper.SECOND_CIRCLE);
     }
 
     @Override

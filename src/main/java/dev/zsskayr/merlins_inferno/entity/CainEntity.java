@@ -71,7 +71,6 @@ public class CainEntity extends Monster {
     private static final int PACT_DURATION = 160;
     /** A natural spawn attempt only goes through one time in this many - on top of the biome's own weight. */
     private static final int SPAWN_ATTEMPT_ODDS = 40;
-    private static final double CIRCLE_CHECK_RADIUS = 64.0;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(Component.translatable("entity.merlins_inferno.cain"),
             BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
@@ -119,8 +118,7 @@ public class CainEntity extends Monster {
         if (!(level instanceof ServerLevel serverLevel)) {
             return false;
         }
-        Player nearest = serverLevel.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, CIRCLE_CHECK_RADIUS, false);
-        if (nearest == null || !ProgressionHelper.hasReached(nearest, ProgressionHelper.SECOND_CIRCLE)) {
+        if (!ProgressionHelper.hasReached(serverLevel, ProgressionHelper.SECOND_CIRCLE)) {
             return false;
         }
         if (random.nextInt(SPAWN_ATTEMPT_ODDS) != 0) {

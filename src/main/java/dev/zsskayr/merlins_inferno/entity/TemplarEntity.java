@@ -64,7 +64,6 @@ public class TemplarEntity extends SacredCultistEntity {
 
     /** A natural spawn attempt only goes through one time in this many - on top of the biome's own weight. */
     private static final int SPAWN_ATTEMPT_ODDS = 12;
-    private static final double CIRCLE_CHECK_RADIUS = 64.0;
     private static final double PATROL_RANGE = 28.0;
     private static final double FOLLOW_CLOSE = 4.0;
 
@@ -113,8 +112,7 @@ public class TemplarEntity extends SacredCultistEntity {
         if (!(level instanceof ServerLevel serverLevel)) {
             return false;
         }
-        Player nearest = serverLevel.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, CIRCLE_CHECK_RADIUS, false);
-        if (nearest == null || !ProgressionHelper.hasReached(nearest, ProgressionHelper.SECOND_CIRCLE)) {
+        if (!ProgressionHelper.hasReached(serverLevel, ProgressionHelper.SECOND_CIRCLE)) {
             return false;
         }
         return random.nextInt(SPAWN_ATTEMPT_ODDS) == 0;

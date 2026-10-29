@@ -79,7 +79,6 @@ public class StarvedEntity extends Monster implements GeoEntity {
     private static final double SPEED_PER_HUNGER = 0.05;
     private static final double DAMAGE_PER_HUNGER = 0.08;
     /** How far a natural spawn attempt looks for the player whose Circle actually gates it. */
-    private static final double CIRCLE_CHECK_RADIUS = 64.0;
 
     private static final ResourceLocation HUNGER_SPEED_ID = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "starved_hunger_speed");
     private static final ResourceLocation HUNGER_DAMAGE_ID = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "starved_hunger_damage");
@@ -141,8 +140,7 @@ public class StarvedEntity extends Monster implements GeoEntity {
         if (!(level instanceof ServerLevel serverLevel)) {
             return false;
         }
-        Player nearest = serverLevel.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, CIRCLE_CHECK_RADIUS, false);
-        return nearest != null && ProgressionHelper.hasReached(nearest, ProgressionHelper.SECOND_CIRCLE);
+        return ProgressionHelper.hasReached(serverLevel, ProgressionHelper.SECOND_CIRCLE);
     }
 
     @Override
