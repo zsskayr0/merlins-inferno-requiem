@@ -49,6 +49,16 @@ public final class ModAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<String>> EQUIPPED_MARK =
             ATTACHMENT_TYPES.register("equipped_mark", () -> AttachmentType.builder(() -> "").serialize(Codec.STRING).copyOnDeath().build());
 
+    /** Mark of Cain: the game time by which the bearer must have killed something (0 = not started; see MarkOfCainHandler). */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> CAIN_KILL_DEADLINE =
+            ATTACHMENT_TYPES.register("cain_kill_deadline", () -> AttachmentType.builder(() -> 0L).serialize(Codec.LONG).build());
+    /** Mark of Cain: the game time of the next roll for "Mark of the Murder". */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> CAIN_MURDER_AT =
+            ATTACHMENT_TYPES.register("cain_murder_at", () -> AttachmentType.builder(() -> 0L).serialize(Codec.LONG).build());
+    /** Mark of Cain: whether "Mark of the Murder" is waiting for the next blow its bearer takes. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> CAIN_MURDER_ARMED =
+            ATTACHMENT_TYPES.register("cain_murder_armed", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
+
     /** Chunk attachment: set once the Arganite vein retrogen has run on the chunk (see ArganiteRetrogen). */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> ARGANITE_VEINS_DONE =
             ATTACHMENT_TYPES.register("arganite_veins_done", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());

@@ -58,6 +58,16 @@ public final class ModEnchantments {
         return getLevel(level, stack, HOLY);
     }
 
+    /** {@link #BANE_OF_HUMANITY}'s level on a stack - 0 if absent. */
+    public static int getBaneOfHumanityLevel(Level level, ItemStack stack) {
+        return getLevel(level, stack, BANE_OF_HUMANITY);
+    }
+
+    /** {@link #EVIL}'s level on a stack - 0 if absent. */
+    public static int getEvilLevel(Level level, ItemStack stack) {
+        return getLevel(level, stack, EVIL);
+    }
+
     /** Resolves and checks {@link #REAPING}'s level on a stack in one call - 0 if absent. */
     public static int getReapingLevel(Level level, ItemStack stack) {
         return getLevel(level, stack, REAPING);

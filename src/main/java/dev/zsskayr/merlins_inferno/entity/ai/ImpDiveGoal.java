@@ -29,7 +29,9 @@ public class ImpDiveGoal extends Goal {
     private static final int STAGGER_TICKS = 15;
     private static final double SEARCH_RANGE = 24.0;
     private static final int SCAN_INTERVAL_TICKS = 4;
-    private static final TargetingConditions TARGETING = TargetingConditions.forCombat().range(SEARCH_RANGE);
+    /** The pack dives on any player but a bearer of a Mark: the Marked are one of their own. */
+    private static final TargetingConditions TARGETING = TargetingConditions.forCombat().range(SEARCH_RANGE)
+            .selector(living -> !dev.zsskayr.merlins_inferno.mark.MarkHelper.hasMark(living));
 
     private final ImpEntity imp;
     @Nullable

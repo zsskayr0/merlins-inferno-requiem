@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "merlins_inferno:item/mark_of_cain"
+    "layer0": "merlins_inferno:item/mark_cain"
   }
 }

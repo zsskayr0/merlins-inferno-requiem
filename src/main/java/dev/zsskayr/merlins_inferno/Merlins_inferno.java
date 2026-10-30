@@ -103,6 +103,7 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new LyriumVillagerTrades());
         NeoForge.EVENT_BUS.register(new MarkOfDebtHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.MarkPickupHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.MarkOfCainHandler());
         NeoForge.EVENT_BUS.register(new PandoraHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EssenceDropHandler());
         NeoForge.EVENT_BUS.register(new BossRewardChestHandler());

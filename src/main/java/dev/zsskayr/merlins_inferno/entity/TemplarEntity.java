@@ -148,9 +148,9 @@ public class TemplarEntity extends SacredCultistEntity {
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         // Retaliation: strike one and the whole brotherhood answers.
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, SacredCultistEntity.class).setAlertOthers(SacredCultistEntity.class));
-        // Neutral to the player - unless it sees something demonic on them.
+        // Neutral to the player - unless it sees something demonic on them, or the Mark on them.
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
-                living -> living instanceof Player player && isDemonic(player)));
+                living -> living instanceof Player player && (isDemonic(player) || dev.zsskayr.merlins_inferno.mark.MarkHelper.hasMark(player))));
         // The faithful hunt the unholy, witches and the Majin-aligned (Tensura), on sight.
         this.targetSelector.addGoal(3, FactionTargets.huntForAngels(this));
     }

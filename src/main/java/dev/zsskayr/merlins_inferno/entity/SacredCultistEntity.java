@@ -113,9 +113,10 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity, Chu
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         // Circle 2+: hostile to the player on sight (the Pandora Box rumor). Circle 1: retaliation only,
-        // and the whole congregation joins in.
+        // and the whole congregation joins in. A Marked player is always prey, Circle or not.
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, true,
-                living -> living instanceof Player player && ProgressionHelper.hasReached(player, ProgressionHelper.SECOND_CIRCLE)));
+                living -> living instanceof Player player && (ProgressionHelper.hasReached(player, ProgressionHelper.SECOND_CIRCLE)
+                        || dev.zsskayr.merlins_inferno.mark.MarkHelper.hasMark(player))));
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this, SacredCultistEntity.class).setAlertOthers(SacredCultistEntity.class));
         // The faithful hunt the unholy, witches and the Majin-aligned (Tensura), whatever the circle.
         this.targetSelector.addGoal(3, FactionTargets.huntForAngels(this));
