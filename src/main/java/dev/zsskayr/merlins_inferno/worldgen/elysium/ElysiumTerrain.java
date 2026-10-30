@@ -28,6 +28,8 @@ public final class ElysiumTerrain {
     /** Blocks of "inland" per unit of the island field; tuned so ed reads roughly as blocks from the coast. */
     private static final double FIELD_SCALE = 1000.0;
     private static final double LAND_THRESHOLD = 0.07;
+    private static final double HOLE_DEPTH = 0.9;
+    private static final double HOLE_FROM = 0.28;
 
     /** What one column looks like: solid from {@code bottom} to {@code top} inclusive when {@code land}. */
     public static final class Column {
@@ -40,7 +42,7 @@ public final class ElysiumTerrain {
         public int x = Integer.MIN_VALUE, z = Integer.MIN_VALUE;
     }
 
-    private final Perlin warpA, warpB, isl1, isl2, isl3, altitude, temp, humid, rel1, rel2, rel3, under, pool, dune, ridge, islet;
+    private final Perlin warpA, warpB, isl1, isl2, isl3, altitude, temp, humid, rel1, rel2, rel3, under, pool, dune, ridge, islet, hole;
 
     public final long seed;
 
@@ -63,16 +65,26 @@ public final class ElysiumTerrain {
         dune = new Perlin(r.nextLong());
         ridge = new Perlin(r.nextLong());
         islet = new Perlin(r.nextLong());
+        hole = new Perlin(r.nextLong());
+    }
+
+    /** Blocks inland from the coast (zero or less over open sky): just the island field, much cheaper than a full {@link #sample}. */
+    public double inlandAt(int x, int z) {
+        double wx = x + 260.0 * warpA.fbm(x / 650.0, z / 650.0, 2);
+        double wz = z + 260.0 * warpB.fbm(x / 650.0, z / 650.0, 2);
+        double field = 0.78 * isl1.fbm(wx / 2000.0, wz / 2000.0, 2) + 0.17 * isl2.fbm(wx / 800.0, wz / 800.0, 2) + 0.05 * isl3.noise(wx / 260.0, wz / 260.0);
+        // sky pits: long, crooked slots cut through the interior (the noise is stretched along a slanted axis), so an island
+        // can hold a chasm that a bridge has to cross
+        double u = wx * 0.819 + wz * 0.574, v = -wx * 0.574 + wz * 0.819;
+        field -= HOLE_DEPTH * smooth(HOLE_FROM, HOLE_FROM + 0.16, hole.fbm(u / 780.0, v / 250.0, 2));
+        return (field - LAND_THRESHOLD) * FIELD_SCALE;
     }
 
     /** Fills {@code c} for the column ({@code x}, {@code z}); cheap enough to call per column, cached by the callers. */
     public void sample(int x, int z, Column c) {
         c.x = x;
         c.z = z;
-        double wx = x + 260.0 * warpA.fbm(x / 650.0, z / 650.0, 2);
-        double wz = z + 260.0 * warpB.fbm(x / 650.0, z / 650.0, 2);
-        double field = 0.78 * isl1.fbm(wx / 2000.0, wz / 2000.0, 2) + 0.17 * isl2.fbm(wx / 800.0, wz / 800.0, 2) + 0.05 * isl3.noise(wx / 260.0, wz / 260.0);
-        c.inland = (field - LAND_THRESHOLD) * FIELD_SCALE;
+        c.inland = inlandAt(x, z);
         c.temperature = climate(temp, x, z);
         c.humidity = climate(humid, x, z);
         if (c.inland <= 0.0) {

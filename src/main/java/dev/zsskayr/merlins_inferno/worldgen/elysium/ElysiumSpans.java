@@ -24,23 +24,23 @@ public final class ElysiumSpans {
     }
 
     public static final int BRIDGE_MAX_GAP = 300;
-    /** How far a ray walks across its own island before it must have left it. */
-    private static final double MAX_RAY = 700.0;
     private static final int MIN_GAP = 48;
     private static final double STEP = 12.0;
+    /** A ray inside its own island strides this far at a time. */
+    private static final double INLAND_STEP = 24.0;
     /** Beyond this much open sky a ray takes bigger strides: the far island is a continent, not a sliver. */
     private static final double FINE_GAP = 300.0;
     private static final double COARSE_STEP = 40.0;
 
     /** One search: how big its cells are, how many rays each throws, which gaps it accepts and how far apart survivors stay. */
-    private record Layer(int cell, int rays, int minGap, int maxGap, double crowd, long salt) {
+    private record Layer(int cell, int rays, int minGap, int maxGap, double maxRay, double crowd, long salt) {
         int reach() {
-            return (int) MAX_RAY + maxGap + cell;
+            return (int) maxRay + maxGap + cell;
         }
     }
 
-    private static final Layer SHORT = new Layer(512, 40, MIN_GAP, 560, 170.0, 0L);
-    private static final Layer LONG = new Layer(1024, 12, 560, 2400, 900.0, 0x5DEECE66DL);
+    private static final Layer SHORT = new Layer(512, 24, MIN_GAP, 560, 700.0, 170.0, 0L);
+    private static final Layer LONG = new Layer(1024, 12, 560, 2000, 450.0, 900.0, 0x5DEECE66DL);
     /** The longest crossing there can be. */
     public static final int MAX_GAP = LONG.maxGap();
 
@@ -143,16 +143,14 @@ public final class ElysiumSpans {
             double px = (i + rng.nextDouble()) * CELL, pz = (j + rng.nextDouble()) * CELL;
             double theta = rng.nextDouble() * 2.0 * Math.PI;
             double dx = Math.cos(theta), dz = Math.sin(theta);
-            terrain.sample((int) Math.floor(px), (int) Math.floor(pz), c);
-            if (!c.land || c.inland < 40.0) {
+            if (terrain.inlandAt((int) Math.floor(px), (int) Math.floor(pz)) < 40.0) {
                 continue;
             }
             double t = 0.0;
             boolean left = false;
-            while (t < MAX_RAY) {
-                t += STEP;
-                terrain.sample((int) Math.floor(px + dx * t), (int) Math.floor(pz + dz * t), c);
-                if (!c.land) {
+            while (t < layer.maxRay()) {
+                t += INLAND_STEP;
+                if (terrain.inlandAt((int) Math.floor(px + dx * t), (int) Math.floor(pz + dz * t)) <= 0.0) {
                     left = true;
                     break;
                 }
@@ -160,21 +158,30 @@ public final class ElysiumSpans {
             if (!left) {
                 continue;
             }
-            double tA = t - STEP;
+            // the shore lies between the last land sample and this one: walk in on it
+            double shoreLo = t - INLAND_STEP, shoreHi = t;
+            for (int n = 0; n < 5 && shoreHi - shoreLo > 1.5; n++) {
+                double mid = (shoreLo + shoreHi) / 2.0;
+                if (terrain.inlandAt((int) Math.floor(px + dx * mid), (int) Math.floor(pz + dz * mid)) > 0.0) {
+                    shoreLo = mid;
+                } else {
+                    shoreHi = mid;
+                }
+            }
+            double tA = shoreLo;
+            t = shoreHi;
             double gapStart = t;
             boolean landed = false;
             while (t - gapStart < MAX_GAP) {
                 double stride = t - gapStart < FINE_GAP ? STEP : COARSE_STEP;
                 t += stride;
-                terrain.sample((int) Math.floor(px + dx * t), (int) Math.floor(pz + dz * t), c);
-                if (c.land) {
+                if (terrain.inlandAt((int) Math.floor(px + dx * t), (int) Math.floor(pz + dz * t)) > 0.0) {
                     landed = true;
                     // a long stride overshoots the shore: walk back to it
                     double lo = t - stride, hi = t;
                     for (int n = 0; n < 6 && hi - lo > 1.5; n++) {
                         double mid = (lo + hi) / 2.0;
-                        terrain.sample((int) Math.floor(px + dx * mid), (int) Math.floor(pz + dz * mid), c);
-                        if (c.land) {
+                        if (terrain.inlandAt((int) Math.floor(px + dx * mid), (int) Math.floor(pz + dz * mid)) > 0.0) {
                             hi = mid;
                         } else {
                             lo = mid;
