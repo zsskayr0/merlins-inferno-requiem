@@ -1,6 +1,7 @@
 package dev.zsskayr.merlins_inferno.item;
 
 import java.util.function.Supplier;
+import dev.zsskayr.merlins_inferno.portal.ElysiumDimension;
 import dev.zsskayr.merlins_inferno.portal.OblivionDimension;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceKey;
@@ -31,13 +32,23 @@ public record WingsProfile(int cooldownTicks, ParticleOptions trail, ResourceLoc
         return Math.max(1, (int) Math.round(cooldownTicks * recharge.in(level)));
     }
 
-    /** A multiplier for each of the three worlds; everything that is neither the Nether nor Oblivion counts as the Overworld. */
-    public record PerWorld(double overworld, double nether, double oblivion) {
-        public static final PerWorld FLAT = new PerWorld(1, 1, 1);
+    /** A multiplier for each world; everything that is not the Nether, Oblivion or El'ysium counts as the Overworld. */
+    public record PerWorld(double overworld, double nether, double oblivion, double elysium) {
+        public static final PerWorld FLAT = new PerWorld(1, 1, 1, 1);
+
+        public PerWorld(double overworld, double nether, double oblivion) {
+            this(overworld, nether, oblivion, 1);
+        }
+
+        /** The same multipliers, with a different one in El'ysium. */
+        public PerWorld withElysium(double elysium) {
+            return new PerWorld(overworld, nether, oblivion, elysium);
+        }
 
         public double in(Level level) {
             ResourceKey<Level> dimension = level.dimension();
             if (dimension == OblivionDimension.LEVEL) return oblivion;
+            if (dimension == ElysiumDimension.LEVEL) return elysium;
             return dimension == Level.NETHER ? nether : overworld;
         }
     }

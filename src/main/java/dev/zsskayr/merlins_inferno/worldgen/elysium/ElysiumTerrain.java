@@ -108,9 +108,9 @@ public final class ElysiumTerrain {
             rel += w[DESERT] * (12.0 + 30.0 * Math.max(0.0, d) + 6.0 * w2);
         }
         if (w[PEAKS] > 0.005) {
-            double r = 1.0 - Math.abs(ridge.fbm(x / 320.0, z / 320.0, 4)) * 1.7;
+            double r = 1.0 - Math.abs(ridge.fbm(x / 210.0, z / 210.0, 4)) * 1.7;
             double massif = smooth(40.0, 420.0, ed);
-            rel += w[PEAKS] * (24.0 + 105.0 * massif * Math.pow(Math.max(0.0, r), 1.5) + 8.0 * w2);
+            rel += w[PEAKS] * (4.0 + 125.0 * massif * Math.pow(Math.max(0.0, r), 2.9) + 8.0 * w2);
         }
         if (w[WEEPING] > 0.005) {
             double lakes = smooth(0.18, 0.46, pool.fbm(x / 210.0 + 91.0, z / 210.0, 3));
@@ -118,7 +118,7 @@ public final class ElysiumTerrain {
         }
 
         double alt = 30.0 * altitude.fbm(x / 2600.0, z / 2600.0, 2);
-        double interior = BASE_Y + alt + rel * RELIEF;
+        double interior = softCeiling(BASE_Y + alt + rel * RELIEF);
         // every coast rises a little above the water, so a basin is always closed in by its own shore
         double shore = WATER_Y + 5.0;
         c.top = Math.min(MAX_Y - 6.0, Math.floor(lerp(shore, Math.max(interior, shore), smooth(0.0, 90.0, ed))));
@@ -128,6 +128,12 @@ public final class ElysiumTerrain {
         double thick = 8.0 + tmax * Math.pow(smooth(0.0, 650.0, ed), 0.7);
         double rough = 40.0 * (0.5 + 0.5 * under.fbm(x / 110.0, z / 110.0, 3)) * smooth(30.0, 300.0, ed);
         c.bottom = Math.max(MIN_Y + 3.0, Math.ceil(c.top - thick - rough));
+    }
+
+    /** Eases the tallest summits into the ceiling instead of slicing them flat against it. */
+    private static double softCeiling(double y) {
+        double knee = MAX_Y - 40.0;
+        return y <= knee ? y : knee + 28.0 * Math.tanh((y - knee) / 28.0);
     }
 
     /** Density for the noise generator: positive inside an island, with a soft gradient across its skin. */

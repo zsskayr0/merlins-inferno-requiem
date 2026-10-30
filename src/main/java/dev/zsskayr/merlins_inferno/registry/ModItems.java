@@ -70,7 +70,9 @@ public final class ModItems {
                     new dev.zsskayr.merlins_inferno.item.WingsProfile(12 * 20, net.minecraft.core.particles.ParticleTypes.END_ROD,
                             wingsTexture("seraph_wings"),
                             new dev.zsskayr.merlins_inferno.item.WingsProfile.PerWorld(1, 2, 2),
-                            new dev.zsskayr.merlins_inferno.item.WingsProfile.PerWorld(1, 0.75, 0.75),
+                            new dev.zsskayr.merlins_inferno.item.WingsProfile.PerWorld(1, 0.75, 0.75).withElysium(1.6),
+                            // in El'ysium the Seraph Wings recharge in under half the time and pull 60% harder
+                            new dev.zsskayr.merlins_inferno.item.WingsProfile.PerWorld(1, 1, 1).withElysium(0.4),
                             ModTags.Items.SERAPH_WINGS_ARMOR, ModItems.SERAPHIUM_BAR)));
     // The Fallen Wings also count as an iron chestplate's worth of armour while worn in the chest slot.
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.WingsItem> FALLEN_WINGS = ITEMS.registerItem("fallen_wings",
