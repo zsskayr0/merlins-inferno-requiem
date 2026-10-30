@@ -13,7 +13,7 @@
   "legacy_random_source": false,
   "noise": {
     "min_y": 0,
-    "height": 384,
+    "height": 1280,
     "size_horizontal": 1,
     "size_vertical": 1
   },
@@ -83,7 +83,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -124,7 +124,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -176,7 +176,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -217,7 +217,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -269,7 +269,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -310,7 +310,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -362,7 +362,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -403,7 +403,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -455,7 +455,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -493,7 +493,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -545,7 +545,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -583,7 +583,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -635,7 +635,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -648,7 +648,7 @@
                           "if_true": {
                             "type": "minecraft:y_above",
                             "anchor": {
-                              "absolute": 292
+                              "absolute": 920
                             },
                             "surface_depth_multiplier": 0,
                             "add_stone_depth": false
@@ -665,7 +665,7 @@
                           "if_true": {
                             "type": "minecraft:y_above",
                             "anchor": {
-                              "absolute": 258
+                              "absolute": 840
                             },
                             "surface_depth_multiplier": 0,
                             "add_stone_depth": false
@@ -715,7 +715,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 188
+                        "absolute": 708
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -728,7 +728,7 @@
                           "if_true": {
                             "type": "minecraft:y_above",
                             "anchor": {
-                              "absolute": 258
+                              "absolute": 840
                             },
                             "surface_depth_multiplier": 0,
                             "add_stone_depth": false

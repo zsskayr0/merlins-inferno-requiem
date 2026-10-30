@@ -11,11 +11,13 @@ import java.util.SplittableRandom;
  * <p>No Minecraft types in here on purpose: {@code tools/ElysiumPreview.java} renders it without starting the game.
  */
 public final class ElysiumTerrain {
-    public static final int BASE_Y = 200;
+    public static final int BASE_Y = 720;
     /** Water in every basin (the Silver Sea, marsh pools, weeping lakes) stands at this height. */
-    public static final int WATER_Y = 188;
+    public static final int WATER_Y = 708;
     public static final int MIN_Y = 0;
-    public static final int MAX_Y = 384;
+    public static final int MAX_Y = 1280;
+    /** Every relief amplitude below is scaled by this, so hills are hills and peaks are mountains next to a 900-block-deep island. */
+    private static final double RELIEF = 2.2;
 
     /** Biome climate anchors (temperature, humidity): the terrain blends by these, {@code multi_noise} picks by them. */
     public static final String[] BIOMES = {"silent_fields", "silverwood", "pale_marsh", "silver_sea", "salt_waste", "mute_peaks", "weeping_plains"};
@@ -116,15 +118,15 @@ public final class ElysiumTerrain {
         }
 
         double alt = 30.0 * altitude.fbm(x / 2600.0, z / 2600.0, 2);
-        double interior = BASE_Y + alt + rel;
+        double interior = BASE_Y + alt + rel * RELIEF;
         // every coast rises a little above the water, so a basin is always closed in by its own shore
         double shore = WATER_Y + 5.0;
-        c.top = Math.floor(lerp(shore, Math.max(interior, shore), smooth(0.0, 70.0, ed)));
+        c.top = Math.floor(lerp(shore, Math.max(interior, shore), smooth(0.0, 160.0, ed)));
 
         double mountain = w[PEAKS];
-        double tmax = 150.0 + 60.0 * mountain;
-        double thick = 8.0 + tmax * Math.pow(smooth(0.0, 650.0, ed), 0.7);
-        double rough = 38.0 * (0.5 + 0.5 * under.fbm(x / 95.0, z / 95.0, 3)) * smooth(30.0, 300.0, ed);
+        double tmax = 420.0 + 130.0 * mountain;
+        double thick = 8.0 + tmax * Math.pow(smooth(0.0, 900.0, ed), 0.7);
+        double rough = 110.0 * (0.5 + 0.5 * under.fbm(x / 160.0, z / 160.0, 3)) * smooth(30.0, 400.0, ed);
         c.bottom = Math.max(MIN_Y + 12.0, Math.ceil(c.top - thick - rough));
     }
 

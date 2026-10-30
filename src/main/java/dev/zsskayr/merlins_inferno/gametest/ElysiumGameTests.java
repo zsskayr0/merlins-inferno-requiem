@@ -57,7 +57,7 @@ public final class ElysiumGameTests {
         var gen = (NoiseBasedChunkGenerator) stem.generator();
         var biomes = access.registryOrThrow(Registries.BIOME);
         RandomState randomState = RandomState.create(gen.generatorSettings().value(), access.lookupOrThrow(Registries.NOISE), 4242L);
-        LevelHeightAccessor height = LevelHeightAccessor.create(0, 384);
+        LevelHeightAccessor height = LevelHeightAccessor.create(0, ElysiumTerrain.MAX_Y);
 
         AtomicReference<Result> done = new AtomicReference<>();
         AtomicReference<Throwable> failure = new AtomicReference<>();
@@ -160,7 +160,7 @@ public final class ElysiumGameTests {
     /** The y of the highest non-air block (the bare chunk's heightmaps are not refreshed by the surface rules). */
     private static int highest(ChunkAccess chunk, int x, int z) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-        for (int y = 383; y >= 0; y--) {
+        for (int y = ElysiumTerrain.MAX_Y - 1; y >= 0; y--) {
             if (!chunk.getBlockState(pos.set(x, y, z)).isAir()) {
                 return y;
             }
