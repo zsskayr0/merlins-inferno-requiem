@@ -215,8 +215,8 @@ public final class MarkGameTests {
         ModItems.DARK_COVEN_I.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
         handler.tickSecond(player);
         player.getMainHandItem().inventoryTick(h.getLevel(), player, 0, true);
-        h.assertTrue(dev.zsskayr.merlins_inferno.item.DarkCovenItem.isInvoked(player.getMainHandItem()), "The coven is not dismissed: the Wither it lives on is still there");
-        h.assertTrue(player.hasEffect(net.minecraft.world.effect.MobEffects.DAMAGE_BOOST), "and its boons hold");
+        h.assertTrue(dev.zsskayr.merlins_inferno.item.DarkCovenItem.isInvoked(player.getMainHandItem()), "The coven is not dismissed: the effect it lives on is still there");
+        h.assertTrue(player.hasEffect(dev.zsskayr.merlins_inferno.registry.ModEffects.DEMONIC_PACT), "and its Pact holds");
         h.succeed();
     }
 

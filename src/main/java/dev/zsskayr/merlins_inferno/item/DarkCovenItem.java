@@ -85,6 +85,21 @@ public class DarkCovenItem extends SwordItem {
      * health bar at stages IV to VII (the original's Wither XI was lethal in a second).
      */
     private static final int[] WITHER = {0, 0, 0, 1, 1, 1, 1};
+
+    /** Wither level (0 = I) of the Pact at a stage. */
+    public static int witherLevel(int stage) {
+        return WITHER[stage];
+    }
+
+    /** Strength and Speed amplifier (0 = level I) at a stage. */
+    public static int boon(int stage) {
+        return BOON[stage];
+    }
+
+    /** Jump Boost amplifier at a stage, or -1 for none. */
+    public static int jump(int stage) {
+        return JUMP[stage];
+    }
     /** Strength and Speed amplifier per stage (the original's values: III up to X). */
     private static final int[] BOON = {2, 3, 4, 5, 6, 7, 9};
     /** Jump Boost amplifier per stage, or -1 for none. */
@@ -168,8 +183,8 @@ public class DarkCovenItem extends SwordItem {
                 player.swing(hand, true);
             } else if (hold) {
                 player.setData(ModAttachments.COVEN_HOLD_UNTIL, now + HOLD_GRACE_TICKS);
-                MobEffectInstance wither = player.getEffect(MobEffects.WITHER);
-                if (wither == null || wither.getDuration() < HOLD_TOP_UP_BELOW) {
+                MobEffectInstance pact = player.getEffect(ModEffects.DEMONIC_PACT);
+                if (pact == null || pact.getDuration() < HOLD_TOP_UP_BELOW) {
                     this.lend(player, HOLD_LENT_TICKS, false);
                 }
             }
@@ -180,35 +195,17 @@ public class DarkCovenItem extends SwordItem {
     }
 
     /**
-     * Lends every effect of the coven for {@code ticks}. {@code replace} drops the ones already running first, so a shorter
-     * time takes hold too (effects only ever keep the longer one otherwise).
+     * Lends the coven for {@code ticks}: the Demonic Pact, which carries the boons and the Wither as one effect, and Night
+     * Vision (a screen effect that cannot be an attribute). {@code replace} drops them first, so a shorter time takes hold
+     * too (effects only ever keep the longer one otherwise).
      */
     private void lend(Player player, int ticks, boolean replace) {
-        boolean pact = this.stage == MAX_STAGE;
-        // One icon for the whole coven; everything else it lends is hidden, icon and particles both.
         if (replace) {
             player.removeEffect(ModEffects.DEMONIC_PACT);
+            player.removeEffect(MobEffects.NIGHT_VISION);
         }
         player.addEffect(new MobEffectInstance(ModEffects.DEMONIC_PACT, ticks, this.stage, false, false, true));
-        // The Wither is the price and the coven's life; every other effect borrows its duration.
-        this.put(player, MobEffects.WITHER, ticks, WITHER[this.stage], replace);
-        this.put(player, MobEffects.DAMAGE_BOOST, ticks, BOON[this.stage], replace);
-        this.put(player, MobEffects.MOVEMENT_SPEED, ticks, BOON[this.stage], replace);
-        this.put(player, MobEffects.NIGHT_VISION, Math.max(ticks, NIGHT_VISION_MIN_TICKS), 0, replace);
-        if (JUMP[this.stage] >= 0) {
-            this.put(player, MobEffects.JUMP, ticks, JUMP[this.stage], replace);
-        }
-        if (pact) {
-            this.put(player, MobEffects.DAMAGE_RESISTANCE, ticks, 1, replace);
-            this.put(player, MobEffects.UNLUCK, ticks, 6, replace);
-        }
-    }
-
-    private void put(Player player, Holder<MobEffect> effect, int ticks, int amplifier, boolean replace) {
-        if (replace) {
-            player.removeEffect(effect);
-        }
-        player.addEffect(new MobEffectInstance(effect, ticks, amplifier, false, false, false));
+        player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, Math.max(ticks, NIGHT_VISION_MIN_TICKS), 0, false, false, false));
     }
 
     private void invoke(ServerLevel level, ItemStack stack, Player player, int ticks) {
@@ -254,17 +251,7 @@ public class DarkCovenItem extends SwordItem {
         }
         player.setData(ModAttachments.COVEN_HOLD_UNTIL, -1L);
         this.removeBoon(player, ModEffects.DEMONIC_PACT, this.stage);
-        this.removeBoon(player, MobEffects.WITHER, WITHER[this.stage]);
-        this.removeBoon(player, MobEffects.DAMAGE_BOOST, BOON[this.stage]);
-        this.removeBoon(player, MobEffects.MOVEMENT_SPEED, BOON[this.stage]);
         this.removeBoon(player, MobEffects.NIGHT_VISION, 0);
-        if (JUMP[this.stage] >= 0) {
-            this.removeBoon(player, MobEffects.JUMP, JUMP[this.stage]);
-        }
-        if (this.stage == MAX_STAGE) {
-            this.removeBoon(player, MobEffects.DAMAGE_RESISTANCE, 1);
-            this.removeBoon(player, MobEffects.UNLUCK, 6);
-        }
     }
 
     /** Only the coven's own boon goes: an effect from another source (a stronger potion, say) is left alone. */
@@ -297,8 +284,8 @@ public class DarkCovenItem extends SwordItem {
             player.setData(ModAttachments.COVEN_HOLD_UNTIL, -1L);
             this.lend(player, RELEASE_TICKS, true);
         }
-        // The pact outlives the sword in hand: only its Wither ending (or sneak + right-click) puts it out.
-        if ((!held && !pact) || !player.hasEffect(MobEffects.WITHER)) {
+        // The pact outlives the sword in hand: only its effect ending (or sneak + right-click) puts it out.
+        if ((!held && !pact) || !player.hasEffect(ModEffects.DEMONIC_PACT)) {
             this.dismiss(stack, player);
             if (held && level instanceof ServerLevel) {
                 player.displayClientMessage(Component.translatable("item.merlins_inferno.dark_coven.dismissed").withStyle(ChatFormatting.GRAY), true);

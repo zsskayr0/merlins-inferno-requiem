@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.effect.DemonicPactEffect;
 import dev.zsskayr.merlins_inferno.effect.DruidicTranceEffect;
 import dev.zsskayr.merlins_inferno.effect.MarkOfDebtEffect;
 import dev.zsskayr.merlins_inferno.effect.SanctifiedEffect;
@@ -38,9 +39,9 @@ public final class ModEffects {
     public static final DeferredHolder<MobEffect, DruidicTranceEffect> DRUIDIC_TRANCE = MOB_EFFECTS.register("druidic_trance",
             () -> new DruidicTranceEffect(MobEffectCategory.NEUTRAL, 0x5FE04A));
 
-    // The Dark Coven's one visible effect: every boon and the Wither it lends are hidden behind it (see item.DarkCovenItem). The level is the stage.
-    public static final DeferredHolder<MobEffect, MarkOfDebtEffect> DEMONIC_PACT = MOB_EFFECTS.register("demonic_pact",
-            () -> new MarkOfDebtEffect(MobEffectCategory.NEUTRAL, 0x8A0A14));
+    // The Dark Coven's one effect: its Strength, Speed, jump, Wither and the rest all live inside it (see effect.DemonicPactEffect). The level is the stage.
+    public static final DeferredHolder<MobEffect, DemonicPactEffect> DEMONIC_PACT = MOB_EFFECTS.register("demonic_pact",
+            () -> new DemonicPactEffect(MobEffectCategory.NEUTRAL, 0x8A0A14));
 
     private ModEffects() {
     }
