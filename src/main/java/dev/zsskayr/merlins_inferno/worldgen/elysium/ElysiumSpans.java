@@ -25,11 +25,14 @@ public final class ElysiumSpans {
     private static final double MAX_RAY = 700.0;
     public static final int BRIDGE_MAX_GAP = 300;
     private static final int MIN_GAP = 48;
-    private static final int RAYS_PER_CELL = 24;
+    /** Two crossings whose midpoints are closer than this compete for the same place. */
+    private static final double CROWD = 170.0;
+    private static final int RAYS_PER_CELL = 40;
     private static final double STEP = 12.0;
 
     private final ElysiumTerrain terrain;
     private final ConcurrentHashMap<Long, List<Span>> cells = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, List<Span>> candidates = new ConcurrentHashMap<>();
 
     public ElysiumSpans(ElysiumTerrain terrain) {
         this.terrain = terrain;
@@ -56,11 +59,58 @@ public final class ElysiumSpans {
         return out;
     }
 
+    private static long key(int i, int j) {
+        return ((long) i << 32) ^ (j & 0xffffffffL);
+    }
+
+    /** The spans a cell keeps: its candidates that no better candidate in the 3x3 cells around it crowds out. */
     private List<Span> cell(int i, int j) {
         if (cells.size() > 4096) {
             cells.clear();
         }
-        return cells.computeIfAbsent(((long) i << 32) ^ (j & 0xffffffffL), k -> compute(i, j));
+        return cells.computeIfAbsent(key(i, j), k -> {
+            List<Span> mine = candidates(i, j);
+            List<Span> kept = new ArrayList<>();
+            for (Span c : mine) {
+                boolean crowded = false;
+                for (int di = -1; di <= 1 && !crowded; di++) {
+                    for (int dj = -1; dj <= 1 && !crowded; dj++) {
+                        for (Span o : candidates(i + di, j + dj)) {
+                            if (o != c && priority(o) > priority(c) && crowds(o, c)) {
+                                crowded = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!crowded) {
+                    kept.add(c);
+                }
+            }
+            return kept;
+        });
+    }
+
+    /** Longer crossings win, with a random tiebreak, so the survivors are spread out and tend to be the long ones. */
+    private static double priority(Span s) {
+        long h = (long) s.ax() * 73856093L ^ (long) s.az() * 19349663L ^ (long) s.bx() * 83492791L ^ (long) s.bz() * 2654435761L;
+        h ^= h >>> 33;
+        h *= 0xff51afd7ed558ccdL;
+        h ^= h >>> 33;
+        double random = (h >>> 11) / (double) (1L << 53);
+        return 0.55 * random + 0.45 * Math.min(s.length(), 500.0) / 500.0;
+    }
+
+    private static boolean crowds(Span a, Span b) {
+        double mx = (a.ax() + a.bx() - b.ax() - b.bx()) / 2.0, mz = (a.az() + a.bz() - b.az() - b.bz()) / 2.0;
+        return Math.hypot(mx, mz) < CROWD;
+    }
+
+    private List<Span> candidates(int i, int j) {
+        if (candidates.size() > 4096) {
+            candidates.clear();
+        }
+        return candidates.computeIfAbsent(key(i, j), k -> compute(i, j));
     }
 
     private List<Span> compute(int i, int j) {
@@ -123,15 +173,7 @@ public final class ElysiumSpans {
             if (!ua.land || !ub.land) {
                 continue;
             }
-            boolean twin = false;
-            for (Span o : found) {
-                // two rays often find the same crossing; keep one chain pair per crossing
-                twin |= Math.hypot(o.ax() - ax, o.az() - az) < 70.0 && Math.hypot(o.bx() - bx, o.bz() - bz) < 70.0
-                        || Math.hypot(o.ax() - bx, o.az() - bz) < 70.0 && Math.hypot(o.bx() - ax, o.bz() - az) < 70.0;
-            }
-            if (!twin) {
-                found.add(new Span(ax, a.top, az, bx, b.top, bz, ua.bottom + 8.0, ub.bottom + 8.0, gap));
-            }
+            found.add(new Span(ax, a.top, az, bx, b.top, bz, ua.bottom + 8.0, ub.bottom + 8.0, gap));
         }
         return found;
     }
