@@ -211,8 +211,9 @@ public final class ElysiumTerrain {
         double t = s / half;
         double w = -dx * sa + dz * ca - bend * t * t;
         // worn edges: slow swells along the cut, ragged bites and spurs a few blocks across
-        double width = wide * Math.pow(1.0 - t * t, 0.6) * (1.0 + 0.16 * hole.noise(s / 70.0 + saltI * 7.3, saltJ * 3.1 + 0.5))
-                + 4.0 * hole.noise(x / 16.0 + 40.0, z / 16.0) + 0.7 * hole.noise(x / 5.0, z / 5.0 + 17.0);
+        double width = wide * Math.pow(1.0 - t * t, 0.6) * (1.0 + 0.28 * hole.noise(s / 70.0 + saltI * 7.3, saltJ * 3.1 + 0.5))
+                + 9.0 * hole.noise(x / 150.0 + 61.0, z / 150.0 + 7.0) + 6.0 * hole.noise(x / 42.0 + 23.0, z / 42.0) + 4.0 * hole.noise(x / 16.0 + 40.0, z / 16.0)
+                + 1.4 * hole.noise(x / 5.0, z / 5.0 + 17.0);
         double dist = Math.abs(w) - width;
         if (dist < best) {
             if (out != null) {

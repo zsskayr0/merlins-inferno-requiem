@@ -83,7 +83,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 138
+                        "absolute": 0
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -124,7 +124,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 138
+                        "absolute": 0
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -176,7 +176,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 138
+                        "absolute": 0
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -217,7 +217,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 138
+                        "absolute": 0
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -452,7 +452,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 138
+                        "absolute": 0
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -490,7 +490,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 138
+                        "absolute": 0
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -542,7 +542,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 138
+                        "absolute": 0
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
@@ -622,7 +622,7 @@
                     "if_true": {
                       "type": "minecraft:y_above",
                       "anchor": {
-                        "absolute": 138
+                        "absolute": 0
                       },
                       "surface_depth_multiplier": 0,
                       "add_stone_depth": false
