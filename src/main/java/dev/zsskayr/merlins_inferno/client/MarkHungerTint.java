@@ -90,7 +90,7 @@ public final class MarkHungerTint {
             int x = right - i * 8 - 9;
             int y = top + (shake ? random.nextInt(3) - 1 : 0);
             ResourceLocation sprite = i * 2 + 1 < level ? FULL : i * 2 + 1 == level ? HALF : EMPTY;
-            graphics.blitSprite(sprite, x, y + 1, 10, 8);
+            graphics.blitSprite(sprite, x + 1, y, 8, 9);
         }
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
