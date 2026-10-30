@@ -67,6 +67,10 @@ public final class ModAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> COVEN_LAST_USE =
             ATTACHMENT_TYPES.register("coven_last_use", () -> AttachmentType.builder(() -> -100L).build());
 
+    /** Dark Coven swords a player died holding: handed back on respawn (see DarkCovenKeepHandler). Throwaway, not saved. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<java.util.List<net.minecraft.world.item.ItemStack>>> KEPT_COVENS =
+            ATTACHMENT_TYPES.register("kept_covens", () -> AttachmentType.builder(() -> (java.util.List<net.minecraft.world.item.ItemStack>) new java.util.ArrayList<net.minecraft.world.item.ItemStack>()).build());
+
     /** Chunk attachment: set once the Arganite vein retrogen has run on the chunk (see ArganiteRetrogen). */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> ARGANITE_VEINS_DONE =
             ATTACHMENT_TYPES.register("arganite_veins_done", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());

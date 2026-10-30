@@ -110,7 +110,7 @@ public class DarkCovenItem extends SwordItem {
         return data != null && data.contains(INVOKED_TAG) && data.copyTag().getBoolean(INVOKED_TAG);
     }
 
-    private static void setInvoked(ItemStack stack, boolean invoked) {
+    public static void setInvoked(ItemStack stack, boolean invoked) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, (CompoundTag tag) -> {
             if (invoked) {
                 tag.putBoolean(INVOKED_TAG, true);
@@ -240,13 +240,14 @@ public class DarkCovenItem extends SwordItem {
         player.displayClientMessage(name, true);
     }
 
-    /** Ends the coven: the flag goes and so do the boons it lent (the Wither, if still there, runs its course). */
+    /** Ends the coven: the flag goes and so do the effects it lent, the Wither included. */
     private void dismiss(ItemStack stack, Player player) {
         setInvoked(stack, false);
         if (this.stage != MAX_STAGE) {
             player.getCooldowns().addCooldown(this, COOLDOWN_SECONDS * 20);
         }
         player.setData(ModAttachments.COVEN_HOLD_UNTIL, -1L);
+        this.removeBoon(player, MobEffects.WITHER, WITHER[this.stage]);
         this.removeBoon(player, MobEffects.DAMAGE_BOOST, BOON[this.stage]);
         this.removeBoon(player, MobEffects.MOVEMENT_SPEED, BOON[this.stage]);
         this.removeBoon(player, MobEffects.NIGHT_VISION, 0);
