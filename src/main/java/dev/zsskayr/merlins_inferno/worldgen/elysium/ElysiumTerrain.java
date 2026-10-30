@@ -454,7 +454,10 @@ public final class ElysiumTerrain {
         double bestGap = reach;
         for (int k = 0; k < 2; k++) {
             double gate = rvWidth.fbm(x / 1500.0 + 50.0 * k, z / 1500.0, 2);
-            double half = k == 0 ? 11.0 * smooth(-0.3, 0.3, gate) : 5.0 * smooth(-0.1, 0.45, gate);
+            double u = k == 0 ? smooth(-0.3, 0.3, gate) : smooth(-0.1, 0.45, gate);
+            // a river never just stops: where it would fade it first swells into a round lake, and ends there
+            double lake = (k == 0 ? 10.0 : 7.0) * (u < 0.12 ? Math.sqrt(u / 0.12) : 1.0 - smooth(0.12, 0.5, u));
+            double half = (k == 0 ? 16.0 : 7.0) * u + lake;
             half *= 0.7 + 0.6 * (0.5 + 0.5 * rvWidth.noise(x / 90.0 + 9.0 * k, z / 90.0));
             if (half < 0.5) {
                 continue;

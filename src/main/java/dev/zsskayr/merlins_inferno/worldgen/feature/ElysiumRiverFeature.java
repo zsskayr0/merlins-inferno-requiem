@@ -25,7 +25,7 @@ import dev.zsskayr.merlins_inferno.worldgen.elysium.ElysiumTerrains;
  * point of the river's line, so a river holds one level across its width and steps down along its length.
  */
 public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
-    private static final double BANK = 17.0;
+    private static final double BANK = 24.0;
 
     public ElysiumRiverFeature() {
         super(NoneFeatureConfiguration.CODEC);
@@ -103,7 +103,7 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                 BlockState under = level.getBlockState(pos.set(x, top - 1, z));
                 if (d <= half) {
                     double t = d / half;
-                    double depth = Math.max(1.0, Math.min(7.0, 0.8 + 0.55 * half));
+                    double depth = Math.max(1.0, Math.min(8.0, 0.8 + 0.5 * half));
                     int bed = (int) Math.floor(level0 - depth * (1.0 - t * t));
                     for (int y = bed; y <= Math.max(top, level0); y++) {
                         if (!kept(level.getBlockState(pos.set(x, y, z)))) {
