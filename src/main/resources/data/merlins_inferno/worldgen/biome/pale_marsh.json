@@ -21,7 +21,9 @@
     [
       "merlins_inferno:elysium_spans"
     ],
-    [],
+    [
+      "merlins_inferno:elysium_erosion"
+    ],
     [
       "merlins_inferno:elysium_ore_calcite",
       "merlins_inferno:elysium_ore_quartzite",

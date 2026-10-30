@@ -1,0 +1,8 @@
+{
+  "feature": "merlins_inferno:elysium_erosion",
+  "placement": [
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

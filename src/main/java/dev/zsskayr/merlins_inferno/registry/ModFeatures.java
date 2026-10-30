@@ -60,6 +60,10 @@ public final class ModFeatures {
     public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumSpansFeature> ELYSIUM_SPANS =
             FEATURES.register("elysium_spans", dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumSpansFeature::new);
 
+    // Rubble, crumbled stone and vines along the slashes.
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumErosionFeature> ELYSIUM_EROSION =
+            FEATURES.register("elysium_erosion", dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumErosionFeature::new);
+
     private ModFeatures() {
     }
 

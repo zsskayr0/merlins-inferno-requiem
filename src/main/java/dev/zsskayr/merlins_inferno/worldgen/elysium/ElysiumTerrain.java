@@ -92,6 +92,10 @@ public final class ElysiumTerrain {
      * clean through an island as if something struck it: the walls stay as high as the rock around them and run all the way
      * down the underside. Far from any slash this is huge.
      */
+    public double slashDistAt(int x, int z) {
+        return slashDist(x, z);
+    }
+
     private double slashDist(int x, int z) {
         int ci = Math.floorDiv(x, SLASH_CELL), cj = Math.floorDiv(z, SLASH_CELL);
         double best = 1.0e9;
@@ -117,7 +121,9 @@ public final class ElysiumTerrain {
                 }
                 double t = s / half;
                 double w = -dx * sa + dz * ca - bend * t * t;
-                double width = wide * Math.pow(1.0 - t * t, 0.6) * (1.0 + 0.12 * hole.noise(s / 70.0 + i * 7.3, j * 3.1 + 0.5));
+                // worn edges: slow swells along the cut, ragged bites and spurs a few blocks across
+                double width = wide * Math.pow(1.0 - t * t, 0.6) * (1.0 + 0.16 * hole.noise(s / 70.0 + i * 7.3, j * 3.1 + 0.5))
+                        + 4.5 * hole.noise(x / 11.0 + 40.0, z / 11.0) + 2.0 * hole.noise(x / 4.5, z / 4.5 + 17.0);
                 best = Math.min(best, Math.abs(w) - width);
             }
         }
