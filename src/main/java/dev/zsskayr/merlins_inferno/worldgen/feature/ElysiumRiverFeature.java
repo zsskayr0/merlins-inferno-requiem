@@ -41,6 +41,20 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
         return (h >>> 11) / (double) (1L << 53);
     }
 
+    /**
+     * The river bed, after Dynamic Waters' bank styles: fast narrow stretches run over rapids of gravel and cobble, slow
+     * wide ones silt up into sand and clay, and the material changes in patches a few blocks across rather than block by block.
+     */
+    private static BlockState bed(int x, int z, double half) {
+        double patch = rand(Math.floorDiv(x, 5), 0, Math.floorDiv(z, 5), 74);
+        double roll = rand(x, 3, z, 75);
+        boolean rapids = half < 6.0 ? patch < 0.75 : patch < 0.3;
+        if (rapids) {
+            return (roll < 0.55 ? Blocks.GRAVEL : roll < 0.8 ? Blocks.COBBLESTONE : roll < 0.9 ? Blocks.STONE : Blocks.MOSSY_COBBLESTONE).defaultBlockState();
+        }
+        return (roll < 0.5 ? Blocks.SAND : roll < 0.75 ? Blocks.CLAY : Blocks.GRAVEL).defaultBlockState();
+    }
+
     /** Bridges, chains and lanterns stand over the water and are never washed away. */
     private static boolean kept(BlockState s) {
         return s.is(ModBlocks.ARGANITE_BRICKS.get()) || s.is(ModBlocks.ARGANITE_BRICKS_WALL.get()) || s.is(Blocks.LANTERN)
@@ -115,11 +129,11 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                             level.setBlock(pos, y <= level0 ? water : air, 2);
                         }
                     }
-                    BlockState bedBlock = rand(x, 0, z, 71) < 0.35 ? Blocks.CLAY.defaultBlockState() : Blocks.GRAVEL.defaultBlockState();
+                    BlockState bedBlock = bed(x, z, half);
                     level.setBlock(pos.set(x, bed - 1, z), bedBlock, 2);
                     if (t > 0.7) {
-                        level.setBlock(pos.set(x, bed, z), Blocks.GRAVEL.defaultBlockState(), 2);
-                        level.setBlock(pos.set(x, bed - 1, z), Blocks.GRAVEL.defaultBlockState(), 2);
+                        // the shallows at the edge: sand bars and gravel
+                        level.setBlock(pos.set(x, bed, z), rand(x, 4, z, 76) < 0.5 ? Blocks.SAND.defaultBlockState() : Blocks.GRAVEL.defaultBlockState(), 2);
                     }
                     double plant = rand(x, 1, z, 72);
                     if (plant < 0.03) {
@@ -142,9 +156,11 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                         for (int y = target + 1; y <= top; y++) {
                             level.setBlock(pos.set(x, y, z), air, 2);
                         }
-                        boolean shore = d < half + 2.5;
-                        level.setBlock(pos.set(x, target, z), shore ? (rand(x, 2, z, 73) < 0.5 ? Blocks.GRAVEL : Blocks.SAND).defaultBlockState() : surface, 2);
-                        level.setBlock(pos.set(x, target - 1, z), shore ? Blocks.GRAVEL.defaultBlockState() : under, 2);
+                        // the shore keeps the ground's own skin for the most part, with patches of gravel and sand
+                        double shoreRoll = d < half + 2.5 ? rand(Math.floorDiv(x, 4), 5, Math.floorDiv(z, 4), 73) : 0.0;
+                        boolean bare = shoreRoll > 0.55;
+                        level.setBlock(pos.set(x, target, z), bare ? (shoreRoll > 0.8 ? Blocks.GRAVEL : Blocks.SAND).defaultBlockState() : surface, 2);
+                        level.setBlock(pos.set(x, target - 1, z), bare ? Blocks.GRAVEL.defaultBlockState() : under, 2);
                         any = true;
                     } else if (top < level0 + 1 && d < half + 3.0) {
                         // a low bank: raise it just over the water, so the river holds
