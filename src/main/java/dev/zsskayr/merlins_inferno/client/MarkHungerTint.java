@@ -29,6 +29,9 @@ public final class MarkHungerTint {
     private static final float RED = 0.8F;
     private static final float GREEN = 0.74F;
     private static final float BLUE = 0.8F;
+    private static final float HUNGRY_RED = 0.62F;
+    private static final float HUNGRY_GREEN = 0.8F;
+    private static final float HUNGRY_BLUE = 0.5F;
     private static final float ALPHA = 0.9F;
 
     private MarkHungerTint() {
@@ -47,10 +50,10 @@ public final class MarkHungerTint {
             return;
         }
         event.setCanceled(true);
-        draw(event.getGuiGraphics(), minecraft, player.getFoodData());
+        draw(event.getGuiGraphics(), minecraft, player.getFoodData(), player.hasEffect(net.minecraft.world.effect.MobEffects.HUNGER));
     }
 
-    private static void draw(GuiGraphics graphics, Minecraft minecraft, FoodData food) {
+    private static void draw(GuiGraphics graphics, Minecraft minecraft, FoodData food, boolean hungry) {
         var gui = minecraft.gui;
         int right = graphics.guiWidth() / 2 + 91;
         int top = graphics.guiHeight() - gui.rightHeight;
@@ -60,7 +63,12 @@ public final class MarkHungerTint {
         boolean shake = food.getSaturationLevel() <= 0.0F && gui.getGuiTicks() % (level * 3 + 1) == 0;
         RandomSource random = RandomSource.create(gui.getGuiTicks() * 312871L);
         RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(RED, GREEN, BLUE, ALPHA);
+        // The Hunger effect sickens it, as it does the vanilla drumsticks.
+        if (hungry) {
+            RenderSystem.setShaderColor(HUNGRY_RED, HUNGRY_GREEN, HUNGRY_BLUE, ALPHA);
+        } else {
+            RenderSystem.setShaderColor(RED, GREEN, BLUE, ALPHA);
+        }
         for (int i = 0; i < 10; i++) {
             int x = right - i * 8 - 9;
             int y = top + (shake ? random.nextInt(3) - 1 : 0);

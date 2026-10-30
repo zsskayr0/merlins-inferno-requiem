@@ -93,8 +93,8 @@ public class DarkCovenItem extends SwordItem {
         return COLORS[stage];
     }
 
-    /** Kills, while invoked, a sword must make at each stage before it can be reforged into the next (like a Vampirism weapon's training). */
-    private static final int[] TRAINING = {20, 30, 40, 50, 60, 80};
+    /** Kills ("souls"), while invoked, a sword must make at each stage before it can be reforged into the next (like a Vampirism weapon's training). */
+    private static final int[] TRAINING = {50, 75, 100, 150, 200, 300};
 
     public static int trainingRequired(int stage) {
         return TRAINING[stage];
@@ -354,6 +354,11 @@ public class DarkCovenItem extends SwordItem {
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.mythic").withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.stage", ROMAN[this.stage], ROMAN[MAX_STAGE])
                 .withStyle(ChatFormatting.DARK_PURPLE));
+        if (this.stage < MAX_STAGE) {
+            tooltip.add(isTrained(stack)
+                    ? Component.translatable("item.merlins_inferno.dark_coven.tooltip.trained").withStyle(ChatFormatting.DARK_RED)
+                    : Component.translatable("item.merlins_inferno.dark_coven.tooltip.training", trainingKills(stack), TRAINING[this.stage]).withStyle(ChatFormatting.GRAY));
+        }
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.no_drop").withStyle(ChatFormatting.DARK_GRAY));
     }
 }
