@@ -553,12 +553,17 @@
                         {
                           "type": "minecraft:condition",
                           "if_true": {
-                            "type": "minecraft:y_above",
-                            "anchor": {
-                              "absolute": 235
-                            },
-                            "surface_depth_multiplier": 0,
-                            "add_stone_depth": false
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:vertical_gradient",
+                              "random_name": "merlins_inferno:peak_snow",
+                              "true_at_and_below": {
+                                "absolute": 212
+                              },
+                              "false_at_and_above": {
+                                "absolute": 244
+                              }
+                            }
                           },
                           "then_run": {
                             "type": "minecraft:block",
@@ -570,17 +575,44 @@
                         {
                           "type": "minecraft:condition",
                           "if_true": {
-                            "type": "minecraft:y_above",
-                            "anchor": {
-                              "absolute": 205
-                            },
-                            "surface_depth_multiplier": 0,
-                            "add_stone_depth": false
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:vertical_gradient",
+                              "random_name": "merlins_inferno:peak_rock",
+                              "true_at_and_below": {
+                                "absolute": 178
+                              },
+                              "false_at_and_above": {
+                                "absolute": 212
+                              }
+                            }
                           },
                           "then_run": {
                             "type": "minecraft:block",
                             "result_state": {
                               "Name": "merlins_inferno:arganite"
+                            }
+                          }
+                        },
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:vertical_gradient",
+                              "random_name": "merlins_inferno:peak_scree",
+                              "true_at_and_below": {
+                                "absolute": 158
+                              },
+                              "false_at_and_above": {
+                                "absolute": 186
+                              }
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": {
+                              "Name": "minecraft:coarse_dirt"
                             }
                           }
                         },
@@ -633,12 +665,17 @@
                         {
                           "type": "minecraft:condition",
                           "if_true": {
-                            "type": "minecraft:y_above",
-                            "anchor": {
-                              "absolute": 205
-                            },
-                            "surface_depth_multiplier": 0,
-                            "add_stone_depth": false
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:vertical_gradient",
+                              "random_name": "merlins_inferno:peak_rock_fill",
+                              "true_at_and_below": {
+                                "absolute": 178
+                              },
+                              "false_at_and_above": {
+                                "absolute": 212
+                              }
+                            }
                           },
                           "then_run": {
                             "type": "minecraft:block",
