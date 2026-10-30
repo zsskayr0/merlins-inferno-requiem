@@ -32,8 +32,11 @@ import dev.zsskayr.merlins_inferno.registry.ModTags;
 /**
  * Everything the Mark of Cain does to its bearer ("Murder"), all keyed off {@link MarkHelper}.
  * <ul>
- *     <li><b>Strength and weakness:</b> faster regeneration, +30% damage dealt, +15% damage taken; immune to Wither and
- *     Poison; Holy weapons hurt more, Bane of Humanity and Evil weapons hurt far less.</li>
+ *     <li><b>Strength and weakness:</b> faster regeneration, +30% damage dealt, +15% damage taken; immune to Poison, and
+ *     the Wither does it no harm (the effect itself is left alone - the Dark Coven's boons live as long as it does);
+ *     Holy weapons hurt more, Bane of Humanity and Evil weapons hurt far less.</li>
+ *     <li><b>Hunger:</b> food fills half as much of the hunger bar; a kill fills some of it - a passive, neutral or
+ *     villager victim as much as a sweet berry, anything else half of that.</li>
  *     <li><b>Mark of the Murder:</b> one roll every 7 minutes; if it comes up, the next blow taken is returned 7-fold to
  *     whoever struck it, then 7 minutes of cooldown.</li>
  *     <li><b>The obligation:</b> the bearer must kill a passive or neutral mob (a villager counts) every 20 minutes. Late,
@@ -58,9 +61,16 @@ public class MarkOfCainHandler {
     private static final float HOLY_FACTOR = 1.5F;
     private static final float HOLY_FACTOR_PER_LEVEL_ABOVE_FIRST = 0.25F;
     private static final float BANE_FACTOR = 0.5F;
+    /** Hunger a kill gives back: the victims the obligation asks for fill a sweet berry's worth, any other kill half of that. */
+    private static final int KILL_FOOD_OBLIGATION = 2;
+    private static final int KILL_FOOD_OTHER = 1;
+    private static final float KILL_SATURATION_MODIFIER = 0.1F;
     private static final double OMEN_CHANCE = 0.03;
     private static final int OMEN_DURATION = 30 * SECOND;
     private static final ResourceLocation PENALTY_ID = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "cain_penalty");
+
+    /** The hunger bar as of the last second, to tell eaten food (halved) from what the Mark itself gave. */
+    private final java.util.Map<java.util.UUID, Integer> lastFood = new java.util.HashMap<>();
 
     /** Whoever was inside a village the last time we looked - an omen is rolled on the way in only. */
     private final java.util.Set<java.util.UUID> inVillage = new java.util.HashSet<>();
@@ -102,7 +112,6 @@ public class MarkOfCainHandler {
             player.setData(ModAttachments.CAIN_MURDER_AT, now + MURDER_INTERVAL);
         }
 
-        player.removeEffect(MobEffects.WITHER);
         player.removeEffect(MobEffects.POISON);
         if (player.isAlive() && player.getHealth() < player.getMaxHealth()) {
             player.heal(REGEN_PER_SECOND);
@@ -126,7 +135,15 @@ public class MarkOfCainHandler {
             player.getFoodData().setFoodLevel(0);
             player.getFoodData().setSaturation(0.0F);
             level.sendParticles(ParticleTypes.ASH, player.getX(), player.getY() + 1.0, player.getZ(), 8, 0.4, 0.8, 0.4, 0.02);
+        } else {
+            // Whatever the bar rose by since last second, short of the Mark's own kills, was food: half of it counts.
+            Integer last = lastFood.get(player.getUUID());
+            int food = player.getFoodData().getFoodLevel();
+            if (last != null && food > last) {
+                player.getFoodData().setFoodLevel(last + (food - last + 1) / 2);
+            }
         }
+        lastFood.put(player.getUUID(), player.getFoodData().getFoodLevel());
 
         // Omen on entering a village.
         boolean village = level.isVillage(player.blockPosition());
@@ -140,7 +157,8 @@ public class MarkOfCainHandler {
     }
 
     /** Forgets everything of the Mark when the player no longer bears it. */
-    private static void release(Player player) {
+    private void release(Player player) {
+        lastFood.remove(player.getUUID());
         applyPenalty(player, 0);
         if (player.getData(ModAttachments.CAIN_KILL_DEADLINE) != 0L) {
             player.setData(ModAttachments.CAIN_KILL_DEADLINE, 0L);
@@ -170,10 +188,17 @@ public class MarkOfCainHandler {
     /** A kill of the right kind pays the debt and starts the next 20 minutes. */
     @SubscribeEvent
     public void onDeath(LivingDeathEvent event) {
-        if (event.getSource().getEntity() instanceof Player player && player.level() instanceof ServerLevel level && bearsCain(player)
-                && isMurderVictim(event.getEntity())) {
-            player.setData(ModAttachments.CAIN_KILL_DEADLINE, level.getGameTime() + KILL_WINDOW);
-            applyPenalty(player, 0);
+        if (event.getEntity() instanceof Player dead) {
+            lastFood.remove(dead.getUUID()); // the respawned bar is full: not food
+        }
+        if (event.getSource().getEntity() instanceof Player player && player.level() instanceof ServerLevel level && bearsCain(player)) {
+            boolean victim = isMurderVictim(event.getEntity());
+            if (victim) {
+                player.setData(ModAttachments.CAIN_KILL_DEADLINE, level.getGameTime() + KILL_WINDOW);
+                applyPenalty(player, 0);
+            }
+            player.getFoodData().eat(victim ? KILL_FOOD_OBLIGATION : KILL_FOOD_OTHER, KILL_SATURATION_MODIFIER);
+            lastFood.put(player.getUUID(), player.getFoodData().getFoodLevel());
         }
     }
 
@@ -181,7 +206,7 @@ public class MarkOfCainHandler {
     public void onEffectApplicable(MobEffectEvent.Applicable event) {
         if (bearsCain(event.getEntity())) {
             MobEffectInstance effect = event.getEffectInstance();
-            if (effect != null && (effect.is(MobEffects.WITHER) || effect.is(MobEffects.POISON))) {
+            if (effect != null && effect.is(MobEffects.POISON)) {
                 event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
             }
         }
@@ -190,6 +215,10 @@ public class MarkOfCainHandler {
     @SubscribeEvent
     public void onIncomingDamage(LivingIncomingDamageEvent event) {
         LivingEntity victim = event.getEntity();
+        if (event.getSource().is(DamageTypes.WITHER) && bearsCain(victim)) {
+            event.setCanceled(true); // the effect stays (the Dark Coven runs on it), it just does not hurt
+            return;
+        }
         Entity source = event.getSource().getEntity();
         float amount = event.getAmount();
         boolean changed = false;

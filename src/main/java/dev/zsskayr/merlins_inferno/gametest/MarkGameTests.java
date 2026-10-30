@@ -128,8 +128,11 @@ public final class MarkGameTests {
         player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.WITHER, 200));
         player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.POISON, 200));
         handler.tickSecond(player);
-        h.assertTrue(!player.hasEffect(net.minecraft.world.effect.MobEffects.WITHER) && !player.hasEffect(net.minecraft.world.effect.MobEffects.POISON),
-                "Wither and Poison do not stay on the bearer");
+        h.assertTrue(player.hasEffect(net.minecraft.world.effect.MobEffects.WITHER), "The Wither is left alone: the Dark Coven lives on it");
+        h.assertTrue(!player.hasEffect(net.minecraft.world.effect.MobEffects.POISON), "but Poison does not stay on the bearer");
+        var wither = incoming(player, h.getLevel().damageSources().wither(), 1.0F);
+        handler.onIncomingDamage(wither);
+        h.assertTrue(wither.isCanceled(), "and the Wither does no harm");
         h.succeed();
     }
 
@@ -179,6 +182,41 @@ public final class MarkGameTests {
         h.assertTrue(dev.zsskayr.merlins_inferno.compat.OptionalCurios.equipped(player).stream().noneMatch(stack -> stack.getItem() instanceof dev.zsskayr.merlins_inferno.item.MarkItem),
                 "The cure empties the slot");
         h.assertTrue(!MarkHelper.hasMark(player), "and frees the player");
+        h.succeed();
+    }
+
+    @GameTest(template = "bench_empty")
+    public static void foodFillsHalfAndKillsFeed(GameTestHelper h) {
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        var handler = new MarkOfCainHandler();
+        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        player.getFoodData().setFoodLevel(8);
+        handler.tickSecond(player);
+        player.getFoodData().setFoodLevel(14);
+        handler.tickSecond(player);
+        h.assertTrue(player.getFoodData().getFoodLevel() == 11, "Food that fills 6 shanks fills 3 (got " + player.getFoodData().getFoodLevel() + ")");
+        var chicken = h.spawn(net.minecraft.world.entity.EntityType.CHICKEN, 1, 2, 1);
+        handler.onDeath(new LivingDeathEvent(chicken, h.getLevel().damageSources().playerAttack(player)));
+        h.assertTrue(player.getFoodData().getFoodLevel() == 13, "A chicken is a sweet berry's worth: 2 (got " + player.getFoodData().getFoodLevel() + ")");
+        handler.tickSecond(player);
+        h.assertTrue(player.getFoodData().getFoodLevel() == 13, "and what a kill gave is not halved");
+        var zombie = h.spawn(net.minecraft.world.entity.EntityType.ZOMBIE, 1, 2, 1);
+        handler.onDeath(new LivingDeathEvent(zombie, h.getLevel().damageSources().playerAttack(player)));
+        h.assertTrue(player.getFoodData().getFoodLevel() == 14, "A hostile kill gives half of that: 1 (got " + player.getFoodData().getFoodLevel() + ")");
+        h.succeed();
+    }
+
+    @GameTest(template = "bench_empty")
+    public static void theDarkCovenStaysInvokedUnderTheMark(GameTestHelper h) {
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        var handler = new MarkOfCainHandler();
+        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.DARK_COVEN_I.get()));
+        ModItems.DARK_COVEN_I.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        handler.tickSecond(player);
+        player.getMainHandItem().inventoryTick(h.getLevel(), player, 0, true);
+        h.assertTrue(dev.zsskayr.merlins_inferno.item.DarkCovenItem.isInvoked(player.getMainHandItem()), "The coven is not dismissed: the Wither it lives on is still there");
+        h.assertTrue(player.hasEffect(net.minecraft.world.effect.MobEffects.DAMAGE_BOOST), "and its boons hold");
         h.succeed();
     }
 
