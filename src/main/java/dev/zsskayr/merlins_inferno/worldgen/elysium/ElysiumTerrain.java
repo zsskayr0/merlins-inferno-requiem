@@ -125,7 +125,9 @@ public final class ElysiumTerrain {
 
         double mountain = w[PEAKS];
         double tmax = 135.0 + 55.0 * mountain;
-        double thick = 8.0 + tmax * Math.pow(smooth(0.0, 650.0, ed), 0.7);
+        // the rim drops away almost sheer in the first few dozen blocks, then the underside tapers like a cone
+        double cliff = Math.sqrt(smooth(0.0, 30.0, ed));
+        double thick = 8.0 + tmax * (0.6 * cliff + 0.4 * Math.pow(smooth(0.0, 650.0, ed), 0.7));
         double rough = 40.0 * (0.5 + 0.5 * under.fbm(x / 110.0, z / 110.0, 3)) * smooth(30.0, 300.0, ed);
         c.bottom = Math.max(MIN_Y + 3.0, Math.ceil(c.top - thick - rough));
     }
