@@ -354,28 +354,6 @@ public class DarkCovenItem extends SwordItem {
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.mythic").withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.stage", ROMAN[this.stage], ROMAN[MAX_STAGE])
                 .withStyle(ChatFormatting.DARK_PURPLE));
-        if (this.stage == MAX_STAGE) {
-            tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.invoke_pact", PACT_SECONDS).withStyle(ChatFormatting.GRAY));
-        } else {
-            tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.invoke", this.getDurationTicks() / 20).withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.cooldown", COOLDOWN_SECONDS).withStyle(ChatFormatting.GRAY));
-        }
-        if (this.stage < MAX_STAGE) {
-            tooltip.add(isTrained(stack)
-                    ? Component.translatable("item.merlins_inferno.dark_coven.tooltip.trained").withStyle(ChatFormatting.DARK_RED)
-                    : Component.translatable("item.merlins_inferno.dark_coven.tooltip.training", trainingKills(stack), TRAINING[this.stage]).withStyle(ChatFormatting.GRAY));
-        }
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.no_drop").withStyle(ChatFormatting.DARK_GRAY));
-        tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.cost").withStyle(ChatFormatting.DARK_RED));
-        if (isInvoked(stack)) {
-            tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.active").withStyle(ChatFormatting.LIGHT_PURPLE));
-        }
-        if (this.stage < MAX_STAGE - 1) {
-            tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.upgrade").withStyle(ChatFormatting.DARK_GRAY));
-        } else if (this.stage == MAX_STAGE - 1) {
-            tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.upgrade_final").withStyle(ChatFormatting.DARK_GRAY));
-        } else {
-            tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.awakened").withStyle(ChatFormatting.DARK_RED));
-        }
     }
 }
