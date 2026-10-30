@@ -1,0 +1,98 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "capped": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/gothic_iron_bars_post_capped"
+      }
+    },
+    {
+      "when": {
+        "capped": "false"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/gothic_iron_bars_post"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "capped": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/gothic_iron_bars_arm_capped"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "capped": "false"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/gothic_iron_bars_arm"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "capped": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/gothic_iron_bars_arm_capped",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "capped": "false"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/gothic_iron_bars_arm",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "capped": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/gothic_iron_bars_arm_capped",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "capped": "false"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/gothic_iron_bars_arm",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "capped": "true"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/gothic_iron_bars_arm_capped",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "capped": "false"
+      },
+      "apply": {
+        "model": "merlins_inferno:block/gothic_iron_bars_arm",
+        "y": 270
+      }
+    }
+  ]
+}

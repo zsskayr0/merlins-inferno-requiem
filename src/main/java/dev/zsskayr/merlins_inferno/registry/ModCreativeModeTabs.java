@@ -159,6 +159,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.SOUL_SPORE.get());
                         output.accept(ModItems.PETRIFIED_SKULL_ITEM.get());
                         output.accept(ModItems.WITHERED_OBSIDIAN_ITEM.get());
+                        output.accept(ModItems.PURIFIED_OBSIDIAN_ITEM.get());
                         output.accept(ModItems.INFERNAL_ESSENCE.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_ITEM.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_STAIRS_ITEM.get());
@@ -217,6 +218,9 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.HELLGLASS_ITEM.get());
                         output.accept(ModItems.CRYPT_GLASS_PANE_ITEM.get());
                         output.accept(ModItems.HELLGLASS_PANE_ITEM.get());
+                        output.accept(ModItems.GOTHIC_IRON_BARS_ITEM.get());
+                        output.accept(ModItems.GOTHIC_GATE_ITEM.get());
+                        output.accept(ModItems.GOTHIC_GREAT_GATE_ITEM.get());
                         output.accept(ModItems.CHURCH_CANDELABRE_ITEM.get());
                         output.accept(ModItems.CHURCH_TOMBSTONE_ITEM.get());
                         output.accept(ModItems.WEEPING_EYE.get());

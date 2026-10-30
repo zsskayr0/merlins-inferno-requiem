@@ -1,0 +1,50 @@
+{
+  "carvers": {},
+  "downfall": 0.4,
+  "temperature": 0.5,
+  "has_precipitation": false,
+  "effects": {
+    "sky_color": 11121338,
+    "fog_color": 12107718,
+    "water_color": 8364981,
+    "water_fog_color": 4874866,
+    "grass_color": 10465439,
+    "foliage_color": 10465439
+  },
+  "features": [
+    [],
+    [],
+    [
+      "merlins_inferno:elysium_water"
+    ],
+    [],
+    [
+      "merlins_inferno:elysium_spans"
+    ],
+    [],
+    [
+      "merlins_inferno:elysium_ore_calcite",
+      "merlins_inferno:elysium_ore_quartzite",
+      "merlins_inferno:elysium_ore_diorite",
+      "merlins_inferno:elysium_ore_andesite"
+    ],
+    [],
+    [],
+    [
+      "minecraft:seagrass_deep_cold",
+      "minecraft:kelp_cold"
+    ],
+    []
+  ],
+  "spawn_costs": {},
+  "spawners": {
+    "monster": [],
+    "creature": [],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

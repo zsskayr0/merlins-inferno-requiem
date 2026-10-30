@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "merlins_inferno:blocks/gothic_gate",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "merlins_inferno:gothic_gate",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "merlins_inferno:gothic_gate",
+              "properties": {
+                "half": "lower"
+              }
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

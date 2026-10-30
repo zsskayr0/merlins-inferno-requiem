@@ -147,6 +147,11 @@ public final class ModBlocks {
             props -> new DoorBlock(ModWoodTypes.ASHWOOD_SET, props),
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS)
                     .strength(3.0F).sound(SoundType.WOOD).noOcclusion().ignitedByLava().pushReaction(PushReaction.DESTROY));
+    /** The Gothic Gate at 3 x 3: two spear-tipped leaves hung in the middle of the opening, in line with Gothic Iron Bars. */
+    public static final DeferredBlock<GreatDoorBlock> GOTHIC_GREAT_GATE = BLOCKS.registerBlock("gothic_great_gate",
+            props -> new GreatDoorBlock(ModWoodTypes.GOTHIC_IRON_SET, props, true),
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).requiresCorrectToolForDrops()
+                    .strength(5.0F, 6.0F).noOcclusion().pushReaction(PushReaction.BLOCK));
     /** 3 x 3 double door: nine cells of one block, see GreatDoorBlock. */
     public static final DeferredBlock<GreatDoorBlock> ASHWOOD_GREAT_DOOR = BLOCKS.registerBlock("ashwood_great_door",
             props -> new GreatDoorBlock(ModWoodTypes.ASHWOOD_SET, props),
@@ -179,7 +184,7 @@ public final class ModBlocks {
     public static final DeferredBlock<GreatDoorBlock> HAUNTED_GREAT_DOOR = BLOCKS.registerBlock("haunted_great_door",
             props -> new GreatDoorBlock(ModWoodTypes.HAUNTED_SET, props), hauntedWood(4.0F).noOcclusion().pushReaction(PushReaction.BLOCK));
     /** Every great door, for the block entity type and the loot tables. */
-    public static final java.util.List<DeferredBlock<GreatDoorBlock>> GREAT_DOORS = java.util.List.of(ASHWOOD_GREAT_DOOR, SPRUCE_GREAT_DOOR, OAK_GREAT_DOOR, BIRCH_GREAT_DOOR, JUNGLE_GREAT_DOOR, ACACIA_GREAT_DOOR, DARK_OAK_GREAT_DOOR, MANGROVE_GREAT_DOOR, CHERRY_GREAT_DOOR, BAMBOO_GREAT_DOOR, CRIMSON_GREAT_DOOR, WARPED_GREAT_DOOR, HAUNTED_GREAT_DOOR);
+    public static final java.util.List<DeferredBlock<GreatDoorBlock>> GREAT_DOORS = java.util.List.of(GOTHIC_GREAT_GATE, ASHWOOD_GREAT_DOOR, SPRUCE_GREAT_DOOR, OAK_GREAT_DOOR, BIRCH_GREAT_DOOR, JUNGLE_GREAT_DOOR, ACACIA_GREAT_DOOR, DARK_OAK_GREAT_DOOR, MANGROVE_GREAT_DOOR, CHERRY_GREAT_DOOR, BAMBOO_GREAT_DOOR, CRIMSON_GREAT_DOOR, WARPED_GREAT_DOOR, HAUNTED_GREAT_DOOR);
     public static final DeferredBlock<TrapDoorBlock> ASHWOOD_TRAPDOOR = BLOCKS.registerBlock("ashwood_trapdoor",
             props -> new TrapDoorBlock(ModWoodTypes.ASHWOOD_SET, props),
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS)
@@ -458,6 +463,16 @@ public final class ModBlocks {
             dev.zsskayr.merlins_inferno.block.OblivionPortalBlock::new, BlockBehaviour.Properties.of().noCollission().strength(-1.0F)
                     .sound(SoundType.GLASS).lightLevel(state -> 5).pushReaction(PushReaction.BLOCK).noLootTable());
 
+    // The film of an El'ysium portal; lit like Oblivion's (see OblivionKeyItem). No item, no drops.
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.ElysiumPortalBlock> ELYSIUM_PORTAL = BLOCKS.registerBlock("elysium_portal",
+            dev.zsskayr.merlins_inferno.block.ElysiumPortalBlock::new, BlockBehaviour.Properties.of().noCollission().strength(-1.0F)
+                    .sound(SoundType.GLASS).lightLevel(state -> 8).pushReaction(PushReaction.BLOCK).noLootTable());
+
+    // --- Purified Obsidian: the frame of an El'ysium portal. The Angelical route's mobs drop it from Circle 2 on (see
+    // PurifiedObsidianDropHandler). Obsidian's own toughness; it borrows the Withered Obsidian texture for now. ---
+    public static final DeferredBlock<Block> PURIFIED_OBSIDIAN = BLOCKS.registerBlock("purified_obsidian",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN).requiresCorrectToolForDrops());
+
     // --- Hell Forge multiblock (3x3x3, see HellForgeStructure): Controller (GUI + inventory, front
     // face centre), Core (centre, sets the forge tier) and Vault (configurable automation port).
     // The 20 edge/corner blocks are plain Compressed Netherrack. ---
@@ -561,6 +576,15 @@ public final class ModBlocks {
     public static final DeferredBlock<net.minecraft.world.level.block.IronBarsBlock> CRYPT_GLASS_PANE = BLOCKS.registerBlock("crypt_glass_pane",
             net.minecraft.world.level.block.IronBarsBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY)
                     .instrument(NoteBlockInstrument.HAT).strength(0.3F).sound(SoundType.GLASS).noOcclusion());
+    // Church-window tracery in black iron, the Crypt Glass pane's hard-wearing sibling.
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GothicIronBarsBlock> GOTHIC_IRON_BARS = BLOCKS.registerBlock("gothic_iron_bars",
+            dev.zsskayr.merlins_inferno.block.GothicIronBarsBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK)
+                    .requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).noOcclusion());
+    // The tall hand-opened leaf to match the bars: spear-tipped pickets over a band of lozenges.
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GothicGateBlock> GOTHIC_GATE = BLOCKS.registerBlock("gothic_gate",
+            props -> new dev.zsskayr.merlins_inferno.block.GothicGateBlock(ModWoodTypes.GOTHIC_IRON_SET, props), BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)
+                    .noOcclusion().pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<net.minecraft.world.level.block.IronBarsBlock> HELLGLASS_PANE = BLOCKS.registerBlock("hellglass_pane",
             net.minecraft.world.level.block.IronBarsBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
                     .instrument(NoteBlockInstrument.HAT).strength(5.0F, 1200.0F).requiresCorrectToolForDrops()

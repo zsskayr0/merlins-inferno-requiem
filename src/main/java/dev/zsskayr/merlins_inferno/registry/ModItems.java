@@ -358,6 +358,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> STRIPPED_ASHWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.STRIPPED_ASHWOOD_WOOD);
     public static final DeferredItem<BlockItem> ASHWOOD_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_FENCE_GATE);
     public static final DeferredItem<BlockItem> ASHWOOD_DOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_DOOR);
+    public static final DeferredItem<BlockItem> GOTHIC_GREAT_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.GOTHIC_GREAT_GATE);
     public static final DeferredItem<BlockItem> ASHWOOD_GREAT_DOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_GREAT_DOOR);
     public static final DeferredItem<BlockItem> SPRUCE_GREAT_DOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SPRUCE_GREAT_DOOR);
     public static final DeferredItem<BlockItem> OAK_GREAT_DOOR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.OAK_GREAT_DOOR);
@@ -414,6 +415,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> CORRUPTED_OBSIDIAN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CORRUPTED_OBSIDIAN);
     public static final DeferredItem<BlockItem> PETRIFIED_SKULL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PETRIFIED_SKULL);
     public static final DeferredItem<BlockItem> WITHERED_OBSIDIAN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.WITHERED_OBSIDIAN);
+    public static final DeferredItem<BlockItem> PURIFIED_OBSIDIAN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PURIFIED_OBSIDIAN);
 
     // --- Hell Forge ingredients + the block itself (see ModBlocks). ---
 
@@ -474,6 +476,9 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> CRYPT_GLASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CRYPT_GLASS);
     public static final DeferredItem<BlockItem> HELLGLASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELLGLASS, new Item.Properties().fireResistant());
     public static final DeferredItem<BlockItem> CRYPT_GLASS_PANE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CRYPT_GLASS_PANE);
+    public static final DeferredItem<BlockItem> GOTHIC_IRON_BARS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.GOTHIC_IRON_BARS);
+    public static final DeferredItem<BlockItem> GOTHIC_GATE_ITEM = ITEMS.register("gothic_gate",
+            () -> new net.minecraft.world.item.DoubleHighBlockItem(ModBlocks.GOTHIC_GATE.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> HELLGLASS_PANE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELLGLASS_PANE, new Item.Properties().fireResistant());
     public static final DeferredItem<BlockItem> CHURCH_CANDELABRE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CHURCH_CANDELABRE);
     public static final DeferredItem<BlockItem> CHURCH_TOMBSTONE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CHURCH_TOMBSTONE);

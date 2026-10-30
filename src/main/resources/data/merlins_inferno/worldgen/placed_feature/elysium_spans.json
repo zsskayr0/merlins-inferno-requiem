@@ -1,0 +1,8 @@
+{
+  "feature": "merlins_inferno:elysium_spans",
+  "placement": [
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

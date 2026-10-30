@@ -52,6 +52,14 @@ public final class ModFeatures {
             FEATURES.register("haunted_tree", () -> new dev.zsskayr.merlins_inferno.worldgen.feature.HauntedTreeFeature(
                     dev.zsskayr.merlins_inferno.worldgen.feature.HauntedTreeFeature.Config.CODEC));
 
+    // Fills El'ysium's basins up to the water line (see the feature's own comment).
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumWaterFeature> ELYSIUM_WATER =
+            FEATURES.register("elysium_water", dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumWaterFeature::new);
+
+    // The bridges and giant chains that tie El'ysium's islands together.
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumSpansFeature> ELYSIUM_SPANS =
+            FEATURES.register("elysium_spans", dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumSpansFeature::new);
+
     private ModFeatures() {
     }
 

@@ -34,6 +34,11 @@ public final class ModAttachments {
             ATTACHMENT_TYPES.register("oblivion_origin", () -> AttachmentType.builder(() -> net.minecraft.core.GlobalPos.of(net.minecraft.world.level.Level.OVERWORLD, net.minecraft.core.BlockPos.ZERO))
                     .serialize(net.minecraft.core.GlobalPos.CODEC).copyOnDeath().build());
 
+    /** Where a player stood when they last entered El'ysium; the arrival portal brings them back there. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<net.minecraft.core.GlobalPos>> ELYSIUM_ORIGIN =
+            ATTACHMENT_TYPES.register("elysium_origin", () -> AttachmentType.builder(() -> net.minecraft.core.GlobalPos.of(net.minecraft.world.level.Level.OVERWORLD, net.minecraft.core.BlockPos.ZERO))
+                    .serialize(net.minecraft.core.GlobalPos.CODEC).copyOnDeath().build());
+
     /** Level attachment: the world day Ostara was last called to a Rowanwood tree (see OstaraSpawnHandler). */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> OSTARA_LAST_DAY =
             ATTACHMENT_TYPES.register("ostara_last_day", () -> AttachmentType.builder(() -> -1L).serialize(Codec.LONG).build());

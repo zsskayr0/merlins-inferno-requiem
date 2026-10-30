@@ -83,7 +83,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.POLISHED_PORCELAIN_SLAB.get(),
                 ModBlocks.HELL_FORGE_CONTROLLER.get(), ModBlocks.DEMONIC_CORE.get(), ModBlocks.HELL_FORGE_VAULT.get(),
                 ModBlocks.LYRIUM_BLOCK.get(),
-                ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.WITHERED_OBSIDIAN.get(),
+                ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.WITHERED_OBSIDIAN.get(), ModBlocks.PURIFIED_OBSIDIAN.get(),
                 ModBlocks.FLESH_BLOCK.get(), ModBlocks.MOUTH_BLOCK.get(), ModBlocks.VISCERA.get(), ModBlocks.FLESH_SLAB.get(), ModBlocks.FLESH_CARPET.get(), ModBlocks.RED_CHAIN.get(),
                 ModBlocks.BLACK_NYLIUM.get(), ModBlocks.BLIGHTSTONE_NYLIUM.get(), ModBlocks.TALL_CRIMSON_ROOTS.get(), ModBlocks.TALL_BLACK_GRASS.get(),
                 ModBlocks.LUST_FLOWER.get(),
@@ -175,6 +175,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.CORRUPTED_OBSIDIAN.get());
         dropSelf(ModBlocks.PETRIFIED_SKULL.get());
         dropSelf(ModBlocks.WITHERED_OBSIDIAN.get());
+        dropSelf(ModBlocks.PURIFIED_OBSIDIAN.get());
         dropSelf(ModBlocks.FLESH_BLOCK.get());
         dropSelf(ModBlocks.MOUTH_BLOCK.get());
         add(ModBlocks.VISCERA.get(), noDrop());

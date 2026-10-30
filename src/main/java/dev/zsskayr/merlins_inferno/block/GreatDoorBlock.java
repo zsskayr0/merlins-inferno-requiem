@@ -51,10 +51,17 @@ public class GreatDoorBlock extends Block implements EntityBlock {
     public static final IntegerProperty ROW = IntegerProperty.create("row", 0, 2);
 
     private final BlockSetType type;
+    /** A centred door stands in the middle of the cells' depth instead of the back 3/16, so it lines up with railings. */
+    private final boolean centered;
 
     public GreatDoorBlock(BlockSetType type, Properties properties) {
+        this(type, properties, false);
+    }
+
+    public GreatDoorBlock(BlockSetType type, Properties properties, boolean centered) {
         super(properties.sound(type.soundType()));
         this.type = type;
+        this.centered = centered;
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(OPEN, false)
                 .setValue(POWERED, false).setValue(COL, 1).setValue(ROW, 0));
     }
@@ -259,10 +266,10 @@ public class GreatDoorBlock extends Block implements EntityBlock {
      * Closed, every cell is a 3/16-thick slab at the back. Open, the outer columns keep a slab along their outer edge (the leaf
      * stands out to the front, 1.5 blocks long, but only the part inside the cell collides) and the middle column is empty.
      */
-    private static VoxelShape shapeOf(BlockState state) {
+    private VoxelShape shapeOf(BlockState state) {
         boolean open = state.getValue(OPEN);
         int col = state.getValue(COL);
-        double x1 = 0, x2 = 3, z1 = 0, z2 = 16;
+        double x1 = centered ? 6.5 : 0, x2 = centered ? 9.5 : 3, z1 = 0, z2 = 16;
         if (open) {
             if (col == 1) {
                 return Shapes.empty();

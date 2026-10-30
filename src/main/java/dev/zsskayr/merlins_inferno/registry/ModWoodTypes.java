@@ -24,6 +24,14 @@ public final class ModWoodTypes {
     public static final BlockSetType HAUNTED_SET = BlockSetType.register(new BlockSetType(Merlins_inferno.MODID + ":haunted"));
     public static final WoodType HAUNTED = WoodType.register(new WoodType(Merlins_inferno.MODID + ":haunted", HAUNTED_SET));
 
+    /** Black iron that opens by hand, with the clang of an iron door. */
+    public static final BlockSetType GOTHIC_IRON_SET = BlockSetType.register(new BlockSetType(Merlins_inferno.MODID + ":gothic_iron", true, true, true,
+            BlockSetType.PressurePlateSensitivity.EVERYTHING, net.minecraft.world.level.block.SoundType.METAL,
+            net.minecraft.sounds.SoundEvents.IRON_DOOR_CLOSE, net.minecraft.sounds.SoundEvents.IRON_DOOR_OPEN,
+            net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_CLOSE, net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_OPEN,
+            net.minecraft.sounds.SoundEvents.METAL_PRESSURE_PLATE_CLICK_OFF, net.minecraft.sounds.SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON,
+            net.minecraft.sounds.SoundEvents.STONE_BUTTON_CLICK_OFF, net.minecraft.sounds.SoundEvents.STONE_BUTTON_CLICK_ON));
+
     private ModWoodTypes() {
     }
 }

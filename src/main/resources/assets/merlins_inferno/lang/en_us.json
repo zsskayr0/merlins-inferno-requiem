@@ -542,6 +542,9 @@
   "block.merlins_inferno.blightstone_nylium": "Blightstone Nylium",
   "block.merlins_inferno.chiseled_polished_blightstone": "Chiseled Polished Blightstone",
   "block.merlins_inferno.crypt_glass_pane": "Crypt Glass Pane",
+  "block.merlins_inferno.gothic_iron_bars": "Gothic Iron Bars",
+  "block.merlins_inferno.gothic_gate": "Gothic Gate",
+  "block.merlins_inferno.gothic_great_gate": "Great Gothic Gate",
   "block.merlins_inferno.hellglass_pane": "Hellglass Pane",
   "block.merlins_inferno.church_candelabre": "Church Candelabre",
   "block.merlins_inferno.church_tombstone": "Church Tombstone",
@@ -569,5 +572,16 @@
   "item.merlins_inferno.polished_porcelain_dust": "Polished Porcelain Dust",
   "item.merlins_inferno.tiled_porcelain_dust": "Tiled Porcelain Dust",
   "block.merlins_inferno.grace_fire": "Grace Fire",
-  "death.attack.grace_fire": "%1$s was purified by Grace Fire"
+  "death.attack.grace_fire": "%1$s was purified by Grace Fire",
+  "block.merlins_inferno.purified_obsidian": "Purified Obsidian",
+  "block.merlins_inferno.elysium_portal": "El'ysium Portal",
+  "message.merlins_inferno.elysium_locked": "The portal does not answer: El'ysium is not yet open to you.",
+  "biome.merlins_inferno.silent_fields": "Silent Fields",
+  "biome.merlins_inferno.silverwood": "Silverwood",
+  "biome.merlins_inferno.pale_marsh": "Pale Marsh",
+  "biome.merlins_inferno.silver_sea": "Silver Sea",
+  "biome.merlins_inferno.salt_waste": "Salt Waste",
+  "biome.merlins_inferno.mute_peaks": "Mute Peaks",
+  "biome.merlins_inferno.weeping_plains": "Weeping Plains",
+  "dimension.merlins_inferno.elysium": "El'ysium"
 }

@@ -78,6 +78,7 @@ public class Merlins_inferno {
         ModMenuTypes.register(modEventBus);
         ModStructureProcessorTypes.register(modEventBus);
         ModFeatures.register(modEventBus);
+        dev.zsskayr.merlins_inferno.registry.ModDensityFunctions.register(modEventBus);
         ModStructureTypes.register(modEventBus);
         ModStructurePieceTypes.register(modEventBus);
         ModEntityTypes.register(modEventBus);
@@ -90,6 +91,7 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.ArganiteRetrogen());
         NeoForge.EVENT_BUS.register(new DemonbloodCombatHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.OblivionSpawnBias());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.PurifiedObsidianDropHandler());
         NeoForge.EVENT_BUS.register(new DebtCollectorHandler());
         NeoForge.EVENT_BUS.register(new VigilsSorrowHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EbonyArmorHandler());
