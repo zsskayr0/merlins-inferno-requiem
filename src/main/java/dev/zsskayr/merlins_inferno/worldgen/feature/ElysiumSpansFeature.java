@@ -132,7 +132,8 @@ public class ElysiumSpansFeature extends Feature<NoneFeatureConfiguration> {
         double ox = -uz * offset, oz = ux * offset;
         double ax = s.ax() - ux * 14 + ox, az = s.az() - uz * 14 + oz, ay = s.aBottom();
         double bx = s.bx() + ux * 14 + ox, bz = s.bz() + uz * 14 + oz, by = s.bBottom();
-        double sag = 0.26 * len + 22.0;
+        // a long crossing would sag out of the bottom of the world: keep the lowest link a few blocks above it
+        double sag = Math.min(0.26 * len + 22.0, Math.max(4.0, (ay + by) / 2.0 - 8.0));
         int n = Math.max(24, (int) (len / 3.0));
         double[][] pts = new double[n + 1][3];
         double[] arc = new double[n + 1];

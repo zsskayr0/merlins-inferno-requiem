@@ -20,10 +20,12 @@ public final class ElysiumSpans {
     }
 
     public static final int CELL = 512;
-    public static final int MAX_GAP = 420;
+    public static final int MAX_GAP = 560;
+    /** How far a ray walks across its own island before it must have left it. */
+    private static final double MAX_RAY = 700.0;
     public static final int BRIDGE_MAX_GAP = 300;
     private static final int MIN_GAP = 48;
-    private static final int RAYS_PER_CELL = 8;
+    private static final int RAYS_PER_CELL = 24;
     private static final double STEP = 12.0;
 
     private final ElysiumTerrain terrain;
@@ -35,7 +37,8 @@ public final class ElysiumSpans {
 
     /** Every span that may touch the box (endpoints within reach of it), found cell by cell. */
     public List<Span> near(int minX, int minZ, int maxX, int maxZ) {
-        int reach = MAX_GAP + 80;
+        // a span can start in a cell as far away as a full ray plus the gap, so look that far for the ones that end here
+        int reach = (int) MAX_RAY + MAX_GAP + CELL;
         int i0 = Math.floorDiv(minX - reach, CELL), i1 = Math.floorDiv(maxX + reach, CELL);
         int j0 = Math.floorDiv(minZ - reach, CELL), j1 = Math.floorDiv(maxZ + reach, CELL);
         List<Span> out = new ArrayList<>();
@@ -75,7 +78,7 @@ public final class ElysiumSpans {
             }
             double t = 0.0;
             boolean left = false;
-            while (t < 700.0) {
+            while (t < MAX_RAY) {
                 t += STEP;
                 terrain.sample((int) Math.floor(px + dx * t), (int) Math.floor(pz + dz * t), c);
                 if (!c.land) {
@@ -120,7 +123,15 @@ public final class ElysiumSpans {
             if (!ua.land || !ub.land) {
                 continue;
             }
-            found.add(new Span(ax, a.top, az, bx, b.top, bz, ua.bottom + 8.0, ub.bottom + 8.0, gap));
+            boolean twin = false;
+            for (Span o : found) {
+                // two rays often find the same crossing; keep one chain pair per crossing
+                twin |= Math.hypot(o.ax() - ax, o.az() - az) < 70.0 && Math.hypot(o.bx() - bx, o.bz() - bz) < 70.0
+                        || Math.hypot(o.ax() - bx, o.az() - bz) < 70.0 && Math.hypot(o.bx() - ax, o.bz() - az) < 70.0;
+            }
+            if (!twin) {
+                found.add(new Span(ax, a.top, az, bx, b.top, bz, ua.bottom + 8.0, ub.bottom + 8.0, gap));
+            }
         }
         return found;
     }
