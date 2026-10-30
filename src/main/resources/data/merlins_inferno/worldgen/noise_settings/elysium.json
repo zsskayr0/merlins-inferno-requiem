@@ -558,10 +558,10 @@
                               "type": "minecraft:vertical_gradient",
                               "random_name": "merlins_inferno:peak_snow",
                               "true_at_and_below": {
-                                "absolute": 212
+                                "absolute": 230
                               },
                               "false_at_and_above": {
-                                "absolute": 244
+                                "absolute": 262
                               }
                             }
                           },
@@ -580,10 +580,10 @@
                               "type": "minecraft:vertical_gradient",
                               "random_name": "merlins_inferno:peak_rock",
                               "true_at_and_below": {
-                                "absolute": 178
+                                "absolute": 190
                               },
                               "false_at_and_above": {
-                                "absolute": 212
+                                "absolute": 220
                               }
                             }
                           },
@@ -602,17 +602,17 @@
                               "type": "minecraft:vertical_gradient",
                               "random_name": "merlins_inferno:peak_scree",
                               "true_at_and_below": {
-                                "absolute": 158
+                                "absolute": 180
                               },
                               "false_at_and_above": {
-                                "absolute": 186
+                                "absolute": 198
                               }
                             }
                           },
                           "then_run": {
                             "type": "minecraft:block",
                             "result_state": {
-                              "Name": "minecraft:coarse_dirt"
+                              "Name": "minecraft:gravel"
                             }
                           }
                         },
@@ -670,10 +670,10 @@
                               "type": "minecraft:vertical_gradient",
                               "random_name": "merlins_inferno:peak_rock_fill",
                               "true_at_and_below": {
-                                "absolute": 178
+                                "absolute": 180
                               },
                               "false_at_and_above": {
-                                "absolute": 212
+                                "absolute": 202
                               }
                             }
                           },
