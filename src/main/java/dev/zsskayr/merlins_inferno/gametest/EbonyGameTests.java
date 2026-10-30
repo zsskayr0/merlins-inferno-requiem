@@ -48,15 +48,16 @@ public final class EbonyGameTests {
                 "Stage I gives Strength III");
         helper.assertTrue(first.getEffect(MobEffects.WITHER) != null && first.getEffect(MobEffects.WITHER).getAmplifier() == 0,
                 "Stage I costs Wither I");
-        helper.assertTrue(first.getEffect(MobEffects.WITHER).getDuration() == 12 * 20, "Stage I lasts 12 seconds");
-        helper.assertTrue(first.getEffect(MobEffects.MOVEMENT_SPEED).getDuration() == 12 * 20, "The boons last as long as the Wither");
+        helper.assertTrue(first.getEffect(MobEffects.WITHER).getDuration() == 20 * 20, "Stage I lasts 20 seconds");
+        helper.assertTrue(first.getEffect(MobEffects.MOVEMENT_SPEED).getDuration() == 20 * 20, "The boons last as long as the Wither");
         helper.assertTrue(first.getEffect(MobEffects.NIGHT_VISION).getDuration() > 200, "Night Vision is held above the flicker threshold");
-        helper.assertTrue(!first.getCooldowns().isOnCooldown(ModItems.DARK_COVEN_I.get()), "There is no cooldown");
+        helper.assertTrue(!first.getCooldowns().isOnCooldown(ModItems.DARK_COVEN_I.get()), "There is no cooldown while it runs");
 
         // The Wither fades: every other effect goes with it - Night Vision included, no fading tail - and the coven is dismissed.
         first.removeEffect(MobEffects.WITHER);
         first.getMainHandItem().inventoryTick(level, first, 0, true);
         helper.assertTrue(!DarkCovenItem.isInvoked(first.getMainHandItem()), "No Wither, no coven");
+        helper.assertTrue(first.getCooldowns().getCooldownPercent(ModItems.DARK_COVEN_I.get(), 0.0F) > 0.0F, "Ending the coven starts a cooldown");
         helper.assertTrue(first.getEffect(MobEffects.DAMAGE_BOOST) == null && first.getEffect(MobEffects.MOVEMENT_SPEED) == null
                 && first.getEffect(MobEffects.NIGHT_VISION) == null, "The other effects go with the Wither");
 
@@ -74,7 +75,23 @@ public final class EbonyGameTests {
         press(ModItems.DARK_COVEN_VII.get(), last);
         helper.assertTrue(last.getEffect(MobEffects.DAMAGE_BOOST).getAmplifier() == 9, "The pact gives Strength X");
         helper.assertTrue(last.getEffect(MobEffects.DAMAGE_RESISTANCE) != null, "The pact gives Resistance");
-        helper.assertTrue(last.getEffect(MobEffects.WITHER).getDuration() == 24 * 20, "Stage VII lasts 24 seconds");
+        helper.assertTrue(last.getEffect(MobEffects.WITHER).getDuration() == 60 * 20, "Stage VII lasts 60 seconds");
+
+        // The pact: a plain click, and it outlives the sword in hand; no cooldown when it ends.
+        var pact = helper.makeMockPlayer(GameType.SURVIVAL);
+        var pactStack = new ItemStack(ModItems.DARK_COVEN_VII.get());
+        pact.setItemInHand(InteractionHand.MAIN_HAND, pactStack);
+        press(ModItems.DARK_COVEN_VII.get(), pact);
+        helper.assertTrue(DarkCovenItem.isInvoked(pactStack) && pact.getEffect(MobEffects.WITHER).getDuration() == 60 * 20,
+                "A plain right-click invokes the pact for a minute");
+        pact.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(net.minecraft.world.item.Items.IRON_SWORD));
+        pactStack.inventoryTick(level, pact, 5, false);
+        helper.assertTrue(DarkCovenItem.isInvoked(pactStack) && pact.getEffect(MobEffects.DAMAGE_BOOST) != null,
+                "The pact keeps going with the sword put away");
+        pact.removeEffect(MobEffects.WITHER);
+        pactStack.inventoryTick(level, pact, 5, false);
+        helper.assertTrue(!DarkCovenItem.isInvoked(pactStack) && !pact.getCooldowns().isOnCooldown(ModItems.DARK_COVEN_VII.get()),
+                "It ends with the Wither, and with no cooldown");
         helper.succeed();
     }
 

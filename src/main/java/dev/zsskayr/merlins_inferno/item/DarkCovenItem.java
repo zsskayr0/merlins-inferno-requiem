@@ -36,11 +36,16 @@ import dev.zsskayr.merlins_inferno.registry.ModAttachments;
  * the enchantments.
  * <p>
  * <b>Holding right-click</b> keeps the coven going; a second after the button is let go, it ends. <b>Sneak + right-click</b>
- * invokes it for a fixed time instead - {@value #BASE_SECONDS} seconds at stage I, two more per stage - and sneak +
- * right-click again dismisses it. The Wither is the price, and it is also the coven's life: Strength, Speed and Night
+ * invokes it for a fixed time instead - {@value #BASE_SECONDS} seconds at stage I, {@value #SECONDS_PER_STAGE} more per
+ * stage, 50 at stage VI - and sneak + right-click again dismisses it. Once a coven ends there is a
+ * {@value #COOLDOWN_SECONDS}-second cooldown. The Wither is the price, and it is also the coven's life: Strength, Speed and Night
  * Vision (and, at the later stages, more) last exactly as long as the Wither does. When the Wither goes - it ran out, or
- * milk or a totem took it - every other effect goes with it and the coven is dismissed. There is no cooldown. Putting the
- * sword away dismisses it too. Night Vision is lent long enough never to flicker, and goes the moment the coven does.
+ * milk or a totem took it - every other effect goes with it and the coven is dismissed. Putting the sword away dismisses
+ * it too.
+ * <p>
+ * The last stage (the Demonic Pact) is different: a plain right-click invokes it for {@value #PACT_SECONDS} seconds, with
+ * no cooldown, and it keeps going with the sword put away - even swapped for another weapon - until the Wither runs out
+ * or it is dismissed with sneak + right-click. No stage can be thrown out of the inventory (see DarkCovenKeepHandler). Night Vision is lent long enough never to flicker, and goes the moment the coven does.
  * <p>
  * Holding is read from the game's own right-click repeat (a held button uses the item every 4 ticks), so the sword is
  * never "in use": you keep moving, sprinting and swinging while it lasts.
@@ -52,8 +57,12 @@ import dev.zsskayr.merlins_inferno.registry.ModAttachments;
 public class DarkCovenItem extends SwordItem {
     public static final int MAX_STAGE = 6;
     /** Seconds the sneak-invoked coven lasts at stage I; every later stage adds {@value #SECONDS_PER_STAGE}. */
-    public static final int BASE_SECONDS = 12;
-    public static final int SECONDS_PER_STAGE = 2;
+    public static final int BASE_SECONDS = 20;
+    public static final int SECONDS_PER_STAGE = 6;
+    /** The Demonic Pact lasts this long. */
+    public static final int PACT_SECONDS = 60;
+    /** After a coven of stages I to VI ends. */
+    public static final int COOLDOWN_SECONDS = 6;
     /** A held right-click repeats every 4 ticks; this long without one and the button is let go. */
     private static final int HOLD_GRACE_TICKS = 5;
     /** What a held coven lends at a time, topped up while the button stays down. */
@@ -93,7 +102,7 @@ public class DarkCovenItem extends SwordItem {
 
     /** How long this stage's coven lasts, in ticks. */
     public int getDurationTicks() {
-        return (BASE_SECONDS + SECONDS_PER_STAGE * this.stage) * 20;
+        return (this.stage == MAX_STAGE ? PACT_SECONDS : BASE_SECONDS + SECONDS_PER_STAGE * this.stage) * 20;
     }
 
     public static boolean isInvoked(ItemStack stack) {
@@ -121,7 +130,20 @@ public class DarkCovenItem extends SwordItem {
             player.setData(ModAttachments.COVEN_LAST_USE, now);
             boolean invoked = isInvoked(stack);
             boolean hold = player.getData(ModAttachments.COVEN_HOLD_UNTIL) >= 0;
-            if (player.isShiftKeyDown()) {
+            if (this.stage == MAX_STAGE) {
+                // The pact needs no button held and no sword in hand: one click, a minute.
+                if (fresh) {
+                    if (invoked && player.isShiftKeyDown()) {
+                        this.dismiss(stack, player);
+                        serverLevel.sendParticles(ParticleTypes.SMOKE, player.getX(), player.getY() + 1.0, player.getZ(), 12, 0.3, 0.6, 0.3, 0.02);
+                        serverLevel.playSound(null, player.blockPosition(), SoundEvents.SOUL_ESCAPE.value(), SoundSource.PLAYERS, 0.5F, 0.8F);
+                        player.displayClientMessage(Component.translatable("item.merlins_inferno.dark_coven.dismissed").withStyle(ChatFormatting.GRAY), true);
+                    } else if (!invoked) {
+                        this.invoke(serverLevel, stack, player, this.getDurationTicks());
+                        player.swing(hand, true);
+                    }
+                }
+            } else if (player.isShiftKeyDown()) {
                 if (fresh) {
                     if (invoked && !hold) {
                         this.dismiss(stack, player);
@@ -221,6 +243,9 @@ public class DarkCovenItem extends SwordItem {
     /** Ends the coven: the flag goes and so do the boons it lent (the Wither, if still there, runs its course). */
     private void dismiss(ItemStack stack, Player player) {
         setInvoked(stack, false);
+        if (this.stage != MAX_STAGE) {
+            player.getCooldowns().addCooldown(this, COOLDOWN_SECONDS * 20);
+        }
         player.setData(ModAttachments.COVEN_HOLD_UNTIL, -1L);
         this.removeBoon(player, MobEffects.DAMAGE_BOOST, BOON[this.stage]);
         this.removeBoon(player, MobEffects.MOVEMENT_SPEED, BOON[this.stage]);
@@ -257,13 +282,15 @@ public class DarkCovenItem extends SwordItem {
             return;
         }
         boolean held = isSelected || player.getOffhandItem() == stack;
+        boolean pact = this.stage == MAX_STAGE;
         long holdUntil = player.getData(ModAttachments.COVEN_HOLD_UNTIL);
-        if (held && holdUntil >= 0 && level.getGameTime() > holdUntil) {
+        if (!pact && held && holdUntil >= 0 && level.getGameTime() > holdUntil) {
             // The button was let go: one more second, then the Wither runs out and takes the coven with it.
             player.setData(ModAttachments.COVEN_HOLD_UNTIL, -1L);
             this.lend(player, RELEASE_TICKS, true);
         }
-        if (!held || !player.hasEffect(MobEffects.WITHER)) {
+        // The pact outlives the sword in hand: only its Wither ending (or sneak + right-click) puts it out.
+        if ((!held && !pact) || !player.hasEffect(MobEffects.WITHER)) {
             this.dismiss(stack, player);
             if (held && level instanceof ServerLevel) {
                 player.displayClientMessage(Component.translatable("item.merlins_inferno.dark_coven.dismissed").withStyle(ChatFormatting.GRAY), true);
@@ -310,7 +337,13 @@ public class DarkCovenItem extends SwordItem {
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.mythic").withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.stage", ROMAN[this.stage], ROMAN[MAX_STAGE])
                 .withStyle(ChatFormatting.DARK_PURPLE));
-        tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.invoke", this.getDurationTicks() / 20).withStyle(ChatFormatting.GRAY));
+        if (this.stage == MAX_STAGE) {
+            tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.invoke_pact", PACT_SECONDS).withStyle(ChatFormatting.GRAY));
+        } else {
+            tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.invoke", this.getDurationTicks() / 20).withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.cooldown", COOLDOWN_SECONDS).withStyle(ChatFormatting.GRAY));
+        }
+        tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.no_drop").withStyle(ChatFormatting.DARK_GRAY));
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.cost").withStyle(ChatFormatting.DARK_RED));
         if (isInvoked(stack)) {
             tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.active").withStyle(ChatFormatting.LIGHT_PURPLE));
