@@ -34,7 +34,7 @@ public class MarkItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
         if (!level.isClientSide) {
-            MarkHelper.equip(player, this);
+            MarkHelper.bind(player, this);
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }

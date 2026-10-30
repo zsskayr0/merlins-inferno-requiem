@@ -26,7 +26,7 @@ public class MarkPickupHandler {
         }
         if (player.getRandom().nextFloat() < MarkHelper.AUTO_EQUIP_CHANCE) {
             event.setCanPickup(TriState.FALSE);
-            MarkHelper.equip(player, mark);
+            MarkHelper.bind(player, mark);
             stack.shrink(1);
             if (stack.isEmpty()) {
                 entity.discard();

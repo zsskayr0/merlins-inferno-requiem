@@ -60,6 +60,21 @@ public final class MarkHelper {
     }
 
     /**
+     * Takes a Mark in, the way right-click and the pickup roll do: into the Curios {@code mark} slot when there is one free,
+     * so it can be seen, otherwise straight into the state (and the caller uses the item up). Returns {@code false},
+     * changing nothing, if the player already bears a Mark.
+     */
+    public static boolean bind(Player player, Item mark) {
+        if (hasMark(player)) {
+            return false;
+        }
+        if (ModList.get().isLoaded("curios")) {
+            CuriosMarks.place(player, new net.minecraft.world.item.ItemStack(mark));
+        }
+        return equip(player, mark);
+    }
+
+    /**
      * Frees the player of whatever Mark they bear: the state and, with Curios, the item in the slot. This is what a
      * Scroll of Salvation does - the Mark itself is gone, it does not come back as an item.
      */

@@ -32,6 +32,20 @@ public final class CuriosMarks {
         }
     }
 
+    /** Puts the Mark into the first free {@code mark} slot, if the player has one; {@code false} when there is none. */
+    public static boolean place(Player player, ItemStack stack) {
+        return CuriosApi.getCuriosInventory(player).map(inventory -> inventory.getStacksHandler("mark").map(handler -> {
+            var slots = handler.getStacks();
+            for (int i = 0; i < slots.getSlots(); i++) {
+                if (slots.getStackInSlot(i).isEmpty()) {
+                    slots.setStackInSlot(i, stack);
+                    return true;
+                }
+            }
+            return false;
+        }).orElse(false)).orElse(false);
+    }
+
     /** Removes the Mark item from the slot without asking it (a cure is not an unequip). */
     public static void removeEquipped(Player player) {
         CuriosApi.getCuriosInventory(player).ifPresent(inventory -> {
@@ -52,7 +66,8 @@ public final class CuriosMarks {
 
         @Override
         public boolean canEquip(SlotContext context) {
-            return !MarkHelper.hasMark(context.entity());
+            // Fine for a player with no Mark, or whose Mark is this very one (placed by MarkHelper.bind, state already set).
+            return !MarkHelper.hasMark(context.entity()) || MarkHelper.hasMark(context.entity(), mark);
         }
 
         @Override

@@ -164,6 +164,24 @@ public final class MarkGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "bench_empty")
+    public static void withCuriosTheMarkSitsInItsSlotAndLeavesWithTheCure(GameTestHelper h) {
+        if (!net.neoforged.fml.ModList.get().isLoaded("curios")) {
+            h.succeed();
+            return;
+        }
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        h.assertTrue(MarkHelper.bind(player, ModItems.MARK_OF_CAIN.get()), "A free player takes the Mark in");
+        h.assertTrue(MarkHelper.hasMark(player, ModItems.MARK_OF_CAIN.get()), "and bears it");
+        h.assertTrue(dev.zsskayr.merlins_inferno.compat.OptionalCurios.equipped(player).stream().anyMatch(stack -> stack.getItem() == ModItems.MARK_OF_CAIN.get()),
+                "The Mark is visible in the Curios mark slot");
+        MarkHelper.clear(player);
+        h.assertTrue(dev.zsskayr.merlins_inferno.compat.OptionalCurios.equipped(player).stream().noneMatch(stack -> stack.getItem() instanceof dev.zsskayr.merlins_inferno.item.MarkItem),
+                "The cure empties the slot");
+        h.assertTrue(!MarkHelper.hasMark(player), "and frees the player");
+        h.succeed();
+    }
+
     private static LivingIncomingDamageEvent incoming(net.minecraft.world.entity.LivingEntity victim, net.minecraft.world.damagesource.DamageSource source, float amount) {
         return new LivingIncomingDamageEvent(victim, new net.neoforged.neoforge.common.damagesource.DamageContainer(source, amount));
     }
