@@ -43,7 +43,7 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
     public static final ModelProperty<Integer> NEIGHBOURS = new ModelProperty<>();
     private static final ModelProperty<BlockPos> POS = new ModelProperty<>();
     /** How far the start of a line of Tiled Porcelain is searched for; a longer line pairs up from here. */
-    private static final int MAX_RUN = 32;
+    private static final int MAX_RUN = 128;
     private static final int VERTEX_SIZE = 8; // DefaultVertexFormat.BLOCK, in ints
     private static final int UV_OFFSET = 4;
     private static final int GRID_W = 32, GRID_H = 24, VARIANTS = 16;
