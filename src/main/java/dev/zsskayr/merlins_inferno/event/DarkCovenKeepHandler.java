@@ -12,7 +12,7 @@ import dev.zsskayr.merlins_inferno.registry.ModAttachments;
 
 /**
  * No stage of the Dark Coven can be thrown away: it moves between inventory slots and chests, nothing more. A toss is put
- * back in the inventory (if it is full the throw is allowed, rather than losing the sword). Death does not drop it either:
+ * back in the inventory (or on the cursor when there is no room): there is no way to get rid of it. Death does not drop it either:
  * it comes back on respawn. Trying to throw it away is answered with a short Wither.
  */
 @EventBusSubscriber(modid = Merlins_inferno.MODID)
@@ -26,11 +26,21 @@ public final class DarkCovenKeepHandler {
     @SubscribeEvent
     public static void onToss(ItemTossEvent event) {
         var stack = event.getEntity().getItem();
-        if (stack.getItem() instanceof DarkCovenItem && !event.getPlayer().level().isClientSide
-                && event.getPlayer().getInventory().add(stack)) {
-            event.setCanceled(true);
-            warn(event.getPlayer());
+        var player = event.getPlayer();
+        if (!(stack.getItem() instanceof DarkCovenItem) || player.level().isClientSide) {
+            return;
         }
+        // With no room left (a sword thrown from the cursor of a full inventory) it goes back to the cursor.
+        if (player.getInventory().add(stack) || (player.containerMenu.getCarried().isEmpty() && setCarried(player, stack))) {
+            event.setCanceled(true);
+            warn(player);
+        }
+    }
+
+    private static boolean setCarried(net.minecraft.world.entity.player.Player player, net.minecraft.world.item.ItemStack stack) {
+        player.containerMenu.setCarried(stack);
+        player.containerMenu.broadcastChanges();
+        return true;
     }
 
     /** The sword takes offence: a short Wither, a groan and a word on the action bar. */
