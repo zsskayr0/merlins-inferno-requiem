@@ -56,6 +56,7 @@ public class Merlins_inferno {
         dev.zsskayr.merlins_inferno.attachment.ProgressionHelper.init();
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(ModDataGenerators::gatherData);
+        modEventBus.addListener(dev.zsskayr.merlins_inferno.compat.framedblocks.FramedBlocksCompat::enqueue);
 
         // Each registry class owns its DeferredRegister(s) and hooks itself onto the mod event bus.
         // ArmorMaterials go first since ModItems' armor pieces reference them.

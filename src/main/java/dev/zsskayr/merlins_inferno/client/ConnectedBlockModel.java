@@ -14,6 +14,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.BakedModelWrapper;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import dev.zsskayr.merlins_inferno.compat.framedblocks.FramedBlocksCompat;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
     /** Bit {@code (dx+1) + 3*(dy+1) + 9*(dz+1)}: the block at that offset is the same block. */
-    private static final ModelProperty<Integer> NEIGHBOURS = new ModelProperty<>();
+    public static final ModelProperty<Integer> NEIGHBOURS = new ModelProperty<>();
     private static final ModelProperty<BlockPos> POS = new ModelProperty<>();
     private static final int VERTEX_SIZE = 8; // DefaultVertexFormat.BLOCK, in ints
     private static final int UV_OFFSET = 4;
@@ -92,7 +93,9 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
     public @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state,
                                            @NotNull ModelData data) {
         int bits = 0;
-        boolean grouped = pairs && state.hasProperty(TiledPorcelainBlock.SECOND_X);
+        // Framed Blocks (and similar) hand us their own state; what matters is the block they are camouflaged as.
+        BlockState self = FramedBlocksCompat.resolve(level, pos, state);
+        boolean grouped = pairs && self == state && state.hasProperty(TiledPorcelainBlock.SECOND_X);
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
@@ -100,8 +103,9 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
                     if ((dx | dy | dz) == 0) {
                         continue;
                     }
-                    BlockState other = level.getBlockState(at.setWithOffset(pos, dx, dy, dz));
-                    if (other.is(state.getBlock()) && (!grouped || sameGroup(state, other, dx, dy, dz))) {
+                    at.setWithOffset(pos, dx, dy, dz);
+                    BlockState other = FramedBlocksCompat.resolve(level, at, level.getBlockState(at));
+                    if (other.is(self.getBlock()) && (!grouped || sameGroup(state, other, dx, dy, dz))) {
                         bits |= bit(dx, dy, dz);
                     }
                 }
@@ -116,7 +120,10 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
         List<BakedQuad> quads = super.getQuads(state, side, rand, data, renderType);
         Integer bits = data.get(NEIGHBOURS);
         BlockPos pos = data.get(POS);
-        if (bits == null || bits == 0 || pos == null || quads.isEmpty()) {
+        if (pos == null) {
+            pos = BlockPos.ZERO; // Framed Blocks only forwards NEIGHBOURS and caches by it, so there is no per-block variant
+        }
+        if (bits == null || bits == 0 || quads.isEmpty()) {
             return quads;
         }
         List<BakedQuad> out = new ArrayList<>(quads.size());
