@@ -1,5 +1,9 @@
 package dev.zsskayr.merlins_inferno.meteor;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
@@ -8,6 +12,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.level.block.AmethystClusterBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,7 +28,7 @@ import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 
 /**
- * Builds a fallen star: a scorched bowl in the ground, a core of Luminite Ore and a few Lyrium clusters at its heart, and a chest
+ * Builds a fallen star: a scorched bowl in the ground, a small geode of Luminite, Amethyst and Lyrium crystals at its heart, and a chest
  * of sky-drop loot at its edge, watched over by a pair of Templars.
  */
 public final class MeteorSite {
@@ -35,6 +41,10 @@ public final class MeteorSite {
     public static final int RADIUS = 6;
     private static final int DEPTH = 4;
     private static final int HEIGHT = 7;
+    /** Radii of the heart geode: its hollow, the lining around it and the basalt shell outside. */
+    private static final double GEODE_CAVITY = 2.2;
+    private static final double GEODE_LINING = 3.1;
+    private static final double GEODE_SHELL = 3.9;
 
     private MeteorSite() {
     }
@@ -75,25 +85,58 @@ public final class MeteorSite {
         }
 
         int floorY = surface - DEPTH;
-        // The core: a small cluster of ore, half of it Luminite, with Lyrium growing out of the rock around it.
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                if (Math.abs(dx) + Math.abs(dz) == 2 && random.nextBoolean()) {
-                    continue;
+        // The core: a small geode, the star's own heart - a basalt shell lined with amethyst and a little Lyrium, hollow inside, its
+        // crystals Luminite always and Amethyst and Lyrium sometimes. Its top is left open so it can be reached.
+        List<BlockPos> lining = new ArrayList<>();
+        BlockPos centre = new BlockPos(x, floorY + 2, z);
+        for (int dx = -4; dx <= 4; dx++) {
+            for (int dy = -4; dy <= 4; dy++) {
+                for (int dz = -4; dz <= 4; dz++) {
+                    double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    BlockPos at = centre.offset(dx, dy, dz);
+                    if (distance <= GEODE_CAVITY) {
+                        level.setBlock(at, Blocks.AIR.defaultBlockState(), 2);
+                    } else if (dy >= 2 && dx * dx + dz * dz < 3) {
+                        level.setBlock(at, Blocks.AIR.defaultBlockState(), 2);
+                    } else if (distance <= GEODE_LINING) {
+                        level.setBlock(at, random.nextInt(8) == 0 ? ModBlocks.LYRIUM_BLOCK.get().defaultBlockState() : Blocks.AMETHYST_BLOCK.defaultBlockState(), 2);
+                        lining.add(at);
+                    } else if (distance <= GEODE_SHELL) {
+                        level.setBlock(at, Blocks.SMOOTH_BASALT.defaultBlockState(), 2);
+                    }
                 }
-                BlockState core = random.nextInt(3) == 0 ? Blocks.BLACKSTONE.defaultBlockState() : ModBlocks.LUMINITE_ORE.get().defaultBlockState();
-                level.setBlock(new BlockPos(x + dx, floorY, z + dz), core, 2);
             }
         }
-        level.setBlock(new BlockPos(x, floorY + 1, z), ModBlocks.LUMINITE_ORE.get().defaultBlockState(), 2);
-        int clusters = 2 + random.nextInt(3);
-        for (int i = 0; i < clusters; i++) {
-            BlockPos at = new BlockPos(x + random.nextInt(5) - 2, floorY + 1, z + random.nextInt(5) - 2);
-            if (level.getBlockState(at).isAir() && level.getBlockState(at.below()).isSolid()) {
-                level.setBlock(at, ModBlocks.LYRIUM_CLUSTER.get().defaultBlockState(), 2);
+        List<BlockPos[]> faces = new ArrayList<>();
+        for (BlockPos block : lining) {
+            for (Direction side : Direction.values()) {
+                BlockPos inside = block.relative(side);
+                if (level.getBlockState(inside).isAir() && Math.sqrt(inside.distSqr(centre)) <= GEODE_CAVITY) {
+                    faces.add(new BlockPos[] {inside, block});
+                }
             }
         }
-        level.setBlock(new BlockPos(x + 2, floorY, z), ModBlocks.LYRIUM_BLOCK.get().defaultBlockState(), 2);
+        Collections.shuffle(faces, new java.util.Random(random.nextLong()));
+        int luminite = 3 + random.nextInt(3);
+        int amethyst = random.nextInt(4);
+        int lyrium = random.nextInt(3);
+        for (BlockPos[] face : faces) {
+            Block crystal;
+            if (luminite > 0) {
+                crystal = ModBlocks.LUMINITE_CLUSTER.get();
+                luminite--;
+            } else if (amethyst > 0) {
+                crystal = Blocks.AMETHYST_CLUSTER;
+                amethyst--;
+            } else if (lyrium > 0) {
+                crystal = ModBlocks.LYRIUM_CLUSTER.get();
+                lyrium--;
+            } else {
+                break;
+            }
+            Direction outward = Direction.getNearest(face[0].getX() - face[1].getX(), face[0].getY() - face[1].getY(), face[0].getZ() - face[1].getZ());
+            level.setBlock(face[0], crystal.defaultBlockState().setValue(AmethystClusterBlock.FACING, outward), 2);
+        }
 
         boolean deep = ProgressionHelper.hasReached(level, ProgressionHelper.THIRD_CIRCLE);
         // The sky drop: a chest on the lip of the bowl.

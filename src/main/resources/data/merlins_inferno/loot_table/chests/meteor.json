@@ -71,7 +71,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "merlins_inferno:luminite_raw",
+          "name": "merlins_inferno:luminite_gem",
           "weight": 8,
           "functions": [
             {
@@ -167,7 +167,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "merlins_inferno:luminite_raw",
+          "name": "merlins_inferno:luminite_gem",
           "weight": 1,
           "functions": [
             {

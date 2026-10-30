@@ -127,7 +127,7 @@ public final class ModArmorMaterials {
             }),
             24,
             SoundEvents.ARMOR_EQUIP_DIAMOND,
-            () -> Ingredient.of(ModItems.LUMINITE_BAR.get()),
+            () -> Ingredient.of(ModItems.LUMINITE_GEM.get()),
             List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "luminite"))),
             3.0F,
             0.1F

@@ -246,7 +246,7 @@ public final class ModTiers {
 
         @Override
         public Ingredient getRepairIngredient() {
-            return Ingredient.of(ModItems.LUMINITE_BAR.get());
+            return Ingredient.of(ModItems.LUMINITE_GEM.get());
         }
     };
 

@@ -3,15 +3,19 @@ package dev.zsskayr.merlins_inferno.block;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
+import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
+import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModParticles;
 
 /**
@@ -27,6 +31,9 @@ import dev.zsskayr.merlins_inferno.registry.ModParticles;
  */
 public class LyriumBlock extends Block {
     public static final BooleanProperty PLACED = BooleanProperty.create("placed");
+    /** One random tick in this many, on one natural block, tries to grow a Luminite crystal. */
+    public static final int LUMINITE_ODDS = 2000;
+    private static final int LUMINITE_SPACING = 5;
 
     public LyriumBlock(Properties properties) {
         super(properties);
@@ -56,7 +63,30 @@ public class LyriumBlock extends Block {
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (!state.getValue(PLACED)) {
             LyriumRadiance.radiate(level, pos);
+            growLuminite(level, pos, random);
         }
+    }
+
+    /**
+     * From the Second Circle on, the world's own Lyrium - new geodes and old alike, so long as nobody has carried the block off and put
+     * it back - very rarely gives a Luminite crystal on a face that opens onto the geode's hollow. A geode keeps to a few: no new crystal
+     * grows within {@link #LUMINITE_SPACING} blocks of another.
+     */
+    private static void growLuminite(ServerLevel level, BlockPos pos, RandomSource random) {
+        if (random.nextInt(LUMINITE_ODDS) != 0 || !ProgressionHelper.hasReached(level, ProgressionHelper.SECOND_CIRCLE)) {
+            return;
+        }
+        Direction side = Direction.getRandom(random);
+        BlockPos at = pos.relative(side);
+        if (!level.getBlockState(at).isAir()) {
+            return;
+        }
+        for (BlockPos near : BlockPos.betweenClosed(pos.offset(-LUMINITE_SPACING, -LUMINITE_SPACING, -LUMINITE_SPACING), pos.offset(LUMINITE_SPACING, LUMINITE_SPACING, LUMINITE_SPACING))) {
+            if (level.getBlockState(near).is(ModBlocks.LUMINITE_CLUSTER.get())) {
+                return;
+            }
+        }
+        level.setBlock(at, ModBlocks.LUMINITE_CLUSTER.get().defaultBlockState().setValue(AmethystClusterBlock.FACING, side), 3);
     }
 
     @Override

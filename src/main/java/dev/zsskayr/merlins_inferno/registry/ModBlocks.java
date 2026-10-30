@@ -502,9 +502,10 @@ public final class ModBlocks {
             CorruptedObsidianBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CRYING_OBSIDIAN)
                     .strength(CorruptedObsidianBlock.HARDNESS, 1200.0F).requiresCorrectToolForDrops());
 
-    // --- Luminite Ore: the metal of fallen meteors (event.MeteorHandler lays it in the crater). Drops Raw Luminite (Silk Touch keeps the block). ---
-    public static final DeferredBlock<Block> LUMINITE_ORE = BLOCKS.registerBlock("luminite_ore",
-            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DIAMOND_ORE).lightLevel(state -> 6).sound(net.minecraft.world.level.block.SoundType.AMETHYST));
+    // --- Luminite Cluster: the crystal of fallen meteors (MeteorSite grows them inside the crater's geode) and, very rarely, of untouched
+    // Lyrium geodes (LyriumBlock). An amethyst cluster in every way but its drop: the Luminite Gem (Silk Touch keeps the block). ---
+    public static final DeferredBlock<net.minecraft.world.level.block.AmethystClusterBlock> LUMINITE_CLUSTER = BLOCKS.registerBlock("luminite_cluster",
+            props -> new net.minecraft.world.level.block.AmethystClusterBlock(7.0F, 3.0F, props), BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_CLUSTER).lightLevel(state -> 8));
 
     // --- Ebony Debris: Circle 2's answer to Ancient Debris, found in Oblivion. Drops Ebony Scrap (Silk Touch keeps the block). ---
     public static final DeferredBlock<Block> EBONY_DEBRIS = BLOCKS.registerBlock("ebony_debris",

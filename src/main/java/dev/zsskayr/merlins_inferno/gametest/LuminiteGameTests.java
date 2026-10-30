@@ -138,12 +138,12 @@ public final class LuminiteGameTests {
         boolean chest = false;
         for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-MeteorSite.RADIUS, -8, -MeteorSite.RADIUS), origin.offset(MeteorSite.RADIUS, 12, MeteorSite.RADIUS))) {
             var state = level.getBlockState(pos);
-            ore |= state.is(ModBlocks.LUMINITE_ORE.get());
+            ore |= state.is(ModBlocks.LUMINITE_CLUSTER.get());
             if (state.is(Blocks.CHEST) && level.getBlockEntity(pos) instanceof ChestBlockEntity chestEntity) {
                 chest = true;
             }
         }
-        helper.assertTrue(ore, "The core is Luminite Ore");
+        helper.assertTrue(ore, "The heart geode grows Luminite crystals");
         helper.assertTrue(chest, "There is a chest by the crater");
         helper.assertTrue(floor > level.getMinBuildHeight(), "The floor height is reported");
         helper.succeed();
@@ -153,10 +153,10 @@ public final class LuminiteGameTests {
     public static void luminiteDataLoads(GameTestHelper helper) {
         var server = helper.getLevel().getServer();
         for (String recipe : new String[] {"luminite_sword", "luminite_axe", "luminite_pickaxe", "luminite_helmet", "luminite_boots", "skyfall_compass",
-                "luminite_bar_from_smelting", "luminite_bar_from_blasting", "luminite_bar_from_ore_smelting"}) {
+                "luminite_leggings", "luminite_chestplate", "luminite_shovel", "luminite_hoe"}) {
             helper.assertTrue(server.getRecipeManager().byKey(id(recipe)).isPresent(), "Recipe " + recipe);
         }
-        for (String table : new String[] {"chests/meteor", "chests/meteor_deep", "blocks/luminite_ore"}) {
+        for (String table : new String[] {"chests/meteor", "chests/meteor_deep", "blocks/luminite_cluster"}) {
             ResourceKey<LootTable> key = ResourceKey.create(Registries.LOOT_TABLE, id(table));
             helper.assertTrue(server.reloadableRegistries().getLootTable(key) != LootTable.EMPTY, "Loot table " + table);
         }

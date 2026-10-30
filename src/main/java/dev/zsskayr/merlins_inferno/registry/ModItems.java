@@ -630,12 +630,12 @@ public final class ModItems {
                 }
             });
 
-    // --- Circle 2, Celestial route: Luminite, the metal of fallen meteors (see event.MeteorHandler). Raw Luminite smelts into the
-    // bar; the sword and axe are crafted already carrying Holy. Tools use the Lyrium Rod as the handle, like Seraphium's.
+    // --- Circle 2, Celestial route: Luminite, the gem of fallen meteors (see event.MeteorHandler) and, very rarely, of untouched Lyrium
+    // geodes (LyriumBlock). Tools and armor are crafted straight from the gem, like diamond; the sword and axe come out already
+    // carrying Holy. Tools use the Lyrium Rod as the handle, like Seraphium's.
     // ModTiers.LUMINITE / ModArmorMaterials.LUMINITE; the armor's set bonus is event.SkyboundHandler. ---
-    public static final DeferredItem<Item> LUMINITE_RAW = ITEMS.registerSimpleItem("luminite_raw", new Item.Properties());
-    public static final DeferredItem<Item> LUMINITE_BAR = ITEMS.registerSimpleItem("luminite_bar", new Item.Properties());
-    public static final DeferredItem<BlockItem> LUMINITE_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LUMINITE_ORE);
+    public static final DeferredItem<Item> LUMINITE_GEM = ITEMS.registerSimpleItem("luminite_gem", new Item.Properties());
+    public static final DeferredItem<BlockItem> LUMINITE_CLUSTER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LUMINITE_CLUSTER);
 
     public static final DeferredItem<SwordItem> LUMINITE_SWORD = ITEMS.registerItem("luminite_sword",
             props -> new SwordItem(ModTiers.LUMINITE, props.attributes(SwordItem.createAttributes(ModTiers.LUMINITE, 3, -2.4F))));

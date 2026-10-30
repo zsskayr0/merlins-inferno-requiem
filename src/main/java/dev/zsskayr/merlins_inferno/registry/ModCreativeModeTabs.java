@@ -272,9 +272,8 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.SERAPHIUM_BOOTS.get());
 
                         // Circle 2: Luminite and the Skyfall Compass
-                        output.accept(ModItems.LUMINITE_ORE_ITEM.get());
-                        output.accept(ModItems.LUMINITE_RAW.get());
-                        output.accept(ModItems.LUMINITE_BAR.get());
+                        output.accept(ModItems.LUMINITE_CLUSTER_ITEM.get());
+                        output.accept(ModItems.LUMINITE_GEM.get());
                         output.accept(ModItems.LUMINITE_SWORD.get());
                         output.accept(ModItems.LUMINITE_AXE.get());
                         output.accept(ModItems.LUMINITE_SHOVEL.get());
