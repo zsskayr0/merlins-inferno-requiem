@@ -18,8 +18,7 @@
       "merlins_inferno:elysium_water"
     ],
     [
-      "merlins_inferno:elysium_groundwater",
-      "merlins_inferno:elysium_rivers"
+      "merlins_inferno:elysium_groundwater"
     ],
     [
       "merlins_inferno:elysium_spans"
@@ -40,7 +39,9 @@
       "minecraft:seagrass_deep_cold",
       "minecraft:kelp_cold"
     ],
-    []
+    [
+      "merlins_inferno:elysium_rivers"
+    ]
   ],
   "spawn_costs": {},
   "spawners": {

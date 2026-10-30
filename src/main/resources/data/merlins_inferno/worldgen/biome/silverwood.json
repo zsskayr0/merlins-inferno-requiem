@@ -18,8 +18,7 @@
       "merlins_inferno:elysium_water"
     ],
     [
-      "merlins_inferno:elysium_groundwater",
-      "merlins_inferno:elysium_rivers"
+      "merlins_inferno:elysium_groundwater"
     ],
     [
       "merlins_inferno:elysium_spans"
@@ -41,7 +40,9 @@
       "minecraft:forest_flowers",
       "minecraft:patch_grass_forest"
     ],
-    []
+    [
+      "merlins_inferno:elysium_rivers"
+    ]
   ],
   "spawn_costs": {},
   "spawners": {

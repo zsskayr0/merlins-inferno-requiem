@@ -16,8 +16,7 @@
       "merlins_inferno:elysium_water"
     ],
     [
-      "merlins_inferno:elysium_groundwater",
-      "merlins_inferno:elysium_rivers"
+      "merlins_inferno:elysium_groundwater"
     ],
     [
       "merlins_inferno:elysium_spans"
@@ -37,7 +36,9 @@
     [
       "minecraft:patch_dead_bush_2"
     ],
-    []
+    [
+      "merlins_inferno:elysium_rivers"
+    ]
   ],
   "spawn_costs": {},
   "spawners": {

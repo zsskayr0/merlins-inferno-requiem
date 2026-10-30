@@ -2,6 +2,7 @@ package dev.zsskayr.merlins_inferno.worldgen.feature;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -10,6 +11,7 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.material.Fluids;
 
+import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.ElysiumTerrain;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.ElysiumTerrains;
 
@@ -37,6 +39,18 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
         h *= 0xc4ceb9fe1a85ec53L;
         h ^= h >>> 33;
         return (h >>> 11) / (double) (1L << 53);
+    }
+
+    /** Bridges, chains and lanterns stand over the water and are never washed away. */
+    private static boolean kept(BlockState s) {
+        return s.is(ModBlocks.ARGANITE_BRICKS.get()) || s.is(ModBlocks.ARGANITE_BRICKS_WALL.get()) || s.is(Blocks.LANTERN)
+                || s.is(Blocks.IRON_BLOCK) || s.is(Blocks.CHAIN);
+    }
+
+    /** What the vegetation left standing where the river now runs: trunks, leaves, plants, and the dirt under them. */
+    private static boolean growth(BlockState s) {
+        return s.is(BlockTags.LEAVES) || s.is(BlockTags.LOGS) || s.is(BlockTags.REPLACEABLE) || s.is(BlockTags.FLOWERS)
+                || s.is(Blocks.GRASS_BLOCK) || s.is(Blocks.DIRT) || s.is(Blocks.COARSE_DIRT) || s.is(Blocks.PODZOL) || s.is(Blocks.MOSS_BLOCK);
     }
 
     @Override
@@ -92,7 +106,14 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                     double depth = Math.max(2.0, Math.min(7.0, 1.2 + 0.55 * half));
                     int bed = (int) Math.floor(level0 - depth * (1.0 - t * t));
                     for (int y = bed; y <= Math.max(top, level0); y++) {
-                        level.setBlock(pos.set(x, y, z), y <= level0 ? water : air, 2);
+                        if (!kept(level.getBlockState(pos.set(x, y, z)))) {
+                            level.setBlock(pos, y <= level0 ? water : air, 2);
+                        }
+                    }
+                    for (int y = Math.max(top, level0) + 1; y <= Math.min(ElysiumTerrain.MAX_Y - 1, Math.max(top, level0) + 24); y++) {
+                        if (growth(level.getBlockState(pos.set(x, y, z)))) {
+                            level.setBlock(pos, y <= level0 ? water : air, 2);
+                        }
                     }
                     BlockState bedBlock = rand(x, 0, z, 71) < 0.35 ? Blocks.CLAY.defaultBlockState() : Blocks.GRAVEL.defaultBlockState();
                     level.setBlock(pos.set(x, bed - 1, z), bedBlock, 2);
