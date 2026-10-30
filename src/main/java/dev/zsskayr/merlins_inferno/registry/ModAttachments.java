@@ -45,9 +45,10 @@ public final class ModAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> WINGS_READY_AT =
             ATTACHMENT_TYPES.register("wings_ready_at", () -> AttachmentType.builder(() -> 0L).build());
 
-    /** Item id of the Mark the player bears, "" for none; the source of truth for Marks (see MarkHelper). Soulbound: kept on death. */
+    /** Item id of the Mark the player bears, "" for none; the source of truth for Marks (see MarkHelper). Soulbound: kept on death. Synced, so the client can draw what a Mark does to the HUD. */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<String>> EQUIPPED_MARK =
-            ATTACHMENT_TYPES.register("equipped_mark", () -> AttachmentType.builder(() -> "").serialize(Codec.STRING).copyOnDeath().build());
+            ATTACHMENT_TYPES.register("equipped_mark", () -> AttachmentType.builder(() -> "").serialize(Codec.STRING).copyOnDeath()
+                    .sync(net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8).build());
 
     /** Mark of Cain: the game time by which the bearer must have killed something (0 = not started; see MarkOfCainHandler). */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> CAIN_KILL_DEADLINE =
