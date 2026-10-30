@@ -11,13 +11,13 @@ import java.util.SplittableRandom;
  * <p>No Minecraft types in here on purpose: {@code tools/ElysiumPreview.java} renders it without starting the game.
  */
 public final class ElysiumTerrain {
-    public static final int BASE_Y = 720;
+    public static final int BASE_Y = 150;
     /** Water in every basin (the Silver Sea, marsh pools, weeping lakes) stands at this height. */
-    public static final int WATER_Y = 708;
+    public static final int WATER_Y = 138;
     public static final int MIN_Y = 0;
-    public static final int MAX_Y = 1280;
-    /** Every relief amplitude below is scaled by this, so hills are hills and peaks are mountains next to a 900-block-deep island. */
-    private static final double RELIEF = 2.2;
+    public static final int MAX_Y = 256;
+    /** Every relief amplitude below is scaled by this, so the tallest peaks stop just short of the world's ceiling (the islands span y 0..250). */
+    private static final double RELIEF = 0.7;
 
     /** Biome climate anchors (temperature, humidity): the terrain blends by these, {@code multi_noise} picks by them. */
     public static final String[] BIOMES = {"silent_fields", "silverwood", "pale_marsh", "silver_sea", "salt_waste", "mute_peaks", "weeping_plains"};
@@ -121,13 +121,13 @@ public final class ElysiumTerrain {
         double interior = BASE_Y + alt + rel * RELIEF;
         // every coast rises a little above the water, so a basin is always closed in by its own shore
         double shore = WATER_Y + 5.0;
-        c.top = Math.floor(lerp(shore, Math.max(interior, shore), smooth(0.0, 160.0, ed)));
+        c.top = Math.min(MAX_Y - 6.0, Math.floor(lerp(shore, Math.max(interior, shore), smooth(0.0, 90.0, ed))));
 
         double mountain = w[PEAKS];
-        double tmax = 420.0 + 130.0 * mountain;
-        double thick = 8.0 + tmax * Math.pow(smooth(0.0, 900.0, ed), 0.7);
-        double rough = 110.0 * (0.5 + 0.5 * under.fbm(x / 160.0, z / 160.0, 3)) * smooth(30.0, 400.0, ed);
-        c.bottom = Math.max(MIN_Y + 12.0, Math.ceil(c.top - thick - rough));
+        double tmax = 135.0 + 55.0 * mountain;
+        double thick = 8.0 + tmax * Math.pow(smooth(0.0, 650.0, ed), 0.7);
+        double rough = 40.0 * (0.5 + 0.5 * under.fbm(x / 110.0, z / 110.0, 3)) * smooth(30.0, 300.0, ed);
+        c.bottom = Math.max(MIN_Y + 3.0, Math.ceil(c.top - thick - rough));
     }
 
     /** Density for the noise generator: positive inside an island, with a soft gradient across its skin. */

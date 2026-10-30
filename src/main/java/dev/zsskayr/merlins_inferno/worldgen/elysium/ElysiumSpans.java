@@ -110,7 +110,7 @@ public final class ElysiumSpans {
             ElysiumTerrain.Column a = new ElysiumTerrain.Column(), b = new ElysiumTerrain.Column();
             terrain.sample((int) Math.floor(ax), (int) Math.floor(az), a);
             terrain.sample((int) Math.floor(bx), (int) Math.floor(bz), b);
-            if (!a.land || !b.land || a.top < ElysiumTerrain.WATER_Y + 3 || b.top < ElysiumTerrain.WATER_Y + 3 || Math.abs(a.top - b.top) > 150.0) {
+            if (!a.land || !b.land || a.top < ElysiumTerrain.WATER_Y + 3 || b.top < ElysiumTerrain.WATER_Y + 3 || Math.abs(a.top - b.top) > 80.0) {
                 continue;
             }
             // the chains hang from the rock a little way in from each shore
