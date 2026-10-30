@@ -366,6 +366,10 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
                 double base = c.terrain.baseInlandAt(sx, sz);
                 // an islet in a slash is small; one out in the open sky between the islands can be a good deal bigger
                 boolean gap = base <= 0.0;
+                if (!gap && base < 60.0) {
+                    // a slash that reaches the coast has no rock to leave behind: it would hang off the island's edge
+                    continue;
+                }
                 double pick = rand(ci, 3, cj, 34);
                 double r = gap ? 4.0 + 9.0 * pick * pick : 3.0 + 5.0 * pick;
                 if (gap && (base < -380.0 || rand(ci, 5, cj, 36) > 0.6)) {

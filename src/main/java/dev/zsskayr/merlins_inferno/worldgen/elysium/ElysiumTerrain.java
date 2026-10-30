@@ -226,9 +226,11 @@ public final class ElysiumTerrain {
 
     /** The strata, ledges and marks of a slash wall at one column; see {@link #wall}. */
     public final class Wall {
-        private final double top, floor, shift, vary, alcove, cy;
+        private final double top, floor, shift, vary, alcove, cy, inland;
 
         private Wall(int x, int z, double top, double floor) {
+            // near the island's coast the rock is thin: wearing it back there only leaves blocks hanging in the air
+            inland = smooth(22.0, 50.0, baseInlandAt(x, z));
             this.top = top;
             this.floor = floor;
             shift = 3.0 * hole.noise(x / 90.0 + 5.0, z / 90.0);
@@ -239,12 +241,12 @@ public final class ElysiumTerrain {
 
         /** Past this far from the slash only an alcove can still reach the column. */
         public double strataReach() {
-            return 3.0 * vary + 1.3;
+            return inland <= 0.0 ? -1.0 : 3.0 * vary + 1.3;
         }
 
         /** Past this far nothing reaches the column at all. */
         public double reach() {
-            return strataReach() + 9.0 * alcove;
+            return inland <= 0.0 ? -1.0 : strataReach() + 9.0 * alcove;
         }
 
         /** The heights an alcove cuts through, with a block to spare. */
@@ -270,10 +272,10 @@ public final class ElysiumTerrain {
             if (gate <= 0.0) {
                 return 0.0;
             }
-            double r = STANDBACK[band(y)] * (0.6 + 0.4 * vary);
+            double r = STANDBACK[band(y)] * (0.6 + 0.4 * vary) * inland;
             double u = 5.0 - Math.abs(y - cy);
             if (alcove > 0.0 && u > 0.0) {
-                r += 9.0 * alcove * Math.min(1.0, u / 1.5);
+                r += 9.0 * alcove * inland * Math.min(1.0, u / 1.5);
             }
             return r * gate;
         }
