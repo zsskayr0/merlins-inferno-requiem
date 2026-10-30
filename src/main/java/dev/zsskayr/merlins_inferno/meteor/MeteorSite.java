@@ -17,6 +17,7 @@ import net.minecraft.world.RandomizableContainer;
 import net.minecraft.core.registries.Registries;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 
@@ -27,6 +28,9 @@ import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 public final class MeteorSite {
     public static final ResourceKey<LootTable> LOOT = ResourceKey.create(Registries.LOOT_TABLE,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/meteor"));
+    /** Once the Third Circle has opened the stars carry more: a bigger haul and one more guard. */
+    public static final ResourceKey<LootTable> LOOT_DEEP = ResourceKey.create(Registries.LOOT_TABLE,
+            ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/meteor_deep"));
     /** Horizontal radius of the bowl; the chunks within this and a margin must be loaded before it is built. */
     public static final int RADIUS = 6;
     private static final int DEPTH = 4;
@@ -91,12 +95,13 @@ public final class MeteorSite {
         }
         level.setBlock(new BlockPos(x + 2, floorY, z), ModBlocks.LYRIUM_BLOCK.get().defaultBlockState(), 2);
 
+        boolean deep = ProgressionHelper.hasReached(level, ProgressionHelper.THIRD_CIRCLE);
         // The sky drop: a chest on the lip of the bowl.
         BlockPos chest = new BlockPos(x - 3, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x - 3, z), z);
         level.setBlock(chest, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.Plane.HORIZONTAL.getRandomDirection(random)), 2);
-        RandomizableContainer.setBlockEntityLootTable(level, random, chest, LOOT);
+        RandomizableContainer.setBlockEntityLootTable(level, random, chest, deep ? LOOT_DEEP : LOOT);
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < (deep ? 3 : 2); i++) {
             Mob guard = ModEntityTypes.TEMPLAR.get().spawn(level, chest.offset(random.nextInt(5) - 2, 0, random.nextInt(5) - 2), MobSpawnType.EVENT);
             if (guard != null) {
                 guard.setPersistenceRequired();

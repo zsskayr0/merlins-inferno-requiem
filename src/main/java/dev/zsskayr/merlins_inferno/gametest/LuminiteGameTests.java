@@ -156,7 +156,7 @@ public final class LuminiteGameTests {
                 "luminite_bar_from_smelting", "luminite_bar_from_blasting", "luminite_bar_from_ore_smelting"}) {
             helper.assertTrue(server.getRecipeManager().byKey(id(recipe)).isPresent(), "Recipe " + recipe);
         }
-        for (String table : new String[] {"chests/meteor", "blocks/luminite_ore"}) {
+        for (String table : new String[] {"chests/meteor", "chests/meteor_deep", "blocks/luminite_ore"}) {
             ResourceKey<LootTable> key = ResourceKey.create(Registries.LOOT_TABLE, id(table));
             helper.assertTrue(server.reloadableRegistries().getLootTable(key) != LootTable.EMPTY, "Loot table " + table);
         }
