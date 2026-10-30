@@ -45,6 +45,10 @@ public final class ModAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> WINGS_READY_AT =
             ATTACHMENT_TYPES.register("wings_ready_at", () -> AttachmentType.builder(() -> 0L).build());
 
+    /** Item id of the Mark the player bears, "" for none; the source of truth for Marks (see MarkHelper). Soulbound: kept on death. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<String>> EQUIPPED_MARK =
+            ATTACHMENT_TYPES.register("equipped_mark", () -> AttachmentType.builder(() -> "").serialize(Codec.STRING).copyOnDeath().build());
+
     /** Chunk attachment: set once the Arganite vein retrogen has run on the chunk (see ArganiteRetrogen). */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> ARGANITE_VEINS_DONE =
             ATTACHMENT_TYPES.register("arganite_veins_done", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());

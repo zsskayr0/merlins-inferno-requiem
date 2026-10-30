@@ -566,6 +566,11 @@ public final class ModItems {
     public static final DeferredItem<PortalKeyItem> FOREST_KEY = ITEMS.registerItem("forest_key",
             props -> new PortalKeyItem(props.stacksTo(1).rarity(Rarity.RARE).fireResistant(), "forest"));
 
+    // --- Marks (item.MarkItem): cursed, soulbound power that binds to its bearer; the Curios slot is "mark". ---
+    /** 6% from Cain. What it does lives in the Mark handlers; it is cured only by a Scroll of Salvation. */
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MarkItem> MARK_OF_CAIN = ITEMS.registerItem("mark_of_cain",
+            props -> new dev.zsskayr.merlins_inferno.item.MarkItem(props.rarity(Rarity.EPIC)));
+
     // --- Circle 1 legendary swords (one per route, equal power): the Hollow Relic (very rare boss/miniboss drop, one use) is the crafting core of each. ---
     public static final DeferredItem<SwordItem> HOLLOW_RELIC = ITEMS.registerItem("hollow_relic",
             props -> new SwordItem(ModTiers.HOLLOW_RELIC, props.rarity(Rarity.UNCOMMON).attributes(SwordItem.createAttributes(ModTiers.HOLLOW_RELIC, 3, -2.4F))));

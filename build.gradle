@@ -17,6 +17,11 @@ repositories {
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
         content { includeGroup 'software.bernie.geckolib' }
     }
+    // Curios API (the Marks' "mark" slot) - compile-time only, see compat/curios.
+    maven {
+        url 'https://maven.theillusivec4.top/'
+        content { includeGroup 'top.theillusivec4.curios' }
+    }
     mavenCentral()
 }
 
@@ -137,6 +142,9 @@ dependencies {
 
     // JEI: compile-time API only; the Pandora's Box category lives in compat/jei and is only loaded by JEI itself.
     compileOnly "mezz.jei:jei-1.21.1-neoforge-api:19.21.0.247"
+
+    // Curios: compile-time API only (optional at runtime; compat/curios is loaded only when Curios is).
+    compileOnly "top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1"
 
     compileOnly "vazkii.patchouli:Patchouli:1.21.1-93-NEOFORGE:api"
     runtimeOnly "vazkii.patchouli:Patchouli:1.21.1-93-NEOFORGE"

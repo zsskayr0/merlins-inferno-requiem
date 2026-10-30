@@ -57,6 +57,9 @@ public class Merlins_inferno {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(ModDataGenerators::gatherData);
         modEventBus.addListener(dev.zsskayr.merlins_inferno.compat.framedblocks.FramedBlocksCompat::enqueue);
+        if (net.neoforged.fml.ModList.get().isLoaded("curios")) {
+            modEventBus.addListener(dev.zsskayr.merlins_inferno.compat.curios.CuriosMarks::register);
+        }
 
         // Each registry class owns its DeferredRegister(s) and hooks itself onto the mod event bus.
         // ArmorMaterials go first since ModItems' armor pieces reference them.
@@ -99,6 +102,7 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new HolyCombatHandler());
         NeoForge.EVENT_BUS.register(new LyriumVillagerTrades());
         NeoForge.EVENT_BUS.register(new MarkOfDebtHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.MarkPickupHandler());
         NeoForge.EVENT_BUS.register(new PandoraHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EssenceDropHandler());
         NeoForge.EVENT_BUS.register(new BossRewardChestHandler());
