@@ -1,27 +1,6 @@
 {
   "variants": {
-    "second_x=false,second_y=false,second_z=false": {
-      "model": "merlins_inferno:block/tiled_porcelain"
-    },
-    "second_x=false,second_y=false,second_z=true": {
-      "model": "merlins_inferno:block/tiled_porcelain"
-    },
-    "second_x=false,second_y=true,second_z=false": {
-      "model": "merlins_inferno:block/tiled_porcelain"
-    },
-    "second_x=false,second_y=true,second_z=true": {
-      "model": "merlins_inferno:block/tiled_porcelain"
-    },
-    "second_x=true,second_y=false,second_z=false": {
-      "model": "merlins_inferno:block/tiled_porcelain"
-    },
-    "second_x=true,second_y=false,second_z=true": {
-      "model": "merlins_inferno:block/tiled_porcelain"
-    },
-    "second_x=true,second_y=true,second_z=false": {
-      "model": "merlins_inferno:block/tiled_porcelain"
-    },
-    "second_x=true,second_y=true,second_z=true": {
+    "": {
       "model": "merlins_inferno:block/tiled_porcelain"
     }
   }

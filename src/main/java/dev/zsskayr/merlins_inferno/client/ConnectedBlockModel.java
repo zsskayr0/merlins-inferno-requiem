@@ -2,7 +2,6 @@ package dev.zsskayr.merlins_inferno.client;
 
 import java.util.ArrayList;
 import java.util.List;
-import dev.zsskayr.merlins_inferno.block.TiledPorcelainBlock;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -36,13 +35,15 @@ import org.jetbrains.annotations.Nullable;
  * ModelData and shows the plain framed tile.
  *
  * <p>In {@code pairs} mode (Tiled Porcelain) a block only counts as connected to a neighbour that shares its 2x2 group,
- * the groups being the first/second halves its blocks carry on each axis (see {@link TiledPorcelainBlock}), so a flat
+ * the groups being the first/second halves counted along each axis from where a line of blocks starts, so a flat
  * area reads as big two-by-two tiles with a border around each one; a lone block is a fully framed tile.
  */
 public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
     /** Bit {@code (dx+1) + 3*(dy+1) + 9*(dz+1)}: the block at that offset is the same block. */
     public static final ModelProperty<Integer> NEIGHBOURS = new ModelProperty<>();
     private static final ModelProperty<BlockPos> POS = new ModelProperty<>();
+    /** How far the start of a line of Tiled Porcelain is searched for; a longer line pairs up from here. */
+    private static final int MAX_RUN = 32;
     private static final int VERTEX_SIZE = 8; // DefaultVertexFormat.BLOCK, in ints
     private static final int UV_OFFSET = 4;
     private static final int GRID_W = 32, GRID_H = 24, VARIANTS = 16;
@@ -101,7 +102,6 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
         int bits = 0;
         // Framed Blocks (and similar) hand us their own state; what matters is the block they are camouflaged as.
         BlockState self = camouflaged(level, pos, state);
-        boolean grouped = pairs && self == state && state.hasProperty(TiledPorcelainBlock.SECOND_X);
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
@@ -111,7 +111,7 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
                     }
                     at.setWithOffset(pos, dx, dy, dz);
                     BlockState other = camouflaged(level, at, level.getBlockState(at));
-                    if (other.is(self.getBlock()) && (!grouped || sameGroup(state, other, dx, dy, dz))) {
+                    if (other.is(self.getBlock()) && (!pairs || sameGroup(level, pos, at, self, dx, dy, dz))) {
                         bits |= bit(dx, dy, dz);
                     }
                 }
@@ -209,18 +209,35 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
     }
 
     /**
-     * Whether two Tiled Porcelain blocks, {@code (dx, dy, dz)} apart, are halves of the same group: on every axis they
-     * differ on this one must be the first half and the other the second, and on the axes they share the halves match.
+     * Whether two Tiled Porcelain blocks, {@code (dx, dy, dz)} apart, are halves of the same 2x2 group. Nothing is stored in
+     * the blocks: along each axis a block is the first or second half of a pair counted from where its unbroken line of
+     * Tiled Porcelain starts, so a row builds tiles from its low end however it was placed. Across an axis they differ on, this
+     * one must be the first half going up (the second going down); on an axis they share, both must be the same half.
      */
-    private static boolean sameGroup(BlockState state, BlockState other, int dx, int dy, int dz) {
-        return sameGroup(state, other, Direction.Axis.X, dx) && sameGroup(state, other, Direction.Axis.Y, dy)
-                && sameGroup(state, other, Direction.Axis.Z, dz);
+    private static boolean sameGroup(BlockAndTintGetter level, BlockPos pos, BlockPos other, BlockState self, int dx, int dy, int dz) {
+        return sameHalf(level, pos, other, self, Direction.Axis.X, dx) && sameHalf(level, pos, other, self, Direction.Axis.Y, dy)
+                && sameHalf(level, pos, other, self, Direction.Axis.Z, dz);
     }
 
-    private static boolean sameGroup(BlockState state, BlockState other, Direction.Axis axis, int d) {
-        boolean second = state.getValue(TiledPorcelainBlock.second(axis));
-        boolean otherSecond = other.getValue(TiledPorcelainBlock.second(axis));
+    private static boolean sameHalf(BlockAndTintGetter level, BlockPos pos, BlockPos other, BlockState self, Direction.Axis axis, int d) {
+        boolean second = secondHalf(level, pos, self, axis);
+        boolean otherSecond = secondHalf(level, other, self, axis);
         return d == 0 ? second == otherSecond : (second == (d < 0) && otherSecond != second);
+    }
+
+    /** Whether the block is the second half of its pair along the axis: an odd number of blocks above the start of its line. */
+    private static boolean secondHalf(BlockAndTintGetter level, BlockPos pos, BlockState self, Direction.Axis axis) {
+        Direction down = Direction.get(Direction.AxisDirection.NEGATIVE, axis);
+        BlockPos.MutableBlockPos at = pos.mutable();
+        int above = 0;
+        while (above < MAX_RUN) {
+            at.move(down);
+            if (!camouflaged(level, at, level.getBlockState(at)).is(self.getBlock())) {
+                break;
+            }
+            above++;
+        }
+        return (above & 1) == 1;
     }
 
     /** The axis direction a vector mostly points along. */
