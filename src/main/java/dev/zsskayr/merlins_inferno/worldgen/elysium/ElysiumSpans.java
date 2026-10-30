@@ -10,6 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * two undersides. Spans are found, not placed by hand: every region cell throws a few rays from a random inland point,
  * and a ray that crosses open sky and lands on another island becomes a span. Pure function of the terrain, so every
  * chunk that a span passes through finds the same one.
+ *
+ * <p>There are two layers of the same search: a fine one for the many short crossings, and a coarse one whose rays go
+ * on for up to two and a half kilometres, so that a few chains reach right across the void and show where the next
+ * island lies.
  */
 public final class ElysiumSpans {
     /** One crossing: shore to shore (A and B at ground level), plus the undersides the chains hang from. */
@@ -19,20 +23,30 @@ public final class ElysiumSpans {
         }
     }
 
-    public static final int CELL = 512;
-    public static final int MAX_GAP = 560;
+    public static final int BRIDGE_MAX_GAP = 300;
     /** How far a ray walks across its own island before it must have left it. */
     private static final double MAX_RAY = 700.0;
-    public static final int BRIDGE_MAX_GAP = 300;
     private static final int MIN_GAP = 48;
-    /** Two crossings whose midpoints are closer than this compete for the same place. */
-    private static final double CROWD = 170.0;
-    private static final int RAYS_PER_CELL = 40;
     private static final double STEP = 12.0;
+    /** Beyond this much open sky a ray takes bigger strides: the far island is a continent, not a sliver. */
+    private static final double FINE_GAP = 300.0;
+    private static final double COARSE_STEP = 40.0;
+
+    /** One search: how big its cells are, how many rays each throws, which gaps it accepts and how far apart survivors stay. */
+    private record Layer(int cell, int rays, int minGap, int maxGap, double crowd, long salt) {
+        int reach() {
+            return (int) MAX_RAY + maxGap + cell;
+        }
+    }
+
+    private static final Layer SHORT = new Layer(512, 40, MIN_GAP, 560, 170.0, 0L);
+    private static final Layer LONG = new Layer(1024, 12, 560, 2400, 900.0, 0x5DEECE66DL);
+    /** The longest crossing there can be. */
+    public static final int MAX_GAP = LONG.maxGap();
 
     private final ElysiumTerrain terrain;
-    private final ConcurrentHashMap<Long, List<Span>> cells = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Long, List<Span>> candidates = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, List<Span>> shortCells = new ConcurrentHashMap<>(), shortCandidates = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, List<Span>> longCells = new ConcurrentHashMap<>(), longCandidates = new ConcurrentHashMap<>();
 
     public ElysiumSpans(ElysiumTerrain terrain) {
         this.terrain = terrain;
@@ -40,14 +54,21 @@ public final class ElysiumSpans {
 
     /** Every span that may touch the box (endpoints within reach of it), found cell by cell. */
     public List<Span> near(int minX, int minZ, int maxX, int maxZ) {
-        // a span can start in a cell as far away as a full ray plus the gap, so look that far for the ones that end here
-        int reach = (int) MAX_RAY + MAX_GAP + CELL;
-        int i0 = Math.floorDiv(minX - reach, CELL), i1 = Math.floorDiv(maxX + reach, CELL);
-        int j0 = Math.floorDiv(minZ - reach, CELL), j1 = Math.floorDiv(maxZ + reach, CELL);
         List<Span> out = new ArrayList<>();
+        collect(SHORT, shortCells, shortCandidates, minX, minZ, maxX, maxZ, out);
+        collect(LONG, longCells, longCandidates, minX, minZ, maxX, maxZ, out);
+        return out;
+    }
+
+    private void collect(Layer layer, ConcurrentHashMap<Long, List<Span>> cells, ConcurrentHashMap<Long, List<Span>> candidates,
+                         int minX, int minZ, int maxX, int maxZ, List<Span> out) {
+        // a span can start in a cell as far away as a full ray plus the gap, so look that far for the ones that end here
+        int reach = layer.reach();
+        int i0 = Math.floorDiv(minX - reach, layer.cell()), i1 = Math.floorDiv(maxX + reach, layer.cell());
+        int j0 = Math.floorDiv(minZ - reach, layer.cell()), j1 = Math.floorDiv(maxZ + reach, layer.cell());
         for (int i = i0; i <= i1; i++) {
             for (int j = j0; j <= j1; j++) {
-                for (Span s : cell(i, j)) {
+                for (Span s : cell(layer, cells, candidates, i, j)) {
                     double lo = Math.min(s.ax, s.bx) - 60, hi = Math.max(s.ax, s.bx) + 60;
                     double lo2 = Math.min(s.az, s.bz) - 60, hi2 = Math.max(s.az, s.bz) + 60;
                     if (hi >= minX && lo <= maxX && hi2 >= minZ && lo2 <= maxZ) {
@@ -56,7 +77,6 @@ public final class ElysiumSpans {
                 }
             }
         }
-        return out;
     }
 
     private static long key(int i, int j) {
@@ -64,19 +84,19 @@ public final class ElysiumSpans {
     }
 
     /** The spans a cell keeps: its candidates that no better candidate in the 3x3 cells around it crowds out. */
-    private List<Span> cell(int i, int j) {
+    private List<Span> cell(Layer layer, ConcurrentHashMap<Long, List<Span>> cells, ConcurrentHashMap<Long, List<Span>> candidates, int i, int j) {
         if (cells.size() > 4096) {
             cells.clear();
         }
         return cells.computeIfAbsent(key(i, j), k -> {
-            List<Span> mine = candidates(i, j);
+            List<Span> mine = candidates(layer, candidates, i, j);
             List<Span> kept = new ArrayList<>();
             for (Span c : mine) {
                 boolean crowded = false;
                 for (int di = -1; di <= 1 && !crowded; di++) {
                     for (int dj = -1; dj <= 1 && !crowded; dj++) {
-                        for (Span o : candidates(i + di, j + dj)) {
-                            if (o != c && priority(o) > priority(c) && crowds(o, c)) {
+                        for (Span o : candidates(layer, candidates, i + di, j + dj)) {
+                            if (o != c && priority(o) > priority(c) && crowds(o, c, layer.crowd())) {
                                 crowded = true;
                                 break;
                             }
@@ -98,23 +118,24 @@ public final class ElysiumSpans {
         h *= 0xff51afd7ed558ccdL;
         h ^= h >>> 33;
         double random = (h >>> 11) / (double) (1L << 53);
-        return 0.55 * random + 0.45 * Math.min(s.length(), 500.0) / 500.0;
+        return 0.55 * random + 0.45 * Math.min(s.length(), 2400.0) / 2400.0;
     }
 
-    private static boolean crowds(Span a, Span b) {
+    private static boolean crowds(Span a, Span b, double crowd) {
         double mx = (a.ax() + a.bx() - b.ax() - b.bx()) / 2.0, mz = (a.az() + a.bz() - b.az() - b.bz()) / 2.0;
-        return Math.hypot(mx, mz) < CROWD;
+        return Math.hypot(mx, mz) < crowd;
     }
 
-    private List<Span> candidates(int i, int j) {
+    private List<Span> candidates(Layer layer, ConcurrentHashMap<Long, List<Span>> candidates, int i, int j) {
         if (candidates.size() > 4096) {
             candidates.clear();
         }
-        return candidates.computeIfAbsent(key(i, j), k -> compute(i, j));
+        return candidates.computeIfAbsent(key(i, j), k -> compute(layer, i, j));
     }
 
-    private List<Span> compute(int i, int j) {
-        SplittableRandom rng = new SplittableRandom(terrain.seed * 0x9E3779B97F4A7C15L + i * 341873128712L + j * 132897987541L);
+    private List<Span> compute(Layer layer, int i, int j) {
+        final int CELL = layer.cell(), RAYS_PER_CELL = layer.rays(), MAX_GAP = layer.maxGap();
+        SplittableRandom rng = new SplittableRandom(terrain.seed * 0x9E3779B97F4A7C15L + layer.salt() + i * 341873128712L + j * 132897987541L);
         List<Span> found = new ArrayList<>();
         ElysiumTerrain.Column c = new ElysiumTerrain.Column();
         ElysiumTerrain.Column d = new ElysiumTerrain.Column();
@@ -143,15 +164,28 @@ public final class ElysiumSpans {
             double gapStart = t;
             boolean landed = false;
             while (t - gapStart < MAX_GAP) {
-                t += STEP;
+                double stride = t - gapStart < FINE_GAP ? STEP : COARSE_STEP;
+                t += stride;
                 terrain.sample((int) Math.floor(px + dx * t), (int) Math.floor(pz + dz * t), c);
                 if (c.land) {
                     landed = true;
+                    // a long stride overshoots the shore: walk back to it
+                    double lo = t - stride, hi = t;
+                    for (int n = 0; n < 6 && hi - lo > 1.5; n++) {
+                        double mid = (lo + hi) / 2.0;
+                        terrain.sample((int) Math.floor(px + dx * mid), (int) Math.floor(pz + dz * mid), c);
+                        if (c.land) {
+                            hi = mid;
+                        } else {
+                            lo = mid;
+                        }
+                    }
+                    t = hi;
                     break;
                 }
             }
             double gap = t - tA;
-            if (!landed || gap < MIN_GAP) {
+            if (!landed || gap < layer.minGap()) {
                 continue;
             }
             // the far shore must be real ground, not a sliver
