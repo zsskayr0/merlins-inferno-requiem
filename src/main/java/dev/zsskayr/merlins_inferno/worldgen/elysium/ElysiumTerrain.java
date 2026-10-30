@@ -109,11 +109,11 @@ public final class ElysiumTerrain {
 
     /** How deep below the rim a column inside a shallow slash lies. */
     public static double shallowDrop(double depth, double noise) {
-        return depth * (0.9 + 0.1 * noise);
+        return depth * (0.95 + 0.05 * noise);
     }
 
     public double shallowNoise(int x, int z) {
-        return hole.noise(x / 9.0 + 3.0, z / 9.0);
+        return hole.noise(x / 26.0 + 3.0, z / 26.0);
     }
 
     /**

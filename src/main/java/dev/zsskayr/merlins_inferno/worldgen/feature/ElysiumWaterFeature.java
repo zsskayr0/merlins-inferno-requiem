@@ -30,8 +30,13 @@ public class ElysiumWaterFeature extends Feature<NoneFeatureConfiguration> {
         ElysiumTerrain.Column column = new ElysiumTerrain.Column();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         boolean any = false;
+        double[] slash = new double[2];
         for (int dx = 0; dx < 16; dx++) {
             for (int dz = 0; dz < 16; dz++) {
+                // a trench cut into an island stays dry: no river down the middle of it
+                if (terrain.nearestSlash(x0 + dx, z0 + dz, slash) <= 0.0 && !Double.isInfinite(slash[1])) {
+                    continue;
+                }
                 terrain.sample(x0 + dx, z0 + dz, column);
                 if (!column.land || column.top >= ElysiumTerrain.WATER_Y) {
                     continue;

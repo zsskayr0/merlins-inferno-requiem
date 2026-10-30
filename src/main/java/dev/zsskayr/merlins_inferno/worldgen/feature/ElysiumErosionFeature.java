@@ -149,7 +149,7 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
         }
     }
 
-    /** Vines over the edge, and now and then a spring that pours into the gap. */
+    /** Vines hanging over the edge. */
     private static void edge(Ctx c, ElysiumTerrain.Column column, int x, int z, double d) {
         int top = (int) column.top;
         for (Direction face : Direction.Plane.HORIZONTAL) {
@@ -164,10 +164,6 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
                 }
                 c.set(x + face.getStepX(), y, z + face.getStepZ(), vine);
             }
-        }
-        if (column.humidity > 0.1 && rand(x, 5, z, 8) < 0.012) {
-            c.set(x, top, z, Blocks.WATER.defaultBlockState());
-            c.level.scheduleTick(new BlockPos(x, top, z), Fluids.WATER, 0);
         }
     }
 
@@ -193,7 +189,13 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
                     c.set(x, y, z, Blocks.AIR.defaultBlockState());
                 }
                 if (plant != null) {
-                    c.set(x, y, z, plant);
+                    if (column.humidity > 0.1 && rand(x, y, z, 23) < 0.05) {
+                        // a spring on the ledge: it spills over the edge as a small waterfall
+                        c.set(x, y, z, Blocks.WATER.defaultBlockState());
+                        c.level.scheduleTick(new BlockPos(x, y, z), Fluids.WATER, 0);
+                    } else {
+                        c.set(x, y, z, plant);
+                    }
                     plant = null;
                 }
             } else {
