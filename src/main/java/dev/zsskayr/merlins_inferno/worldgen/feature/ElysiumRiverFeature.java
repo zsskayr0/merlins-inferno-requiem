@@ -23,7 +23,7 @@ import dev.zsskayr.merlins_inferno.worldgen.elysium.ElysiumTerrains;
  * point of the river's line, so a river holds one level across its width and steps down along its length.
  */
 public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
-    private static final double BANK = 11.0;
+    private static final double BANK = 17.0;
 
     public ElysiumRiverFeature() {
         super(NoneFeatureConfiguration.CODEC);
@@ -89,7 +89,7 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                 BlockState under = level.getBlockState(pos.set(x, top - 1, z));
                 if (d <= half) {
                     double t = d / half;
-                    double depth = Math.max(2.0, Math.min(5.0, 1.1 + 0.55 * half));
+                    double depth = Math.max(2.0, Math.min(7.0, 1.2 + 0.55 * half));
                     int bed = (int) Math.floor(level0 - depth * (1.0 - t * t));
                     for (int y = bed; y <= Math.max(top, level0); y++) {
                         level.setBlock(pos.set(x, y, z), y <= level0 ? water : air, 2);
@@ -116,12 +116,12 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                     any = true;
                 } else {
                     // the bank rises gently from the water and keeps the ground's own skin
-                    int target = (int) Math.floor(level0 + 1 + (d - half) * 0.45);
+                    int target = (int) Math.floor(level0 + 1 + (d - half) * 0.35);
                     if (top > target) {
                         for (int y = target + 1; y <= top; y++) {
                             level.setBlock(pos.set(x, y, z), air, 2);
                         }
-                        boolean shore = d < half + 2.0;
+                        boolean shore = d < half + 2.5;
                         level.setBlock(pos.set(x, target, z), shore ? (rand(x, 2, z, 73) < 0.5 ? Blocks.GRAVEL : Blocks.SAND).defaultBlockState() : surface, 2);
                         level.setBlock(pos.set(x, target - 1, z), shore ? Blocks.GRAVEL.defaultBlockState() : under, 2);
                         any = true;

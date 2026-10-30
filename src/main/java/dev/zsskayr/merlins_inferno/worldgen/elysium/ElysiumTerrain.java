@@ -212,7 +212,7 @@ public final class ElysiumTerrain {
         double w = -dx * sa + dz * ca - bend * t * t;
         // worn edges: slow swells along the cut, ragged bites and spurs a few blocks across
         double width = wide * Math.pow(1.0 - t * t, 0.6) * (1.0 + 0.16 * hole.noise(s / 70.0 + saltI * 7.3, saltJ * 3.1 + 0.5))
-                + 4.5 * hole.noise(x / 11.0 + 40.0, z / 11.0) + 2.0 * hole.noise(x / 4.5, z / 4.5 + 17.0);
+                + 4.0 * hole.noise(x / 16.0 + 40.0, z / 16.0) + 0.7 * hole.noise(x / 5.0, z / 5.0 + 17.0);
         double dist = Math.abs(w) - width;
         if (dist < best) {
             if (out != null) {
@@ -451,11 +451,13 @@ public final class ElysiumTerrain {
         double bestGap = reach;
         for (int k = 0; k < 2; k++) {
             double gate = rvWidth.fbm(x / 1500.0 + 50.0 * k, z / 1500.0, 2);
-            double half = k == 0 ? 6.0 * smooth(-0.12, 0.3, gate) : 2.6 * smooth(0.05, 0.45, gate);
-            half *= 0.65 + 0.7 * (0.5 + 0.5 * rvWidth.noise(x / 90.0 + 9.0 * k, z / 90.0));
-            if (half < (k == 0 ? 1.0 : 0.9)) {
+            double half = k == 0 ? 11.0 * smooth(-0.12, 0.3, gate) : 5.0 * smooth(0.05, 0.45, gate);
+            half *= 0.7 + 0.6 * (0.5 + 0.5 * rvWidth.noise(x / 90.0 + 9.0 * k, z / 90.0));
+            if (half < (k == 0 ? 1.5 : 1.2)) {
                 continue;
             }
+            // scalloped banks, like a river dug with overlapping round bites
+            half += 1.6 * rvWidth.noise(x / 9.0 + 31.0 * k, z / 9.0 + 5.0) + 0.8 * rvWidth.noise(x / 4.0, z / 4.0 + 13.0 * k);
             double f0, fx, fz;
             if (k == 0) {
                 f0 = mainField(x, z);
