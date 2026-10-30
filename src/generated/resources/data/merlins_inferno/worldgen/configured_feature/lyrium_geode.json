@@ -19,13 +19,24 @@
         }
       },
       "inner_layer_provider": {
-        "type": "minecraft:simple_state_provider",
-        "state": {
-          "Name": "merlins_inferno:lyrium_block",
-          "Properties": {
-            "placed": "false"
+        "type": "minecraft:weighted_state_provider",
+        "entries": [
+          {
+            "data": {
+              "Name": "merlins_inferno:lyrium_block",
+              "Properties": {
+                "placed": "false"
+              }
+            },
+            "weight": 8
+          },
+          {
+            "data": {
+              "Name": "merlins_inferno:luminite_ore"
+            },
+            "weight": 1
           }
-        }
+        ]
       },
       "inner_placements": [
         {

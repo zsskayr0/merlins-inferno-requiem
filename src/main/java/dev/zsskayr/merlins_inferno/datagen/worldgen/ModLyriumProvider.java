@@ -56,10 +56,17 @@ public final class ModLyriumProvider {
         // lining and Lyrium Clusters as the crystals. Clusters may grow from any lining block
         // ("placementsRequireLayer0Alternate" off) since there's no budding variant to gate them.
         BlockStateProvider lining = BlockStateProvider.simple(ModBlocks.LYRIUM_BLOCK.get());
+        // Luminite is the geode's rare find: about one in nine lining blocks. It rides on the existing feature's block
+        // provider instead of a new feature, so the worldgen feature order is untouched.
+        BlockStateProvider rareLining = new net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider(
+                net.minecraft.util.random.SimpleWeightedRandomList.<net.minecraft.world.level.block.state.BlockState>builder()
+                        .add(ModBlocks.LYRIUM_BLOCK.get().defaultBlockState(), 8)
+                        .add(ModBlocks.LUMINITE_ORE.get().defaultBlockState(), 1)
+                        .build());
         context.register(ModConfiguredFeatures.LYRIUM_GEODE, new ConfiguredFeature<>(Feature.GEODE, new GeodeConfiguration(
                 new GeodeBlockSettings(
                         BlockStateProvider.simple(Blocks.AIR),
-                        lining,
+                        rareLining,
                         lining,
                         BlockStateProvider.simple(ModBlocks.ARGANITE.get()),
                         BlockStateProvider.simple(Blocks.SMOOTH_BASALT),
