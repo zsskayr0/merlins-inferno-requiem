@@ -8,6 +8,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodData;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
@@ -37,7 +38,11 @@ public final class MarkHungerTint {
     private MarkHungerTint() {
     }
 
-    @SubscribeEvent
+    /**
+     * Last in line (LOW): a HUD mod that hides or cancels the vanilla food bar gets there first, and then this never runs -
+     * the skulls go away with the bar. The sprites are plain GUI sprites, so a resource pack can repaint them.
+     */
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void before(RenderGuiLayerEvent.Pre event) {
         if (!event.getName().equals(VanillaGuiLayers.FOOD_LEVEL)) {
             return;
