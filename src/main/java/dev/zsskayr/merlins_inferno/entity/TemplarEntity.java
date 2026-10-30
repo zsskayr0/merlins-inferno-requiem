@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -39,6 +38,7 @@ import software.bernie.geckolib.animation.RawAnimation;
 
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
+import dev.zsskayr.merlins_inferno.entity.ai.FactionTargets;
 import dev.zsskayr.merlins_inferno.registry.ModTags;
 
 /**
@@ -151,9 +151,8 @@ public class TemplarEntity extends SacredCultistEntity {
         // Neutral to the player - unless it sees something demonic on them.
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
                 living -> living instanceof Player player && isDemonic(player)));
-        // The faithful hunt the unholy: undead and demons, on sight.
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 5, false, false,
-                living -> living.getType().is(EntityTypeTags.UNDEAD) || living.getType().is(ModTags.EntityTypes.DEMON)));
+        // The faithful hunt the unholy, witches and the Majin-aligned (Tensura), on sight.
+        this.targetSelector.addGoal(3, FactionTargets.huntForAngels(this));
     }
 
     // ------------------------------------------------------------------------------------------

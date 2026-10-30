@@ -93,6 +93,8 @@ public class FleshGolemEntity extends Monster {
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // The Infernal route preys on humans.
+        this.targetSelector.addGoal(3, dev.zsskayr.merlins_inferno.entity.ai.FactionTargets.huntForDemons(this));
     }
 
     @Override

@@ -50,7 +50,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.blockentity.SacredAltarBlockEntity;
 import dev.zsskayr.merlins_inferno.registry.ModEffects;
-import dev.zsskayr.merlins_inferno.registry.ModTags;
+import dev.zsskayr.merlins_inferno.entity.ai.FactionTargets;
 import dev.zsskayr.merlins_inferno.worldgen.structure.GreatBell;
 
 /**
@@ -245,7 +245,7 @@ public class EliasEntity extends Monster implements GeoEntity {
 
     /** Undead and demons are fair game for him (see {@link EntityTypeTags#UNDEAD} and the mod's demon tag). */
     private static boolean isUnholy(LivingEntity living) {
-        return !(living instanceof ImpEntity) && (living.getType().is(EntityTypeTags.UNDEAD) || living.getType().is(ModTags.EntityTypes.DEMON));
+        return FactionTargets.isAngelicPrey(living);
     }
 
     /** Who a sweeping blade may hit: players and the unholy, never his own congregation or villagers. */

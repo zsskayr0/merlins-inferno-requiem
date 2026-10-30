@@ -6,6 +6,7 @@
     "#minecraft:raiders",
     "merlins_inferno:sacred_cultist",
     "merlins_inferno:sacred_priest",
-    "merlins_inferno:templar"
+    "merlins_inferno:templar",
+    {"id": "#tensura:human_like", "required": false}
   ]
 }

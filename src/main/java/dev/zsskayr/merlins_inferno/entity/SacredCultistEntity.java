@@ -44,6 +44,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 import dev.zsskayr.merlins_inferno.entity.ai.ChurchServiceGoal;
+import dev.zsskayr.merlins_inferno.entity.ai.FactionTargets;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 import dev.zsskayr.merlins_inferno.registry.ModTags;
 
@@ -116,9 +117,8 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity, Chu
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, true,
                 living -> living instanceof Player player && ProgressionHelper.hasReached(player, ProgressionHelper.SECOND_CIRCLE)));
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this, SacredCultistEntity.class).setAlertOthers(SacredCultistEntity.class));
-        // The faithful hunt the unholy: undead and demons are attacked on sight, whatever the circle.
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 5, false, false,
-                living -> living.getType().is(EntityTypeTags.UNDEAD) || living.getType().is(ModTags.EntityTypes.DEMON)));
+        // The faithful hunt the unholy, witches and the Majin-aligned (Tensura), whatever the circle.
+        this.targetSelector.addGoal(3, FactionTargets.huntForAngels(this));
     }
 
     /** Gives it a seat: where its feet go and the direction it faces while praying. */

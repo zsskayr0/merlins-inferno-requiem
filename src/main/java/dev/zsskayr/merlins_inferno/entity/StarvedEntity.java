@@ -44,6 +44,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
+import dev.zsskayr.merlins_inferno.entity.ai.FactionTargets;
 import dev.zsskayr.merlins_inferno.entity.ai.StarvedChargeGoal;
 import dev.zsskayr.merlins_inferno.entity.ai.StarvedSeekGoal;
 import dev.zsskayr.merlins_inferno.registry.ModSounds;
@@ -177,6 +178,8 @@ public class StarvedEntity extends Monster implements GeoEntity {
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, net.minecraft.world.entity.Mob.class, 10, false, false,
                 prey -> prey instanceof net.minecraft.world.entity.monster.hoglin.Hoglin
                         || prey instanceof net.minecraft.world.entity.monster.piglin.AbstractPiglin));
+        // The Infernal route preys on humans.
+        this.targetSelector.addGoal(4, FactionTargets.huntForDemons(this));
     }
 
     // ------------------------------------------------------------------------------------------
