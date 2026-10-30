@@ -52,6 +52,9 @@ public class MarkOfCainHandler {
     private static final double MURDER_CHANCE = 0.5;
     private static final float MURDER_FACTOR = 7.0F;
     private static final long KILL_WINDOW = 20L * 60 * SECOND;
+    /** While the Dark Coven's Pact lasts under the Mark: exhaustion a second (about a hunger point every 4 s), and ticks the kill deadline loses a second on top of the usual - 4x the clock. */
+    private static final float PACT_EXHAUSTION_PER_SECOND = 1.0F;
+    private static final long PACT_CLOCK_EXTRA = 3L * SECOND;
     private static final long TIER_STEP = 5L * 60 * SECOND;
     private static final double HEALTH_PER_TIER = 4.0;
     private static final double MIN_MAX_HEALTH = 2.0;
@@ -126,6 +129,12 @@ public class MarkOfCainHandler {
         }
         if (player.getData(ModAttachments.CAIN_MURDER_ARMED)) {
             level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 1.0, player.getZ(), 6, 0.4, 0.8, 0.4, 0.02);
+        }
+
+        // The Pact feeds on the Mark: a ravenous hunger, and the clock to the next kill runs several times as fast.
+        if (player.hasEffect(dev.zsskayr.merlins_inferno.registry.ModEffects.DEMONIC_PACT)) {
+            player.causeFoodExhaustion(PACT_EXHAUSTION_PER_SECOND);
+            player.setData(ModAttachments.CAIN_KILL_DEADLINE, player.getData(ModAttachments.CAIN_KILL_DEADLINE) - PACT_CLOCK_EXTRA);
         }
 
         // The obligation.

@@ -86,6 +86,11 @@ public class DarkCovenItem extends SwordItem {
      */
     private static final int[] WITHER = {0, 0, 0, 1, 1, 1, 1};
 
+    /** The dust colour of a stage (violet at I, blood red at VII). */
+    public static float[] color(int stage) {
+        return COLORS[stage];
+    }
+
     /** Wither level (0 = I) of the Pact at a stage. */
     public static int witherLevel(int stage) {
         return WITHER[stage];
