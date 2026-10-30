@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "D": {
+      "item": "minecraft:crimson_door"
+    },
+    "P": {
+      "item": "minecraft:crimson_planks"
+    }
+  },
+  "pattern": [
+    "DPD",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:crimson_great_door"
+  }
+}

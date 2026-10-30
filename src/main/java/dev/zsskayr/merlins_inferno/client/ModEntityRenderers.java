@@ -68,6 +68,7 @@ public final class ModEntityRenderers {
         event.registerBlockEntityRenderer(ModBlockEntityTypes.DRYING_RACK.get(), DryingRackRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.PANDORA_BOX.get(), context -> new PandoraBoxRenderer());
         event.registerBlockEntityRenderer(ModBlockEntityTypes.SACRED_ALTAR.get(), context -> new CelestialAltarRenderer());
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.GREAT_DOOR.get(), context -> new GreatDoorRenderer());
     }
 
     /** The Box item plays its idle clip only while the cursor is over it in an inventory screen. */

@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "merlins_inferno:birch_great_door",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "col": "1",
+                "row": "0"
+              }
+            }
+          ],
+          "name": "merlins_inferno:birch_great_door"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "merlins_inferno:blocks/birch_great_door"
+}

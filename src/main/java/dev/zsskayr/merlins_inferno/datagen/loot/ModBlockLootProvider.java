@@ -6,11 +6,18 @@ import java.util.Set;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
+import dev.zsskayr.merlins_inferno.block.GreatDoorBlock;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 
@@ -39,7 +46,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
     protected Iterable<Block> getKnownBlocks() {
         // The default is EVERY registered block (vanilla included), and generate() must supply a
         // loot table for every one of them - restrict it to just this mod's blocks.
-        return List.of(
+        java.util.List<Block> known = new java.util.ArrayList<>(List.of(
                 ModBlocks.ASHWOOD_LOG.get(), ModBlocks.ASHWOOD_WOOD.get(), ModBlocks.ASHWOOD_PLANKS.get(),
                 ModBlocks.ASHWOOD_LEAVES.get(), ModBlocks.ASHWOOD_SAPLING.get(), ModBlocks.ASHWOOD_STAIRS.get(),
                 ModBlocks.ASHWOOD_SLAB.get(), ModBlocks.ASHWOOD_FENCE.get(),
@@ -80,7 +87,9 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.FLESH_BLOCK.get(), ModBlocks.MOUTH_BLOCK.get(), ModBlocks.VISCERA.get(), ModBlocks.FLESH_SLAB.get(), ModBlocks.FLESH_CARPET.get(), ModBlocks.RED_CHAIN.get(),
                 ModBlocks.BLACK_NYLIUM.get(), ModBlocks.BLIGHTSTONE_NYLIUM.get(), ModBlocks.TALL_CRIMSON_ROOTS.get(), ModBlocks.TALL_BLACK_GRASS.get(),
                 ModBlocks.LUST_FLOWER.get(),
-                ModBlocks.SKIN.get(), ModBlocks.SPINE.get());
+                ModBlocks.SKIN.get(), ModBlocks.SPINE.get()));
+        ModBlocks.GREAT_DOORS.forEach(door -> known.add(door.get()));
+        return known;
         // lyrium_cluster is hand-authored (data/merlins_inferno/loot_table/blocks/lyrium_cluster.json).
     }
 
@@ -97,6 +106,16 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.STRIPPED_ASHWOOD_WOOD.get());
         dropSelf(ModBlocks.ASHWOOD_FENCE_GATE.get());
         add(ModBlocks.ASHWOOD_DOOR.get(), createDoorTable(ModBlocks.ASHWOOD_DOOR.get()));
+        // One item for the whole 3 x 3 door: only the bottom middle cell drops it (the others hand it over, see GreatDoorBlock).
+        for (var door : ModBlocks.GREAT_DOORS) {
+            Block block = door.get();
+            add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool()
+                    .setRolls(ConstantValue.exactly(1.0F))
+                    .add(LootItem.lootTableItem(block)
+                            .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                                    .setProperties(StatePropertiesPredicate.Builder.properties()
+                                            .hasProperty(GreatDoorBlock.COL, 1).hasProperty(GreatDoorBlock.ROW, 0)))))));
+        }
         dropSelf(ModBlocks.ASHWOOD_TRAPDOOR.get());
         dropSelf(ModBlocks.ASHWOOD_PRESSURE_PLATE.get());
         dropSelf(ModBlocks.ASHWOOD_BUTTON.get());

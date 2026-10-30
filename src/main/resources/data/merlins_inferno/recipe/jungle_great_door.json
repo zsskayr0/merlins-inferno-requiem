@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "D": {
+      "item": "minecraft:jungle_door"
+    },
+    "P": {
+      "item": "minecraft:jungle_planks"
+    }
+  },
+  "pattern": [
+    "DPD",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:jungle_great_door"
+  }
+}

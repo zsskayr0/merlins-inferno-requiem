@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.WallHangingSignBlock;
 import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
@@ -41,6 +42,7 @@ import dev.zsskayr.merlins_inferno.block.CorruptedObsidianBlock;
 import dev.zsskayr.merlins_inferno.block.DryingRackBlock;
 import dev.zsskayr.merlins_inferno.block.PandoraBoxBlock;
 import dev.zsskayr.merlins_inferno.block.EdenweedBushBlock;
+import dev.zsskayr.merlins_inferno.block.GreatDoorBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgeControllerBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgeCoreBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgeVaultBlock;
@@ -145,6 +147,39 @@ public final class ModBlocks {
             props -> new DoorBlock(ModWoodTypes.ASHWOOD_SET, props),
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS)
                     .strength(3.0F).sound(SoundType.WOOD).noOcclusion().ignitedByLava().pushReaction(PushReaction.DESTROY));
+    /** 3 x 3 double door: nine cells of one block, see GreatDoorBlock. */
+    public static final DeferredBlock<GreatDoorBlock> ASHWOOD_GREAT_DOOR = BLOCKS.registerBlock("ashwood_great_door",
+            props -> new GreatDoorBlock(ModWoodTypes.ASHWOOD_SET, props),
+            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS)
+                    .strength(4.0F).noOcclusion().ignitedByLava().pushReaction(PushReaction.BLOCK));
+    public static final DeferredBlock<GreatDoorBlock> SPRUCE_GREAT_DOOR = BLOCKS.registerBlock("spruce_great_door",
+            props -> new GreatDoorBlock(BlockSetType.SPRUCE, props),
+            BlockBehaviour.Properties.of().mapColor(MapColor.PODZOL).instrument(NoteBlockInstrument.BASS)
+                    .strength(4.0F).noOcclusion().ignitedByLava().pushReaction(PushReaction.BLOCK));
+    public static final DeferredBlock<GreatDoorBlock> OAK_GREAT_DOOR = BLOCKS.registerBlock("oak_great_door",
+            props -> new GreatDoorBlock(BlockSetType.OAK, props), greatDoorProperties(MapColor.WOOD, false));
+    public static final DeferredBlock<GreatDoorBlock> BIRCH_GREAT_DOOR = BLOCKS.registerBlock("birch_great_door",
+            props -> new GreatDoorBlock(BlockSetType.BIRCH, props), greatDoorProperties(MapColor.SAND, false));
+    public static final DeferredBlock<GreatDoorBlock> JUNGLE_GREAT_DOOR = BLOCKS.registerBlock("jungle_great_door",
+            props -> new GreatDoorBlock(BlockSetType.JUNGLE, props), greatDoorProperties(MapColor.DIRT, false));
+    public static final DeferredBlock<GreatDoorBlock> ACACIA_GREAT_DOOR = BLOCKS.registerBlock("acacia_great_door",
+            props -> new GreatDoorBlock(BlockSetType.ACACIA, props), greatDoorProperties(MapColor.COLOR_ORANGE, false));
+    public static final DeferredBlock<GreatDoorBlock> DARK_OAK_GREAT_DOOR = BLOCKS.registerBlock("dark_oak_great_door",
+            props -> new GreatDoorBlock(BlockSetType.DARK_OAK, props), greatDoorProperties(MapColor.COLOR_BROWN, false));
+    public static final DeferredBlock<GreatDoorBlock> MANGROVE_GREAT_DOOR = BLOCKS.registerBlock("mangrove_great_door",
+            props -> new GreatDoorBlock(BlockSetType.MANGROVE, props), greatDoorProperties(MapColor.COLOR_RED, false));
+    public static final DeferredBlock<GreatDoorBlock> CHERRY_GREAT_DOOR = BLOCKS.registerBlock("cherry_great_door",
+            props -> new GreatDoorBlock(BlockSetType.CHERRY, props), greatDoorProperties(MapColor.TERRACOTTA_WHITE, false));
+    public static final DeferredBlock<GreatDoorBlock> BAMBOO_GREAT_DOOR = BLOCKS.registerBlock("bamboo_great_door",
+            props -> new GreatDoorBlock(BlockSetType.BAMBOO, props), greatDoorProperties(MapColor.COLOR_YELLOW, false));
+    public static final DeferredBlock<GreatDoorBlock> CRIMSON_GREAT_DOOR = BLOCKS.registerBlock("crimson_great_door",
+            props -> new GreatDoorBlock(BlockSetType.CRIMSON, props), greatDoorProperties(MapColor.CRIMSON_STEM, true));
+    public static final DeferredBlock<GreatDoorBlock> WARPED_GREAT_DOOR = BLOCKS.registerBlock("warped_great_door",
+            props -> new GreatDoorBlock(BlockSetType.WARPED, props), greatDoorProperties(MapColor.WARPED_STEM, true));
+    public static final DeferredBlock<GreatDoorBlock> HAUNTED_GREAT_DOOR = BLOCKS.registerBlock("haunted_great_door",
+            props -> new GreatDoorBlock(ModWoodTypes.HAUNTED_SET, props), hauntedWood(4.0F).noOcclusion().pushReaction(PushReaction.BLOCK));
+    /** Every great door, for the block entity type and the loot tables. */
+    public static final java.util.List<DeferredBlock<GreatDoorBlock>> GREAT_DOORS = java.util.List.of(ASHWOOD_GREAT_DOOR, SPRUCE_GREAT_DOOR, OAK_GREAT_DOOR, BIRCH_GREAT_DOOR, JUNGLE_GREAT_DOOR, ACACIA_GREAT_DOOR, DARK_OAK_GREAT_DOOR, MANGROVE_GREAT_DOOR, CHERRY_GREAT_DOOR, BAMBOO_GREAT_DOOR, CRIMSON_GREAT_DOOR, WARPED_GREAT_DOOR, HAUNTED_GREAT_DOOR);
     public static final DeferredBlock<TrapDoorBlock> ASHWOOD_TRAPDOOR = BLOCKS.registerBlock("ashwood_trapdoor",
             props -> new TrapDoorBlock(ModWoodTypes.ASHWOOD_SET, props),
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS)
@@ -212,6 +247,13 @@ public final class ModBlocks {
     private static BlockBehaviour.Properties hauntedWood(float strength) {
         return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).instrument(NoteBlockInstrument.BASS)
                 .strength(strength).sound(SoundType.WOOD);
+    }
+
+    /** A great door's properties; the nether woods do not burn. */
+    private static BlockBehaviour.Properties greatDoorProperties(MapColor color, boolean fireproof) {
+        BlockBehaviour.Properties props = BlockBehaviour.Properties.of().mapColor(color).instrument(NoteBlockInstrument.BASS)
+                .strength(4.0F).noOcclusion().pushReaction(PushReaction.BLOCK);
+        return fireproof ? props : props.ignitedByLava();
     }
 
     private static BlockBehaviour.Properties signProperties() {

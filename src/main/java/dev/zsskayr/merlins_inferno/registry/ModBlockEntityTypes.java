@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.blockentity.DryingRackBlockEntity;
+import dev.zsskayr.merlins_inferno.blockentity.GreatDoorBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.PandoraBoxBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.HellForgeBlockEntity;
 import dev.zsskayr.merlins_inferno.blockentity.MouthBlockEntity;
@@ -32,6 +33,10 @@ public final class ModBlockEntityTypes {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PandoraBoxBlockEntity>> PANDORA_BOX = BLOCK_ENTITY_TYPES.register("pandora_box",
             () -> BlockEntityType.Builder.of(PandoraBoxBlockEntity::new, ModBlocks.PANDORA_BOX.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GreatDoorBlockEntity>> GREAT_DOOR = BLOCK_ENTITY_TYPES.register("great_door",
+            () -> BlockEntityType.Builder.of(GreatDoorBlockEntity::new,
+                    ModBlocks.GREAT_DOORS.stream().map(door -> (net.minecraft.world.level.block.Block) door.get()).toArray(net.minecraft.world.level.block.Block[]::new)).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MouthBlockEntity>> MOUTH_BLOCK = BLOCK_ENTITY_TYPES.register("mouth_block",
             () -> BlockEntityType.Builder.of(MouthBlockEntity::new, ModBlocks.MOUTH_BLOCK.get()).build(null));

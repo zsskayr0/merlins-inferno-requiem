@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "merlins_inferno:item/spruce_great_door"
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.great_door.open": {
+      "animation_length": 0.6,
+      "bones": {
+        "leaf_w": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.6": {
+              "vector": [
+                0,
+                -90,
+                0
+              ],
+              "easing": "easeInOutSine"
+            }
+          }
+        },
+        "leaf_e": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.6": {
+              "vector": [
+                0,
+                90,
+                0
+              ],
+              "easing": "easeInOutSine"
+            }
+          }
+        }
+      }
+    },
+    "animation.great_door.close": {
+      "animation_length": 0.6,
+      "bones": {
+        "leaf_w": {
+          "rotation": {
+            "0.0": [
+              0,
+              -90,
+              0
+            ],
+            "0.6": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            }
+          }
+        },
+        "leaf_e": {
+          "rotation": {
+            "0.0": [
+              0,
+              90,
+              0
+            ],
+            "0.6": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            }
+          }
+        }
+      }
+    },
+    "animation.great_door.opened": {
+      "animation_length": 0.05,
+      "bones": {
+        "leaf_w": {
+          "rotation": [
+            0,
+            -90,
+            0
+          ]
+        },
+        "leaf_e": {
+          "rotation": [
+            0,
+            90,
+            0
+          ]
+        }
+      }
+    },
+    "animation.great_door.closed": {
+      "animation_length": 0.05,
+      "bones": {
+        "leaf_w": {
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "leaf_e": {
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    }
+  }
+}
