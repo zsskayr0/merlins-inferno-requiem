@@ -97,7 +97,8 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
         BlockPos origin = context.origin();
         int x0 = origin.getX() & ~15, z0 = origin.getZ() & ~15;
         Ctx c = new Ctx(level, terrain, x0, z0);
-        ElysiumTerrain.Column column = new ElysiumTerrain.Column();
+        ElysiumTerrain.Column[] cols = terrain.columns(x0 >> 4, z0 >> 4);
+        ElysiumTerrain.Column column;
         double[] near = new double[2];
         for (int dx = 0; dx < 16; dx++) {
             for (int dz = 0; dz < 16; dz++) {
@@ -106,7 +107,7 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
                 if (d <= 0.0 || d > ElysiumTerrain.WALL_ZONE) {
                     continue;
                 }
-                terrain.sample(x, z, column);
+                column = cols[dz * 16 + dx];
                 if (!column.land) {
                     continue;
                 }
@@ -176,12 +177,21 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
         // the highest a trench floor can be: nothing is carved below it
         double floorLimit = through ? -1.0e9 : top - 0.8 * depth;
         ElysiumTerrain.Wall wall = c.terrain.wall(x, z, top, floorLimit);
+        if (d > wall.reach()) {
+            return;
+        }
+        // far from the wall only an alcove can still reach: look at its heights alone
+        int yHi = top - 1;
+        if (d > wall.strataReach()) {
+            low = Math.max(low, wall.alcoveLow());
+            yHi = Math.min(yHi, wall.alcoveHigh());
+        }
         int markDepth = c.terrain.markDepth(x, z);
         boolean lit = c.terrain.markLit(x, z);
         BlockState arganite = ModBlocks.ARGANITE.get().defaultBlockState();
         double r = wall.recess(low);
         BlockState plant = null;
-        for (int y = low; y < top; y++) {
+        for (int y = low; y <= yHi; y++) {
             double next = wall.recess(y + 1);
             BlockState st = c.get(x, y, z);
             if (r > d && !kept(st)) {
@@ -189,7 +199,7 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
                     c.set(x, y, z, Blocks.AIR.defaultBlockState());
                 }
                 if (plant != null) {
-                    if (column.humidity > 0.1 && rand(x, y, z, 23) < 0.05) {
+                    if (column.humidity > 0.1 && rand(x, y, z, 23) < 0.03) {
                         // a spring on the ledge: it spills over the edge as a small waterfall
                         c.set(x, y, z, Blocks.WATER.defaultBlockState());
                         c.level.scheduleTick(new BlockPos(x, y, z), Fluids.WATER, 0);
@@ -211,7 +221,7 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
                                 : p < 0.59 ? Blocks.AZALEA.defaultBlockState()
                                 : p < 0.62 ? Blocks.FLOWERING_AZALEA.defaultBlockState() : null;
                     } else if (d - r < 1.2) {
-                        BlockState face = faceBlock(c.terrain, wall, x, y, z, (top - y == markDepth || top - y == markDepth + 1) && lit);
+                        BlockState face = faceBlock(c.terrain, wall, x, y, z, top - y == markDepth && lit);
                         if (face != null) {
                             c.set(x, y, z, face);
                         }
@@ -225,20 +235,19 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
     /** What a freshly exposed face of the wall is made of, or null to leave it Arganite. */
     private static BlockState faceBlock(ElysiumTerrain terrain, ElysiumTerrain.Wall wall, int x, int y, int z, boolean mark) {
         if (mark) {
-            return Blocks.SEA_LANTERN.defaultBlockState();
+            // a thin quartzite line, with a lantern set in it every nine blocks
+            return ((x + z) % 9 == 0 ? Blocks.SEA_LANTERN : ModBlocks.QUARTZITE.get()).defaultBlockState();
         }
         double blob = rand(x >> 1, y >> 2, z >> 1, 5);
-        if (blob < 0.14) {
-            return (blob < 0.07 ? Blocks.ANDESITE : blob < 0.11 ? Blocks.COBBLESTONE : Blocks.GRAVEL).defaultBlockState();
+        if (blob < 0.07) {
+            return (blob < 0.035 ? Blocks.ANDESITE : blob < 0.055 ? Blocks.COBBLESTONE : Blocks.GRAVEL).defaultBlockState();
         }
         if (terrain.crack(x, y, z)) {
             return Blocks.SMOOTH_BASALT.defaultBlockState();
         }
         return switch (wall.band(y)) {
             case 2 -> Blocks.CALCITE.defaultBlockState();
-            case 4 -> ModBlocks.QUARTZITE.get().defaultBlockState();
             case 5 -> Blocks.DIORITE.defaultBlockState();
-            case 6 -> Blocks.ANDESITE.defaultBlockState();
             default -> null;
         };
     }
@@ -247,7 +256,7 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
 
     /** A pocket cut into the wall, lined with quartzite and set with quartz or Lyrium crystals. */
     private static void cave(Ctx c, ElysiumTerrain.Column column, int x, int z, double depth) {
-        if (rand(x, 0, z, 11) >= 0.015) {
+        if (rand(x, 0, z, 11) >= 0.006) {
             return;
         }
         double[] tmp = new double[2];
@@ -342,21 +351,28 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
     // ---- rock left floating in the gap ----
 
     private static void debris(Ctx c, int x0, int z0) {
-        final int cell = 56;
+        final int cell = 64;
         List<ElysiumSpans.Span> spans = ElysiumTerrains.spans(c.terrain).near(x0 - 16, z0 - 16, x0 + 31, z0 + 31);
         ElysiumTerrain.Column col = new ElysiumTerrain.Column();
         for (int ci = Math.floorDiv(x0, cell); ci <= Math.floorDiv(x0 + 15, cell); ci++) {
             for (int cj = Math.floorDiv(z0, cell); cj <= Math.floorDiv(z0 + 15, cell); cj++) {
-                if (rand(ci, 0, cj, 31) > 0.45) {
+                if (rand(ci, 0, cj, 31) > 0.5) {
                     continue;
                 }
                 int sx = ci * cell + (int) (rand(ci, 1, cj, 32) * cell), sz = cj * cell + (int) (rand(ci, 2, cj, 33) * cell);
                 if (sx < x0 || sx > x0 + 15 || sz < z0 || sz > z0 + 15) {
                     continue;
                 }
-                double r = 3.0 + 5.0 * rand(ci, 3, cj, 34);
+                double base = c.terrain.baseInlandAt(sx, sz);
+                // an islet in a slash is small; one out in the open sky between the islands can be a good deal bigger
+                boolean gap = base <= 0.0;
+                double pick = rand(ci, 3, cj, 34);
+                double r = gap ? 4.0 + 9.0 * pick * pick : 3.0 + 5.0 * pick;
+                if (gap && (base < -380.0 || rand(ci, 5, cj, 36) > 0.6)) {
+                    continue;
+                }
                 c.terrain.sample(sx, sz, col);
-                if (col.land || col.inland > -(r + 6.0) || c.terrain.baseInlandAt(sx, sz) <= 0.0) {
+                if (col.land || col.inland > -(r + 6.0)) {
                     continue;
                 }
                 int ri = (int) Math.ceil(r + 3.0);
@@ -367,12 +383,20 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
                 if (nearSpan(spans, sx, sz, r + 14.0)) {
                     continue;
                 }
-                double span = Math.min(60.0, (col.top - col.bottom) * 0.5);
-                int cy = (int) (col.top - 22.0 - rand(ci, 4, cj, 35) * span);
-                if (cy - r * 1.4 < col.bottom + 6) {
+                int cy;
+                if (gap) {
+                    cy = (int) (c.terrain.skyLevel(sx, sz) - 75.0 + 125.0 * rand(ci, 4, cj, 35));
+                } else {
+                    double span = Math.min(60.0, (col.top - col.bottom) * 0.5);
+                    cy = (int) (col.top - 22.0 - rand(ci, 4, cj, 35) * span);
+                    if (cy - r * 1.4 < col.bottom + 6) {
+                        continue;
+                    }
+                }
+                if (cy < 24 || cy > ElysiumTerrain.MAX_Y - 24) {
                     continue;
                 }
-                fragment(c, sx, cy, sz, r);
+                fragment(c, sx, cy, sz, r, rand(ci, 6, cj, 37));
             }
         }
     }
@@ -390,8 +414,11 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     /** A chunk of the missing slice: flat grassy top, a long root of rock hanging beneath. */
-    private static void fragment(Ctx c, int cx, int cy, int cz, double r) {
-        int ry = (int) Math.ceil(r * 1.4) + 1;
+    private static void fragment(Ctx c, int cx, int cy, int cz, double r, double style) {
+        // some are squat plates, some deep cones; a few are bare rock
+        double drop = 0.9 + 1.0 * style;
+        boolean bare = style > 0.82;
+        int ry = (int) Math.ceil(r * drop) + 1;
         int rh = (int) Math.ceil(r) + 1;
         BlockState rock = ModBlocks.ARGANITE.get().defaultBlockState();
         for (int dx = -rh; dx <= rh; dx++) {
@@ -399,7 +426,7 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
                 double wobble = 0.85 + 0.3 * rand(cx + dx, 0, cz + dz, 41);
                 int topY = Integer.MIN_VALUE;
                 for (int dy = ry; dy >= -ry; dy--) {
-                    double yy = dy >= 0 ? dy / (0.35 * r) : dy / (1.4 * r);
+                    double yy = dy >= 0 ? dy / (0.35 * r) : dy / (drop * r);
                     double f = (dx * dx + dz * dz) / (r * r * wobble) + yy * yy;
                     if (f > 1.0) {
                         continue;
@@ -411,7 +438,7 @@ public class ElysiumErosionFeature extends Feature<NoneFeatureConfiguration> {
                     c.set(x, y, z, rock);
                     topY = Math.max(topY, y);
                 }
-                if (topY != Integer.MIN_VALUE) {
+                if (topY != Integer.MIN_VALUE && !bare) {
                     c.set(cx + dx, topY, cz + dz, Blocks.GRASS_BLOCK.defaultBlockState());
                     double p = rand(cx + dx, topY, cz + dz, 42);
                     if (p < 0.35 && c.get(cx + dx, topY + 1, cz + dz).isAir()) {

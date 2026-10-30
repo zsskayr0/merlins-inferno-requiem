@@ -50,9 +50,32 @@ public final class ElysiumTerrain {
         public int x = Integer.MIN_VALUE, z = Integer.MIN_VALUE;
     }
 
-    private final Perlin warpA, warpB, isl1, isl2, isl3, altitude, temp, humid, rel1, rel2, rel3, under, pool, dune, ridge, islet, hole;
+    private final Perlin warpA, warpB, isl1, isl2, isl3, altitude, temp, humid, rel1, rel2, rel3, under, pool, dune, ridge, islet, hole,
+            aqua, rvWarpA, rvWarpB, rvMain, rvTrib, rvWidth;
 
     public final long seed;
+
+    private final java.util.concurrent.ConcurrentHashMap<Long, Column[]> chunkColumns = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /**
+     * The 256 columns of a chunk, worked out once and shared by every feature that decorates it (index {@code dz * 16 + dx}).
+     * Read them, never write to them.
+     */
+    public Column[] columns(int chunkX, int chunkZ) {
+        if (chunkColumns.size() > 256) {
+            chunkColumns.clear();
+        }
+        return chunkColumns.computeIfAbsent(((long) chunkX << 32) ^ (chunkZ & 0xffffffffL), k -> {
+            Column[] out = new Column[256];
+            for (int dz = 0; dz < 16; dz++) {
+                for (int dx = 0; dx < 16; dx++) {
+                    out[dz * 16 + dx] = new Column();
+                    sample(chunkX * 16 + dx, chunkZ * 16 + dz, out[dz * 16 + dx]);
+                }
+            }
+            return out;
+        });
+    }
 
     public ElysiumTerrain(long seed) {
         this.seed = seed;
@@ -74,6 +97,12 @@ public final class ElysiumTerrain {
         ridge = new Perlin(r.nextLong());
         islet = new Perlin(r.nextLong());
         hole = new Perlin(r.nextLong());
+        aqua = new Perlin(r.nextLong());
+        rvWarpA = new Perlin(r.nextLong());
+        rvWarpB = new Perlin(r.nextLong());
+        rvMain = new Perlin(r.nextLong());
+        rvTrib = new Perlin(r.nextLong());
+        rvWidth = new Perlin(r.nextLong());
     }
 
     /** Blocks inland from the coast (zero or less over open sky): the island field with the slashes cut out, much cheaper than a full {@link #sample}. */
@@ -202,19 +231,38 @@ public final class ElysiumTerrain {
         private Wall(int x, int z, double top, double floor) {
             this.top = top;
             this.floor = floor;
-            shift = 14.0 * hole.noise(x / 70.0 + 5.0, z / 70.0);
-            vary = 0.5 + 0.5 * hole.noise(x / 30.0, z / 30.0 + 9.0);
-            alcove = smooth(0.05, 0.3, hole.noise(x / 45.0 + 30.0, z / 45.0));
+            shift = 3.0 * hole.noise(x / 90.0 + 5.0, z / 90.0);
+            vary = 0.85 + 0.15 * hole.noise(x / 60.0, z / 60.0 + 9.0);
+            alcove = smooth(0.12, 0.4, hole.noise(x / 60.0 + 30.0, z / 60.0));
             cy = top - 40.0 - 25.0 * hole.noise(x / 110.0, z / 110.0 + 3.0);
+        }
+
+        /** Past this far from the slash only an alcove can still reach the column. */
+        public double strataReach() {
+            return 3.0 * vary + 1.3;
+        }
+
+        /** Past this far nothing reaches the column at all. */
+        public double reach() {
+            return strataReach() + 9.0 * alcove;
+        }
+
+        /** The heights an alcove cuts through, with a block to spare. */
+        public int alcoveLow() {
+            return (int) Math.floor(cy - 6.0);
+        }
+
+        public int alcoveHigh() {
+            return (int) Math.ceil(cy + 6.0);
         }
 
         /** Which rock layer height {@code y} lies in (0..7): decides how far it stands back and what it is made of. */
         public int band(int y) {
-            int k = (int) Math.floor((y + shift) / 6.0);
+            int k = (int) Math.floor((y + shift) / 8.0);
             return (int) (unit(mix(seed + k * 0x9E3779B97F4A7C15L)) * 8.0);
         }
 
-        private static final double[] STANDBACK = {0, 1, 3, 5, 7, 10, 0, 3};
+        private static final double[] STANDBACK = {0, 0, 1, 2, 0, 3, 1, 0};
 
         /** How far the wall has worn back at height {@code y}: a few blocks by layer, a deep balcony where an alcove cuts in. */
         public double recess(int y) {
@@ -223,9 +271,9 @@ public final class ElysiumTerrain {
                 return 0.0;
             }
             double r = STANDBACK[band(y)] * (0.6 + 0.4 * vary);
-            double u = 6.5 - Math.abs(y - cy);
+            double u = 5.0 - Math.abs(y - cy);
             if (alcove > 0.0 && u > 0.0) {
-                r += 14.0 * alcove * Math.min(1.0, u / 1.5);
+                r += 9.0 * alcove * Math.min(1.0, u / 1.5);
             }
             return r * gate;
         }
@@ -242,12 +290,12 @@ public final class ElysiumTerrain {
     }
 
     public boolean markLit(int x, int z) {
-        return hole.noise(x / 25.0 + 12.0, z / 25.0 + 88.0) > -0.35;
+        return hole.noise(x / 25.0 + 12.0, z / 25.0 + 88.0) > -0.1;
     }
 
     /** Thin dark fissures running down a wall. */
     public boolean crack(int x, int y, int z) {
-        return Math.abs(hole.noise((x * 0.6 + z * 0.8) / 16.0 + 55.0, y / 24.0)) < 0.035;
+        return Math.abs(hole.noise((x * 0.6 + z * 0.8) / 16.0 + 55.0, y / 24.0)) < 0.018;
     }
 
     public double baseInlandAt(int x, int z) {
@@ -310,14 +358,18 @@ public final class ElysiumTerrain {
             rel += w[WEEPING] * (8.0 + 18.0 * w1 + 5.0 * w2 - 22.0 * lakes * smooth(60.0, 160.0, ed));
         }
 
-        double alt = 30.0 * altitude.fbm(x / 2600.0, z / 2600.0, 2);
+        // every island floats at its own height: some ride low, some high. The wet lowlands keep to the water line and the
+        // peaks bring their own height, so neither is lifted further
+        double wet = w[SEA] + w[MARSH] + w[WEEPING];
+        double alt = 75.0 * skyShare(x, z) * (1.0 - 0.9 * wet) * (1.0 - 0.6 * w[PEAKS]) + 12.0 * altitude.fbm(x / 600.0 + 40.0, z / 600.0, 2);
         double interior = softCeiling(BASE_Y + alt + rel * RELIEF);
         // every coast rises a little above the water, so a basin is always closed in by its own shore
         double shore = WATER_Y + 5.0;
         c.top = Math.min(MAX_Y - 6.0, Math.floor(lerp(shore, Math.max(interior, shore), smooth(0.0, 90.0, ed))));
 
         double mountain = w[PEAKS];
-        double tmax = 135.0 + 55.0 * mountain;
+        // and its own depth: some are slabs, some hang far down
+        double tmax = (135.0 + 55.0 * mountain) * (0.62 + 0.5 * (0.5 + 0.5 * Math.max(-1.0, Math.min(1.0, 2.0 * under.fbm(x / 1300.0 + 7.0, z / 1300.0, 2)))));
         // the rim drops away almost sheer in the first few dozen blocks, then the underside tapers like a cone
         double cliff = Math.sqrt(smooth(0.0, 30.0, ed));
         double thick = 8.0 + tmax * (0.6 * cliff + 0.4 * Math.pow(smooth(0.0, 650.0, ed), 0.7));
@@ -329,6 +381,97 @@ public final class ElysiumTerrain {
                 c.top = Math.max(c.bottom + 8.0, c.top - Math.floor(shallowDrop(shallow[1], shallowNoise(x, z))));
             }
         }
+    }
+
+    /** 0..1: how high this stretch of the sky floats its islands. */
+    private double skyShare(int x, int z) {
+        return 0.5 + 0.5 * Math.max(-1.0, Math.min(1.0, 2.4 * altitude.fbm(x / 1500.0, z / 1500.0, 2)));
+    }
+
+    /** Roughly where the islands around (x, z) ride, for things that float in the gaps between them. */
+    public double skyLevel(int x, int z) {
+        return BASE_Y + 40.0 * skyShare(x, z);
+    }
+
+    /** The water table: a flooded cavern a few blocks high lies at this height under the larger islands. */
+    public static final int WATER_TABLE = 74;
+
+    public record Aquifer(int floor, int ceil) {}
+
+    /**
+     * The groundwater cavern under a column, if any: big lakes in the dark, floored with a bowl and roofed a few blocks
+     * above the water table, with rock pillars left standing. Never within a few blocks of an island's edge.
+     */
+    public Aquifer aquifer(int x, int z, double top, double bottom, double inland) {
+        if (inland < 10.0) {
+            return null;
+        }
+        double s = smooth(0.02, 0.22, aqua.fbm(x / 240.0 + 11.0, z / 240.0, 3));
+        if (s <= 0.0 || s < 0.97 && aqua.noise(x / 19.0 + 71.0, z / 19.0) > 0.38) {
+            return null;
+        }
+        int floor = (int) Math.floor(WATER_TABLE - 3 - 7.0 * s);
+        int ceil = (int) Math.ceil(WATER_TABLE + 4 + 5.0 * s + 4.0 * aqua.noise(x / 37.0, z / 37.0 + 5.0));
+        if (bottom + 8 > floor || ceil + 10 > top || ceil - floor < 6) {
+            return null;
+        }
+        return new Aquifer(floor, ceil);
+    }
+
+    /** A river at one column: distance from its centre line, its half width there, and the nearest point on the line. */
+    public record River(double dist, double half, double px, double pz) {}
+
+    private static final double RIVER_H = 5.0;
+
+    private double mainField(double x, double z) {
+        // a wide slow wander, and a tighter bend on top of it
+        double wx = x + 260.0 * rvWarpA.fbm(x / 600.0, z / 600.0, 2) + 55.0 * rvWarpB.fbm(x / 170.0 + 20.0, z / 170.0, 2);
+        double wz = z + 260.0 * rvWarpB.fbm(x / 600.0, z / 600.0, 2) + 55.0 * rvWarpA.fbm(x / 170.0 + 20.0, z / 170.0, 2);
+        return rvMain.fbm(wx / 1700.0, wz / 1700.0, 2);
+    }
+
+    private double tribField(double x, double z) {
+        double wx = x + 70.0 * rvWarpA.fbm(x / 260.0 + 30.0, z / 260.0, 2), wz = z + 70.0 * rvWarpB.fbm(x / 260.0 + 30.0, z / 260.0, 2);
+        return rvTrib.fbm(wx / 520.0, wz / 520.0, 2);
+    }
+
+    /**
+     * The rivers: the zero contours of two smooth fields over the whole sky, so a river is one line that runs on across
+     * the gaps and comes up again on the next island. The main stems wander wide; thinner tributaries wander in patches;
+     * both swell and shrink along their course and fade out like headwaters. Null if no river lies within {@code reach}
+     * blocks of its bank.
+     */
+    public River riverAt(int x, int z, double reach) {
+        River best = null;
+        double bestGap = reach;
+        for (int k = 0; k < 2; k++) {
+            double gate = rvWidth.fbm(x / 1500.0 + 50.0 * k, z / 1500.0, 2);
+            double half = k == 0 ? 6.0 * smooth(-0.12, 0.3, gate) : 2.6 * smooth(0.05, 0.45, gate);
+            half *= 0.65 + 0.7 * (0.5 + 0.5 * rvWidth.noise(x / 90.0 + 9.0 * k, z / 90.0));
+            if (half < (k == 0 ? 1.0 : 0.9)) {
+                continue;
+            }
+            double f0, fx, fz;
+            if (k == 0) {
+                f0 = mainField(x, z);
+                fx = (mainField(x + RIVER_H, z) - mainField(x - RIVER_H, z)) / (2 * RIVER_H);
+                fz = (mainField(x, z + RIVER_H) - mainField(x, z - RIVER_H)) / (2 * RIVER_H);
+            } else {
+                f0 = tribField(x, z);
+                fx = (tribField(x + RIVER_H, z) - tribField(x - RIVER_H, z)) / (2 * RIVER_H);
+                fz = (tribField(x, z + RIVER_H) - tribField(x, z - RIVER_H)) / (2 * RIVER_H);
+            }
+            double g2 = fx * fx + fz * fz;
+            if (g2 < 1.0e-12) {
+                continue;
+            }
+            double dist = Math.abs(f0) / Math.sqrt(g2);
+            if (dist - half < bestGap) {
+                bestGap = dist - half;
+                best = new River(dist, half, x - fx * f0 / g2, z - fz * f0 / g2);
+            }
+        }
+        return best;
     }
 
     /** Eases the tallest summits into the ceiling instead of slicing them flat against it. */

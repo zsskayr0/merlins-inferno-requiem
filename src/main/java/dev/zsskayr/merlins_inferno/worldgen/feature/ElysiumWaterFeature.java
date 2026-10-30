@@ -27,7 +27,8 @@ public class ElysiumWaterFeature extends Feature<NoneFeatureConfiguration> {
         BlockPos origin = context.origin();
         int x0 = origin.getX() & ~15, z0 = origin.getZ() & ~15;
         BlockState water = Blocks.WATER.defaultBlockState();
-        ElysiumTerrain.Column column = new ElysiumTerrain.Column();
+        ElysiumTerrain.Column[] cols = terrain.columns(x0 >> 4, z0 >> 4);
+        ElysiumTerrain.Column column;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         boolean any = false;
         double[] slash = new double[2];
@@ -37,7 +38,7 @@ public class ElysiumWaterFeature extends Feature<NoneFeatureConfiguration> {
                 if (terrain.nearestSlash(x0 + dx, z0 + dz, slash) <= 0.0 && !Double.isInfinite(slash[1])) {
                     continue;
                 }
-                terrain.sample(x0 + dx, z0 + dz, column);
+                column = cols[dz * 16 + dx];
                 if (!column.land || column.top >= ElysiumTerrain.WATER_Y) {
                     continue;
                 }

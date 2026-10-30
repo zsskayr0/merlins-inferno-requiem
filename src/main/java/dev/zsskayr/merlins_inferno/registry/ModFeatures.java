@@ -64,6 +64,12 @@ public final class ModFeatures {
     public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumErosionFeature> ELYSIUM_EROSION =
             FEATURES.register("elysium_erosion", dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumErosionFeature::new);
 
+    // Flooded caverns under the islands, and the rivers that run over them.
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumGroundwaterFeature> ELYSIUM_GROUNDWATER =
+            FEATURES.register("elysium_groundwater", dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumGroundwaterFeature::new);
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumRiverFeature> ELYSIUM_RIVERS =
+            FEATURES.register("elysium_rivers", dev.zsskayr.merlins_inferno.worldgen.feature.ElysiumRiverFeature::new);
+
     private ModFeatures() {
     }
 

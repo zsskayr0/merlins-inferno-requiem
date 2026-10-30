@@ -19,7 +19,7 @@ public final class ElysiumSpans {
     /** One crossing: shore to shore (A and B at ground level), plus the undersides the chains hang from. */
     public record Span(double ax, double ay, double az, double bx, double by, double bz, double aBottom, double bBottom, double length) {
         public boolean hasBridge() {
-            return length <= BRIDGE_MAX_GAP;
+            return length <= BRIDGE_MAX_GAP && Math.abs(by - ay) <= 0.4 * length;
         }
     }
 
@@ -204,7 +204,7 @@ public final class ElysiumSpans {
             ElysiumTerrain.Column a = new ElysiumTerrain.Column(), b = new ElysiumTerrain.Column();
             terrain.sample((int) Math.floor(ax), (int) Math.floor(az), a);
             terrain.sample((int) Math.floor(bx), (int) Math.floor(bz), b);
-            if (!a.land || !b.land || a.top < ElysiumTerrain.WATER_Y + 3 || b.top < ElysiumTerrain.WATER_Y + 3 || Math.abs(a.top - b.top) > 80.0) {
+            if (!a.land || !b.land || a.top < ElysiumTerrain.WATER_Y + 3 || b.top < ElysiumTerrain.WATER_Y + 3 || Math.abs(a.top - b.top) > 140.0) {
                 continue;
             }
             // the chains hang from the rock a little way in from each shore
