@@ -30,7 +30,14 @@ public final class ElysiumTerrain {
     private static final double LAND_THRESHOLD = 0.07;
     /** Slashes: one may lie in each cell of this size; the longest reaches well under a cell, so the 3x3 around a column is enough. */
     private static final int SLASH_CELL = 900;
-    private static final double SLASH_CHANCE = 0.75;
+    private static final double SLASH_CHANCE = 0.28;
+    /** Crossings: now and then two long slashes strike the same point, in an X that ties the island in four. */
+    private static final int CROSS_CELL = 2200;
+    private static final double CROSS_CHANCE = 0.3;
+    /** The share of slashes that stop short of the underside: a trench with a floor, not a gap. */
+    private static final double SHALLOW_SHARE = 0.4;
+    /** How far the wall zone of a slash reaches into the rock, past which the strata and alcoves are gone. */
+    public static final double WALL_ZONE = 30.0;
 
     /** What one column looks like: solid from {@code bottom} to {@code top} inclusive when {@code land}. */
     public static final class Column {
@@ -87,16 +94,34 @@ public final class ElysiumTerrain {
         return (h >>> 11) / (double) (1L << 53);
     }
 
-    /**
-     * Blocks from the nearest slash, negative inside it. A slash is a blade-shaped cut, long and slightly bowed, that goes
-     * clean through an island as if something struck it: the walls stay as high as the rock around them and run all the way
-     * down the underside. Far from any slash this is huge.
-     */
-    public double slashDistAt(int x, int z) {
-        return slashDist(x, z);
+    /** Blocks from the nearest slash that goes right through its island (negative inside), huge far from any. */
+    private double slashDist(int x, int z) {
+        return scan(x, z, 0, null);
     }
 
-    private double slashDist(int x, int z) {
+    /**
+     * Blocks from the nearest slash of either kind, negative inside it. {@code out[1]} gets that slash's depth below the
+     * rim, or infinity if it goes clean through.
+     */
+    public double nearestSlash(int x, int z, double[] out) {
+        return scan(x, z, 2, out);
+    }
+
+    /** How deep below the rim a column inside a shallow slash lies. */
+    public static double shallowDrop(double depth, double noise) {
+        return depth * (0.9 + 0.1 * noise);
+    }
+
+    public double shallowNoise(int x, int z) {
+        return hole.noise(x / 9.0 + 3.0, z / 9.0);
+    }
+
+    /**
+     * The slashes: blade-shaped cuts, long and slightly bowed, that strike an island as if something had hit it. Most go
+     * clean through (the walls stay as high as the rock around them and run all the way down the underside); the others
+     * are trenches that stop a few dozen blocks down. {@code mode}: 0 through only, 1 shallow only, 2 both.
+     */
+    private double scan(int x, int z, int mode, double[] out) {
         int ci = Math.floorDiv(x, SLASH_CELL), cj = Math.floorDiv(z, SLASH_CELL);
         double best = 1.0e9;
         for (int i = ci - 1; i <= ci + 1; i++) {
@@ -110,27 +135,122 @@ public final class ElysiumTerrain {
                 double half = 300.0 + 400.0 * unit(h = mix(h + 1));
                 double wide = 18.0 + 24.0 * unit(h = mix(h + 1));
                 double bend = (unit(h = mix(h + 1)) * 2.0 - 1.0) * 0.14 * half;
-                double dx = x - cx, dz = z - cz;
-                if (dx * dx + dz * dz > (1.25 * half + wide) * (1.25 * half + wide)) {
+                boolean shallow = unit(h = mix(h + 1)) < SHALLOW_SHARE;
+                double depth = 22.0 + 48.0 * unit(h = mix(h + 1));
+                if (mode == 0 && shallow || mode == 1 && !shallow) {
                     continue;
                 }
-                double ca = Math.cos(ang), sa = Math.sin(ang);
-                double s = dx * ca + dz * sa;
-                if (Math.abs(s) >= half) {
+                best = blade(x, z, cx, cz, ang, half, wide, bend, shallow ? depth : Double.POSITIVE_INFINITY, i, j, out, best);
+            }
+        }
+        if (mode == 1) {
+            return best;
+        }
+        int ki = Math.floorDiv(x, CROSS_CELL), kj = Math.floorDiv(z, CROSS_CELL);
+        for (int i = ki - 1; i <= ki + 1; i++) {
+            for (int j = kj - 1; j <= kj + 1; j++) {
+                long h = mix(seed * 31L ^ (i * 0xA24BAED4963EE407L) ^ (j * 0x9FB21C651E98DF25L));
+                if (unit(h) > CROSS_CHANCE) {
                     continue;
                 }
-                double t = s / half;
-                double w = -dx * sa + dz * ca - bend * t * t;
-                // worn edges: slow swells along the cut, ragged bites and spurs a few blocks across
-                double width = wide * Math.pow(1.0 - t * t, 0.6) * (1.0 + 0.16 * hole.noise(s / 70.0 + i * 7.3, j * 3.1 + 0.5))
-                        + 4.5 * hole.noise(x / 11.0 + 40.0, z / 11.0) + 2.0 * hole.noise(x / 4.5, z / 4.5 + 17.0);
-                best = Math.min(best, Math.abs(w) - width);
+                double cx = (i + 0.2 + 0.6 * unit(h = mix(h + 1))) * CROSS_CELL, cz = (j + 0.2 + 0.6 * unit(h = mix(h + 1))) * CROSS_CELL;
+                double ang = unit(h = mix(h + 1)) * Math.PI;
+                double gap = 0.6 + 0.9 * unit(h = mix(h + 1));
+                for (int k = 0; k < 2; k++) {
+                    double half = 450.0 + 350.0 * unit(h = mix(h + 1));
+                    double wide = 20.0 + 18.0 * unit(h = mix(h + 1));
+                    double bend = (unit(h = mix(h + 1)) * 2.0 - 1.0) * 0.10 * half;
+                    best = blade(x, z, cx, cz, ang + k * gap, half, wide, bend, Double.POSITIVE_INFINITY, i + 1000 * (k + 1), j, out, best);
+                }
             }
         }
         return best;
     }
 
-    private double baseInlandAt(int x, int z) {
+    /** Distance from (x, z) to one blade, folded into {@code best}. */
+    private double blade(int x, int z, double cx, double cz, double ang, double half, double wide, double bend, double depth,
+                         int saltI, int saltJ, double[] out, double best) {
+        double dx = x - cx, dz = z - cz;
+        if (dx * dx + dz * dz > (1.25 * half + wide) * (1.25 * half + wide)) {
+            return best;
+        }
+        double ca = Math.cos(ang), sa = Math.sin(ang);
+        double s = dx * ca + dz * sa;
+        if (Math.abs(s) >= half) {
+            return best;
+        }
+        double t = s / half;
+        double w = -dx * sa + dz * ca - bend * t * t;
+        // worn edges: slow swells along the cut, ragged bites and spurs a few blocks across
+        double width = wide * Math.pow(1.0 - t * t, 0.6) * (1.0 + 0.16 * hole.noise(s / 70.0 + saltI * 7.3, saltJ * 3.1 + 0.5))
+                + 4.5 * hole.noise(x / 11.0 + 40.0, z / 11.0) + 2.0 * hole.noise(x / 4.5, z / 4.5 + 17.0);
+        double dist = Math.abs(w) - width;
+        if (dist < best) {
+            if (out != null) {
+                out[0] = dist;
+                out[1] = depth;
+            }
+            return dist;
+        }
+        return best;
+    }
+
+    /** The strata, ledges and marks of a slash wall at one column; see {@link #wall}. */
+    public final class Wall {
+        private final double top, floor, shift, vary, alcove, cy;
+
+        private Wall(int x, int z, double top, double floor) {
+            this.top = top;
+            this.floor = floor;
+            shift = 14.0 * hole.noise(x / 70.0 + 5.0, z / 70.0);
+            vary = 0.5 + 0.5 * hole.noise(x / 30.0, z / 30.0 + 9.0);
+            alcove = smooth(0.05, 0.3, hole.noise(x / 45.0 + 30.0, z / 45.0));
+            cy = top - 40.0 - 25.0 * hole.noise(x / 110.0, z / 110.0 + 3.0);
+        }
+
+        /** Which rock layer height {@code y} lies in (0..7): decides how far it stands back and what it is made of. */
+        public int band(int y) {
+            int k = (int) Math.floor((y + shift) / 6.0);
+            return (int) (unit(mix(seed + k * 0x9E3779B97F4A7C15L)) * 8.0);
+        }
+
+        private static final double[] STANDBACK = {0, 1, 3, 5, 7, 10, 0, 3};
+
+        /** How far the wall has worn back at height {@code y}: a few blocks by layer, a deep balcony where an alcove cuts in. */
+        public double recess(int y) {
+            double gate = smooth(6.0, 16.0, top - y) * smooth(floor + 2.0, floor + 10.0, y);
+            if (gate <= 0.0) {
+                return 0.0;
+            }
+            double r = STANDBACK[band(y)] * (0.6 + 0.4 * vary);
+            double u = 6.5 - Math.abs(y - cy);
+            if (alcove > 0.0 && u > 0.0) {
+                r += 14.0 * alcove * Math.min(1.0, u / 1.5);
+            }
+            return r * gate;
+        }
+    }
+
+    /** {@code floor} is the lowest block the wall may stand back at (use a very low number for a slash that goes through). */
+    public Wall wall(int x, int z, double top, double floor) {
+        return new Wall(x, z, top, floor);
+    }
+
+    /** How far below the rim the glowing strike line runs along a wall, and whether it is lit here. */
+    public int markDepth(int x, int z) {
+        return 26 + (int) (10.0 * hole.noise(x / 130.0 + 70.0, z / 130.0));
+    }
+
+    public boolean markLit(int x, int z) {
+        return hole.noise(x / 25.0 + 12.0, z / 25.0 + 88.0) > -0.35;
+    }
+
+    /** Thin dark fissures running down a wall. */
+    public boolean crack(int x, int y, int z) {
+        return Math.abs(hole.noise((x * 0.6 + z * 0.8) / 16.0 + 55.0, y / 24.0)) < 0.035;
+    }
+
+    public double baseInlandAt(int x, int z) {
         double wx = x + 260.0 * warpA.fbm(x / 650.0, z / 650.0, 2);
         double wz = z + 260.0 * warpB.fbm(x / 650.0, z / 650.0, 2);
         double field = 0.78 * isl1.fbm(wx / 2000.0, wz / 2000.0, 2) + 0.17 * isl2.fbm(wx / 800.0, wz / 800.0, 2) + 0.05 * isl3.noise(wx / 260.0, wz / 260.0);
@@ -145,11 +265,13 @@ public final class ElysiumTerrain {
         c.inland = Math.min(base, slashDist(x, z));
         c.temperature = climate(temp, x, z);
         c.humidity = climate(humid, x, z);
-        if (c.inland <= 0.0) {
+        if (base <= 0.0) {
             c.land = false;
             return;
         }
-        c.land = true;
+        // inside a slash the column is open sky, but its top and bottom are still worked out: they say where the rock
+        // around it stands
+        c.land = c.inland > 0.0;
         weights(c.temperature, c.humidity, c.weights);
 
         // shape the island as if the slash were not there: its walls then stand as tall and as deep as the rock around them
@@ -201,6 +323,12 @@ public final class ElysiumTerrain {
         double thick = 8.0 + tmax * (0.6 * cliff + 0.4 * Math.pow(smooth(0.0, 650.0, ed), 0.7));
         double rough = 40.0 * (0.5 + 0.5 * under.fbm(x / 110.0, z / 110.0, 3)) * smooth(30.0, 300.0, ed);
         c.bottom = Math.max(MIN_Y + 3.0, Math.ceil(c.top - thick - rough));
+        if (c.land) {
+            double[] shallow = new double[2];
+            if (scan(x, z, 1, shallow) <= 0.0) {
+                c.top = Math.max(c.bottom + 8.0, c.top - Math.floor(shallowDrop(shallow[1], shallowNoise(x, z))));
+            }
+        }
     }
 
     /** Eases the tallest summits into the ceiling instead of slicing them flat against it. */
