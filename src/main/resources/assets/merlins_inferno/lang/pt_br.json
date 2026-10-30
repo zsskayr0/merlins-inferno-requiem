@@ -411,6 +411,7 @@
   "item.merlins_inferno.dark_coven.tooltip.invoke_pact": "Botão direito para invocar o pacto por %s segundos, sem recarga. Não precisa da espada na mão: troque de arma à vontade. Agachar + botão direito o dispensa.",
   "item.merlins_inferno.dark_coven.tooltip.cooldown": "%s segundos de recarga quando termina.",
   "item.merlins_inferno.dark_coven.tooltip.no_drop": "Não pode ser jogada fora.",
+  "item.merlins_inferno.dark_coven.disrespect": "O Dark Coven não será descartado.",
   "item.merlins_inferno.dark_coven.tooltip.cost": "O Wither é o preço - se ele sumir, o conciliábulo inteiro some junto.",
   "item.merlins_inferno.dark_coven.tooltip.upgrade": "Ferraria: Osso Definhado + Barra de Ébano sobe um estágio.",
   "item.merlins_inferno.dark_coven.tooltip.upgrade_final": "Ferraria: Osso Definhado + Estrela do Nether sela o Pacto Demoníaco.",
