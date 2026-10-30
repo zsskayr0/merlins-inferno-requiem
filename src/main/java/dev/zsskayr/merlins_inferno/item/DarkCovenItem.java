@@ -151,8 +151,9 @@ public class DarkCovenItem extends SwordItem {
                 }
             }
         }
-        // No swing from the client: a held button would make the sword chop the air four times a second.
-        return InteractionResultHolder.consume(stack);
+        // PASS, not CONSUME: a consumed use resets the first-person "item used" bob, and a held button would make the
+        // sword dip every 4 ticks. The server does its own work above; the swing on invoking is sent from there.
+        return InteractionResultHolder.pass(stack);
     }
 
     /**
