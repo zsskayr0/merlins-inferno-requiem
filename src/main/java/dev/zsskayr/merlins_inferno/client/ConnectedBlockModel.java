@@ -14,6 +14,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.BakedModelWrapper;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import dev.zsskayr.merlins_inferno.compat.ae2.Ae2FacadeCompat;
 import dev.zsskayr.merlins_inferno.compat.framedblocks.FramedBlocksCompat;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.NotNull;
@@ -85,6 +86,11 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
         return out;
     }
 
+    /** The block a Framed Blocks block or an AE2 facade shows; anything else is itself. */
+    private static BlockState camouflaged(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        return Ae2FacadeCompat.resolve(level, pos, FramedBlocksCompat.resolve(level, pos, state));
+    }
+
     private static int bit(int dx, int dy, int dz) {
         return 1 << ((dx + 1) + 3 * (dy + 1) + 9 * (dz + 1));
     }
@@ -94,7 +100,7 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
                                            @NotNull ModelData data) {
         int bits = 0;
         // Framed Blocks (and similar) hand us their own state; what matters is the block they are camouflaged as.
-        BlockState self = FramedBlocksCompat.resolve(level, pos, state);
+        BlockState self = camouflaged(level, pos, state);
         boolean grouped = pairs && self == state && state.hasProperty(TiledPorcelainBlock.SECOND_X);
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
         for (int dx = -1; dx <= 1; dx++) {
@@ -104,7 +110,7 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
                         continue;
                     }
                     at.setWithOffset(pos, dx, dy, dz);
-                    BlockState other = FramedBlocksCompat.resolve(level, at, level.getBlockState(at));
+                    BlockState other = camouflaged(level, at, level.getBlockState(at));
                     if (other.is(self.getBlock()) && (!grouped || sameGroup(state, other, dx, dy, dz))) {
                         bits |= bit(dx, dy, dz);
                     }

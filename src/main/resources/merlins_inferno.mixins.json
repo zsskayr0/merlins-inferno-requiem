@@ -12,7 +12,9 @@
     "CameraMixin",
     "ItemRendererMixin",
     "EntityMixin",
-    "LocalPlayerMixin"
+    "LocalPlayerMixin",
+    "Ae2FacadeAccessMixin",
+    "Ae2FacadeBuilderMixin"
   ],
   "injectors": {
     "defaultRequire": 1
