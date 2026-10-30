@@ -39,7 +39,9 @@ public class ElysiumWaterFeature extends Feature<NoneFeatureConfiguration> {
                     continue;
                 }
                 column = cols[dz * 16 + dx];
-                if (!column.land || column.top >= ElysiumTerrain.WATER_Y) {
+                // only the wet lowlands hold water: a dry island that rides low is just an island
+                double wet = column.weights[ElysiumTerrain.SEA] + column.weights[ElysiumTerrain.WEEPING];
+                if (!column.land || column.top >= ElysiumTerrain.WATER_Y || wet < 0.3) {
                     continue;
                 }
                 for (int y = (int) column.top + 1; y <= ElysiumTerrain.WATER_Y; y++) {

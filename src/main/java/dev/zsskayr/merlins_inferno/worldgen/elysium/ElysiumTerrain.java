@@ -361,10 +361,12 @@ public final class ElysiumTerrain {
         // every island floats at its own height: some ride low, some high. The wet lowlands keep to the water line and the
         // peaks bring their own height, so neither is lifted further
         double wet = w[SEA] + w[MARSH] + w[WEEPING];
-        double alt = 75.0 * skyShare(x, z) * (1.0 - 0.9 * wet) * (1.0 - 0.6 * w[PEAKS]) + 12.0 * altitude.fbm(x / 600.0 + 40.0, z / 600.0, 2);
+        double dry = 1.0 - Math.min(1.0, wet);
+        double alt = LIFT * (skyShare(x, z) - 0.3) * dry * (1.0 - 0.6 * w[PEAKS]) + 18.0 * altitude.fbm(x / 600.0 + 40.0, z / 600.0, 2) * (0.3 + 0.7 * dry);
         double interior = softCeiling(BASE_Y + alt + rel * RELIEF);
         // every coast rises a little above the water, so a basin is always closed in by its own shore
-        double shore = WATER_Y + 5.0;
+        // a dry island's coast stands at that island's own height; only the wet lowlands come down to the water line
+        double shore = lerp(WATER_Y + 5.0, BASE_Y + alt - 4.0, dry);
         c.top = Math.min(MAX_Y - 6.0, Math.floor(lerp(shore, Math.max(interior, shore), smooth(0.0, 90.0, ed))));
 
         double mountain = w[PEAKS];
@@ -383,6 +385,9 @@ public final class ElysiumTerrain {
         }
     }
 
+    /** How far apart the lowest and the highest dry islands ride. */
+    private static final double LIFT = 120.0;
+
     /** 0..1: how high this stretch of the sky floats its islands. */
     private double skyShare(int x, int z) {
         return 0.5 + 0.5 * Math.max(-1.0, Math.min(1.0, 2.4 * altitude.fbm(x / 1500.0, z / 1500.0, 2)));
@@ -390,7 +395,7 @@ public final class ElysiumTerrain {
 
     /** Roughly where the islands around (x, z) ride, for things that float in the gaps between them. */
     public double skyLevel(int x, int z) {
-        return BASE_Y + 40.0 * skyShare(x, z);
+        return BASE_Y + LIFT * (skyShare(x, z) - 0.3);
     }
 
     /** The water table: a flooded cavern a few blocks high lies at this height under the larger islands. */
@@ -506,6 +511,11 @@ public final class ElysiumTerrain {
     public static void weights(double t, double h, double[] out) {
         double sum = 0.0;
         for (int i = 0; i < CLIMATE.length; i++) {
+            if (i == MARSH) {
+                // the marsh is gone from the sky: its row only keeps the indices steady
+                out[i] = 0.0;
+                continue;
+            }
             double dt = t - CLIMATE[i][0], dh = h - CLIMATE[i][1];
             out[i] = Math.exp(-(dt * dt + dh * dh) / (2.0 * 0.30 * 0.30));
             sum += out[i];
@@ -521,7 +531,7 @@ public final class ElysiumTerrain {
         for (int i = 0; i < CLIMATE.length; i++) {
             double dt = t - CLIMATE[i][0], dh = h - CLIMATE[i][1];
             double d = dt * dt + dh * dh;
-            if (d < bd) {
+            if (i != MARSH && d < bd) {
                 bd = d;
                 best = i;
             }
