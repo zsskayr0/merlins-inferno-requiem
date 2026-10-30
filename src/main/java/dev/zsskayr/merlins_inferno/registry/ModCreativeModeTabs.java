@@ -153,7 +153,6 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.BLACK_FUNGUS_ITEM.get());
                         output.accept(ModItems.BLACK_GRASS_ITEM.get());
                         output.accept(ModItems.BLACK_SPROUTS_ITEM.get());
-                        output.accept(ModItems.ASH_BLOCK_ITEM.get());
                         output.accept(ModItems.BLACK_VINES_ITEM.get());
                         output.accept(ModItems.OBLIVION_SHROOMLIGHT_ITEM.get());
                         output.accept(ModItems.SOUL_SPORE.get());

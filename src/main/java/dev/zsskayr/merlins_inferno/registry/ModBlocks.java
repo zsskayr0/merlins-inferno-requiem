@@ -735,10 +735,6 @@ public final class ModBlocks {
             SoulShroomlightBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE).strength(1.0F)
                     .sound(SoundType.SHROOMLIGHT).lightLevel(state -> 12));
 
-    // The ground of the Cinder Dunes: a soft, dry grey ash that does not fall (unlike sand).
-    public static final DeferredBlock<Block> ASH_BLOCK = BLOCKS.registerBlock("ash_block",
-            Block::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(0.5F).sound(SoundType.SAND));
-
     public static final DeferredBlock<NetherDoublePlantBlock> TALL_CRIMSON_ROOTS = BLOCKS.registerBlock("tall_crimson_roots",
             NetherDoublePlantBlock::new, netherPlantProperties(MapColor.COLOR_RED));
     public static final DeferredBlock<NetherDoublePlantBlock> TALL_BLACK_GRASS = BLOCKS.registerBlock("tall_black_grass",

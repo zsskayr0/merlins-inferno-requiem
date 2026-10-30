@@ -674,7 +674,6 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> OBLIVION_SHROOMLIGHT_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.OBLIVION_SHROOMLIGHT);
     // Dropped by Soul Shroomlight (2-4); four make one back.
     public static final DeferredItem<Item> SOUL_SPORE = ITEMS.registerSimpleItem("soul_spore", new Item.Properties());
-    public static final DeferredItem<BlockItem> ASH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASH_BLOCK);
     public static final DeferredItem<BlockItem> BLACK_SPROUTS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_SPROUTS);
     public static final DeferredItem<BlockItem> BLACK_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_ROOTS);
     public static final DeferredItem<BlockItem> EBONY_DEBRIS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.EBONY_DEBRIS, new Item.Properties().fireResistant());

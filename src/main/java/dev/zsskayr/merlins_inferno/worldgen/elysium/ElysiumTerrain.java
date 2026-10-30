@@ -25,6 +25,9 @@ public final class ElysiumTerrain {
             {0.15, -0.30}, {-0.05, 0.30}, {0.75, 0.45}, {0.20, 0.75}, {0.80, -0.60}, {-0.75, -0.15}, {-0.60, 0.75}};
     public static final int PLAINS = 0, FOREST = 1, MARSH = 2, SEA = 3, DESERT = 4, PEAKS = 5, WEEPING = 6;
 
+    /** From this much wet climate on a column floods with water, and keeps its ground above it. */
+    public static final double WET_FLOOD = 0.3;
+
     /** Blocks of "inland" per unit of the island field; tuned so ed reads roughly as blocks from the coast. */
     private static final double FIELD_SCALE = 1000.0;
     private static final double LAND_THRESHOLD = 0.07;
@@ -150,7 +153,18 @@ public final class ElysiumTerrain {
      * clean through (the walls stay as high as the rock around them and run all the way down the underside); the others
      * are trenches that stop a few dozen blocks down. {@code mode}: 0 through only, 1 shallow only, 2 both.
      */
+    /** How much of the climate here belongs to the wet biomes, whose water the ground must hold. */
+    public double wetAt(int x, int z) {
+        double[] w = new double[BIOMES.length];
+        weights(climate(temp, x, z), climate(humid, x, z), w);
+        return w[SEA] + w[MARSH] + w[WEEPING];
+    }
+
     private double scan(int x, int z, int mode, double[] out) {
+        if (wetAt(x, z) >= WET_FLOOD) {
+            // no cut through the water: it would leave the lake standing as a wall over the gap
+            return 1.0e9;
+        }
         int ci = Math.floorDiv(x, SLASH_CELL), cj = Math.floorDiv(z, SLASH_CELL);
         double best = 1.0e9;
         for (int i = ci - 1; i <= ci + 1; i++) {
@@ -369,7 +383,7 @@ public final class ElysiumTerrain {
         double interior = softCeiling(BASE_Y + alt + rel * RELIEF);
         // every coast rises a little above the water, so a basin is always closed in by its own shore
         // a dry island's coast stands at that island's own height; only the wet lowlands come down to the water line
-        double shore = lerp(WATER_Y + 5.0, BASE_Y + alt - 4.0, dry);
+        double shore = lerp(BASE_Y + alt - 4.0, WATER_Y + 5.0, smooth(0.0, WET_FLOOD, wet));
         c.top = Math.min(MAX_Y - 6.0, Math.floor(lerp(shore, Math.max(interior, shore), smooth(0.0, 90.0, ed))));
 
         double mountain = w[PEAKS];

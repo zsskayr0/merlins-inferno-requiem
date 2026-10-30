@@ -177,6 +177,31 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                 }
             }
         }
+        // trees planted by the neighbouring chunks lean their leaves over this one: sweep the water just outside too
+        ElysiumTerrain.Column edge = new ElysiumTerrain.Column();
+        for (int dx = -5; dx < 21; dx++) {
+            for (int dz = -5; dz < 21; dz++) {
+                if (dx >= 0 && dx < 16 && dz >= 0 && dz < 16) {
+                    continue;
+                }
+                int x = x0 + dx, z = z0 + dz;
+                ElysiumTerrain.River river = terrain.riverAt(x, z, 0.0);
+                if (river == null || river.dist() > river.half()) {
+                    continue;
+                }
+                terrain.sample(x, z, edge);
+                if (!edge.land) {
+                    continue;
+                }
+                int level0 = (int) Math.floor(terrain.riverLevel(river.px(), river.pz()));
+                int top = (int) edge.top;
+                for (int y = Math.max(top, level0) + 1; y <= Math.min(ElysiumTerrain.MAX_Y - 1, Math.max(top, level0) + 24); y++) {
+                    if (growth(level.getBlockState(pos.set(x, y, z)))) {
+                        level.setBlock(pos, y <= level0 ? water : air, 2);
+                    }
+                }
+            }
+        }
         return any;
     }
 }
