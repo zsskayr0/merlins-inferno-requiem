@@ -103,7 +103,7 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                 int top = (int) col.top;
                 int level0 = (int) Math.floor(terrain.riverLevel(river.px(), river.pz()));
                 // where the ground has fallen far away from the river's level the water stops, and spills if it can
-                if (top < level0 - 8) {
+                if (top < level0 - 12) {
                     continue;
                 }
                 BlockState surface = level.getBlockState(pos.set(x, top, z));
@@ -148,6 +148,10 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                     double blend = smooth(14.0, BANK - 2.0, d - half);
                     int target = (int) Math.floor(valley + (top - valley) * blend);
                     if (top > target) {
+                        if (target < col.bottom + 4) {
+                            // thin rock near the coast: cutting down to the valley would leave a shelf hanging in the void
+                            continue;
+                        }
                         for (int y = target + 1; y <= top; y++) {
                             level.setBlock(pos.set(x, y, z), air, 2);
                         }

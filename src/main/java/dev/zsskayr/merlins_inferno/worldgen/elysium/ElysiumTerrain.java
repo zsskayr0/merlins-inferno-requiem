@@ -444,7 +444,8 @@ public final class ElysiumTerrain {
     public double riverLevel(double px, double pz) {
         double mean = lattice(meanLevels, px, pz, 256, 5, 110);
         double blur = lattice(blurLevels, px, pz, 64, 3, 48);
-        return mean + 5.0 * Math.tanh((blur - mean) / 14.0) - 3.0;
+        // and never above the land around it, or the river would have to be held up on dikes
+        return Math.min(mean + 5.0 * Math.tanh((blur - mean) / 14.0) - 3.0, blur - 2.0);
     }
 
     /** The water table: a flooded cavern a few blocks high lies at this height under the larger islands. */
