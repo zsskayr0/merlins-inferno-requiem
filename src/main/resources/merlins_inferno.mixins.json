@@ -13,6 +13,7 @@
     "ItemRendererMixin",
     "EntityMixin",
     "LocalPlayerMixin",
+    "LevelRendererMixin",
     "Ae2FacadeAccessMixin",
     "Ae2FacadeBuilderMixin"
   ],

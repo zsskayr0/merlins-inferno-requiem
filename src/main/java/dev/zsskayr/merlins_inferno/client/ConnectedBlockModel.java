@@ -42,8 +42,6 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
     /** Bit {@code (dx+1) + 3*(dy+1) + 9*(dz+1)}: the block at that offset is the same block. */
     public static final ModelProperty<Integer> NEIGHBOURS = new ModelProperty<>();
     private static final ModelProperty<BlockPos> POS = new ModelProperty<>();
-    /** How far the start of a line of Tiled Porcelain is searched for; a longer line pairs up from here. */
-    private static final int MAX_RUN = 128;
     private static final int VERTEX_SIZE = 8; // DefaultVertexFormat.BLOCK, in ints
     private static final int UV_OFFSET = 4;
     private static final int GRID_W = 32, GRID_H = 24, VARIANTS = 16;
@@ -227,17 +225,8 @@ public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
 
     /** Whether the block is the second half of its pair along the axis: an odd number of blocks above the start of its line. */
     private static boolean secondHalf(BlockAndTintGetter level, BlockPos pos, BlockState self, Direction.Axis axis) {
-        Direction down = Direction.get(Direction.AxisDirection.NEGATIVE, axis);
-        BlockPos.MutableBlockPos at = pos.mutable();
-        int above = 0;
-        while (above < MAX_RUN) {
-            at.move(down);
-            if (!camouflaged(level, at, level.getBlockState(at)).is(self.getBlock())) {
-                break;
-            }
-            above++;
-        }
-        return (above & 1) == 1;
+        return TiledLines.secondHalf(pos, axis, at -> camouflaged(level, at, level.getBlockState(at)).is(self.getBlock()),
+                Ae2FacadeCompat.context() == null);
     }
 
     /** The axis direction a vector mostly points along. */
