@@ -412,6 +412,8 @@
   "item.merlins_inferno.dark_coven.tooltip.cooldown": "%s seconds of cooldown once it ends.",
   "item.merlins_inferno.dark_coven.tooltip.no_drop": "Cannot be thrown away.",
   "item.merlins_inferno.dark_coven.disrespect": "The Dark Coven will not be cast aside.",
+  "effect.merlins_inferno.demonic_pact": "Demonic Pact",
+  "effect.merlins_inferno.demonic_pact.description": "The Dark Coven is invoked. Its Strength, Speed and the Wither it costs all hide behind this one mark.",
   "item.merlins_inferno.dark_coven.tooltip.cost": "The Wither is the price - if it fades, the whole coven fades with it.",
   "item.merlins_inferno.dark_coven.tooltip.upgrade": "Smithing: Withered Bone + Ebony Bar raises it a stage.",
   "item.merlins_inferno.dark_coven.tooltip.upgrade_final": "Smithing: Withered Bone + Nether Star seals the Demonic Pact.",

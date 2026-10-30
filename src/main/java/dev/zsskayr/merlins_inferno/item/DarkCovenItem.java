@@ -28,6 +28,7 @@ import net.minecraft.world.level.Level;
 import org.joml.Vector3f;
 
 import dev.zsskayr.merlins_inferno.registry.ModAttachments;
+import dev.zsskayr.merlins_inferno.registry.ModEffects;
 
 /**
  * The Dark Coven - the mythic sword of Cain (not craftable; he drops it very rarely), a Circle 2 weapon far above the ordinary Ebony Sword. It exists as seven items, one per
@@ -184,25 +185,30 @@ public class DarkCovenItem extends SwordItem {
      */
     private void lend(Player player, int ticks, boolean replace) {
         boolean pact = this.stage == MAX_STAGE;
+        // One icon for the whole coven; everything else it lends is hidden, icon and particles both.
+        if (replace) {
+            player.removeEffect(ModEffects.DEMONIC_PACT);
+        }
+        player.addEffect(new MobEffectInstance(ModEffects.DEMONIC_PACT, ticks, this.stage, false, false, true));
         // The Wither is the price and the coven's life; every other effect borrows its duration.
-        this.put(player, MobEffects.WITHER, ticks, WITHER[this.stage], replace, true);
-        this.put(player, MobEffects.DAMAGE_BOOST, ticks, BOON[this.stage], replace, true);
-        this.put(player, MobEffects.MOVEMENT_SPEED, ticks, BOON[this.stage], replace, true);
-        this.put(player, MobEffects.NIGHT_VISION, Math.max(ticks, NIGHT_VISION_MIN_TICKS), 0, replace, false);
+        this.put(player, MobEffects.WITHER, ticks, WITHER[this.stage], replace);
+        this.put(player, MobEffects.DAMAGE_BOOST, ticks, BOON[this.stage], replace);
+        this.put(player, MobEffects.MOVEMENT_SPEED, ticks, BOON[this.stage], replace);
+        this.put(player, MobEffects.NIGHT_VISION, Math.max(ticks, NIGHT_VISION_MIN_TICKS), 0, replace);
         if (JUMP[this.stage] >= 0) {
-            this.put(player, MobEffects.JUMP, ticks, JUMP[this.stage], replace, true);
+            this.put(player, MobEffects.JUMP, ticks, JUMP[this.stage], replace);
         }
         if (pact) {
-            this.put(player, MobEffects.DAMAGE_RESISTANCE, ticks, 1, replace, true);
-            this.put(player, MobEffects.UNLUCK, ticks, 6, replace, true);
+            this.put(player, MobEffects.DAMAGE_RESISTANCE, ticks, 1, replace);
+            this.put(player, MobEffects.UNLUCK, ticks, 6, replace);
         }
     }
 
-    private void put(Player player, Holder<MobEffect> effect, int ticks, int amplifier, boolean replace, boolean visible) {
+    private void put(Player player, Holder<MobEffect> effect, int ticks, int amplifier, boolean replace) {
         if (replace) {
             player.removeEffect(effect);
         }
-        player.addEffect(new MobEffectInstance(effect, ticks, amplifier, false, visible));
+        player.addEffect(new MobEffectInstance(effect, ticks, amplifier, false, false, false));
     }
 
     private void invoke(ServerLevel level, ItemStack stack, Player player, int ticks) {
@@ -247,6 +253,7 @@ public class DarkCovenItem extends SwordItem {
             player.getCooldowns().addCooldown(this, COOLDOWN_SECONDS * 20);
         }
         player.setData(ModAttachments.COVEN_HOLD_UNTIL, -1L);
+        this.removeBoon(player, ModEffects.DEMONIC_PACT, this.stage);
         this.removeBoon(player, MobEffects.WITHER, WITHER[this.stage]);
         this.removeBoon(player, MobEffects.DAMAGE_BOOST, BOON[this.stage]);
         this.removeBoon(player, MobEffects.MOVEMENT_SPEED, BOON[this.stage]);

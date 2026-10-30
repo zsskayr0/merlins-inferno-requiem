@@ -38,6 +38,10 @@ public final class ModEffects {
     public static final DeferredHolder<MobEffect, DruidicTranceEffect> DRUIDIC_TRANCE = MOB_EFFECTS.register("druidic_trance",
             () -> new DruidicTranceEffect(MobEffectCategory.NEUTRAL, 0x5FE04A));
 
+    // The Dark Coven's one visible effect: every boon and the Wither it lends are hidden behind it (see item.DarkCovenItem). The level is the stage.
+    public static final DeferredHolder<MobEffect, MarkOfDebtEffect> DEMONIC_PACT = MOB_EFFECTS.register("demonic_pact",
+            () -> new MarkOfDebtEffect(MobEffectCategory.NEUTRAL, 0x8A0A14));
+
     private ModEffects() {
     }
 
