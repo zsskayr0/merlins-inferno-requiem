@@ -407,7 +407,7 @@
   "item.merlins_inferno.dark_coven.tooltip.mythic": "Mítica",
   "item.merlins_inferno.dark_coven.stage": "Estágio %s de %s",
   "item.merlins_inferno.dark_coven.pact": "Pacto Demoníaco Ativado",
-  "item.merlins_inferno.dark_coven.tooltip.invoke": "Botão direito para invocar o conciliábulo por %s segundos: Força, Velocidade e Visão Noturna. Botão direito de novo para dispensá-lo.",
+  "item.merlins_inferno.dark_coven.tooltip.invoke": "Segure o botão direito para invocar o conciliábulo: Força, Velocidade e Visão Noturna duram enquanto você segura, e um segundo depois de soltar. Agachar + botão direito o invoca por %s segundos; agachar + botão direito de novo o dispensa.",
   "item.merlins_inferno.dark_coven.tooltip.cost": "O Wither é o preço - se ele sumir, o conciliábulo inteiro some junto.",
   "item.merlins_inferno.dark_coven.tooltip.upgrade": "Ferraria: Osso Definhado + Barra de Ébano sobe um estágio.",
   "item.merlins_inferno.dark_coven.tooltip.upgrade_final": "Ferraria: Osso Definhado + Estrela do Nether sela o Pacto Demoníaco.",

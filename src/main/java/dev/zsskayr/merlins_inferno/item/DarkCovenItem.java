@@ -27,17 +27,23 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import org.joml.Vector3f;
 
+import dev.zsskayr.merlins_inferno.registry.ModAttachments;
+
 /**
  * The Dark Coven - the mythic sword of Cain (not craftable; he drops it very rarely), a Circle 2 weapon far above the ordinary Ebony Sword. It exists as seven items, one per
  * stage (I to VII): each stage is the next step of the same blade, reached at a smithing table with one Ebony Bar and a
  * Withered Bone as the template - the last step (VI to VII) asks for a Nether Star instead of the bar. Smithing keeps
  * the enchantments.
  * <p>
- * <b>Right-click</b> invokes the coven (and, while it lasts, right-click again dismisses it). The Wither is the price, and
- * it is also the coven's life: Strength, Speed and Night Vision (and, at the later stages, more) last exactly as long as
- * the Wither does - {@value #BASE_SECONDS} seconds at stage I, one more second per stage. When the Wither goes - it ran
- * out, or milk or a totem took it - every other effect goes with it and the coven is dismissed. There is no cooldown:
- * invoke it again whenever you like. Putting the sword away dismisses it too.
+ * <b>Holding right-click</b> keeps the coven going; a second after the button is let go, it ends. <b>Sneak + right-click</b>
+ * invokes it for a fixed time instead - {@value #BASE_SECONDS} seconds at stage I, two more per stage - and sneak +
+ * right-click again dismisses it. The Wither is the price, and it is also the coven's life: Strength, Speed and Night
+ * Vision (and, at the later stages, more) last exactly as long as the Wither does. When the Wither goes - it ran out, or
+ * milk or a totem took it - every other effect goes with it and the coven is dismissed. There is no cooldown. Putting the
+ * sword away dismisses it too. Night Vision is lent long enough never to flicker, and goes the moment the coven does.
+ * <p>
+ * Holding is read from the game's own right-click repeat (a held button uses the item every 4 ticks), so the sword is
+ * never "in use": you keep moving, sprinting and swinging while it lasts.
  * <p>
  * <b>Visual cue:</b> invoking sets off a ring of dust that climbs with the stage - violet and thin at stage I, crimson,
  * dense and with soul flames at stage VII - and the action bar names the stage. The item's own texture also gains more
@@ -45,8 +51,18 @@ import org.joml.Vector3f;
  */
 public class DarkCovenItem extends SwordItem {
     public static final int MAX_STAGE = 6;
-    /** Seconds the coven lasts at stage I; every later stage adds one. */
-    public static final int BASE_SECONDS = 7;
+    /** Seconds the sneak-invoked coven lasts at stage I; every later stage adds {@value #SECONDS_PER_STAGE}. */
+    public static final int BASE_SECONDS = 12;
+    public static final int SECONDS_PER_STAGE = 2;
+    /** A held right-click repeats every 4 ticks; this long without one and the button is let go. */
+    private static final int HOLD_GRACE_TICKS = 5;
+    /** What a held coven lends at a time, topped up while the button stays down. */
+    private static final int HOLD_LENT_TICKS = 60;
+    private static final int HOLD_TOP_UP_BELOW = 30;
+    /** What is left of the coven once the button is let go: one second. */
+    private static final int RELEASE_TICKS = 20;
+    /** Night Vision flickers in its last ten seconds, so it is never lent for less than this (it is removed with the coven). */
+    private static final int NIGHT_VISION_MIN_TICKS = 300;
     private static final String INVOKED_TAG = "coven_invoked";
     private static final String[] ROMAN = {"I", "II", "III", "IV", "V", "VI", "VII"};
     /** Dust colours per stage: violet at I, blood red at VII. */
@@ -77,7 +93,7 @@ public class DarkCovenItem extends SwordItem {
 
     /** How long this stage's coven lasts, in ticks. */
     public int getDurationTicks() {
-        return (BASE_SECONDS + this.stage) * 20;
+        return (BASE_SECONDS + SECONDS_PER_STAGE * this.stage) * 20;
     }
 
     public static boolean isInvoked(ItemStack stack) {
@@ -99,35 +115,77 @@ public class DarkCovenItem extends SwordItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (level instanceof ServerLevel serverLevel) {
-            if (isInvoked(stack)) {
-                this.dismiss(stack, player);
-                serverLevel.sendParticles(ParticleTypes.SMOKE, player.getX(), player.getY() + 1.0, player.getZ(), 12, 0.3, 0.6, 0.3, 0.02);
-                serverLevel.playSound(null, player.blockPosition(), SoundEvents.SOUL_ESCAPE.value(), SoundSource.PLAYERS, 0.5F, 0.8F);
-                player.displayClientMessage(Component.translatable("item.merlins_inferno.dark_coven.dismissed").withStyle(ChatFormatting.GRAY), true);
-            } else {
-                this.invoke(serverLevel, stack, player);
+            long now = serverLevel.getGameTime();
+            // A held button re-uses the item every 4 ticks: only a use after a pause is a fresh press.
+            boolean fresh = now - player.getData(ModAttachments.COVEN_LAST_USE) > HOLD_GRACE_TICKS;
+            player.setData(ModAttachments.COVEN_LAST_USE, now);
+            boolean invoked = isInvoked(stack);
+            boolean hold = player.getData(ModAttachments.COVEN_HOLD_UNTIL) >= 0;
+            if (player.isShiftKeyDown()) {
+                if (fresh) {
+                    if (invoked && !hold) {
+                        this.dismiss(stack, player);
+                        serverLevel.sendParticles(ParticleTypes.SMOKE, player.getX(), player.getY() + 1.0, player.getZ(), 12, 0.3, 0.6, 0.3, 0.02);
+                        serverLevel.playSound(null, player.blockPosition(), SoundEvents.SOUL_ESCAPE.value(), SoundSource.PLAYERS, 0.5F, 0.8F);
+                        player.displayClientMessage(Component.translatable("item.merlins_inferno.dark_coven.dismissed").withStyle(ChatFormatting.GRAY), true);
+                    } else {
+                        // The fixed-time coven: no button to keep down.
+                        player.setData(ModAttachments.COVEN_HOLD_UNTIL, -1L);
+                        if (invoked) {
+                            this.lend(player, this.getDurationTicks(), true);
+                        } else {
+                            this.invoke(serverLevel, stack, player, this.getDurationTicks());
+                        }
+                        player.swing(hand, true);
+                    }
+                }
+            } else if (!invoked) {
+                player.setData(ModAttachments.COVEN_HOLD_UNTIL, now + HOLD_GRACE_TICKS);
+                this.invoke(serverLevel, stack, player, HOLD_LENT_TICKS);
+                player.swing(hand, true);
+            } else if (hold) {
+                player.setData(ModAttachments.COVEN_HOLD_UNTIL, now + HOLD_GRACE_TICKS);
+                MobEffectInstance wither = player.getEffect(MobEffects.WITHER);
+                if (wither == null || wither.getDuration() < HOLD_TOP_UP_BELOW) {
+                    this.lend(player, HOLD_LENT_TICKS, false);
+                }
             }
         }
-        player.swing(hand, true);
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+        // No swing from the client: a held button would make the sword chop the air four times a second.
+        return InteractionResultHolder.consume(stack);
     }
 
-    private void invoke(ServerLevel level, ItemStack stack, Player player) {
+    /**
+     * Lends every effect of the coven for {@code ticks}. {@code replace} drops the ones already running first, so a shorter
+     * time takes hold too (effects only ever keep the longer one otherwise).
+     */
+    private void lend(Player player, int ticks, boolean replace) {
         boolean pact = this.stage == MAX_STAGE;
-        int duration = this.getDurationTicks();
-        setInvoked(stack, true);
         // The Wither is the price and the coven's life; every other effect borrows its duration.
-        player.addEffect(new MobEffectInstance(MobEffects.WITHER, duration, WITHER[this.stage]));
-        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, duration, BOON[this.stage]));
-        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, duration, BOON[this.stage]));
-        player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, duration, 0, false, false));
+        this.put(player, MobEffects.WITHER, ticks, WITHER[this.stage], replace, true);
+        this.put(player, MobEffects.DAMAGE_BOOST, ticks, BOON[this.stage], replace, true);
+        this.put(player, MobEffects.MOVEMENT_SPEED, ticks, BOON[this.stage], replace, true);
+        this.put(player, MobEffects.NIGHT_VISION, Math.max(ticks, NIGHT_VISION_MIN_TICKS), 0, replace, false);
         if (JUMP[this.stage] >= 0) {
-            player.addEffect(new MobEffectInstance(MobEffects.JUMP, duration, JUMP[this.stage]));
+            this.put(player, MobEffects.JUMP, ticks, JUMP[this.stage], replace, true);
         }
         if (pact) {
-            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, duration, 1));
-            player.addEffect(new MobEffectInstance(MobEffects.UNLUCK, duration, 6));
+            this.put(player, MobEffects.DAMAGE_RESISTANCE, ticks, 1, replace, true);
+            this.put(player, MobEffects.UNLUCK, ticks, 6, replace, true);
         }
+    }
+
+    private void put(Player player, Holder<MobEffect> effect, int ticks, int amplifier, boolean replace, boolean visible) {
+        if (replace) {
+            player.removeEffect(effect);
+        }
+        player.addEffect(new MobEffectInstance(effect, ticks, amplifier, false, visible));
+    }
+
+    private void invoke(ServerLevel level, ItemStack stack, Player player, int ticks) {
+        boolean pact = this.stage == MAX_STAGE;
+        setInvoked(stack, true);
+        this.lend(player, ticks, false);
 
         // The visual cue: the dust ring climbs and thickens with the stage.
         float[] c = COLORS[this.stage];
@@ -162,6 +220,7 @@ public class DarkCovenItem extends SwordItem {
     /** Ends the coven: the flag goes and so do the boons it lent (the Wither, if still there, runs its course). */
     private void dismiss(ItemStack stack, Player player) {
         setInvoked(stack, false);
+        player.setData(ModAttachments.COVEN_HOLD_UNTIL, -1L);
         this.removeBoon(player, MobEffects.DAMAGE_BOOST, BOON[this.stage]);
         this.removeBoon(player, MobEffects.MOVEMENT_SPEED, BOON[this.stage]);
         this.removeBoon(player, MobEffects.NIGHT_VISION, 0);
@@ -197,6 +256,12 @@ public class DarkCovenItem extends SwordItem {
             return;
         }
         boolean held = isSelected || player.getOffhandItem() == stack;
+        long holdUntil = player.getData(ModAttachments.COVEN_HOLD_UNTIL);
+        if (held && holdUntil >= 0 && level.getGameTime() > holdUntil) {
+            // The button was let go: one more second, then the Wither runs out and takes the coven with it.
+            player.setData(ModAttachments.COVEN_HOLD_UNTIL, -1L);
+            this.lend(player, RELEASE_TICKS, true);
+        }
         if (!held || !player.hasEffect(MobEffects.WITHER)) {
             this.dismiss(stack, player);
             if (held && level instanceof ServerLevel) {

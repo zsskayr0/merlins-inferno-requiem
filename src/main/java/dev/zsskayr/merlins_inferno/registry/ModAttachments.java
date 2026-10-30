@@ -59,6 +59,13 @@ public final class ModAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> CAIN_MURDER_ARMED =
             ATTACHMENT_TYPES.register("cain_murder_armed", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
 
+    /** Dark Coven: game time up to which a held right-click keeps the coven going; -1 when it is not in "hold" mode. Not saved. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> COVEN_HOLD_UNTIL =
+            ATTACHMENT_TYPES.register("coven_hold_until", () -> AttachmentType.builder(() -> -1L).build());
+    /** Dark Coven: game time of the last right-click, to tell a fresh press from the repeats of a held button. Not saved. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> COVEN_LAST_USE =
+            ATTACHMENT_TYPES.register("coven_last_use", () -> AttachmentType.builder(() -> -100L).build());
+
     /** Chunk attachment: set once the Arganite vein retrogen has run on the chunk (see ArganiteRetrogen). */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> ARGANITE_VEINS_DONE =
             ATTACHMENT_TYPES.register("arganite_veins_done", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
