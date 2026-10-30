@@ -401,6 +401,52 @@ public final class ElysiumTerrain {
         return BASE_Y + LIFT * (skyShare(x, z) - 0.3);
     }
 
+    private final java.util.concurrent.ConcurrentHashMap<Long, Double> meanLevels = new java.util.concurrent.ConcurrentHashMap<>();
+    private final java.util.concurrent.ConcurrentHashMap<Long, Double> blurLevels = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** The average height of the island ground in an {@code n} by {@code n} grid of samples around a point; the sky's height where there is none. */
+    private double groundAverage(int cx, int cz, int n, int step) {
+        Column c = new Column();
+        double sum = 0.0;
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                sample(cx + (i - n / 2) * step, cz + (j - n / 2) * step, c);
+                if (c.land) {
+                    sum += c.top;
+                    count++;
+                }
+            }
+        }
+        return count > 0 ? sum / count : BASE_Y;
+    }
+
+    private double lattice(java.util.concurrent.ConcurrentHashMap<Long, Double> cache, double x, double z, int spacing, int n, int step) {
+        if (cache.size() > 4096) {
+            cache.clear();
+        }
+        double fx = x / spacing, fz = z / spacing;
+        int ix = (int) Math.floor(fx), iz = (int) Math.floor(fz);
+        double tx = fx - ix, tz = fz - iz;
+        double[] v = new double[4];
+        for (int k = 0; k < 4; k++) {
+            int lx = ix + (k & 1), lz = iz + (k >> 1);
+            v[k] = cache.computeIfAbsent(((long) lx << 32) ^ (lz & 0xffffffffL), key -> groundAverage(lx * spacing, lz * spacing, n, step));
+        }
+        return lerp(lerp(v[0], v[1], tx), lerp(v[2], v[3], tx), tz);
+    }
+
+    /**
+     * The level of a river's water at one point of its line. Each island has its own: the ground averaged over the whole
+     * island sets it, and the local lie of the land moves it up or down by five blocks at the most, slowly, so a river
+     * is a gentle slope and never a staircase.
+     */
+    public double riverLevel(double px, double pz) {
+        double mean = lattice(meanLevels, px, pz, 256, 5, 110);
+        double blur = lattice(blurLevels, px, pz, 64, 3, 48);
+        return mean + 5.0 * Math.tanh((blur - mean) / 14.0) - 3.0;
+    }
+
     /** The water table: a flooded cavern a few blocks high lies at this height under the larger islands. */
     public static final int WATER_TABLE = 74;
 

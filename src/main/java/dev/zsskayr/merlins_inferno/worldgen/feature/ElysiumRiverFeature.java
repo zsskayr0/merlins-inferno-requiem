@@ -25,7 +25,7 @@ import dev.zsskayr.merlins_inferno.worldgen.elysium.ElysiumTerrains;
  * point of the river's line, so a river holds one level across its width and steps down along its length.
  */
 public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
-    private static final double BANK = 24.0;
+    private static final double BANK = 46.0;
 
     public ElysiumRiverFeature() {
         super(NoneFeatureConfiguration.CODEC);
@@ -39,6 +39,11 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
         h *= 0xc4ceb9fe1a85ec53L;
         h ^= h >>> 33;
         return (h >>> 11) / (double) (1L << 53);
+    }
+
+    private static double smooth(double a, double b, double x) {
+        double t = Math.max(0.0, Math.min(1.0, (x - a) / (b - a)));
+        return t * t * (3.0 - 2.0 * t);
     }
 
     /**
@@ -75,7 +80,6 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
         int x0 = origin.getX() & ~15, z0 = origin.getZ() & ~15;
         ElysiumTerrain.Column[] cols = terrain.columns(x0 >> 4, z0 >> 4);
         ElysiumTerrain.Column col;
-        ElysiumTerrain.Column at = new ElysiumTerrain.Column();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         BlockState air = Blocks.AIR.defaultBlockState();
         BlockState water = Blocks.WATER.defaultBlockState();
@@ -95,22 +99,11 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                 if (d > half + BANK) {
                     continue;
                 }
-                // the level of the water: the ground around the nearest point of the line, a couple of blocks down
-                double sum = 0.0;
-                int n = 0;
-                int px = (int) Math.round(river.px()), pz = (int) Math.round(river.pz());
-                for (int k = 0; k < 5; k++) {
-                    int sx = px + (k == 1 ? 12 : k == 2 ? -12 : 0), sz = pz + (k == 3 ? 12 : k == 4 ? -12 : 0);
-                    terrain.sample(sx, sz, at);
-                    if (at.land) {
-                        sum += at.top;
-                        n++;
-                    }
-                }
+                // the level of the water: each island has its own, drifting only a few blocks across its whole length
                 int top = (int) col.top;
-                int level0 = (int) Math.floor((n > 0 ? sum / n : top) - 2.0);
-                // where the ground has fallen away from the river's level the water stops, and spills if it can
-                if (top < level0 - 1) {
+                int level0 = (int) Math.floor(terrain.riverLevel(river.px(), river.pz()));
+                // where the ground has fallen far away from the river's level the water stops, and spills if it can
+                if (top < level0 - 8) {
                     continue;
                 }
                 BlockState surface = level.getBlockState(pos.set(x, top, z));
@@ -150,11 +143,18 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                     }
                     any = true;
                 } else {
-                    // the bank rises gently from the water and keeps the ground's own skin
-                    int target = (int) Math.floor(level0 + 1 + (d - half) * 0.35);
+                    // the valley: the bank rises gently from the water, and further out it climbs to meet the ground
+                    double valley = level0 + 1 + (d - half) * 0.35;
+                    double blend = smooth(14.0, BANK - 2.0, d - half);
+                    int target = (int) Math.floor(valley + (top - valley) * blend);
                     if (top > target) {
                         for (int y = target + 1; y <= top; y++) {
                             level.setBlock(pos.set(x, y, z), air, 2);
+                        }
+                        for (int y = top + 1; y <= Math.min(ElysiumTerrain.MAX_Y - 1, top + 24); y++) {
+                            if (growth(level.getBlockState(pos.set(x, y, z)))) {
+                                level.setBlock(pos, air, 2);
+                            }
                         }
                         // the shore keeps the ground's own skin for the most part, with patches of gravel and sand
                         double shoreRoll = d < half + 2.5 ? rand(Math.floorDiv(x, 4), 5, Math.floorDiv(z, 4), 73) : 0.0;
@@ -162,10 +162,11 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                         level.setBlock(pos.set(x, target, z), bare ? (shoreRoll > 0.8 ? Blocks.GRAVEL : Blocks.SAND).defaultBlockState() : surface, 2);
                         level.setBlock(pos.set(x, target - 1, z), bare ? Blocks.GRAVEL.defaultBlockState() : under, 2);
                         any = true;
-                    } else if (top < level0 + 1 && d < half + 3.0) {
-                        // a low bank: raise it just over the water, so the river holds
-                        for (int y = top + 1; y <= level0 + 1; y++) {
-                            level.setBlock(pos.set(x, y, z), y == level0 + 1 ? surface : under, 2);
+                    } else if (top < (int) Math.floor(level0 + 1 - (d - half) * 0.5)) {
+                        // low ground beside the water: a dike, falling away from the river until it meets the ground
+                        int dike = (int) Math.floor(level0 + 1 - (d - half) * 0.5);
+                        for (int y = top + 1; y <= dike; y++) {
+                            level.setBlock(pos.set(x, y, z), y == dike ? surface : under, 2);
                         }
                         any = true;
                     }
