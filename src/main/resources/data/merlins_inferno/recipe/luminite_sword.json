@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "X": {
+      "item": "merlins_inferno:luminite_bar"
+    },
+    "S": {
+      "item": "merlins_inferno:lyrium_rod"
+    }
+  },
+  "pattern": [
+    "X",
+    "X",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:luminite_sword",
+    "components": {
+      "minecraft:enchantments": {
+        "levels": {
+          "merlins_inferno:holy": 1
+        }
+      }
+    }
+  }
+}

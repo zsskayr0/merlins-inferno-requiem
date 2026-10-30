@@ -1,0 +1,200 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "merlins_inferno:item/skyfall_compass/frame_00"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "angle": 0.0
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_00"
+    },
+    {
+      "predicate": {
+        "angle": 0.03125
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_01"
+    },
+    {
+      "predicate": {
+        "angle": 0.0625
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_02"
+    },
+    {
+      "predicate": {
+        "angle": 0.09375
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_03"
+    },
+    {
+      "predicate": {
+        "angle": 0.125
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_04"
+    },
+    {
+      "predicate": {
+        "angle": 0.15625
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_05"
+    },
+    {
+      "predicate": {
+        "angle": 0.1875
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_06"
+    },
+    {
+      "predicate": {
+        "angle": 0.21875
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_07"
+    },
+    {
+      "predicate": {
+        "angle": 0.25
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_08"
+    },
+    {
+      "predicate": {
+        "angle": 0.28125
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_09"
+    },
+    {
+      "predicate": {
+        "angle": 0.3125
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_10"
+    },
+    {
+      "predicate": {
+        "angle": 0.34375
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_11"
+    },
+    {
+      "predicate": {
+        "angle": 0.375
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_12"
+    },
+    {
+      "predicate": {
+        "angle": 0.40625
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_13"
+    },
+    {
+      "predicate": {
+        "angle": 0.4375
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_14"
+    },
+    {
+      "predicate": {
+        "angle": 0.46875
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_15"
+    },
+    {
+      "predicate": {
+        "angle": 0.5
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_16"
+    },
+    {
+      "predicate": {
+        "angle": 0.53125
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_17"
+    },
+    {
+      "predicate": {
+        "angle": 0.5625
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_18"
+    },
+    {
+      "predicate": {
+        "angle": 0.59375
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_19"
+    },
+    {
+      "predicate": {
+        "angle": 0.625
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_20"
+    },
+    {
+      "predicate": {
+        "angle": 0.65625
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_21"
+    },
+    {
+      "predicate": {
+        "angle": 0.6875
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_22"
+    },
+    {
+      "predicate": {
+        "angle": 0.71875
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_23"
+    },
+    {
+      "predicate": {
+        "angle": 0.75
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_24"
+    },
+    {
+      "predicate": {
+        "angle": 0.78125
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_25"
+    },
+    {
+      "predicate": {
+        "angle": 0.8125
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_26"
+    },
+    {
+      "predicate": {
+        "angle": 0.84375
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_27"
+    },
+    {
+      "predicate": {
+        "angle": 0.875
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_28"
+    },
+    {
+      "predicate": {
+        "angle": 0.90625
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_29"
+    },
+    {
+      "predicate": {
+        "angle": 0.9375
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_30"
+    },
+    {
+      "predicate": {
+        "angle": 0.96875
+      },
+      "model": "merlins_inferno:item/skyfall_compass/frame_31"
+    }
+  ]
+}

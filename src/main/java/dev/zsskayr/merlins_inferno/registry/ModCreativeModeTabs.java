@@ -271,6 +271,21 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.SERAPHIUM_LEGGINGS.get());
                         output.accept(ModItems.SERAPHIUM_BOOTS.get());
 
+                        // Circle 2: Luminite and the Skyfall Compass
+                        output.accept(ModItems.LUMINITE_ORE_ITEM.get());
+                        output.accept(ModItems.LUMINITE_RAW.get());
+                        output.accept(ModItems.LUMINITE_BAR.get());
+                        output.accept(ModItems.LUMINITE_SWORD.get());
+                        output.accept(ModItems.LUMINITE_AXE.get());
+                        output.accept(ModItems.LUMINITE_SHOVEL.get());
+                        output.accept(ModItems.LUMINITE_PICKAXE.get());
+                        output.accept(ModItems.LUMINITE_HOE.get());
+                        output.accept(ModItems.LUMINITE_HELMET.get());
+                        output.accept(ModItems.LUMINITE_CHESTPLATE.get());
+                        output.accept(ModItems.LUMINITE_LEGGINGS.get());
+                        output.accept(ModItems.LUMINITE_BOOTS.get());
+                        output.accept(ModItems.SKYFALL_COMPASS.get());
+
                         // Circle 2: Ebony and the Dark Coven
                         output.accept(ModItems.EBONY_DEBRIS_ITEM.get());
                         output.accept(ModItems.EBONY_SCRAP.get());

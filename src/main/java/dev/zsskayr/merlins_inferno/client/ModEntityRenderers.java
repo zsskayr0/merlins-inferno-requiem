@@ -138,6 +138,20 @@ public final class ModEntityRenderers {
                         }
                         return ChampionSeekerItem.getAngle(holder, new Vec3(target.getX(), target.getY(), target.getZ()));
                     });
+            // The Skyfall Compass: the server writes the meteor into the stack's lodestone tracker; the needle just follows it.
+            ItemProperties.register(ModItems.SKYFALL_COMPASS.get(), ResourceLocation.withDefaultNamespace("angle"),
+                    (stack, level, entity, seed) -> {
+                        if (!(entity instanceof LivingEntity holder)) {
+                            return 0.0F;
+                        }
+                        var tracker = stack.get(net.minecraft.core.component.DataComponents.LODESTONE_TRACKER);
+                        var target = tracker == null ? java.util.Optional.<net.minecraft.core.GlobalPos>empty() : tracker.target();
+                        if (target.isEmpty() || target.get().dimension() != holder.level().dimension()) {
+                            return (holder.level().getGameTime() % 360L) / 360.0F;
+                        }
+                        var pos = target.get().pos();
+                        return ChampionSeekerItem.getAngle(holder, new Vec3(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5));
+                    });
         });
     }
 

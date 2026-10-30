@@ -214,6 +214,42 @@ public final class ModTiers {
         }
     };
 
+    /**
+     * Design (per project decision): Circle 2's Luminite, the Celestial route's meteor metal - above Seraphium on every stat and
+     * below Ebony, the route being the weakest of the Circle. Its set bonus (Skybound) is in {@code event.SkyboundHandler}.
+     */
+    public static final Tier LUMINITE = new Tier() {
+        @Override
+        public int getUses() {
+            return 2750; // above Seraphium's 2500, below Ebony's 3000
+        }
+
+        @Override
+        public float getSpeed() {
+            return 10.5F; // above Seraphium's 10.0, below Ebony's 11.0
+        }
+
+        @Override
+        public float getAttackDamageBonus() {
+            return 5.5F; // above Seraphium's 5.0, below Ebony's 6.0
+        }
+
+        @Override
+        public TagKey<Block> getIncorrectBlocksForDrops() {
+            return BlockTags.INCORRECT_FOR_NETHERITE_TOOL;
+        }
+
+        @Override
+        public int getEnchantmentValue() {
+            return 26;
+        }
+
+        @Override
+        public Ingredient getRepairIngredient() {
+            return Ingredient.of(ModItems.LUMINITE_BAR.get());
+        }
+    };
+
     private ModTiers() {
     }
 }

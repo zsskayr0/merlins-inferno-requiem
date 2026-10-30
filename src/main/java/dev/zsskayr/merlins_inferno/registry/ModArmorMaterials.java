@@ -112,6 +112,27 @@ public final class ModArmorMaterials {
             0.15F // knockback resistance, above Netherite's 0.1
     ));
 
+    /**
+     * Design (per project decision): Luminite's worn stats are Netherite's - 20 defense (3/6/8/3), toughness 3 - which is its floor
+     * in daylight; the Skybound set bonus ({@code event.SkyboundHandler}) adds armor and toughness toward the night, peaking just
+     * under Ebony's 26 / 5. Worn-armor textures live at {@code textures/models/armor/luminite_layer_1.png} (and {@code _layer_2.png}).
+     */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> LUMINITE = ARMOR_MATERIALS.register("luminite", () -> new ArmorMaterial(
+            Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                map.put(ArmorItem.Type.BOOTS, 3);
+                map.put(ArmorItem.Type.LEGGINGS, 6);
+                map.put(ArmorItem.Type.CHESTPLATE, 8);
+                map.put(ArmorItem.Type.HELMET, 3);
+                map.put(ArmorItem.Type.BODY, 7);
+            }),
+            24,
+            SoundEvents.ARMOR_EQUIP_DIAMOND,
+            () -> Ingredient.of(ModItems.LUMINITE_BAR.get()),
+            List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "luminite"))),
+            3.0F,
+            0.1F
+    ));
+
     private ModArmorMaterials() {
     }
 

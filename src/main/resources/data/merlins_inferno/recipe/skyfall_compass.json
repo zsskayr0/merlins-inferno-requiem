@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": {
+      "item": "merlins_inferno:lyrium_refined"
+    },
+    "C": {
+      "item": "minecraft:compass"
+    }
+  },
+  "pattern": [
+    " L ",
+    "LCL",
+    " L "
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:skyfall_compass"
+  }
+}

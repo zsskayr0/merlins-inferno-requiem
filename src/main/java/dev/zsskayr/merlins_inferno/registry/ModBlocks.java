@@ -502,6 +502,10 @@ public final class ModBlocks {
             CorruptedObsidianBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CRYING_OBSIDIAN)
                     .strength(CorruptedObsidianBlock.HARDNESS, 1200.0F).requiresCorrectToolForDrops());
 
+    // --- Luminite Ore: the metal of fallen meteors (event.MeteorHandler lays it in the crater). Drops Raw Luminite (Silk Touch keeps the block). ---
+    public static final DeferredBlock<Block> LUMINITE_ORE = BLOCKS.registerBlock("luminite_ore",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DIAMOND_ORE).lightLevel(state -> 6).sound(net.minecraft.world.level.block.SoundType.AMETHYST));
+
     // --- Ebony Debris: Circle 2's answer to Ancient Debris, found in Oblivion. Drops Ebony Scrap (Silk Touch keeps the block). ---
     public static final DeferredBlock<Block> EBONY_DEBRIS = BLOCKS.registerBlock("ebony_debris",
             dev.zsskayr.merlins_inferno.block.EbonyDebrisBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.ANCIENT_DEBRIS));

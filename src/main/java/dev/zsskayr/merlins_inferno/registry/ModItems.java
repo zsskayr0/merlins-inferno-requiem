@@ -630,6 +630,37 @@ public final class ModItems {
                 }
             });
 
+    // --- Circle 2, Celestial route: Luminite, the metal of fallen meteors (see event.MeteorHandler). Raw Luminite smelts into the
+    // bar; the sword and axe are crafted already carrying Holy. Tools use the Lyrium Rod as the handle, like Seraphium's.
+    // ModTiers.LUMINITE / ModArmorMaterials.LUMINITE; the armor's set bonus is event.SkyboundHandler. ---
+    public static final DeferredItem<Item> LUMINITE_RAW = ITEMS.registerSimpleItem("luminite_raw", new Item.Properties());
+    public static final DeferredItem<Item> LUMINITE_BAR = ITEMS.registerSimpleItem("luminite_bar", new Item.Properties());
+    public static final DeferredItem<BlockItem> LUMINITE_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LUMINITE_ORE);
+
+    public static final DeferredItem<SwordItem> LUMINITE_SWORD = ITEMS.registerItem("luminite_sword",
+            props -> new SwordItem(ModTiers.LUMINITE, props.attributes(SwordItem.createAttributes(ModTiers.LUMINITE, 3, -2.4F))));
+    public static final DeferredItem<AxeItem> LUMINITE_AXE = ITEMS.registerItem("luminite_axe",
+            props -> new AxeItem(ModTiers.LUMINITE, props.attributes(AxeItem.createAttributes(ModTiers.LUMINITE, 5.5F, -3.0F))));
+    public static final DeferredItem<ShovelItem> LUMINITE_SHOVEL = ITEMS.registerItem("luminite_shovel",
+            props -> new ShovelItem(ModTiers.LUMINITE, props.attributes(ShovelItem.createAttributes(ModTiers.LUMINITE, 1.5F, -3.0F))));
+    public static final DeferredItem<PickaxeItem> LUMINITE_PICKAXE = ITEMS.registerItem("luminite_pickaxe",
+            props -> new PickaxeItem(ModTiers.LUMINITE, props.attributes(PickaxeItem.createAttributes(ModTiers.LUMINITE, 1.0F, -2.8F))));
+    public static final DeferredItem<HoeItem> LUMINITE_HOE = ITEMS.registerItem("luminite_hoe",
+            props -> new HoeItem(ModTiers.LUMINITE, props.attributes(HoeItem.createAttributes(ModTiers.LUMINITE, -4.5F, 0.0F))));
+
+    public static final DeferredItem<ArmorItem> LUMINITE_HELMET = ITEMS.registerItem("luminite_helmet",
+            props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(40))));
+    public static final DeferredItem<ArmorItem> LUMINITE_CHESTPLATE = ITEMS.registerItem("luminite_chestplate",
+            props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(40))));
+    public static final DeferredItem<ArmorItem> LUMINITE_LEGGINGS = ITEMS.registerItem("luminite_leggings",
+            props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(40))));
+    public static final DeferredItem<ArmorItem> LUMINITE_BOOTS = ITEMS.registerItem("luminite_boots",
+            props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(40))));
+
+    /** Points at the nearest unclaimed meteor of this world - see SkyfallCompassItem. */
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.SkyfallCompassItem> SKYFALL_COMPASS = ITEMS.registerItem("skyfall_compass",
+            props -> new dev.zsskayr.merlins_inferno.item.SkyfallCompassItem(props.stacksTo(1).rarity(Rarity.UNCOMMON)));
+
     // --- Circle 2: Ebony (Cain, the Flesh Golem and the Ebony Debris of Oblivion) and the Dark Coven. The scrap comes from
     // Ebony Debris, rarely from Ancient Debris, and from Oblivion's bosses; the Hell Forge turns it into the bar (one to one).
     // Tools use Withered Bone as the handle, like the other sets; see ModTiers.EBONY / ModArmorMaterials.EBONY. ---
