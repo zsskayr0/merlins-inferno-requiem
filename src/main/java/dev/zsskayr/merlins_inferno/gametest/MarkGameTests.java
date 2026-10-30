@@ -150,6 +150,20 @@ public final class MarkGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "bench_empty")
+    public static void theScrollOfSalvationFreesAMarkedPlayerOnly(GameTestHelper h) {
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack scroll = new ItemStack(ModItems.SCROLL_OF_SALVATION.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, scroll);
+        ModItems.SCROLL_OF_SALVATION.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        h.assertTrue(!scroll.isEmpty(), "Without a Mark the scroll is not wasted");
+        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        ModItems.SCROLL_OF_SALVATION.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        h.assertTrue(!MarkHelper.hasMark(player), "Reading it frees the bearer");
+        h.assertTrue(scroll.isEmpty(), "and it is used up");
+        h.succeed();
+    }
+
     private static LivingIncomingDamageEvent incoming(net.minecraft.world.entity.LivingEntity victim, net.minecraft.world.damagesource.DamageSource source, float amount) {
         return new LivingIncomingDamageEvent(victim, new net.neoforged.neoforge.common.damagesource.DamageContainer(source, amount));
     }

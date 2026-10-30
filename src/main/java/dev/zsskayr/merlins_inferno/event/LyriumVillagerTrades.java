@@ -44,6 +44,13 @@ public final class LyriumVillagerTrades {
                 new ItemStack(ModItems.LYRIUM_REFINED.get()),
                 4, 30, 0.05F));
 
+        // The cure for a Mark: dear, and a single use (see item.ScrollOfSalvationItem).
+        event.getTrades().get(5).add(new BasicItemListing(
+                new ItemStack(Items.EMERALD, 64),
+                new ItemStack(ModItems.BOOK_OF_CONTRACTS.get()),
+                new ItemStack(ModItems.SCROLL_OF_SALVATION.get()),
+                1, 30, 0.05F));
+
         ItemStack holyBook = createHolyBook(event.getRegistryAccess(), 1);
         if (!holyBook.isEmpty()) {
             event.getTrades().get(2).add(new BasicItemListing(

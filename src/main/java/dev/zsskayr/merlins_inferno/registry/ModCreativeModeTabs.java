@@ -129,6 +129,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.BOOK_OF_CONTRACTS.get());
                         output.accept(ModItems.HOLLOW_RELIC.get());
                         output.accept(ModItems.MARK_OF_CAIN.get());
+                        output.accept(ModItems.SCROLL_OF_SALVATION.get());
                         output.accept(ModItems.HELL_SEAL.get());
                         output.accept(ModItems.EDENS_THORN.get());
                         output.accept(ModItems.DEBT_COLLECTOR.get());

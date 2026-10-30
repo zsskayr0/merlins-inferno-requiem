@@ -570,6 +570,9 @@ public final class ModItems {
     /** 6% from Cain. What it does lives in the Mark handlers; it is cured only by a Scroll of Salvation. */
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MarkItem> MARK_OF_CAIN = ITEMS.registerItem("mark_of_cain",
             props -> new dev.zsskayr.merlins_inferno.item.MarkItem(props.rarity(Rarity.EPIC)));
+    /** The only cure for a Mark: a Cleric's expensive trade, or rarely the Sacred Priest's drop. */
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ScrollOfSalvationItem> SCROLL_OF_SALVATION = ITEMS.registerItem("scroll_of_salvation",
+            props -> new dev.zsskayr.merlins_inferno.item.ScrollOfSalvationItem(props.stacksTo(1).rarity(Rarity.RARE)));
 
     // --- Circle 1 legendary swords (one per route, equal power): the Hollow Relic (very rare boss/miniboss drop, one use) is the crafting core of each. ---
     public static final DeferredItem<SwordItem> HOLLOW_RELIC = ITEMS.registerItem("hollow_relic",
