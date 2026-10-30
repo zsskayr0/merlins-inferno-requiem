@@ -27,7 +27,9 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import org.joml.Vector3f;
 
+import dev.zsskayr.merlins_inferno.effect.DemonicPactAura;
 import dev.zsskayr.merlins_inferno.registry.ModAttachments;
+import dev.zsskayr.merlins_inferno.registry.ModDataComponents;
 import dev.zsskayr.merlins_inferno.registry.ModEffects;
 
 /**
@@ -89,6 +91,43 @@ public class DarkCovenItem extends SwordItem {
     /** The dust colour of a stage (violet at I, blood red at VII). */
     public static float[] color(int stage) {
         return COLORS[stage];
+    }
+
+    /** Kills, while invoked, a sword must make at each stage before it can be reforged into the next (like a Vampirism weapon's training). */
+    private static final int[] TRAINING = {20, 30, 40, 50, 60, 80};
+
+    public static int trainingRequired(int stage) {
+        return TRAINING[stage];
+    }
+
+    /** The kills this sword has made at its own stage. */
+    public static int trainingKills(ItemStack stack) {
+        if (stack.getItem() instanceof DarkCovenItem sword && sword.stage < MAX_STAGE) {
+            var training = stack.get(ModDataComponents.COVEN_TRAINING);
+            if (training != null && training.stage() == sword.stage) {
+                return Math.min(training.kills(), TRAINING[sword.stage]);
+            }
+        }
+        return 0;
+    }
+
+    public static boolean isTrained(ItemStack stack) {
+        return stack.getItem() instanceof DarkCovenItem sword && sword.stage < MAX_STAGE
+                && trainingKills(stack) >= TRAINING[sword.stage];
+    }
+
+    /** One kill made with the coven invoked; when the stage's quota is met the sword is ready to be reforged. */
+    public static void creditKill(Player player, ItemStack stack) {
+        if (!(stack.getItem() instanceof DarkCovenItem sword) || sword.stage >= MAX_STAGE || isTrained(stack)) {
+            return;
+        }
+        int kills = trainingKills(stack) + 1;
+        stack.set(ModDataComponents.COVEN_TRAINING, new ModDataComponents.CovenTraining(sword.stage, kills));
+        if (kills >= TRAINING[sword.stage]) {
+            stack.set(ModDataComponents.COVEN_READY, sword.stage);
+            player.displayClientMessage(Component.translatable("item.merlins_inferno.dark_coven.trained").withStyle(ChatFormatting.DARK_RED), true);
+            player.level().playSound(null, player.blockPosition(), SoundEvents.WITHER_SKELETON_AMBIENT, SoundSource.PLAYERS, 0.8F, 0.5F);
+        }
     }
 
     /** Wither level (0 = I) of the Pact at a stage. */
@@ -218,29 +257,7 @@ public class DarkCovenItem extends SwordItem {
         setInvoked(stack, true);
         this.lend(player, ticks, false);
 
-        // The visual cue: the dust ring climbs and thickens with the stage.
-        float[] c = COLORS[this.stage];
-        DustParticleOptions dust = new DustParticleOptions(new Vector3f(c[0], c[1], c[2]), 1.0F + 0.15F * this.stage);
-        int points = 12 + 6 * this.stage;
-        double radius = 0.8 + 0.08 * this.stage;
-        for (int i = 0; i < points; i++) {
-            double angle = i * (Math.PI * 2.0 / points);
-            double rise = (double) i / points * (1.0 + 0.15 * this.stage);
-            level.sendParticles(dust, player.getX() + Math.cos(angle) * radius, player.getY() + 0.1 + rise * 1.8,
-                    player.getZ() + Math.sin(angle) * radius, 1, 0.0, 0.0, 0.0, 0.0);
-        }
-        level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 0.2, player.getZ(),
-                2 + 3 * this.stage, 0.5, 0.1, 0.5, 0.02);
-        if (this.stage >= 3) {
-            level.sendParticles(ParticleTypes.SOUL, player.getX(), player.getY() + 1.0, player.getZ(), this.stage * 2, 0.4, 0.8, 0.4, 0.04);
-        }
-        if (pact) {
-            level.sendParticles(ParticleTypes.LARGE_SMOKE, player.getX(), player.getY() + 1.0, player.getZ(), 30, 0.5, 0.9, 0.5, 0.03);
-            level.playSound(null, player.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.PLAYERS, 0.6F, 0.7F);
-        } else {
-            level.playSound(null, player.blockPosition(), SoundEvents.WITHER_AMBIENT, SoundSource.PLAYERS, 0.5F,
-                    Mth.clamp(0.7F + this.stage * 0.08F, 0.7F, 1.3F));
-        }
+        DemonicPactAura.burst(level, player, this.stage);
         Component name = pact
                 ? Component.translatable("item.merlins_inferno.dark_coven.pact").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
                 : Component.translatable("item.merlins_inferno.dark_coven.stage", ROMAN[this.stage], ROMAN[MAX_STAGE])
@@ -342,6 +359,11 @@ public class DarkCovenItem extends SwordItem {
         } else {
             tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.invoke", this.getDurationTicks() / 20).withStyle(ChatFormatting.GRAY));
             tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.cooldown", COOLDOWN_SECONDS).withStyle(ChatFormatting.GRAY));
+        }
+        if (this.stage < MAX_STAGE) {
+            tooltip.add(isTrained(stack)
+                    ? Component.translatable("item.merlins_inferno.dark_coven.tooltip.trained").withStyle(ChatFormatting.DARK_RED)
+                    : Component.translatable("item.merlins_inferno.dark_coven.tooltip.training", trainingKills(stack), TRAINING[this.stage]).withStyle(ChatFormatting.GRAY));
         }
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.no_drop").withStyle(ChatFormatting.DARK_GRAY));
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.cost").withStyle(ChatFormatting.DARK_RED));

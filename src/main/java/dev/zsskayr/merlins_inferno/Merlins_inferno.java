@@ -67,6 +67,7 @@ public class Merlins_inferno {
         ModParticles.register(modEventBus);
         dev.zsskayr.merlins_inferno.registry.ModPlacementModifiers.register(modEventBus);
         ModEffects.register(modEventBus);
+        dev.zsskayr.merlins_inferno.registry.ModDataComponents.register(modEventBus);
         ModAttachments.register(modEventBus);
         dev.zsskayr.merlins_inferno.registry.ModLootModifiers.register(modEventBus);
         ModRecipeTypes.register(modEventBus);

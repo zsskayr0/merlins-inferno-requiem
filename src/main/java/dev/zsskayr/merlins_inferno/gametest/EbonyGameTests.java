@@ -103,6 +103,24 @@ public final class EbonyGameTests {
     }
 
     @GameTest(template = "bench_empty")
+    public static void darkCovenUpgradesNeedTraining(GameTestHelper helper) {
+        var level = helper.getLevel();
+        var player = helper.makeMockPlayer(GameType.SURVIVAL);
+        var sword = new ItemStack(ModItems.DARK_COVEN_I.get());
+        java.util.function.Supplier<Boolean> reforgeable = () -> level.getRecipeManager().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.SMITHING,
+                new net.minecraft.world.item.crafting.SmithingRecipeInput(new ItemStack(ModItems.WITHERED_BONE.get()), sword, new ItemStack(ModItems.EBONY_BAR.get())), level).isPresent();
+        helper.assertTrue(!reforgeable.get(), "An untrained sword cannot be reforged");
+        DarkCovenItem.creditKill(player, sword);
+        helper.assertTrue(DarkCovenItem.trainingKills(sword) == 1 && !reforgeable.get(), "One kill is not enough");
+        for (int i = 0; i < DarkCovenItem.trainingRequired(0); i++) {
+            DarkCovenItem.creditKill(player, sword);
+        }
+        helper.assertTrue(DarkCovenItem.isTrained(sword), "The quota trains it");
+        helper.assertTrue(reforgeable.get(), "and then it can be reforged");
+        helper.succeed();
+    }
+
+    @GameTest(template = "bench_empty")
     public static void darkCovenLastsWhileTheButtonIsHeldAndOneSecondAfter(GameTestHelper helper) {
         var level = helper.getLevel();
         var player = helper.makeMockPlayer(GameType.SURVIVAL);

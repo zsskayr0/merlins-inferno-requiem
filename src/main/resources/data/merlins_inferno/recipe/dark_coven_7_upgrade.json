@@ -4,7 +4,12 @@
     "item": "merlins_inferno:withered_bone"
   },
   "base": {
-    "item": "merlins_inferno:dark_coven_6"
+    "type": "neoforge:components",
+    "items": "merlins_inferno:dark_coven_6",
+    "components": {
+      "merlins_inferno:coven_ready": 5
+    },
+    "strict": false
   },
   "addition": {
     "item": "minecraft:nether_star"

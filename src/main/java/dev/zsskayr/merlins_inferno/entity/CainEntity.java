@@ -76,6 +76,8 @@ public class CainEntity extends Monster {
             BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
 
     private int pactTimer;
+    /** Ticks left of the pact he is under (just for the aura). */
+    private int pactLeft;
 
     public CainEntity(EntityType<? extends CainEntity> type, Level level) {
         super(type, level);
@@ -191,8 +193,15 @@ public class CainEntity extends Monster {
             this.pactTimer = 0;
             this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, PACT_DURATION, 1));
             this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, PACT_DURATION, 1));
-            serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getX(), this.getY() + 1.0, this.getZ(), 40, 0.6, 0.9, 0.6, 0.05);
-            this.playSound(SoundEvents.WITHER_SPAWN, 0.8F, 0.6F);
+            // The same invoking the players see, and the same aura while it lasts.
+            dev.zsskayr.merlins_inferno.effect.DemonicPactAura.burst(serverLevel, this, dev.zsskayr.merlins_inferno.item.DarkCovenItem.MAX_STAGE);
+            this.pactLeft = PACT_DURATION;
+        }
+        if (this.pactLeft > 0) {
+            this.pactLeft--;
+            if (this.tickCount % 5 == 0) {
+                dev.zsskayr.merlins_inferno.effect.DemonicPactAura.emit(serverLevel, this, dev.zsskayr.merlins_inferno.item.DarkCovenItem.MAX_STAGE);
+            }
         }
     }
 

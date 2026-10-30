@@ -4,7 +4,12 @@
     "item": "merlins_inferno:withered_bone"
   },
   "base": {
-    "item": "merlins_inferno:dark_coven"
+    "type": "neoforge:components",
+    "items": "merlins_inferno:dark_coven",
+    "components": {
+      "merlins_inferno:coven_ready": 0
+    },
+    "strict": false
   },
   "addition": {
     "item": "merlins_inferno:ebony_bar"
