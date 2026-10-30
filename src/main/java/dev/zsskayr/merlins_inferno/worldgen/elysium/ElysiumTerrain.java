@@ -28,8 +28,9 @@ public final class ElysiumTerrain {
     /** Blocks of "inland" per unit of the island field; tuned so ed reads roughly as blocks from the coast. */
     private static final double FIELD_SCALE = 1000.0;
     private static final double LAND_THRESHOLD = 0.07;
-    private static final double HOLE_DEPTH = 0.9;
-    private static final double HOLE_FROM = 0.28;
+    /** Slashes: one may lie in each cell of this size; the longest reaches well under a cell, so the 3x3 around a column is enough. */
+    private static final int SLASH_CELL = 900;
+    private static final double SLASH_CHANCE = 0.75;
 
     /** What one column looks like: solid from {@code bottom} to {@code top} inclusive when {@code land}. */
     public static final class Column {
@@ -68,15 +69,65 @@ public final class ElysiumTerrain {
         hole = new Perlin(r.nextLong());
     }
 
-    /** Blocks inland from the coast (zero or less over open sky): just the island field, much cheaper than a full {@link #sample}. */
+    /** Blocks inland from the coast (zero or less over open sky): the island field with the slashes cut out, much cheaper than a full {@link #sample}. */
     public double inlandAt(int x, int z) {
+        return Math.min(baseInlandAt(x, z), slashDist(x, z));
+    }
+
+    private static long mix(long h) {
+        h ^= h >>> 33;
+        h *= 0xff51afd7ed558ccdL;
+        h ^= h >>> 33;
+        h *= 0xc4ceb9fe1a85ec53L;
+        h ^= h >>> 33;
+        return h;
+    }
+
+    private static double unit(long h) {
+        return (h >>> 11) / (double) (1L << 53);
+    }
+
+    /**
+     * Blocks from the nearest slash, negative inside it. A slash is a blade-shaped cut, long and slightly bowed, that goes
+     * clean through an island as if something struck it: the walls stay as high as the rock around them and run all the way
+     * down the underside. Far from any slash this is huge.
+     */
+    private double slashDist(int x, int z) {
+        int ci = Math.floorDiv(x, SLASH_CELL), cj = Math.floorDiv(z, SLASH_CELL);
+        double best = 1.0e9;
+        for (int i = ci - 1; i <= ci + 1; i++) {
+            for (int j = cj - 1; j <= cj + 1; j++) {
+                long h = mix(seed ^ (i * 0x9E3779B97F4A7C15L) ^ (j * 0xC2B2AE3D27D4EB4FL));
+                if (unit(h) > SLASH_CHANCE) {
+                    continue;
+                }
+                double cx = (i + unit(h = mix(h + 1))) * SLASH_CELL, cz = (j + unit(h = mix(h + 1))) * SLASH_CELL;
+                double ang = unit(h = mix(h + 1)) * Math.PI;
+                double half = 300.0 + 400.0 * unit(h = mix(h + 1));
+                double wide = 18.0 + 24.0 * unit(h = mix(h + 1));
+                double bend = (unit(h = mix(h + 1)) * 2.0 - 1.0) * 0.14 * half;
+                double dx = x - cx, dz = z - cz;
+                if (dx * dx + dz * dz > (1.25 * half + wide) * (1.25 * half + wide)) {
+                    continue;
+                }
+                double ca = Math.cos(ang), sa = Math.sin(ang);
+                double s = dx * ca + dz * sa;
+                if (Math.abs(s) >= half) {
+                    continue;
+                }
+                double t = s / half;
+                double w = -dx * sa + dz * ca - bend * t * t;
+                double width = wide * Math.pow(1.0 - t * t, 0.6) * (1.0 + 0.12 * hole.noise(s / 70.0 + i * 7.3, j * 3.1 + 0.5));
+                best = Math.min(best, Math.abs(w) - width);
+            }
+        }
+        return best;
+    }
+
+    private double baseInlandAt(int x, int z) {
         double wx = x + 260.0 * warpA.fbm(x / 650.0, z / 650.0, 2);
         double wz = z + 260.0 * warpB.fbm(x / 650.0, z / 650.0, 2);
         double field = 0.78 * isl1.fbm(wx / 2000.0, wz / 2000.0, 2) + 0.17 * isl2.fbm(wx / 800.0, wz / 800.0, 2) + 0.05 * isl3.noise(wx / 260.0, wz / 260.0);
-        // sky pits: long, crooked slots cut through the interior (the noise is stretched along a slanted axis), so an island
-        // can hold a chasm that a bridge has to cross
-        double u = wx * 0.819 + wz * 0.574, v = -wx * 0.574 + wz * 0.819;
-        field -= HOLE_DEPTH * smooth(HOLE_FROM, HOLE_FROM + 0.16, hole.fbm(u / 780.0, v / 250.0, 2));
         return (field - LAND_THRESHOLD) * FIELD_SCALE;
     }
 
@@ -84,7 +135,8 @@ public final class ElysiumTerrain {
     public void sample(int x, int z, Column c) {
         c.x = x;
         c.z = z;
-        c.inland = inlandAt(x, z);
+        double base = baseInlandAt(x, z);
+        c.inland = Math.min(base, slashDist(x, z));
         c.temperature = climate(temp, x, z);
         c.humidity = climate(humid, x, z);
         if (c.inland <= 0.0) {
@@ -94,7 +146,8 @@ public final class ElysiumTerrain {
         c.land = true;
         weights(c.temperature, c.humidity, c.weights);
 
-        double ed = c.inland;
+        // shape the island as if the slash were not there: its walls then stand as tall and as deep as the rock around them
+        double ed = base;
         double w1 = rel1.fbm(x / 380.0, z / 380.0, 3);
         double w2 = rel2.fbm(x / 130.0, z / 130.0, 3);
         double rel = 0.0;
