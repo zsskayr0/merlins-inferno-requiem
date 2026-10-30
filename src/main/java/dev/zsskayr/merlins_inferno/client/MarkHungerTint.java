@@ -20,7 +20,7 @@ import dev.zsskayr.merlins_inferno.mark.MarkHelper;
 
 /**
  * A Marked player's hunger bar is drawn with skulls instead of drumsticks, washed out as if the appetite itself were going.
- * It takes the place of the vanilla food layer (same spot, same shaking when starving); nothing in the HUD says why.
+ * It sits exactly where the vanilla food layer draws (same spot, same shaking when starving); nothing in the HUD says why.
  */
 @EventBusSubscriber(modid = Merlins_inferno.MODID, value = Dist.CLIENT)
 public final class MarkHungerTint {
@@ -38,31 +38,43 @@ public final class MarkHungerTint {
     private MarkHungerTint() {
     }
 
+    /** Marked, and nothing else is standing in for the food bar (a mount's hearts take its place in vanilla). */
+    private static boolean marked(Minecraft minecraft) {
+        var player = minecraft.player;
+        return player != null && MarkHelper.hasMark(player) && !minecraft.options.hideGui && minecraft.gameMode != null
+                && minecraft.gameMode.canHurtPlayer() && !(player.getVehicle() instanceof LivingEntity);
+    }
+
     /**
-     * Last in line (LOW): a HUD mod that hides or cancels the vanilla food bar gets there first, and then this never runs -
-     * the skulls go away with the bar. The sprites are plain GUI sprites, so a resource pack can repaint them.
+     * The vanilla layer is let run - so HUD mods hiding or cancelling the bar still do, and take the skulls with it - but its
+     * drumsticks are drawn fully transparent. Mods that decorate the bar afterwards (AppleSkin's saturation and restore
+     * overlays) see the bar where it always is and draw on top of the skulls.
      */
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void before(RenderGuiLayerEvent.Pre event) {
-        if (!event.getName().equals(VanillaGuiLayers.FOOD_LEVEL)) {
-            return;
+        if (event.getName().equals(VanillaGuiLayers.FOOD_LEVEL) && marked(Minecraft.getInstance())) {
+            RenderSystem.enableBlend();
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.0F);
         }
-        Minecraft minecraft = Minecraft.getInstance();
-        var player = minecraft.player;
-        // A mount's hearts take the food bar's place in vanilla; leave that alone.
-        if (player == null || !MarkHelper.hasMark(player) || minecraft.options.hideGui || minecraft.gameMode == null
-                || !minecraft.gameMode.canHurtPlayer() || player.getVehicle() instanceof LivingEntity) {
-            return;
+    }
+
+    /** Runs before the other mods' Post handlers, so whatever they draw over the bar lands on the skulls. */
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void after(RenderGuiLayerEvent.Post event) {
+        if (event.getName().equals(VanillaGuiLayers.FOOD_LEVEL)) {
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            Minecraft minecraft = Minecraft.getInstance();
+            if (marked(minecraft)) {
+                draw(event.getGuiGraphics(), minecraft, minecraft.player.getFoodData(), minecraft.player.hasEffect(net.minecraft.world.effect.MobEffects.HUNGER));
+            }
         }
-        event.setCanceled(true);
-        draw(event.getGuiGraphics(), minecraft, player.getFoodData(), player.hasEffect(net.minecraft.world.effect.MobEffects.HUNGER));
     }
 
     private static void draw(GuiGraphics graphics, Minecraft minecraft, FoodData food, boolean hungry) {
         var gui = minecraft.gui;
         int right = graphics.guiWidth() / 2 + 91;
-        int top = graphics.guiHeight() - gui.rightHeight;
-        gui.rightHeight += 10;
+        // The vanilla layer has already claimed its row: the bar is the one just below the current height.
+        int top = graphics.guiHeight() - (gui.rightHeight - 10);
         int level = food.getFoodLevel();
         // Starving (no saturation) makes the icons shake, as in vanilla.
         boolean shake = food.getSaturationLevel() <= 0.0F && gui.getGuiTicks() % (level * 3 + 1) == 0;
