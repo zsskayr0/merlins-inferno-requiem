@@ -17,5 +17,7 @@ public final class ModNetwork {
                 (payload, context) -> WingsItem.tryBoost(context.player()));
         event.registrar(PROTOCOL).playToClient(CirclePayload.TYPE, CirclePayload.CODEC,
                 (payload, context) -> context.enqueueWork(() -> ProgressionHelper.setClientCircle(payload.circle())));
+        event.registrar(PROTOCOL).playToClient(ItemActivationPayload.TYPE, ItemActivationPayload.CODEC,
+                (payload, context) -> context.enqueueWork(() -> dev.zsskayr.merlins_inferno.client.ItemActivationClient.show(payload.stack())));
     }
 }
