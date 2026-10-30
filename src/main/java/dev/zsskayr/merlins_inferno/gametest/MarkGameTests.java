@@ -207,6 +207,39 @@ public final class MarkGameTests {
     }
 
     @GameTest(template = "bench_empty")
+    public static void villagersHoldTheMarkAgainstItsBearer(GameTestHelper h) {
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        var handler = new MarkOfCainHandler();
+        var villager = h.spawn(net.minecraft.world.entity.EntityType.VILLAGER, 2, 2, 2);
+        player.setPos(villager.getX(), villager.getY(), villager.getZ());
+        handler.tickSecond(player);
+        h.assertTrue(villager.getPlayerReputation(player) > -100, "Without the Mark the villager has no opinion");
+        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        handler.tickSecond(player);
+        h.assertTrue(villager.getPlayerReputation(player) <= -100, "Under the Mark it is below what makes Iron Golems strike (got " + villager.getPlayerReputation(player) + ")");
+        h.succeed();
+    }
+
+    @GameTest(template = "bench_empty")
+    public static void thePactFeedsOnTheMark(GameTestHelper h) {
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        var handler = new MarkOfCainHandler();
+        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        handler.tickSecond(player);
+        long before = player.getData(ModAttachments.CAIN_KILL_DEADLINE);
+        handler.tickSecond(player);
+        long calm = before - player.getData(ModAttachments.CAIN_KILL_DEADLINE);
+        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(dev.zsskayr.merlins_inferno.registry.ModEffects.DEMONIC_PACT, 200, 0));
+        float fedBefore = player.getFoodData().getFoodLevel() * 4.0F - player.getFoodData().getExhaustionLevel();
+        before = player.getData(ModAttachments.CAIN_KILL_DEADLINE);
+        handler.tickSecond(player);
+        long hurried = before - player.getData(ModAttachments.CAIN_KILL_DEADLINE);
+        h.assertTrue(hurried > calm, "The kill clock runs faster under the Pact");
+        h.assertTrue(player.getFoodData().getFoodLevel() * 4.0F - player.getFoodData().getExhaustionLevel() < fedBefore, "and hunger burns");
+        h.succeed();
+    }
+
+    @GameTest(template = "bench_empty")
     public static void theDarkCovenStaysInvokedUnderTheMark(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         var handler = new MarkOfCainHandler();

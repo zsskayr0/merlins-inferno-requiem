@@ -55,6 +55,9 @@ public class MarkOfCainHandler {
     /** While the Dark Coven's Pact lasts under the Mark: exhaustion a second (about a hunger point every 4 s), and ticks the kill deadline loses a second on top of the usual - 4x the clock. */
     private static final float PACT_EXHAUSTION_PER_SECOND = 1.0F;
     private static final long PACT_CLOCK_EXTRA = 3L * SECOND;
+    private static final double REPUTATION_RADIUS = 24.0;
+    /** Below Iron Golems' -100, so they strike, with room for the odd good deed. */
+    private static final int REPUTATION_FLOOR = -120;
     private static final long TIER_STEP = 5L * 60 * SECOND;
     private static final double HEALTH_PER_TIER = 4.0;
     private static final double MIN_MAX_HEALTH = 2.0;
@@ -100,6 +103,22 @@ public class MarkOfCainHandler {
         }
     }
 
+    /**
+     * Villagers know what the Mark is: the bearer is held at a bad reputation with every villager nearby - which is what
+     * makes trades dearer and Iron Golems (who turn on anyone at -100) attack on sight. The word spreads between them.
+     */
+    private static void spoilReputation(Player player, ServerLevel level) {
+        for (net.minecraft.world.entity.npc.Villager villager : level.getEntitiesOfClass(net.minecraft.world.entity.npc.Villager.class,
+                player.getBoundingBox().inflate(REPUTATION_RADIUS))) {
+            var gossips = villager.getGossips();
+            int reputation = gossips.getReputation(player.getUUID(), type -> type == net.minecraft.world.entity.ai.gossip.GossipType.MAJOR_NEGATIVE);
+            if (reputation > REPUTATION_FLOOR) {
+                // Each point of this gossip weighs -5.
+                gossips.add(player.getUUID(), net.minecraft.world.entity.ai.gossip.GossipType.MAJOR_NEGATIVE, (reputation - REPUTATION_FLOOR + 4) / 5);
+            }
+        }
+    }
+
     /** One second of the Mark; public so the game tests can step it. */
     public void tickSecond(Player player) {
         if (!(player.level() instanceof ServerLevel level)) {
@@ -114,6 +133,8 @@ public class MarkOfCainHandler {
             player.setData(ModAttachments.CAIN_KILL_DEADLINE, now + KILL_WINDOW);
             player.setData(ModAttachments.CAIN_MURDER_AT, now + MURDER_INTERVAL);
         }
+
+        spoilReputation(player, level);
 
         player.removeEffect(MobEffects.POISON);
         if (player.isAlive() && player.getHealth() < player.getMaxHealth()) {
