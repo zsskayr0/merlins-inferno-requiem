@@ -454,13 +454,14 @@ public final class ElysiumTerrain {
         double bestGap = reach;
         for (int k = 0; k < 2; k++) {
             double gate = rvWidth.fbm(x / 1500.0 + 50.0 * k, z / 1500.0, 2);
-            double half = k == 0 ? 11.0 * smooth(-0.12, 0.3, gate) : 5.0 * smooth(0.05, 0.45, gate);
+            double half = k == 0 ? 11.0 * smooth(-0.3, 0.3, gate) : 5.0 * smooth(-0.1, 0.45, gate);
             half *= 0.7 + 0.6 * (0.5 + 0.5 * rvWidth.noise(x / 90.0 + 9.0 * k, z / 90.0));
-            if (half < (k == 0 ? 1.5 : 1.2)) {
+            if (half < 0.5) {
                 continue;
             }
             // scalloped banks, like a river dug with overlapping round bites
-            half += 1.6 * rvWidth.noise(x / 9.0 + 31.0 * k, z / 9.0 + 5.0) + 0.8 * rvWidth.noise(x / 4.0, z / 4.0 + 13.0 * k);
+            // (a headwater thins out to a trickle before it ends, so the bites fade with the width)
+            half += Math.min(1.0, half / 4.0) * (1.6 * rvWidth.noise(x / 9.0 + 31.0 * k, z / 9.0 + 5.0) + 0.8 * rvWidth.noise(x / 4.0, z / 4.0 + 13.0 * k));
             double f0, fx, fz;
             if (k == 0) {
                 f0 = mainField(x, z);

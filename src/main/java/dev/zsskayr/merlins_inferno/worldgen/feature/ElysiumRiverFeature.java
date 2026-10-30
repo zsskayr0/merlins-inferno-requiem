@@ -103,7 +103,7 @@ public class ElysiumRiverFeature extends Feature<NoneFeatureConfiguration> {
                 BlockState under = level.getBlockState(pos.set(x, top - 1, z));
                 if (d <= half) {
                     double t = d / half;
-                    double depth = Math.max(2.0, Math.min(7.0, 1.2 + 0.55 * half));
+                    double depth = Math.max(1.0, Math.min(7.0, 0.8 + 0.55 * half));
                     int bed = (int) Math.floor(level0 - depth * (1.0 - t * t));
                     for (int y = bed; y <= Math.max(top, level0); y++) {
                         if (!kept(level.getBlockState(pos.set(x, y, z)))) {
