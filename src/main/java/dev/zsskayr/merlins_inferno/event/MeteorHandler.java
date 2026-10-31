@@ -3,6 +3,7 @@ package dev.zsskayr.merlins_inferno.event;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,6 +13,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.core.BlockPos;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
@@ -57,10 +59,33 @@ public class MeteorHandler {
         tend(level, data);
     }
 
+    /** {@code /merlins_inferno debug meteor}: forces a meteor to fall now, ignoring the chance, the night and the active cap. */
+    @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandsEvent event) {
+        event.getDispatcher().register(Commands.literal("merlins_inferno")
+                .requires(source -> source.hasPermission(2))
+                .then(Commands.literal("debug")
+                        .then(Commands.literal("meteor").executes(context -> {
+                            ServerLevel level = context.getSource().getServer().overworld();
+                            Meteor meteor = fall(level, MeteorData.get(level), level.random, true);
+                            if (meteor == null) {
+                                context.getSource().sendFailure(Component.literal("No meteor fell: no player in the Overworld, or no spot inside the world border."));
+                                return 0;
+                            }
+                            context.getSource().sendSuccess(() -> Component.literal(
+                                    "Meteor fell at " + meteor.x + ", " + meteor.z + " (built when its chunks load)."), true);
+                            return 1;
+                        }))));
+    }
+
     /** Drops a meteor near a random player, if the world has room for one. */
     public static Meteor fall(ServerLevel level, MeteorData data, RandomSource random) {
+        return fall(level, data, random, false);
+    }
+
+    public static Meteor fall(ServerLevel level, MeteorData data, RandomSource random, boolean force) {
         List<ServerPlayer> players = level.players().stream().filter(p -> !p.isSpectator()).toList();
-        if (players.isEmpty() || data.active() >= MAX_ACTIVE) {
+        if (players.isEmpty() || (!force && data.active() >= MAX_ACTIVE)) {
             return null;
         }
         ServerPlayer near = players.get(random.nextInt(players.size()));
