@@ -101,12 +101,17 @@ public class MeteorHandler {
             return null;
         }
         ServerPlayer near = players.get(random.nextInt(players.size()));
-        for (int attempt = 0; attempt < 8; attempt++) {
+        for (int attempt = 0; attempt < 12; attempt++) {
             double angle = random.nextDouble() * Math.PI * 2.0;
             double distance = MIN_DISTANCE + random.nextDouble() * (MAX_DISTANCE - MIN_DISTANCE);
             int x = near.getBlockX() + (int) (Math.cos(angle) * distance);
             int z = near.getBlockZ() + (int) (Math.sin(angle) * distance);
             if (!level.getWorldBorder().isWithinBounds(new BlockPos(x, 64, z))) {
+                continue;
+            }
+            // Stars land on dry land: skip the spots whose biome is sea, river or beach (the last attempt is taken whatever it is).
+            var biome = level.getUncachedNoiseBiome(x >> 2, level.getSeaLevel() >> 2, z >> 2);
+            if (attempt < 11 && (biome.is(net.minecraft.tags.BiomeTags.IS_OCEAN) || biome.is(net.minecraft.tags.BiomeTags.IS_RIVER) || biome.is(net.minecraft.tags.BiomeTags.IS_BEACH))) {
                 continue;
             }
             Meteor meteor = data.add(x, z, level.getGameTime(), level.getSeaLevel());
@@ -143,6 +148,8 @@ public class MeteorHandler {
             } else if (!meteor.built) {
                 if (MeteorSite.canBuild(level, meteor.x, meteor.z)) {
                     MeteorSite.Built built = MeteorSite.build(level, meteor.x, meteor.z, level.random);
+                    meteor.x = built.x();
+                    meteor.z = built.z();
                     meteor.y = built.y();
                     meteor.guarded = built.guarded();
                     meteor.builtAt = level.getGameTime();

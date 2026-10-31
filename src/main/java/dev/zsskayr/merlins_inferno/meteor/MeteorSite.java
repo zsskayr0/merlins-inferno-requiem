@@ -1,7 +1,7 @@
 package dev.zsskayr.merlins_inferno.meteor;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,27 +10,18 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.GeodeBlockSettings;
-import net.minecraft.world.level.levelgen.GeodeCrackSettings;
-import net.minecraft.world.level.levelgen.GeodeLayerSettings;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.GeodeConfiguration;
-import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
-import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
@@ -39,12 +30,14 @@ import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 
 /**
- * Builds a fallen star the way Applied Energistics 2 builds its meteorites: a sealed geode buried just under the ground, a wide shallow
- * crater cut around its top, and a scatter of scorched fallout over the rim. The crater's kind follows the biome (plain, lava,
- * obsidian, water, snow or ice), and a star that lands in water leaves no crater at all, only the buried geode.
+ * Builds a fallen star: a perfectly round, sealed geode buried just under the ground, a smooth bowl of a crater opened around its top
+ * (a little irregular at the rim, scorched towards the middle), debris and fires over the rim. The crater's kind follows the biome
+ * (plain, lava, obsidian, water, snow or ice); a star that lands in water leaves no crater, only the buried geode, so the site is
+ * moved to dry land first when there is any close by.
  * <p>
- * The geode is Lyrium-sized (same layers and spread as the Lyrium geodes), closed all round, with a Luminite lining, a middle layer
- * of Arganite flecked with Quartzite and a Meteorite shell. The sky-drop chest sits in its hollow, so it must be dug into.
+ * The geode's shell is Meteorite, then a middle layer of Arganite flecked with Quartzite, then a Luminite lining (a little Lyrium in
+ * it) hollow inside, with Luminite, Lyrium and Amethyst clusters growing inwards. The sky-drop chest sits in the hollow, so it must be
+ * dug into.
  */
 public final class MeteorSite {
     public static final ResourceKey<LootTable> LOOT = ResourceKey.create(Registries.LOOT_TABLE,
@@ -52,82 +45,62 @@ public final class MeteorSite {
     /** Once the Third Circle has opened the stars carry more: a bigger haul and one more guard. */
     public static final ResourceKey<LootTable> LOOT_DEEP = ResourceKey.create(Registries.LOOT_TABLE,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/meteor_deep"));
-    /** The chunks within this many blocks of the centre must be loaded before the site is built (the fallout reaches 30). */
-    public static final int LOAD_RADIUS = 34;
-    private static final int FALLOUT_RADIUS = 30;
-    /** The fallout leaves everything this close to the centre alone: the geode and its hollow. */
-    private static final int GEODE_REACH = 9;
-    /** AE2's "meteorite size": it sets how deep the geode sits and how wide the crater opens. */
-    private static final int SIZE = 5;
-    private static final double CRATER = (SIZE * 2.0 + 5.0) * (SIZE * 2.0 + 5.0);
+    /** The chunks within this many blocks of the centre must be loaded before the site is built. */
+    public static final int LOAD_RADIUS = 40;
+    /** A star that would land in water is moved at most this far to dry land. */
+    private static final int MAX_SHIFT = 10;
+    /** The geode's layers: hollow, Luminite lining, Arganite/Quartzite middle and the Meteorite shell. Exact spheres, so it is always round. */
+    private static final double HOLLOW = 2.3;
+    private static final double LINING = 3.1;
+    private static final double MIDDLE = 4.2;
+    private static final double SHELL = 5.2;
+    /** How far the geode's centre sits under the bowl's rim level, and how deep the bowl is, so the top of the geode stands in the bowl. */
+    private static final int GEODE_SINK = 5;
+    private static final double BOWL_DEPTH = 4.0;
 
-    private static GeodeConfiguration geode;
-
-    /** The kinds of crater, with what fills the bowl's floor (null: no crater at all). */
-    private enum Crater {
-        NONE(null), NORMAL(Blocks.AIR), LAVA(Blocks.LAVA), OBSIDIAN(Blocks.OBSIDIAN), WATER(Blocks.WATER), SNOW(Blocks.SNOW_BLOCK), ICE(Blocks.ICE);
-
-        final Block filler;
-
-        Crater(Block filler) {
-            this.filler = filler;
-        }
-    }
-
-    /** A built site: the height of the geode's centre, and whether Templars were left to guard it. */
-    public record Built(int y, boolean guarded) {
+    /** A built site: where it ended up, the height of the geode's centre, and whether Templars were left to guard it. */
+    public record Built(int x, int y, int z, boolean guarded) {
     }
 
     /** The chance a fallen star has the Cult of El at its crater. */
     public static final double GUARD_CHANCE = 0.5;
 
+    /** The kinds of crater; the biome picks one, and a star in the water has none. */
+    private enum Crater {
+        NONE, NORMAL, LAVA, OBSIDIAN, WATER, SNOW, ICE
+    }
+
     private MeteorSite() {
     }
 
-    /** True when every chunk the crater and its fallout touch is loaded. */
+    /** True when every chunk the crater and its debris touch is loaded. */
     public static boolean canBuild(ServerLevel level, int x, int z) {
         return level.hasChunksAt(new BlockPos(x - LOAD_RADIUS, level.getMinBuildHeight(), z - LOAD_RADIUS),
                 new BlockPos(x + LOAD_RADIUS, level.getMinBuildHeight(), z + LOAD_RADIUS));
     }
 
-    /** Builds the site around (x, z). */
+    /** Builds the site around (x, z), or on dry land close to it. */
     public static Built build(ServerLevel level, int x, int z, RandomSource random) {
-        int yOffset = SIZE + 1;
-        // Where the ground is, over the meteorite's footprint: its mean, pulled down towards the lowest point on rough ground.
-        int scan = SIZE * 2;
-        double sum = 0;
-        double sumSquares = 0;
-        int min = Integer.MAX_VALUE;
-        int count = 0;
-        for (int dx = -scan; dx <= scan; dx++) {
-            for (int dz = -scan; dz <= scan; dz++) {
-                int h = groundAt(level, x + dx, z + dz);
-                sum += h;
-                sumSquares += (double) h * h;
-                min = Math.min(min, h);
-                count++;
-            }
-        }
-        double mean = sum / count;
-        int centreY = (int) mean;
-        if (sumSquares / count - mean * mean > 5.0) {
-            centreY = (int) (centreY - (mean - min) * 0.75);
-        }
-        centreY = Math.max(level.getMinBuildHeight() + yOffset + 8, centreY - yOffset);
+        int[] dry = dryNear(level, x, z);
+        x = dry[0];
+        z = dry[1];
+        int baseY = footprintGround(level, x, z);
+        int centreY = Math.max(level.getMinBuildHeight() + 12, baseY - GEODE_SINK);
+        baseY = centreY + GEODE_SINK;
         BlockPos centre = new BlockPos(x, centreY, z);
 
         // A star in the water leaves no crater. Otherwise the biome picks the kind.
-        boolean wet = level.getFluidState(new BlockPos(x, groundAt(level, x, z) + 1, z)).is(net.minecraft.tags.FluidTags.WATER);
-        Crater crater = wet ? Crater.NONE : craterFor(level, centre, random);
+        Crater crater = wet(level, x, z) ? Crater.NONE : craterFor(level, centre, random);
+        double radius = 12.0 + random.nextDouble() * 3.0;
+        double[] phase = {random.nextDouble() * 6.3, random.nextDouble() * 6.3, random.nextDouble() * 6.3};
+        List<BlockPos> fires = new ArrayList<>();
         if (crater != Crater.NONE) {
-            carveCrater(level, centre, crater);
+            carveBowl(level, centre, baseY, radius, phase, crater, random, fires);
         }
         BlockPos chest = placeGeode(level, centre, random);
         if (crater != Crater.NONE) {
-            decay(level, centre, crater, random);
-            if (lakeAround(level, centre)) {
-                fillLake(level, centre, crater, random);
-            }
+            scatterDebris(level, centre, radius, phase, random, fires);
+            light(level, fires, random);
         }
 
         boolean deep = ProgressionHelper.hasReached(level, ProgressionHelper.THIRD_CIRCLE);
@@ -138,7 +111,7 @@ public final class MeteorSite {
         if (guarded) {
             for (int i = 0; i < (deep ? 3 : 2); i++) {
                 double angle = random.nextDouble() * Math.PI * 2.0;
-                double distance = 8 + random.nextDouble() * 5;
+                double distance = radius * (0.6 + random.nextDouble() * 0.5);
                 int gx = x + (int) (Math.cos(angle) * distance);
                 int gz = z + (int) (Math.sin(angle) * distance);
                 BlockPos at = new BlockPos(gx, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, gx, gz), gz);
@@ -148,7 +121,7 @@ public final class MeteorSite {
                 }
             }
         }
-        return new Built(centreY, guarded);
+        return new Built(x, centreY, z, guarded);
     }
 
     /** The top of the solid ground in a column, under water, snow cover, leaves and trunks. */
@@ -164,7 +137,52 @@ public final class MeteorSite {
         return cursor.getY();
     }
 
-    /** AE2's choice of crater, by temperature and rain: most are plain, the rest depend on how hot or cold the biome is. */
+    private static boolean wet(ServerLevel level, int x, int z) {
+        return level.getFluidState(new BlockPos(x, groundAt(level, x, z) + 1, z)).is(FluidTags.WATER);
+    }
+
+    /** (x, z) itself when it is dry, otherwise the nearest dry spot within {@link #MAX_SHIFT} blocks (or (x, z) again if there is none). */
+    private static int[] dryNear(ServerLevel level, int x, int z) {
+        if (!wet(level, x, z)) {
+            return new int[] {x, z};
+        }
+        for (int ring = 3; ring <= MAX_SHIFT; ring += 3) {
+            for (int step = 0; step < 12; step++) {
+                double angle = step * Math.PI / 6.0;
+                int cx = x + (int) Math.round(Math.cos(angle) * ring);
+                int cz = z + (int) Math.round(Math.sin(angle) * ring);
+                if (!wet(level, cx, cz) && groundAt(level, cx, cz) >= level.getSeaLevel()) {
+                    return new int[] {cx, cz};
+                }
+            }
+        }
+        return new int[] {x, z};
+    }
+
+    /** The ground level over the star's footprint: its mean, pulled down towards the lowest point on rough ground. */
+    private static int footprintGround(ServerLevel level, int x, int z) {
+        double sum = 0;
+        double sumSquares = 0;
+        int min = Integer.MAX_VALUE;
+        int count = 0;
+        for (int dx = -8; dx <= 8; dx++) {
+            for (int dz = -8; dz <= 8; dz++) {
+                int h = groundAt(level, x + dx, z + dz);
+                sum += h;
+                sumSquares += (double) h * h;
+                min = Math.min(min, h);
+                count++;
+            }
+        }
+        double mean = sum / count;
+        int ground = (int) Math.round(mean);
+        if (sumSquares / count - mean * mean > 5.0) {
+            ground = (int) Math.round(ground - (mean - min) * 0.5);
+        }
+        return ground;
+    }
+
+    /** The biome picks the kind of crater: most are plain, the rest depend on how hot or cold it is and whether it rains. */
     private static Crater craterFor(ServerLevel level, BlockPos pos, RandomSource random) {
         Biome biome = level.getBiome(pos).value();
         float temp = biome.getBaseTemperature();
@@ -211,197 +229,200 @@ public final class MeteorSite {
         return Crater.NORMAL;
     }
 
-    /** The crater: a very flat cone (rising 0.02 a block squared) opened from the geode's flank up to the sky. */
-    private static void carveCrater(ServerLevel level, BlockPos centre, Crater crater) {
-        BlockState filler = crater.filler.defaultBlockState();
-        double h = centre.getY() - SIZE + 1;
-        BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
-        for (int dx = -FALLOUT_RADIUS; dx <= FALLOUT_RADIUS; dx++) {
-            for (int dz = -FALLOUT_RADIUS; dz <= FALLOUT_RADIUS; dz++) {
-                double rim = h + (double) (dx * dx + dz * dz) * 0.02;
-                int top = level.getHeight(Heightmap.Types.WORLD_SURFACE, centre.getX() + dx, centre.getZ() + dz);
-                int from = Math.max(centre.getY() - 5, (int) Math.floor(rim) + 1);
-                for (int y = from; y <= top; y++) {
-                    if (y <= rim) {
-                        continue;
-                    }
-                    at.set(centre.getX() + dx, y, centre.getZ() + dz);
-                    BlockState current = level.getBlockState(at);
-                    if (crater != Crater.NORMAL && y < centre.getY() && current.isSolid()) {
-                        put(level, at, filler);
-                    } else {
-                        put(level, at, Blocks.AIR.defaultBlockState());
-                    }
-                }
-            }
-        }
-    }
-
-    /** Places the sealed geode with the vanilla geode feature and returns a hollow spot inside it for the chest. */
-    private static BlockPos placeGeode(ServerLevel level, BlockPos centre, RandomSource random) {
-        Feature.GEODE.place(new FeaturePlaceContext<>(Optional.empty(), level, level.getChunkSource().getGenerator(), random, centre, geodeConfig()));
-        BlockPos best = null;
-        double bestDistance = Double.MAX_VALUE;
-        for (BlockPos pos : BlockPos.betweenClosed(centre.offset(-3, -3, -3), centre.offset(3, 3, 3))) {
-            if (level.getBlockState(pos).isAir() && level.getBlockState(pos.below()).isSolid()) {
-                double distance = pos.distSqr(centre);
-                if (distance < bestDistance) {
-                    bestDistance = distance;
-                    best = pos.immutable();
-                }
-            }
-        }
-        return best != null ? best : centre;
+    /** The rim's radius towards an angle: a circle bent by a few low waves, so the crater is not a perfect ring. */
+    private static double rimRadius(double radius, double[] phase, double angle) {
+        return radius * (1.0 + 0.10 * Math.sin(2 * angle + phase[0]) + 0.07 * Math.sin(3 * angle + phase[1]) + 0.05 * Math.sin(5 * angle + phase[2]));
     }
 
     /**
-     * Lyrium-sized and closed: the Lyrium geode's layers and spread, no crack, Luminite for the lining (a little Lyrium and Amethyst in
-     * it), Arganite flecked with Quartzite in place of the calcite layer, and a Meteorite shell. Nothing counts as an invalid block,
-     * so it forms under water and lava too.
+     * The crater: a smooth bowl, deepest at the geode and rising as a parabola to the ground level at the rim, then a gentle ramp that
+     * trims the hill beyond it. Everything above the bowl is cleared (trees too), and its surface is scorched towards the middle.
      */
-    private static GeodeConfiguration geodeConfig() {
-        if (geode == null) {
-            BlockState arganite = ModBlocks.ARGANITE.get().defaultBlockState();
-            BlockState quartzite = ModBlocks.QUARTZITE.get().defaultBlockState();
-            geode = new GeodeConfiguration(
-                    new GeodeBlockSettings(
-                            BlockStateProvider.simple(Blocks.AIR),
-                            BlockStateProvider.simple(ModBlocks.LUMINITE_BLOCK.get()),
-                            BlockStateProvider.simple(ModBlocks.LYRIUM_BLOCK.get()),
-                            new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder().add(arganite, 7).add(quartzite, 3).build()),
-                            BlockStateProvider.simple(ModBlocks.METEORITE.get()),
-                            List.of(ModBlocks.LUMINITE_CLUSTER.get().defaultBlockState(), ModBlocks.LUMINITE_CLUSTER.get().defaultBlockState(),
-                                    ModBlocks.LUMINITE_CLUSTER.get().defaultBlockState(), ModBlocks.LYRIUM_CLUSTER.get().defaultBlockState(),
-                                    Blocks.AMETHYST_CLUSTER.defaultBlockState()),
-                            BlockTags.FEATURES_CANNOT_REPLACE,
-                            BlockTags.GEODE_INVALID_BLOCKS),
-                    new GeodeLayerSettings(1.7, 2.2, 3.2, 4.2),
-                    new GeodeCrackSettings(0.0, 2.0, 2),
-                    0.35, 0.25, false,
-                    UniformInt.of(4, 6), UniformInt.of(3, 4), UniformInt.of(1, 2),
-                    -16, 16, 0.05, Integer.MAX_VALUE);
-        }
-        return geode;
-    }
-
-    /** The fallout: debris dropped over the crater's rim, and the rim's own ground scorched. */
-    private static void decay(ServerLevel level, BlockPos centre, Crater crater, RandomSource random) {
-        double budget = 0;
+    private static void carveBowl(ServerLevel level, BlockPos centre, int baseY, double radius, double[] phase, Crater crater, RandomSource random, List<BlockPos> fires) {
+        double liquidY = baseY - BOWL_DEPTH * 0.55;
+        int reach = (int) Math.ceil(radius * 1.5);
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
-        BlockPos.MutableBlockPos up = new BlockPos.MutableBlockPos();
-        BlockPos.MutableBlockPos down = new BlockPos.MutableBlockPos();
-        for (int i = centre.getX() - FALLOUT_RADIUS; i <= centre.getX() + FALLOUT_RADIUS; i++) {
-            for (int k = centre.getZ() - FALLOUT_RADIUS; k <= centre.getZ() + FALLOUT_RADIUS; k++) {
-                for (int j = centre.getY() - 9; j < centre.getY() + FALLOUT_RADIUS; j++) {
-                    if (centre.distSqr(new BlockPos(i, j, k)) <= GEODE_REACH * GEODE_REACH) {
-                        continue;
+        for (int dx = -reach; dx <= reach; dx++) {
+            for (int dz = -reach; dz <= reach; dz++) {
+                double rim = rimRadius(radius, phase, Math.atan2(dz, dx));
+                double u = Math.sqrt(dx * dx + dz * dz) / rim;
+                if (u > 1.3) {
+                    continue;
+                }
+                double bowl = u <= 1.0 ? baseY - BOWL_DEPTH * (1.0 - u * u) : baseY + 3.0 * (u - 1.0);
+                int floor = (int) Math.floor(bowl);
+                int x = centre.getX() + dx;
+                int z = centre.getZ() + dz;
+                int top = level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
+                if (top - 1 <= floor) {
+                    continue;
+                }
+                for (int y = floor + 1; y < top; y++) {
+                    at.set(x, y, z);
+                    put(level, at, Blocks.AIR.defaultBlockState());
+                }
+                at.set(x, floor, z);
+                BlockState surface = surfaceFor(crater, u, random);
+                if (surface != null) {
+                    put(level, at, surface);
+                    if (surface.is(Blocks.MAGMA_BLOCK) || (surface.is(Blocks.BLACKSTONE) && random.nextInt(14) == 0)) {
+                        fires.add(at.immutable());
                     }
-                    at.set(i, j, k);
-                    up.set(i, j + 1, k);
-                    down.set(i, j - 1, k);
-                    BlockState state = level.getBlockState(at);
-                    if (state.canBeReplaced()) {
-                        if (!level.isEmptyBlock(up)) {
-                            level.setBlock(at, level.getBlockState(up), 2);
-                        } else if (budget < 100.0 * CRATER) {
-                            double dx = i - centre.getX();
-                            double dy = j - centre.getY();
-                            double dz = k - centre.getZ();
-                            double dist = dx * dx + dy * dy + dz * dz;
-                            BlockState under = level.getBlockState(down);
-                            if (!under.canBeReplaced()) {
-                                double height = CRATER * (random.nextDouble() * 0.6 + 0.2) - Math.abs(dist - CRATER * 1.7);
-                                if (!under.isAir() && height > 0.0 && random.nextDouble() > 0.6) {
-                                    budget++;
-                                    put(level, at, scorched(random, crater));
-                                }
-                            }
-                        }
-                    } else if (level.isEmptyBlock(up) && random.nextDouble() > 0.4 && isNaturalGround(state)) {
-                        double dx = i - centre.getX();
-                        double dy = j - centre.getY();
-                        double dz = k - centre.getZ();
-                        if ((Math.abs(dx) > 1 || Math.abs(dy) > 1 || Math.abs(dz) > 1) && dx * dx + dy * dy + dz * dz < CRATER * 1.6) {
-                            put(level, at, scorched(random, crater));
-                        }
+                }
+                if ((crater == Crater.LAVA || crater == Crater.WATER) && floor < liquidY) {
+                    BlockState liquid = crater == Crater.LAVA ? Blocks.LAVA.defaultBlockState() : Blocks.WATER.defaultBlockState();
+                    for (int y = floor + 1; y <= (int) liquidY; y++) {
+                        at.set(x, y, z);
+                        put(level, at, liquid);
                     }
                 }
             }
         }
     }
 
-    /** Only plain ground is scorched; the geode, ores and structures are left as they are. */
-    private static boolean isNaturalGround(BlockState state) {
-        return state.is(BlockTags.DIRT) || state.is(BlockTags.SAND) || state.is(BlockTags.BASE_STONE_OVERWORLD) || state.is(Blocks.SNOW_BLOCK);
-    }
-
-    private static BlockState scorched(RandomSource random, Crater crater) {
-        int roll = random.nextInt(10);
-        if (roll < 2) {
-            return ModBlocks.METEORITE.get().defaultBlockState();
+    /** The bowl's floor: scorched rock and magma at the middle, coarse dirt and gravel towards the rim, left alone beyond it. */
+    private static BlockState surfaceFor(Crater crater, double u, RandomSource random) {
+        if (u > 1.12) {
+            return null;
         }
-        if (roll < 4) {
-            return Blocks.SMOOTH_BASALT.defaultBlockState();
+        int roll = random.nextInt(100);
+        if (u < 0.7) {
+            switch (crater) {
+                case OBSIDIAN:
+                    return Blocks.OBSIDIAN.defaultBlockState();
+                case SNOW:
+                    return Blocks.SNOW_BLOCK.defaultBlockState();
+                case ICE:
+                    return Blocks.PACKED_ICE.defaultBlockState();
+                default:
+                    break;
+            }
         }
-        if (roll < 7) {
+        if (u < 0.35) {
+            if (roll < 12) {
+                return ModBlocks.METEORITE.get().defaultBlockState();
+            }
+            if (roll < 12 + (crater == Crater.LAVA ? 28 : 16)) {
+                return Blocks.MAGMA_BLOCK.defaultBlockState();
+            }
+            return roll < 62 ? Blocks.SMOOTH_BASALT.defaultBlockState() : Blocks.BLACKSTONE.defaultBlockState();
+        }
+        if (u < 0.8) {
+            if (roll < 20) {
+                return Blocks.SMOOTH_BASALT.defaultBlockState();
+            }
+            if (roll < 45) {
+                return Blocks.BLACKSTONE.defaultBlockState();
+            }
+            return roll < 80 ? Blocks.COARSE_DIRT.defaultBlockState() : Blocks.GRAVEL.defaultBlockState();
+        }
+        if (roll < 40) {
+            return Blocks.COARSE_DIRT.defaultBlockState();
+        }
+        if (roll < 55) {
             return Blocks.BLACKSTONE.defaultBlockState();
         }
-        if (roll == 7) {
-            return crater == Crater.LAVA ? Blocks.MAGMA_BLOCK.defaultBlockState() : ModBlocks.ARGANITE.get().defaultBlockState();
-        }
-        return Blocks.COARSE_DIRT.defaultBlockState();
+        return roll < 65 ? Blocks.GRAVEL.defaultBlockState() : null;
     }
 
-    /** True when the crater's slope cuts below sea level next to open water: it then fills as a lake. */
-    private static boolean lakeAround(ServerLevel level, BlockPos centre) {
-        int maxY = level.getSeaLevel() - 1;
-        double h = centre.getY() - SIZE + 1;
-        for (int dx = -32; dx <= 32; dx++) {
-            for (int dz = -32; dz <= 32; dz++) {
-                double distance = dx * dx + dz * dz;
-                if (maxY > h + distance * 0.0175 && maxY < h + distance * 0.02
-                        && level.getHeight(Heightmap.Types.OCEAN_FLOOR, centre.getX() + dx, centre.getZ() + dz) < level.getSeaLevel()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /** Floods the crater up to sea level and lines its slope so the water stays in. */
-    private static void fillLake(ServerLevel level, BlockPos centre, Crater crater, RandomSource random) {
-        int maxY = level.getSeaLevel() - 1;
-        double h = centre.getY() - SIZE + 1;
-        BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
-        for (int x = centre.getX() - FALLOUT_RADIUS; x <= centre.getX() + FALLOUT_RADIUS; x++) {
-            for (int z = centre.getZ() - FALLOUT_RADIUS; z <= centre.getZ() + FALLOUT_RADIUS; z++) {
-                double distance = (x - centre.getX()) * (x - centre.getX()) + (z - centre.getZ()) * (z - centre.getZ());
-                for (int y = centre.getY() - 5; y <= maxY; y++) {
-                    at.set(x, y, z);
-                    if (y > h + distance * 0.02) {
-                        if (level.getBlockState(at).isAir()) {
-                            level.setBlock(at, Blocks.WATER.defaultBlockState(), 2);
-                            if (y == maxY) {
-                                level.scheduleTick(at.immutable(), Fluids.WATER, 0);
-                            }
-                        }
-                    } else if (maxY + (maxY - y) * 2 + 2 > h + distance * 0.02) {
-                        lineSlope(level, at, crater, random);
+    /** Places the round, sealed geode and returns the spot inside it for the chest. */
+    private static BlockPos placeGeode(ServerLevel level, BlockPos centre, RandomSource random) {
+        BlockState luminite = ModBlocks.LUMINITE_BLOCK.get().defaultBlockState();
+        BlockState lyrium = ModBlocks.LYRIUM_BLOCK.get().defaultBlockState();
+        BlockState arganite = ModBlocks.ARGANITE.get().defaultBlockState();
+        BlockState quartzite = ModBlocks.QUARTZITE.get().defaultBlockState();
+        BlockState meteorite = ModBlocks.METEORITE.get().defaultBlockState();
+        BlockState air = Blocks.AIR.defaultBlockState();
+        int reach = (int) Math.ceil(SHELL);
+        for (int dx = -reach; dx <= reach; dx++) {
+            for (int dy = -reach; dy <= reach; dy++) {
+                for (int dz = -reach; dz <= reach; dz++) {
+                    double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    BlockState state;
+                    if (distance <= HOLLOW) {
+                        state = air;
+                    } else if (distance <= LINING) {
+                        state = random.nextInt(8) == 0 ? lyrium : luminite;
+                    } else if (distance <= MIDDLE) {
+                        state = random.nextInt(10) < 7 ? arganite : quartzite;
+                    } else if (distance <= SHELL) {
+                        state = meteorite;
+                    } else {
+                        continue;
                     }
+                    put(level, centre.offset(dx, dy, dz), state);
+                }
+            }
+        }
+        BlockPos chest = centre.below(2);
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dy = -3; dy <= 3; dy++) {
+                for (int dz = -3; dz <= 3; dz++) {
+                    BlockPos inside = centre.offset(dx, dy, dz);
+                    if (inside.equals(chest) || !level.getBlockState(inside).isAir() || random.nextInt(5) != 0) {
+                        continue;
+                    }
+                    Direction towards = null;
+                    for (Direction side : Direction.values()) {
+                        BlockState neighbour = level.getBlockState(inside.relative(side));
+                        if (neighbour.is(ModBlocks.LUMINITE_BLOCK.get()) || neighbour.is(ModBlocks.LYRIUM_BLOCK.get())) {
+                            towards = side;
+                            break;
+                        }
+                    }
+                    if (towards == null) {
+                        continue;
+                    }
+                    int pick = random.nextInt(5);
+                    Block crystal = pick < 3 ? ModBlocks.LUMINITE_CLUSTER.get() : pick == 3 ? ModBlocks.LYRIUM_CLUSTER.get() : Blocks.AMETHYST_CLUSTER;
+                    level.setBlock(inside, crystal.defaultBlockState().setValue(AmethystClusterBlock.FACING, towards.getOpposite()), 2);
+                }
+            }
+        }
+        return chest;
+    }
+
+    /** Debris thrown over the rim: ground scorched or strewn with rock, thinning out with distance. */
+    private static void scatterDebris(ServerLevel level, BlockPos centre, double radius, double[] phase, RandomSource random, List<BlockPos> fires) {
+        int reach = (int) Math.ceil(radius * 1.2 * 1.7);
+        BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
+        for (int dx = -reach; dx <= reach; dx++) {
+            for (int dz = -reach; dz <= reach; dz++) {
+                double rim = rimRadius(radius, phase, Math.atan2(dz, dx));
+                double u = Math.sqrt(dx * dx + dz * dz) / rim;
+                if (u < 1.0 || u > 1.7) {
+                    continue;
+                }
+                double chance = 0.30 * (1.7 - u) / 0.7;
+                if (random.nextDouble() >= chance) {
+                    continue;
+                }
+                int x = centre.getX() + dx;
+                int z = centre.getZ() + dz;
+                int top = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+                at.set(x, top - 1, z);
+                BlockState ground = level.getBlockState(at);
+                if (!(ground.is(BlockTags.DIRT) || ground.is(BlockTags.SAND) || ground.is(BlockTags.BASE_STONE_OVERWORLD) || ground.is(Blocks.SNOW_BLOCK))) {
+                    continue;
+                }
+                int roll = random.nextInt(10);
+                BlockState scorched = roll < 4 ? Blocks.COARSE_DIRT.defaultBlockState() : roll < 7 ? Blocks.BLACKSTONE.defaultBlockState()
+                        : roll < 9 ? Blocks.SMOOTH_BASALT.defaultBlockState() : ModBlocks.METEORITE.get().defaultBlockState();
+                put(level, at, scorched);
+                if (random.nextInt(18) == 0) {
+                    fires.add(at.immutable());
                 }
             }
         }
     }
 
-    private static void lineSlope(ServerLevel level, BlockPos from, Crater crater, RandomSource random) {
-        BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos().set(from);
-        for (int i = 0; i < 20; i++) {
-            BlockState state = level.getBlockState(at);
-            if (state.isAir() || state.getFluidState().isEmpty() && (state.canBeReplaced() || state.is(BlockTags.REPLACEABLE))) {
-                put(level, at, crater == Crater.LAVA && random.nextFloat() < 0.075F ? Blocks.MAGMA_BLOCK.defaultBlockState() : scorched(random, crater));
-                at.move(Direction.DOWN);
-            } else {
-                return;
+    /** Sets the fires: a flame over every magma block (it never burns out, rain or not) and a few over the other scorched rock. */
+    private static void light(ServerLevel level, List<BlockPos> fires, RandomSource random) {
+        for (BlockPos below : fires) {
+            BlockPos above = below.above();
+            boolean magma = level.getBlockState(below).is(Blocks.MAGMA_BLOCK);
+            if (level.getBlockState(above).isAir() && (magma || level.getBlockState(below).isSolid()) && (!magma || random.nextInt(3) != 0)) {
+                level.setBlock(above, Blocks.FIRE.defaultBlockState(), 3);
             }
         }
     }

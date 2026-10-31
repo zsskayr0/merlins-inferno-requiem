@@ -21,8 +21,8 @@ public class MeteorData extends SavedData {
 
     /** A fallen star: where it is, when it fell, and whether its crater has been built yet. */
     public static final class Meteor {
-        public final int x;
-        public final int z;
+        public int x;
+        public int z;
         public final long fell;
         public int y;
         public boolean built;
