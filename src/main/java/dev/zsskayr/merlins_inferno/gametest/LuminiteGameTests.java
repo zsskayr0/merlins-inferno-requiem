@@ -164,8 +164,8 @@ public final class LuminiteGameTests {
     public static void meteorSiteBuildsACraterWithOreAndLoot(GameTestHelper helper) {
         var level = helper.getLevel();
         BlockPos origin = helper.absolutePos(new BlockPos(0, 2, 0));
-        for (int cx = -3; cx <= 3; cx++) {
-            for (int cz = -3; cz <= 3; cz++) {
+        for (int cx = -4; cx <= 4; cx++) {
+            for (int cz = -4; cz <= 4; cz++) {
                 level.getChunk(origin.offset(cx * 16, 0, cz * 16));
             }
         }

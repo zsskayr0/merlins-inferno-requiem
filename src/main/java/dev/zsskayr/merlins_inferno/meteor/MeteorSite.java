@@ -47,7 +47,7 @@ public final class MeteorSite {
     public static final ResourceKey<LootTable> LOOT_DEEP = ResourceKey.create(Registries.LOOT_TABLE,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/meteor_deep"));
     /** The chunks within this many blocks of the centre must be loaded before the site is built. */
-    public static final int LOAD_RADIUS = 40;
+    public static final int LOAD_RADIUS = 48;
     /** A star that would land in water is moved at most this far to dry land. */
     private static final int MAX_SHIFT = 10;
     /** The geode's layers: hollow, Luminite lining, Arganite/Quartzite middle and the Meteorite shell. Exact spheres, so it is always round. */
