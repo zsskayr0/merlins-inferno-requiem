@@ -50,12 +50,12 @@ public final class MeteorSite {
     /** A star that would land in water is moved at most this far to dry land. */
     private static final int MAX_SHIFT = 10;
     /** The geode's layers: hollow, Luminite lining, Arganite/Quartzite middle and the Meteorite shell. Exact spheres, so it is always round. */
-    private static final double HOLLOW = 3.5;
-    private static final double LINING = 4.8;
-    private static final double MIDDLE = 6.5;
-    private static final double SHELL = 8.0;
+    private static final double HOLLOW = 3.1;
+    private static final double LINING = 4.2;
+    private static final double MIDDLE = 5.7;
+    private static final double SHELL = 7.0;
     /** How far the geode's centre sits under the bowl's rim level, and how deep the bowl is, so the top of the geode stands in the bowl. */
-    private static final int GEODE_SINK = 8;
+    private static final int GEODE_SINK = 7;
     private static final double BOWL_DEPTH = 4.0;
 
     /** A built site: where it ended up, the height of the geode's centre, and whether Templars were left to guard it. */
@@ -355,9 +355,9 @@ public final class MeteorSite {
             }
         }
         BlockPos chest = centre.below(3);
-        for (int dx = -4; dx <= 4; dx++) {
-            for (int dy = -4; dy <= 4; dy++) {
-                for (int dz = -4; dz <= 4; dz++) {
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dy = -3; dy <= 3; dy++) {
+                for (int dz = -3; dz <= 3; dz++) {
                     BlockPos inside = centre.offset(dx, dy, dz);
                     if (inside.equals(chest) || !level.getBlockState(inside).isAir() || random.nextInt(5) != 0) {
                         continue;
