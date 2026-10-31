@@ -136,7 +136,7 @@ public final class LuminiteGameTests {
         int floor = MeteorSite.build(level, origin.getX(), origin.getZ(), level.random);
         boolean ore = false;
         boolean chest = false;
-        for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-MeteorSite.RADIUS, -8, -MeteorSite.RADIUS), origin.offset(MeteorSite.RADIUS, 12, MeteorSite.RADIUS))) {
+        for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-10, -24, -10), origin.offset(10, 12, 10))) {
             var state = level.getBlockState(pos);
             ore |= state.is(ModBlocks.LUMINITE_CLUSTER.get());
             if (state.is(Blocks.CHEST) && level.getBlockEntity(pos) instanceof ChestBlockEntity chestEntity) {
@@ -144,7 +144,7 @@ public final class LuminiteGameTests {
             }
         }
         helper.assertTrue(ore, "The heart geode grows Luminite crystals");
-        helper.assertTrue(chest, "There is a chest by the crater");
+        helper.assertTrue(chest, "The sky-drop chest sits in the geode's hollow");
         helper.assertTrue(floor > level.getMinBuildHeight(), "The floor height is reported");
         helper.succeed();
     }
