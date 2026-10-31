@@ -57,9 +57,7 @@ public class ChampionSeekerItem extends Item {
         // Same maths as vanilla's CompassItemPropertyFunction: yaw 0 faces +Z, atan2 measures from +X.
         double targetAngle = Mth.atan2(dz, dx) / (Math.PI * 2);
         double facing = Mth.positiveModulo(holder.getYRot() / 360.0D, 1.0D);
-        double angle = Mth.positiveModulo(0.5D - (facing - 0.25D - targetAngle), 1.0D);
-        // The baked needle frames rotate the opposite way to vanilla's compass (frame_08 points left),
-        // so mirror the angle or the needle swings away from the target.
-        return (float) Mth.positiveModulo(1.0D - angle, 1.0D);
+        // The baked needle frames turn the same way as vanilla's (frame_08 points right: the cross-piece of the arrow is its head).
+        return (float) Mth.positiveModulo(0.5D - (facing - 0.25D - targetAngle), 1.0D);
     }
 }
