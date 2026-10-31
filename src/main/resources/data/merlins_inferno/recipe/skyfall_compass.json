@@ -2,17 +2,20 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
+    "G": {
+      "item": "merlins_inferno:luminite_gem"
+    },
     "L": {
       "item": "merlins_inferno:lyrium_refined"
     },
-    "C": {
-      "item": "minecraft:compass"
+    "P": {
+      "item": "minecraft:ender_pearl"
     }
   },
   "pattern": [
-    " L ",
-    "LCL",
-    " L "
+    "LGL",
+    "GPG",
+    "LGL"
   ],
   "result": {
     "count": 1,
