@@ -69,7 +69,7 @@ where it drops below 0.15. Non-snow biomes are warm enough to stay green up to ~
 snow starts at ≈ y 256, matching the palette snow line. Do not lower these without re-checking the snow line.
 
 ## 4. Cloud sea
-- Client-rendered stacked layers, top at y 64. `cloud_sea.png`: 256² seamless, ~94 % opaque soft white → light
+- RETIRED, see `core-notes.md`: the cloud sea is now blocks. Old design: client-rendered stacked layers, top at y 64. `cloud_sea.png`: 256² seamless, ~94 % opaque soft white → light
   blue-grey billows lit from one side, ~2 % small rounded gaps (gaps show the next layer, never the void).
   `cloud_sea_puffs.png`: ~23 % coverage of soft puffs for the topmost layer, drifting slower/faster than the base.
 - Tint toward the fog colour with distance; vertex colour slightly warmer on top layer. No vanilla clouds at all.
