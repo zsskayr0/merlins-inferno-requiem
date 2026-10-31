@@ -6,6 +6,7 @@ import dev.zsskayr.merlins_inferno.worldgen.elysium.ElysiumChunkGenerator;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.ElysiumSeed;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.core.Column;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.core.ElysiumWorld;
+import dev.zsskayr.merlins_inferno.worldgen.elysium.structure.SpanBuilder;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Map;
@@ -102,10 +103,13 @@ public final class ElysiumGameTests {
                                 world.sample(wx, wz, col);
                                 sampled++;
                                 int expected = expectedTop(col);
+                                if (expected < 0) {
+                                    expected = world.cloudTop(wx, wz);
+                                }
                                 if (top != expected) {
                                     mismatches++;
                                 }
-                                if (top < 0) {
+                                if (top < ElysiumWorld.LOWEST_SOLID) {
                                     img.setRGB(px, pz, 0xe8eef4); // the cloud sea
                                     continue;
                                 }
@@ -157,6 +161,54 @@ public final class ElysiumGameTests {
             helper.assertTrue(result.mismatches() * 200 <= result.sampled(), "Generated columns copy the core: " + result.mismatches() + "/" + result.sampled());
             helper.assertTrue(result.biomeMismatches() == 0, "Chunk biomes follow ElysiumWorld.biomeAt: " + result.biomeMismatches());
         });
+    }
+
+    /** The decoration pass on a real level, high above the test area: a loose chain across chunks, the two new tree features, the cloud block. */
+    @GameTest(template = "bench_empty")
+    public static void elysiumDecorationBuilds(GameTestHelper helper) {
+        var level = helper.getLevel();
+        BlockPos o = helper.absolutePos(new BlockPos(1, 1, 1)).atY(240);
+        var chain = new ElysiumWorld.HangingChain(o.getX(), o.getY(), o.getZ(), 1.0, 0.0, 14, 70, 42L);
+        ChunkPos home = new ChunkPos(o);
+        for (int dx = -1; dx <= 3; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                SpanBuilder.buildHanging(level, new ChunkPos(home.x + dx, home.z + dz), java.util.List.of(chain));
+            }
+        }
+        int links = 0, lowest = Integer.MAX_VALUE, farthest = Integer.MIN_VALUE;
+        for (BlockPos p : BlockPos.betweenClosed(o.offset(-12, -85, -12), o.offset(40, 12, 12))) {
+            BlockState state = level.getBlockState(p);
+            if (state.is(ModBlocks.ARGANITE.get()) || state.is(ModBlocks.ARGANITE_BRICKS.get())) {
+                links++;
+                lowest = Math.min(lowest, p.getY());
+                farthest = Math.max(farthest, p.getX());
+            }
+        }
+        helper.assertTrue(links > 200, "The loose chain draws links: " + links);
+        helper.assertTrue(lowest <= o.getY() - 60, "It reaches its drop, lowest y " + lowest + " from " + o.getY());
+        helper.assertTrue(farthest >= o.getX() + 10, "It swings out over the edge, x " + farthest + " from " + o.getX());
+
+        var features = level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE);
+        var generator = level.getChunkSource().getGenerator();
+        int offset = 40;
+        for (String id : new String[] {"elysium_pale_tree", "elysium_mistfall_trees"}) {
+            BlockPos soil = o.offset(offset, -30, 40);
+            offset += 30;
+            level.setBlock(soil, net.minecraft.world.level.block.Blocks.GRASS_BLOCK.defaultBlockState(), 2);
+            var feature = features.getOrThrow(net.minecraft.resources.ResourceKey.create(Registries.CONFIGURED_FEATURE,
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, id)));
+            boolean grew = false;
+            for (int attempt = 0; attempt < 8 && !grew; attempt++) {
+                grew = feature.place(level, generator, level.getRandom(), soil.above());
+            }
+            helper.assertTrue(grew, id + " grows on grass");
+        }
+
+        BlockState cloud = ModBlocks.CLOUD_SEA.get().defaultBlockState();
+        helper.assertTrue(!cloud.blocksMotion() && cloud.getCollisionShape(level, o).isEmpty(), "Entities fall through the cloud layer");
+        helper.assertTrue(cloud.getShape(level, o).isEmpty(), "The cloud layer cannot be targeted");
+        helper.assertTrue(!cloud.isValidSpawn(level, o, net.minecraft.world.entity.EntityType.PIG), "Nothing spawns on the cloud layer");
+        helper.succeed();
     }
 
     /** The y of the highest block the core puts in a column (water and arches included), or -1 for open sky. */

@@ -204,6 +204,20 @@ public final class ElysiumWorld {
         return out;
     }
 
+    /** Loose chains hanging from islands that may reach into the rectangle. */
+    public List<HangingChain> hangingChainsIn(int minX, int minZ, int maxX, int maxZ) {
+        List<HangingChain> out = new ArrayList<>();
+        int pad = HangingChain.MAX_RUN + 12;
+        for (IslandPlan p : plansIn(minX - pad, minZ - pad, maxX + pad, maxZ + pad)) {
+            for (HangingChain h : p.chains()) {
+                if (h.x() + pad >= minX && h.x() - pad <= maxX && h.z() + pad >= minZ && h.z() - pad <= maxZ) {
+                    out.add(h);
+                }
+            }
+        }
+        return out;
+    }
+
     /** Points of interest for structures (ruins, white architecture) inside the rectangle. */
     public List<Site> sitesIn(int minX, int minZ, int maxX, int maxZ) {
         List<Site> out = new ArrayList<>();
@@ -228,6 +242,15 @@ public final class ElysiumWorld {
      */
     public record Span(Kind kind, int ax, int ay, int az, int bx, int by, int bz, double sag, int width) {
         public enum Kind { STONE_ARCH, ROPE, VINE_CHAIN, GIANT_CHAIN }
+    }
+
+    /**
+     * A giant chain tied to one island and to nothing else, hanging in the air. (x, y, z) is the anchor; (outX, outZ) the
+     * unit direction it leaves the coast in and {@code run} how far out it swings (0 = straight down from the underside);
+     * {@code drop} how far the free end falls below the anchor.
+     */
+    public record HangingChain(int x, int y, int z, double outX, double outZ, int run, int drop, long salt) {
+        public static final int MAX_RUN = 20;
     }
 
     /** A water source on a cliff face or river mouth: place a WATER source at (x,y,z); the game makes the fall. */
@@ -292,6 +315,17 @@ public final class ElysiumWorld {
         return out;
     }
 
+    /** Highest block of the physical cloud layer in a column (see {@code CloudSeaBlock}); the layer is 2 blocks thick. */
+    public int cloudTop(int x, int z) {
+        return CLOUD_SEA_Y - 1 + (int) Math.round(2.2 * nz.fbm(x / 44.0 + 919.0, z / 44.0 - 271.0, 2));
+    }
+
+    /** Cloud block tint 0..2 (dark to bright) for a column of the layer: slow patches, brighter on the crests. */
+    public int cloudTone(int x, int z, int top) {
+        double v = nz.fbm(x / 21.0 - 53.0, z / 21.0 + 777.0, 2) + (top - CLOUD_SEA_Y + 1) * 0.3;
+        return v < -0.25 ? 0 : (v < 0.25 ? 1 : 2);
+    }
+
     /** Climate at a block: {temperature, humidity, ruggedness}, each about -1..1. */
     public double[] climate(double x, double z) {
         double t = Noise.clamp(1.5 * nz.fbm(x / 7000.0 + 311.0, z / 7000.0 - 97.0, 2), -1, 1);
@@ -343,6 +377,30 @@ public final class ElysiumWorld {
 
     private static boolean allows(ElysiumBiome b, ElysiumBiome.Size s) {
         return s.ordinal() >= b.minSize.ordinal() && s.ordinal() <= b.maxSize.ordinal();
+    }
+
+    /**
+     * The biomes an island of {@code own} biome at this climate can share its land with, nearest first: never a sea (those
+     * are a basin held by a rim), and never a cold biome next to a warm one. Seas themselves keep to one biome.
+     */
+    private static ElysiumBiome[] neighbours(double[] c, ElysiumBiome own) {
+        if (own == ElysiumBiome.GLASS_SEA || own == ElysiumBiome.AZURE_SHALLOWS) {
+            return new ElysiumBiome[0];
+        }
+        boolean cold = own == ElysiumBiome.RIME_EXPANSE || own == ElysiumBiome.FROSTCREST_RANGE;
+        List<ElysiumBiome> out = new ArrayList<>();
+        for (ElysiumBiome b : ElysiumBiome.values()) {
+            if (b == own || ANCHORS[b.ordinal()] == null || b == ElysiumBiome.GLASS_SEA || b == ElysiumBiome.AZURE_SHALLOWS) {
+                continue;
+            }
+            boolean coldB = b == ElysiumBiome.RIME_EXPANSE || b == ElysiumBiome.FROSTCREST_RANGE;
+            boolean either = b == ElysiumBiome.HIGHPINE_FOREST || b == ElysiumBiome.ARGENT_PEAKS;
+            if (coldB == cold || either) {
+                out.add(b);
+            }
+        }
+        out.sort(java.util.Comparator.comparingDouble(b -> climateDist(c, b)));
+        return out.subList(0, Math.min(3, out.size())).toArray(new ElysiumBiome[0]);
     }
 
     /** Nearest surface biome to the climate allowing size s (null s = any). */
@@ -445,7 +503,7 @@ public final class ElysiumWorld {
         int icx = (int) Math.floor(cx), icz = (int) Math.floor(cz);
         Island is = new Island(packIndex(sx, sz, slot), icx, icz, w, actual, biome, baseY,
                 icx - ext, icz - ext, icx + ext, icz + ext);
-        cell.plans.add(new IslandPlan(is, R, nz, seed));
+        cell.plans.add(new IslandPlan(is, R, nz, seed, neighbours(clim, biome)));
     }
 
     // ======================================================================== stage B: spans & platforms
@@ -657,7 +715,7 @@ public final class ElysiumWorld {
             int icx = (int) Math.floor(qx), icz = (int) Math.floor(qz), e = (int) Math.ceil(ext);
             Island is = new Island(packIndex(sx, sz, slot++), icx, icz, (int) Math.round(2 * Rp),
                     ElysiumBiome.Size.PLATFORM, ElysiumBiome.CHAINFALL, baseY, icx - e, icz - e, icx + e, icz + e);
-            IslandPlan p = new IslandPlan(is, Rp, nz, seed);
+            IslandPlan p = new IslandPlan(is, Rp, nz, seed, new ElysiumBiome[0]);
             cell.platforms.add(p);
             chain.add(p);
         }

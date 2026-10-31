@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "tone=0": {
+      "model": "merlins_inferno:block/cloud_sea_0"
+    },
+    "tone=1": {
+      "model": "merlins_inferno:block/cloud_sea_1"
+    },
+    "tone=2": {
+      "model": "merlins_inferno:block/cloud_sea_2"
+    }
+  }
+}

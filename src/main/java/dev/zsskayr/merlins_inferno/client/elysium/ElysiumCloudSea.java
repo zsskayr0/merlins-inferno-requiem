@@ -19,6 +19,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.block.CloudSeaBlock;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.core.ElysiumWorld;
 
 /**
@@ -57,7 +58,7 @@ public final class ElysiumCloudSea {
     public static void render(ClientLevel level, float time, float partialTick, Matrix4f modelView, Matrix4f projection,
                               double camX, double camY, double camZ) {
         ShaderInstance shader = GameRenderer.getPositionTexColorShader();
-        if (shader == null) {
+        if (shader == null || CloudSeaBlock.isShown()) {
             return;
         }
         int renderChunks = Minecraft.getInstance().options.getEffectiveRenderDistance();

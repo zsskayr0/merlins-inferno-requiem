@@ -371,6 +371,8 @@ public final class ModBlocks {
             SlabBlock::new, arganiteProperties());
     public static final DeferredBlock<WallBlock> ARGANITE_BRICKS_WALL = BLOCKS.registerBlock("arganite_bricks_wall",
             WallBlock::new, arganiteProperties().forceSolidOn());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.CloudSeaBlock> CLOUD_SEA = BLOCKS.registerBlock("cloud_sea",
+            dev.zsskayr.merlins_inferno.block.CloudSeaBlock::new, dev.zsskayr.merlins_inferno.block.CloudSeaBlock.blockProperties());
     public static final DeferredBlock<Block> QUARTZITE = BLOCKS.registerBlock("quartzite",
             Block::new, quartziteProperties());
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.PorcelainBlock> PORCELAIN = BLOCKS.registerBlock("porcelain",

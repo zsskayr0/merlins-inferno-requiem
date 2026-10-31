@@ -47,8 +47,13 @@ java -Djava.awt.headless=true -cp /home/claude/work/corebuild Preview 1 /home/cl
 7. **Stage C**: per super cell, the list of every island and platform whose bbox touches it. `sample()` scans only that list.
 8. **Springs and sites** are computed lazily per island (volatile cache).
 
+9. **Biome regions**: a land island of 2 to 6 seeds (`planRegions`): its own biome plus its nearest climate neighbours, never a sea and never cold next to warm. A column belongs to the nearest seed after a domain warp, and the relief is a weighted mix of every region within `REGION_BLEND`, so borders are ramps. Sea islands keep one biome.
+10. **Coast**: `coastFall` brings tall relief down to a low lip over 20 + 0.85 x height blocks, in rough ledges. Sea rims and platforms are exempt.
+11. **Hanging chains**: `IslandPlan.computeChains`, drawn by `SpanBuilder.buildHanging` with the giant chain's links. Tied to one island only.
+12. **Cloud layer**: `cloudTop` / `cloudTone` give a 2-block layer of `CloudSeaBlock` in every column. It only renders while a shader pack runs; otherwise `ElysiumCloudSea` draws the sheets.
+
 ## Tunables
-`SUPER`, `CELL_MARGIN`, `MAX_BRIDGE_GAP`, `MAX_CHAIN_GAP` (ElysiumWorld); the climate anchors; the single/quad (0.7)
+`REGION_BLEND`, `ISLET_LEVEL`, `SUPER`, `CELL_MARGIN`, `MAX_BRIDGE_GAP`, `MAX_CHAIN_GAP` (ElysiumWorld); the climate anchors; the single/quad (0.7)
 and small (0.45) probabilities in `buildA`; per-biome constants in `IslandPlan.relief`, `planRivers`, `planLakes`;
 `coneDepth` / `rim` in the IslandPlan constructor.
 

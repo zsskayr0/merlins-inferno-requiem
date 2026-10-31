@@ -24,9 +24,9 @@ import dev.zsskayr.merlins_inferno.worldgen.elysium.core.ElysiumWorld.Span;
  *       elliptical intrados with alternating voussoirs and a keystone at the crown, vines hanging off the faces.</li>
  *   <li>{@code ROPE}: spruce/oak slab deck (default 3) hanging in a catenary ({@code sag}), log stringers with fence
  *       railings and taller posts every 6 blocks, crossbeams underneath, vine drapes.</li>
- *   <li>{@code VINE_CHAIN}: mossy stone slab deck (default 3) in a catenary, dark stringers, two chain handrails on
+ *   <li>{@code VINE_CHAIN}: mossy stone slab deck (default 3) in a catenary, Arganite stringers, two chain handrails on
  *       vertical chain hangers, moss and long vines.</li>
- *   <li>{@code GIANT_CHAIN}: a huge chain of 9-block diamond links in alternating planes, polished blackstone, hanging in
+ *   <li>{@code GIANT_CHAIN}: a huge chain of 9-block diamond links in alternating planes, Arganite, hanging in
  *       a catenary between the anchors under the two cliffs; moss on top of the links, vines under them.</li>
  * </ul>
  * Bridge anchors are the deck block at each coast; the deck carries on {@value #ABUT} blocks into the island as a flat
@@ -306,12 +306,12 @@ public final class SpanBuilder {
                     }
                     return;
                 }
-                // rail: dark stringer, chain hanger every 3 blocks, horizontal chain handrail on top
-                b.set(x, slabY, z, Pal.BLACKSTONE);
+                // rail: stringer, chain hanger every 3 blocks, horizontal chain handrail on top
+                b.set(x, slabY, z, Pal.ARG_BRICKS);
                 boolean hanger = Math.abs(t) < 0.75 || Math.abs(t - line.len) < 0.75 || every(t, 3.0, 0.0);
                 if (hanger) {
                     b.set(x, slabY + 1, z, Pal.CHAIN_Y);
-                    b.set(x, slabY + 2, z, Pal.BLACKSTONE);
+                    b.set(x, slabY + 2, z, Pal.ARG_BRICKS);
                 } else {
                     b.set(x, slabY + 2, z, Pal.chain(along));
                 }
@@ -357,6 +357,49 @@ public final class SpanBuilder {
                 arc[i] = arc[i - 1] + Math.sqrt(sq(pts[i][0] - pts[i - 1][0]) + sq(pts[i][1] - pts[i - 1][1]) + sq(pts[i][2] - pts[i - 1][2]));
             }
         }
+        drawLinks(b, salt, pts, arc, n);
+    }
+
+    /**
+     * Loose chains, tied to one island only: from under an island straight down, or from the coast out over the edge and
+     * down. Same links as the giant chains, drawn the same way, one chunk at a time.
+     */
+    public static void buildHanging(WorldGenLevel level, ChunkPos chunk, List<ElysiumWorld.HangingChain> chains) {
+        if (chains.isEmpty()) {
+            return;
+        }
+        Brush brush = Brush.chunk(level, chunk);
+        for (ElysiumWorld.HangingChain h : chains) {
+            hangingChain(brush, h);
+        }
+    }
+
+    private static void hangingChain(Brush b, ElysiumWorld.HangingChain h) {
+        double ax = h.x() + 0.5 - h.outX() * CHAIN_EMBED, az = h.z() + 0.5 - h.outZ() * CHAIN_EMBED;
+        double ay = h.y() + (h.run() == 0 ? CHAIN_EMBED : 0.5);
+        double total = h.run() + CHAIN_EMBED;
+        double phase = Rng.unit(h.salt(), 1, 2, 3) * Math.PI * 2;
+        int n = Math.max(16, (int) ((h.drop() + total) / 2.0));
+        double[][] pts = new double[n + 1][3];
+        double[] arc = new double[n + 1];
+        for (int i = 0; i <= n; i++) {
+            double f = i / (double) n;
+            // swings out over the first third, then plumb; the sway dies away towards the anchor
+            double k = 1 - Math.min(1.0, f * 3.0);
+            double out = total * (1 - k * k * k);
+            double sway = 1.5 * f * Math.sin(f * 5.0 + phase);
+            pts[i][0] = ax + h.outX() * out + sway;
+            pts[i][1] = ay - (h.drop() + ay - h.y()) * Math.pow(f, h.run() == 0 ? 1.0 : 1.5);
+            pts[i][2] = az + h.outZ() * out + sway * 0.6;
+            if (i > 0) {
+                arc[i] = arc[i - 1] + Math.sqrt(sq(pts[i][0] - pts[i - 1][0]) + sq(pts[i][1] - pts[i - 1][1]) + sq(pts[i][2] - pts[i - 1][2]));
+            }
+        }
+        drawLinks(b, h.salt(), pts, arc, n);
+    }
+
+    /** Diamond links in alternating planes along a polyline with cumulative lengths {@code arc}, plus moss and vines. */
+    private static void drawLinks(Brush b, long salt, double[][] pts, double[] arc, int n) {
         int links = (int) (arc[n] / LINK_SPACING);
         int seg = 0;
         double reach = LINK + 2.0;
@@ -382,7 +425,12 @@ public final class SpanBuilder {
             ty /= tl;
             tz /= tl;
             // h: horizontal side vector; v = t x h. Even links lie in the (t, h) plane, odd links in (t, v).
-            double hx = -tz, hz = tx, hl = Math.max(1e-6, Math.hypot(hx, hz));
+            double hx = -tz, hz = tx, hl = Math.hypot(hx, hz);
+            if (hl < 0.2) { // running straight down: any horizontal side will do, and a fixed one keeps the links aligned
+                hx = 1.0;
+                hz = 0.0;
+                hl = 1.0;
+            }
             hx /= hl;
             hz /= hl;
             double vx = ty * hz, vy = tz * hx - tx * hz, vz = -ty * hx;
@@ -394,7 +442,7 @@ public final class SpanBuilder {
                 nx = vx; ny = vy; nz = vz;
                 wx2 = hx; wy2 = 0.0; wz2 = hz;
             }
-            BlockState material = (k % 7 == 3) ? Pal.BLACKSTONE_BRICKS : Pal.BLACKSTONE;
+            BlockState material = (k % 7 == 3) ? Pal.ARG : Pal.ARG_BRICKS;
             int steps = LINK * 6;
             for (int edge = 0; edge < 4; edge++) {
                 double[] p = DIAMOND[edge], q = DIAMOND[(edge + 1) % 4];

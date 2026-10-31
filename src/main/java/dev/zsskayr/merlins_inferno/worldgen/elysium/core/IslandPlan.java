@@ -33,18 +33,25 @@ public final class IslandPlan {
     final List<River> rivers = new ArrayList<>();
     final List<Lake> lakes = new ArrayList<>();
     final List<Peak> peaks = new ArrayList<>();
+    /** Biome regions of this island; fewer than 2 means the whole island is {@link #biome}. */
+    final Region[] regions;
     /** Chainfall natural arch (platforms only), null when none. */
     Arch arch;
     private volatile List<ElysiumWorld.Spring> springs;
     private volatile List<ElysiumWorld.Site> sites;
+    private volatile List<ElysiumWorld.HangingChain> chains;
 
     record Lake(double x, double z, double r, int level) {}
 
-    record Peak(double x, double z, double r, double h) {}
+    record Peak(ElysiumBiome biome, double x, double z, double r, double h) {}
+
+    /** A part of the island that belongs to one biome: the columns nearer to this seed than to any other. */
+    record Region(double x, double z, ElysiumBiome biome) {}
 
     record Arch(double x0, double z0, double x1, double z1, double height, double sag) {}
 
-    IslandPlan(ElysiumWorld.Island island, double R, Noise nz, long seed) {
+    /** @param near biomes this island may also hold besides its own, nearest climate first; empty = single biome */
+    IslandPlan(ElysiumWorld.Island island, double R, Noise nz, long seed, ElysiumBiome[] near) {
         this.island = island;
         this.biome = island.biome();
         this.platform = biome == ElysiumBiome.CHAINFALL;
@@ -66,13 +73,21 @@ public final class IslandPlan {
         // cone: ~30 + 7.5% of the width deep, clamped so stalactites still stay above LOWEST_SOLID
         double room = baseY - ElysiumWorld.LOWEST_SOLID - 6;
         this.coneDepth = platform ? Math.min(room, 22 + 0.35 * R) : Math.min(room, (0.15 + 0.07 * r.nextDouble()) * island.width());
-        this.rim = platform ? 7 + 4 * r.nextDouble() : 11 + 6 * r.nextDouble();
+        this.rim = platform ? 7 + 4 * r.nextDouble() : 7 + 5 * r.nextDouble();
         this.seaLevel = switch (biome) {
             case GLASS_SEA -> baseY + 6;
             case AZURE_SHALLOWS -> baseY + 5;
             default -> NONE;
         };
-        planPeaks(r);
+        this.regions = planRegions(r, near);
+        if (regions.length < 2) {
+            planPeaks(r, biome, cx, cz, R);
+        } else {
+            double share = R / Math.sqrt(regions.length);
+            for (Region g : regions) {
+                planPeaks(r, g.biome, g.x, g.z, share);
+            }
+        }
         if (platform) {
             if (r.nextDouble() < 0.55 && R > 26) {
                 double a = r.nextDouble() * Math.PI * 2, d = 0.55 * R * aspect;
@@ -167,7 +182,55 @@ public final class IslandPlan {
     /** Base terrain height (absolute y, before rivers/lakes) at (x,z). */
     public double relief(double x, double z, double inland) {
         double h;
-        switch (biome) {
+        if (regions.length < 2) {
+            h = biomeRelief(biome, x, z, inland);
+        } else {
+            double qx = regionX(x, z), qz = regionZ(x, z);
+            double min = Double.POSITIVE_INFINITY;
+            for (Region g : regions) {
+                min = Math.min(min, regionDist(g, qx, qz));
+            }
+            // every region within the blend band weighs in, so the height stays continuous where three regions meet
+            double sum = 0, acc = 0;
+            for (Region g : regions) {
+                double k = 1 - (regionDist(g, qx, qz) - min) / REGION_BLEND;
+                if (k > 0) {
+                    k *= k;
+                    acc += k * biomeRelief(g.biome, x, z, inland);
+                    sum += k;
+                }
+            }
+            h = acc / sum;
+        }
+        return baseY + coastFall(x, z, inland, h);
+    }
+
+    /**
+     * Brings tall ground down to a low lip near the coast, in rough ledges, so an island edge reads as a slope with rock
+     * showing rather than as one wall from the top of the relief to the underside. Sea rims hold water, so they stay.
+     */
+    private double coastFall(double x, double z, double inland, double h) {
+        if (seaLevel != NONE || platform) {
+            return h;
+        }
+        double lip = 3.5 + 2.5 * n(x - 511, z + 203, 70, 2);
+        if (h <= lip) {
+            return h;
+        }
+        double wobble = 1 + 0.35 * n(x + 151, z - 87, 85, 2);
+        double width = (20 + 0.85 * (h - lip)) * wobble;
+        if (inland >= width) {
+            return h;
+        }
+        double f = Noise.smoothstep(0, width, Math.max(0, inland));
+        double fallen = lip + (h - lip) * f;
+        return Noise.lerp(terrace(fallen, 7, 0.45), fallen, f * f);
+    }
+
+    /** Height above baseY of one biome's relief at (x,z). */
+    private double biomeRelief(ElysiumBiome b, double x, double z, double inland) {
+        double h;
+        switch (b) {
             case LARK_MEADOWS -> {
                 h = 8 + 5 * n(x, z, 170, 3) + 1.6 * n(x, z, 45, 2);
                 h = terrace(h, 4, 0.4) + spires(x, z, 220, 0.15, 3, 5, 10, 24);
@@ -179,10 +242,13 @@ public final class IslandPlan {
             }
             case MOSSY_WEALD -> h = 6 + 2.6 * n(x, z, 140, 3) + 1.1 * n(x, z, 35, 2) + spires(x, z, 170, 0.15, 3, 6, 6, 14);
             case ARGENT_PEAKS, FROSTCREST_RANGE -> {
-                boolean argent = biome == ElysiumBiome.ARGENT_PEAKS;
+                boolean argent = b == ElysiumBiome.ARGENT_PEAKS;
                 double base = argent ? 16 + 7 * n(x, z, 110, 3) : 12 + 6 * n(x, z, 120, 3);
                 double best = 0, sum = 0;
                 for (Peak p : peaks) {
+                    if (p.biome != b) {
+                        continue;
+                    }
                     double dx = x - p.x, dz = z - p.z;
                     double d = Math.sqrt(dx * dx + dz * dz);
                     if (d < p.r) {
@@ -212,11 +278,12 @@ public final class IslandPlan {
                 double rimH = 13 + 4 * n(x, z, 90, 2);
                 double floor = -12 - 22 * Noise.smoothstep(ringW, ringW + 140, inland) + 5 * n(x, z, 70, 2);
                 h = Noise.lerp(rimH, floor, Noise.smoothstep(ringW, ringW + 45, inland));
-                double iv = n(x + 333, z - 777, 95, 3);
-                if (iv > 0.38) {
-                    h = Math.max(h, 6 + (iv - 0.38) * 42);
+                // open water for the most part: an islet is a rare thing to spot far off
+                double iv = n(x + 333, z - 777, 230, 3);
+                if (iv > ISLET_LEVEL) {
+                    h = Math.max(h, 6 + (iv - ISLET_LEVEL) * 70);
                 }
-                h += spires(x, z, 120, 0.3, 4, 8, 10, 30);
+                h += spires(x, z, 240, 0.06, 4, 8, 10, 30);
             }
             case AZURE_SHALLOWS -> {
                 double ringW = 14 + 6 * n(x, z, 90, 2);
@@ -227,34 +294,97 @@ public final class IslandPlan {
                     floor = Math.max(floor, 2.5 + (reef - 0.35) * 5); // reef crests 1..2 below the surface
                     floor = Math.min(floor, 4);
                 }
-                double bar = n(x - 410, z + 230, 110, 3);
-                if (bar > 0.45) {
-                    floor = Math.max(floor, 5 + (bar - 0.45) * 14);
+                double bar = n(x - 410, z + 230, 170, 3);
+                if (bar > 0.55) {
+                    floor = Math.max(floor, 5 + (bar - 0.55) * 18);
                 }
                 h = Noise.lerp(rimH, floor, Noise.smoothstep(ringW, ringW + 12, inland));
-                h += spires(x, z, 150, 0.15, 3, 6, 8, 22);
+                h += spires(x, z, 220, 0.06, 3, 6, 8, 22);
             }
             case RIME_EXPANSE -> h = 3 + 1.6 * n(x, z, 260, 3) + 0.6 * n(x, z, 40, 2);
             case CHAINFALL -> h = 3 + 2.2 * n(x, z, 28, 2) + spires(x, z, 40, 0.35, 2, 4, 8, 22);
             default -> h = 6;
         }
-        return baseY + h;
+        return h;
+    }
+
+    // =================================================================== biome regions
+
+    /** Width of the band where neighbouring regions' reliefs mix (blocks of difference in distance to their seeds). */
+    private static final double REGION_BLEND = 110;
+    /** Glass Sea islets rise where a slow noise passes this; the fbm rarely gets above 0.6. */
+    private static final double ISLET_LEVEL = 0.56;
+
+    private double regionX(double x, double z) {
+        return x + 130 * nz.noise((x + ox) / 300.0, (z + oz) / 300.0) + 16 * nz.noise((x + oz) / 37.0, (z - ox) / 37.0);
+    }
+
+    private double regionZ(double x, double z) {
+        return z + 130 * nz.noise((x - oz) / 300.0 + 57.3, (z + ox) / 300.0 - 31.9) + 16 * nz.noise((x - ox) / 37.0 + 11.1, (z + oz) / 37.0);
+    }
+
+    private static double regionDist(Region g, double qx, double qz) {
+        double dx = qx - g.x, dz = qz - g.z;
+        return Math.sqrt(dx * dx + dz * dz);
+    }
+
+    /** The biome of the column at block (x, z); per-column jitter frays the border instead of drawing a clean line. */
+    private ElysiumBiome regionBiome(int x, int z) {
+        if (regions.length < 2) {
+            return biome;
+        }
+        double px = x + 0.5, pz = z + 0.5;
+        double qx = regionX(px, pz), qz = regionZ(px, pz);
+        double jitter = 7 * Noise.unit(Noise.hash(salt, x, z, 0x2E6));
+        ElysiumBiome best = biome;
+        double bd = Double.POSITIVE_INFINITY;
+        for (int i = 0; i < regions.length; i++) {
+            // the jitter only has to differ between regions, and only near a border
+            double d = regionDist(regions[i], qx, qz) + ((i & 1) == 0 ? jitter : 0);
+            if (d < bd) {
+                bd = d;
+                best = regions[i].biome;
+            }
+        }
+        return best;
+    }
+
+    /** Seeds spread around the centre: the island's own biome first, then the climate neighbours in turn. */
+    private Region[] planRegions(SplittableRandom r, ElysiumBiome[] near) {
+        if (platform || near.length == 0) {
+            return new Region[0];
+        }
+        int w = island.width();
+        int n = w < 500 ? 2 : (w < 900 ? 3 : (w < 1500 ? 4 : 6));
+        Region[] out = new Region[n];
+        double spin = r.nextDouble() * Math.PI * 2;
+        for (int i = 0; i < n; i++) {
+            double a = spin + (i + 0.35 * r.nextDouble()) / n * Math.PI * 2;
+            double d = (0.42 + 0.22 * r.nextDouble()) * coreInland();
+            // on the giant islands the own biome takes a second seed, so it stays the main one
+            ElysiumBiome b = i == 0 || i == 4 ? biome : near[(i - 1) % near.length];
+            out[i] = new Region(cx + Math.cos(a) * d, cz + Math.sin(a) * d, b);
+        }
+        return out;
     }
 
     // =================================================================== column
 
     private static final ThreadLocal<River.Hit> HIT = ThreadLocal.withInitial(River.Hit::new);
+    /** Farther inland than this the coast fall is always over (it is under 170 wide even on the tallest relief). */
+    private static final double COAST_BAND = 170;
 
     /** Fill the column at (x, z), which must be inside this island's outline (inland > 0 given). */
     void fill(int x, int z, double inland, Column c) {
         double px = x + 0.5, pz = z + 0.5;
         c.land = true;
         c.island = island.index();
-        c.biome = biome;
+        ElysiumBiome local = regionBiome(x, z);
+        c.biome = local;
         c.inland = inland;
         c.baseY = baseY;
         c.spill = false;
-        c.frozen = biome == ElysiumBiome.RIME_EXPANSE || biome == ElysiumBiome.FROSTCREST_RANGE;
+        c.frozen = local == ElysiumBiome.RIME_EXPANSE || local == ElysiumBiome.FROSTCREST_RANGE;
         c.shore = false;
         c.archBottom = 0;
         c.archTop = -1;
@@ -280,7 +410,7 @@ public final class IslandPlan {
                 int L = hit.level;
                 c.riverDist = Math.max(0, e);
                 if (e < 0) {
-                    double depth = hit.river.kind == River.Kind.NOTCH ? 2 : 1 + Math.min(2.0, -e * 0.6);
+                    double depth = hit.river.kind == River.Kind.NOTCH ? 2 : 1 + Math.min(4.0, -e * 0.55);
                     top = L - Math.round(depth);
                     w = L;
                 } else {
@@ -308,7 +438,7 @@ public final class IslandPlan {
                     // embankment: never lower than the water next to it; dike slopes away where ground dips
                     double embank = L + 1 - Math.max(0, e - 2) * 0.8;
                     top = Math.max(top, embank);
-                    if (e < 3 && top <= L + 2) {
+                    if (e < 4.5 && top <= L + 2) {
                         c.shore = true;
                     }
                 }
@@ -374,8 +504,12 @@ public final class IslandPlan {
 
         // ---- slope (mountain biomes only; others leave the cheap 0)
         if (c.slope == 0) {
-            double gx = relief(px + 1, pz, inland) - relief(px - 1, pz, inland);
-            double gz = relief(px, pz + 1, inland) - relief(px, pz - 1, inland);
+            // the coast fall makes the relief depend on the distance to the coast, so that has to move with the sample
+            boolean nearCoast = inland < COAST_BAND;
+            double gx = relief(px + 1, pz, nearCoast ? inland(px + 1, pz) : inland)
+                    - relief(px - 1, pz, nearCoast ? inland(px - 1, pz) : inland);
+            double gz = relief(px, pz + 1, nearCoast ? inland(px, pz + 1) : inland)
+                    - relief(px, pz - 1, nearCoast ? inland(px, pz - 1) : inland);
             c.slope = 0.5 * Math.sqrt(gx * gx + gz * gz);
         }
         if (c.slope > 3) {
@@ -398,13 +532,16 @@ public final class IslandPlan {
             thick += 0.12 * coneDepth * k * k;
         }
         thick += stalactite(x, z, t);
+        if (biome == ElysiumBiome.GLASS_SEA) {
+            thick = Math.max(thick, rim + 40 * Noise.smoothstep(8, 50, inland)); // a spire's foot must not stop above the basin floor beside it
+        }
         int bottom = (int) Math.floor(baseY - thick);
         bottom = Math.max(bottom, ElysiumWorld.LOWEST_SOLID);
         bottom = Math.min(bottom, itop - 3);
         c.bottom = bottom;
 
         long hh = Noise.hash(salt, x, z, 0x4A6);
-        Mat hang = ElysiumPalette.hang(biome, c, Noise.unit(hh), c.patch);
+        Mat hang = ElysiumPalette.hang(local, c, Noise.unit(hh), c.patch);
         int len = 1 + (int) ((hh >>> 3) % 6);
         if (hang == null || hang == Mat.AIR || bottom - len < ElysiumWorld.LOWEST_SOLID) {
             c.hangMat = Mat.AIR;
@@ -476,28 +613,29 @@ public final class IslandPlan {
 
     // =================================================================== planning
 
-    private void planPeaks(SplittableRandom r) {
-        if (biome == ElysiumBiome.ARGENT_PEAKS) {
-            int n = 3 + (int) (R / 150) + r.nextInt(2);
+    /** Peaks of one Argent or Frostcrest region around (px, pz), reach pr (the whole island when it has no regions). */
+    private void planPeaks(SplittableRandom r, ElysiumBiome b, double px, double pz, double pr) {
+        if (b == ElysiumBiome.ARGENT_PEAKS) {
+            int n = 3 + (int) (pr / 150) + r.nextInt(2);
             double maxH = ElysiumWorld.HIGHEST_SOLID - 12 - baseY - 30;
             for (int i = 0; i < n; i++) {
-                double a = r.nextDouble() * Math.PI * 2, d = Math.sqrt(r.nextDouble()) * 0.62 * coreInland();
+                double a = r.nextDouble() * Math.PI * 2, d = Math.sqrt(r.nextDouble()) * 0.62 * pr * aspect;
                 double h = maxH * (i == 0 ? 1.0 : 0.45 + 0.45 * r.nextDouble());
-                double rad = (0.32 + 0.25 * r.nextDouble()) * R * (i == 0 ? 1.1 : 1.0);
-                peaks.add(new Peak(cx + Math.cos(a) * d, cz + Math.sin(a) * d, rad, h));
+                double rad = (0.32 + 0.25 * r.nextDouble()) * pr * (i == 0 ? 1.1 : 1.0);
+                peaks.add(new Peak(b, px + Math.cos(a) * d, pz + Math.sin(a) * d, rad, h));
             }
-        } else if (biome == ElysiumBiome.FROSTCREST_RANGE) {
-            // a range: peaks strung along a ridge axis through the island
+        } else if (b == ElysiumBiome.FROSTCREST_RANGE) {
+            // a range: peaks strung along a ridge axis through the region
             double a = r.nextDouble() * Math.PI;
             int n = 5 + r.nextInt(4);
             for (int i = 0; i < n; i++) {
                 double f = (i / (double) (n - 1)) * 1.2 - 0.6;
-                double side = (r.nextDouble() - 0.5) * 0.3 * R;
-                double x = cx + Math.cos(a) * f * R * aspect - Math.sin(a) * side;
-                double z = cz + Math.sin(a) * f * R * aspect + Math.cos(a) * side;
+                double side = (r.nextDouble() - 0.5) * 0.3 * pr;
+                double x = px + Math.cos(a) * f * pr * aspect - Math.sin(a) * side;
+                double z = pz + Math.sin(a) * f * pr * aspect + Math.cos(a) * side;
                 double h = 55 + 40 * r.nextDouble();
-                double rad = (0.22 + 0.14 * r.nextDouble()) * R;
-                peaks.add(new Peak(x, z, rad, h));
+                double rad = (0.22 + 0.14 * r.nextDouble()) * pr;
+                peaks.add(new Peak(b, x, z, rad, h));
             }
         }
     }
@@ -517,10 +655,10 @@ public final class IslandPlan {
                 kind = River.Kind.GORGE;
             }
             case LARK_MEADOWS -> {
-                chance = 0.55;
+                chance = 0.7;
                 count = island.width() > 1300 ? 2 : 1;
             }
-            case HIGHPINE_FOREST, MOSSY_WEALD -> chance = 0.45;
+            case HIGHPINE_FOREST, MOSSY_WEALD -> chance = 0.6;
             case STONECROWN_CLIFFS -> chance = 0.35;
             case AZURE_SHALLOWS -> {
                 for (int i = 0, n = 3 + r.nextInt(3); i < n; i++) {
@@ -534,7 +672,8 @@ public final class IslandPlan {
                 }
                 return;
             }
-            default -> chance = 0;
+            // a dry or icy biome carries a river only when other biomes share the island
+            default -> chance = regions.length < 2 ? 0 : 0.4;
         }
         if (r.nextDouble() >= chance) {
             return;
@@ -576,7 +715,7 @@ public final class IslandPlan {
         double sCoast = -1, s = 0;
         pts.add(new double[] {x, z});
         for (int i = 0; i < 3000; i++) {
-            double turn = 0.11 * nz.noise(turnSeed + i * 0.045, 7.7) + 0.035 * angleDiff(dir, a);
+            double turn = 0.16 * nz.noise(turnSeed + i * 0.045, 7.7) + 0.03 * angleDiff(dir, a);
             a += Noise.clamp(turn, -0.09, 0.09);
             x += Math.cos(a) * River.STEP;
             z += Math.sin(a) * River.STEP;
@@ -596,25 +735,27 @@ public final class IslandPlan {
         int n = pts.size();
         double[] xs = new double[n], zs = new double[n], ss = new double[n], ws = new double[n];
         int[] lv = new int[n];
+        // half widths: a valley river is a real one, 12 to 22 blocks across on the big islands
+        double sizeW = 0.8 + 0.3 * Noise.clamp((island.width() - 500) / 800.0, 0, 1);
         double baseW = switch (kind) {
-            case CANYON -> 3 + 1.5 * r.nextDouble();
-            case GORGE -> 1.8 + 0.6 * r.nextDouble();
-            default -> 2.2 + 1.6 * r.nextDouble();
+            case CANYON -> (5.5 + 2.5 * r.nextDouble()) * sizeW;
+            case GORGE -> 3 + 1.2 * r.nextDouble();
+            default -> (7 + 3 * r.nextDouble()) * sizeW;
         };
-        double pool = kind == River.Kind.GORGE ? 4.5 : 6.5 + 2 * r.nextDouble();
+        double pool = baseW + 3 + 2 * r.nextDouble();
         for (int i = 0; i < n; i++) {
             xs[i] = pts.get(i)[0];
             zs[i] = pts.get(i)[1];
             ss[i] = i * River.STEP;
             double wv = baseW * (1 + 0.25 * nz.noise(turnSeed + i * 0.03, 33.1));
             wv = Math.max(wv, pool - Math.max(0, ss[i] - 6) * 0.35);
-            double taper = Noise.smoothstep(sCoast - 26, sCoast - 4, ss[i]);
+            double taper = Noise.smoothstep(sCoast - 26 - 4 * baseW, sCoast - 4, ss[i]);
             ws[i] = Noise.lerp(wv, 1.25, taper);
         }
         double influence = switch (kind) {
             case CANYON -> 62;
-            case GORGE -> 26;
-            default -> 36;
+            case GORGE -> 30;
+            default -> 60;
         };
         // ---- levels
         int minLevel = (int) Math.ceil(baseY - rim + 6);
@@ -650,6 +791,8 @@ public final class IslandPlan {
                 double f = u * steps;
                 double stair = (Math.floor(f) + Noise.smoothstep(0.55, 1.0, f - Math.floor(f))) / steps;
                 int target = (int) Math.round(baseY + Noise.lerp(relStart, relEnd, stair));
+                // a canyon that runs out of its plateau into a lower biome follows the ground down
+                target = Math.min(target, (int) Math.floor(relief(xs[i], zs[i], inland(xs[i], zs[i]))) - 2);
                 if (i > poolEnd && target < L && i - lastDrop >= 1 && L > minLevel) {
                     L--;
                     lastDrop = i;
@@ -709,21 +852,43 @@ public final class IslandPlan {
         return d;
     }
 
+    /** How many lakes a whole island of this biome holds. */
+    private static int lakeCount(ElysiumBiome b, SplittableRandom r) {
+        return switch (b) {
+            case MOSSY_WEALD -> 6 + r.nextInt(9);
+            case RIME_EXPANSE -> 4 + r.nextInt(7);
+            case FROSTCREST_RANGE -> 2 + r.nextInt(3);
+            case LARK_MEADOWS -> r.nextInt(3);
+            case HIGHPINE_FOREST, WINDLESS_STEPPE -> r.nextInt(2);
+            default -> 0;
+        };
+    }
+
     private void planLakes(SplittableRandom r) {
-        int n;
-        double rMin, rMax;
-        switch (biome) {
-            case MOSSY_WEALD -> { n = 6 + r.nextInt(9); rMin = 5; rMax = 13; }
-            case RIME_EXPANSE -> { n = 4 + r.nextInt(7); rMin = 14; rMax = 42; }
-            case FROSTCREST_RANGE -> { n = 2 + r.nextInt(3); rMin = 12; rMax = 26; }
-            case LARK_MEADOWS -> { n = r.nextInt(3); rMin = 8; rMax = 18; }
-            case HIGHPINE_FOREST -> { n = r.nextInt(2); rMin = 6; rMax = 12; }
-            case WINDLESS_STEPPE -> { n = r.nextInt(2); rMin = 6; rMax = 12; }
-            default -> { return; }
+        int n = 0;
+        if (regions.length < 2) {
+            n = lakeCount(biome, r);
+        } else {
+            for (Region g : regions) {
+                n += lakeCount(g.biome, r);
+            }
+            n /= regions.length - 1;
+        }
+        if (n == 0) {
+            return;
         }
         for (int attempt = 0; attempt < n * 8 && lakes.size() < n; attempt++) {
             double a = r.nextDouble() * Math.PI * 2, d = Math.sqrt(r.nextDouble()) * 0.9 * R;
             double x = cx + Math.cos(a) * d, z = cz + Math.sin(a) * d;
+            double rMin, rMax;
+            switch (regionBiome((int) Math.floor(x), (int) Math.floor(z))) {
+                case MOSSY_WEALD -> { rMin = 5; rMax = 13; }
+                case RIME_EXPANSE -> { rMin = 14; rMax = 42; }
+                case FROSTCREST_RANGE -> { rMin = 12; rMax = 26; }
+                case LARK_MEADOWS -> { rMin = 8; rMax = 18; }
+                case HIGHPINE_FOREST, WINDLESS_STEPPE -> { rMin = 6; rMax = 12; }
+                default -> { continue; }
+            }
             double rr = rMin + (rMax - rMin) * r.nextDouble();
             double in = inland(x, z);
             if (in < rr * 1.2 + 40) {
@@ -744,7 +909,7 @@ public final class IslandPlan {
             }
             for (Peak p : peaks) {
                 double ddx = p.x - x, ddz = p.z - z;
-                if (biome == ElysiumBiome.FROSTCREST_RANGE && Math.sqrt(ddx * ddx + ddz * ddz) < p.r * 0.75) {
+                if (p.biome == ElysiumBiome.FROSTCREST_RANGE && Math.sqrt(ddx * ddx + ddz * ddz) < p.r * 0.75) {
                     ok = false;
                 }
             }
@@ -852,6 +1017,71 @@ public final class IslandPlan {
         return List.copyOf(out);
     }
 
+    List<ElysiumWorld.HangingChain> chains() {
+        List<ElysiumWorld.HangingChain> s = chains;
+        if (s == null) {
+            s = computeChains();
+            chains = s;
+        }
+        return s;
+    }
+
+    /** Hanging chains stop this high: one link above the lowest solid block. */
+    private static final int CHAIN_FLOOR = ElysiumWorld.LOWEST_SOLID + 8;
+
+    /** Loose giant chains: straight down from the underside, and out over the edge from the coast. */
+    private List<ElysiumWorld.HangingChain> computeChains() {
+        List<ElysiumWorld.HangingChain> out = new ArrayList<>();
+        if (platform) {
+            return out;
+        }
+        SplittableRandom r = new SplittableRandom(salt ^ 0xC4A15L);
+        Column c = new Column();
+        int under = 2 + island.width() / 140, side = 2 + island.width() / 220;
+        for (int k = 0, tries = 0; k < under && tries < under * 8; tries++) {
+            double a = r.nextDouble() * Math.PI * 2, d = Math.sqrt(r.nextDouble()) * 0.85 * R;
+            int x = (int) Math.floor(cx + Math.cos(a) * d), z = (int) Math.floor(cz + Math.sin(a) * d);
+            double in = inland(x + 0.5, z + 0.5);
+            if (in < 14) {
+                continue;
+            }
+            fill(x, z, in, c);
+            int room = c.bottom - CHAIN_FLOOR;
+            if (room < 16) {
+                continue;
+            }
+            int drop = Math.min(room, 22 + (int) (r.nextDouble() * r.nextDouble() * 100));
+            out.add(new ElysiumWorld.HangingChain(x, c.bottom, z, 0, 0, 0, drop, r.nextLong()));
+            k++;
+        }
+        for (int k = 0; k < side; k++) {
+            double a = (k + 0.7 * r.nextDouble()) / side * Math.PI * 2, dx = Math.cos(a), dz = Math.sin(a);
+            double last = -1;
+            for (double d = 0; d < extent(R) + 4; d += 1) {
+                if (inland(cx + dx * d, cz + dz * d) > 0) {
+                    last = d;
+                }
+            }
+            int x = (int) Math.floor(cx + dx * last), z = (int) Math.floor(cz + dz * last);
+            double in = inland(x + 0.5, z + 0.5);
+            if (last < 0 || in <= 0) {
+                continue;
+            }
+            fill(x, z, in, c);
+            if (c.hasWater() || c.riverDist < 8 || c.top - c.bottom < 5) {
+                continue;
+            }
+            int y = Math.max(c.bottom + 2, c.top - 2 - r.nextInt(4));
+            int room = y - CHAIN_FLOOR;
+            if (room < 20) {
+                continue;
+            }
+            int drop = Math.min(room, 30 + (int) (r.nextDouble() * r.nextDouble() * 110));
+            out.add(new ElysiumWorld.HangingChain(x, y, z, dx, dz, 7 + r.nextInt(ElysiumWorld.HangingChain.MAX_RUN - 6), drop, r.nextLong()));
+        }
+        return List.copyOf(out);
+    }
+
     List<ElysiumWorld.Site> sites() {
         List<ElysiumWorld.Site> s = sites;
         if (s == null) {
@@ -884,13 +1114,14 @@ public final class IslandPlan {
                 long h = Noise.hash(salt, gx, gz, 0x5173);
                 double u = Noise.unit(h);
                 String kind = null;
-                switch (biome) {
+                ElysiumBiome cellBiome = regionBiome(gx * cell + cell / 2, gz * cell + cell / 2);
+                switch (cellBiome) {
                     case MOSSY_WEALD, HIGHPINE_FOREST -> kind = u < 0.10 ? "mossy_castle" : (u < 0.85 ? "overgrown_ruin" : null);
                     case WINDLESS_STEPPE, CASCADE_VALE -> kind = u < 0.10 ? "overgrown_works" : (u < 0.85 ? "overgrown_ruin" : null);
                     case LARK_MEADOWS, ARGENT_PEAKS -> kind = u < 0.07 ? "spire_chapel"
-                            : (u < 0.85 && biome != ElysiumBiome.ARGENT_PEAKS ? "overgrown_ruin" : null);
+                            : (u < 0.85 && cellBiome != ElysiumBiome.ARGENT_PEAKS ? "overgrown_ruin" : null);
                     case GLASS_SEA -> kind = u < 0.10 ? "spire_chapel" : (u < 0.6 ? "overgrown_ruin" : null);
-                    default -> kind = temperate(biome) && u < 0.85 ? "overgrown_ruin" : null;
+                    default -> kind = temperate(cellBiome) && u < 0.85 ? "overgrown_ruin" : null;
                 }
                 if (kind == null) {
                     continue;

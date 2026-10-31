@@ -48,10 +48,6 @@ final class Pal {
     static final BlockState TUFF_BRICKS = Blocks.TUFF_BRICKS.defaultBlockState();
     static final BlockState POLISHED_ANDESITE = Blocks.POLISHED_ANDESITE.defaultBlockState();
 
-    // ---- dark metal (giant chains) ----
-    static final BlockState BLACKSTONE = Blocks.POLISHED_BLACKSTONE.defaultBlockState();
-    static final BlockState BLACKSTONE_BRICKS = Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState();
-
     // ---- rusted metal (industrial ruin) ----
     static final BlockState OX_COPPER = Blocks.OXIDIZED_COPPER.defaultBlockState();
     static final BlockState WE_COPPER = Blocks.WEATHERED_COPPER.defaultBlockState();

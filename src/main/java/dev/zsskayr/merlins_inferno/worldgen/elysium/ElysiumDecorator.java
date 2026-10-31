@@ -21,7 +21,7 @@ import dev.zsskayr.merlins_inferno.worldgen.elysium.structure.SpanBuilder;
 
 /**
  * What the chunk generator adds after vanilla biome decoration (the FEATURES step, so it may write into the 3x3 chunks
- * around this one): built spans (bridges, chains), structure sites, springs, and a few glow lichens under the islands
+ * around this one): built spans (bridges, chains), loose hanging chains, structure sites, springs, and a few glow lichens under the islands
  * so the Underhang is dark but not black. Nothing here goes into biome JSON (see the feature-order rule).
  */
 public final class ElysiumDecorator {
@@ -48,6 +48,15 @@ public final class ElysiumDecorator {
                     spanFailureLogged = true;
                     LOGGER.error("El'ysium span builder failed in chunk {} (further failures are not logged)", chunkPos, e);
                 }
+            }
+        }
+
+        try {
+            SpanBuilder.buildHanging(level, chunkPos, world.hangingChainsIn(minX, minZ, maxX, maxZ));
+        } catch (RuntimeException e) {
+            if (!spanFailureLogged) {
+                spanFailureLogged = true;
+                LOGGER.error("El'ysium hanging chains failed in chunk {} (further failures are not logged)", chunkPos, e);
             }
         }
 

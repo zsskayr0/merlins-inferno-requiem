@@ -224,7 +224,7 @@ public final class Preview {
             case ICE, PACKED_ICE, BLUE_ICE -> 0x9CC8F5;
             case ARGANITE -> 0x5C4F6E;
             case ORANGE_TERRACOTTA, TERRACOTTA, BROWN_TERRACOTTA -> 0xB4643A;
-            case DEEPSLATE, TUFF, SMOOTH_BASALT -> 0x4A4A50;
+            case TUFF, SMOOTH_BASALT -> 0x4A4A50;
             default -> 0x8A8A8A;
         };
     }

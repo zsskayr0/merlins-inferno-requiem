@@ -141,6 +141,12 @@ public final class Validator {
                 viol("chain sags below LOWEST_SOLID", s.toString());
             }
         }
+        for (ElysiumWorld.HangingChain h : world.hangingChainsIn(-9000, -9000, 9000, 9000)) {
+            stat(h.run() == 0 ? "hanging chains under" : "hanging chains side", 1);
+            if (h.y() - h.drop() < ElysiumWorld.LOWEST_SOLID) {
+                viol("hanging chain below LOWEST_SOLID", h.toString());
+            }
+        }
         stat("sites", world.sitesIn(-9000, -9000, 9000, 9000).size());
         // ---- biome adjacency (Rime next to Azure)
         for (ElysiumWorld.Island a : all) {

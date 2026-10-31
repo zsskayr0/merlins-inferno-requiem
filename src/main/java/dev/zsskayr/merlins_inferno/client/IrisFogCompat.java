@@ -54,7 +54,8 @@ public final class IrisFogCompat {
         return m.invoke(null);
     }
 
-    private static boolean irisReady() {
+    /** True while Iris is running a shader pack. */
+    public static boolean irisReady() {
         if (missing) return false;
         try {
             if (iris == null) iris = Class.forName(IRIS);

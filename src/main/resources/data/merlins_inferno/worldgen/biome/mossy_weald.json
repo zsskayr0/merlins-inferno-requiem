@@ -2,17 +2,23 @@
   "carvers": {},
   "downfall": 0.9,
   "effects": {
-    "fog_color": 12176831,
-    "foliage_color": 5147182,
-    "grass_color": 6069820,
+    "fog_color": 13952999,
+    "foliage_color": 10999976,
+    "grass_color": 10338470,
     "mood_sound": {
       "block_search_extent": 8,
       "offset": 2.0,
       "sound": "minecraft:ambient.cave",
       "tick_delay": 6000
     },
-    "sky_color": 8828122,
-    "water_color": 3964794,
+    "sky_color": 10735594,
+    "particle": {
+      "options": {
+        "type": "minecraft:white_ash"
+      },
+      "probability": 0.002
+    },
+    "water_color": 6405592,
     "water_fog_color": 667178,
     "music": {
       "max_delay": 24000,
@@ -25,7 +31,6 @@
     [],
     [],
     [
-      "minecraft:forest_rock"
     ],
     [],
     [],
@@ -43,11 +48,8 @@
     [],
     [
       "minecraft:classic_vines_cave_feature",
-      "minecraft:dark_forest_vegetation",
-      "minecraft:patch_large_fern",
+      "merlins_inferno:elysium_pale_trees",
       "minecraft:patch_grass_forest",
-      "minecraft:brown_mushroom_normal",
-      "minecraft:red_mushroom_normal",
       "minecraft:patch_waterlily"
     ],
     [

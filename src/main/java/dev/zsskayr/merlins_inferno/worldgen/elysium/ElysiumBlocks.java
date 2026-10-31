@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 
+import dev.zsskayr.merlins_inferno.block.CloudSeaBlock;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.core.Mat;
 
@@ -33,6 +34,11 @@ public final class ElysiumBlocks {
             t = build();
         }
         return t[mat.ordinal()];
+    }
+
+    /** A block of the physical cloud layer, tint 0..2. */
+    public static BlockState cloud(int tone) {
+        return ModBlocks.CLOUD_SEA.get().defaultBlockState().setValue(CloudSeaBlock.TONE, tone);
     }
 
     public static BlockState water() {
@@ -79,7 +85,6 @@ public final class ElysiumBlocks {
             case ANDESITE: return Blocks.ANDESITE.defaultBlockState();
             case DIORITE: return Blocks.DIORITE.defaultBlockState();
             case TUFF: return Blocks.TUFF.defaultBlockState();
-            case DEEPSLATE: return Blocks.DEEPSLATE.defaultBlockState();
             case SMOOTH_BASALT: return Blocks.SMOOTH_BASALT.defaultBlockState();
             // soils
             case GRASS_BLOCK: return Blocks.GRASS_BLOCK.defaultBlockState();

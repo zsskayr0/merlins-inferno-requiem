@@ -1,7 +1,7 @@
 package dev.zsskayr.merlins_inferno.worldgen.elysium.core;
 
 /**
- * The El'ysium biomes. One island = one surface biome (Terralith style). CHAINFALL is the band of stepping-stone
+ * The El'ysium biomes. An island has a main biome and, unless it is a sea, regions of its climate neighbours. CHAINFALL is the band of stepping-stone
  * platforms around the giant chains; UNDERHANG is the 3D biome of the space under/inside the islands' undersides.
  * {@link #id} is the biome JSON path under data/merlins_inferno/worldgen/biome/.
  */

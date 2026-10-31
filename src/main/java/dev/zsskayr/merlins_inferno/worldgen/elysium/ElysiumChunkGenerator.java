@@ -44,7 +44,8 @@ import dev.zsskayr.merlins_inferno.worldgen.elysium.core.Mat;
  * {@code {"type": "merlins_inferno:elysium", "biome_source": {"type": "merlins_inferno:elysium"}}}.
  *
  * <p>Column layout (see {@link Column}): hang dressing under {@code bottom}, solid {@code bottom..top}, water
- * {@code top+1..waterTop} (ice on top when frozen), and an optional floating arch span.
+ * {@code top+1..waterTop} (ice on top when frozen), and an optional floating arch span. Every column, island or not, also
+ * gets the thin layer of cloud blocks far below (see {@link dev.zsskayr.merlins_inferno.block.CloudSeaBlock}).
  */
 public final class ElysiumChunkGenerator extends ChunkGenerator {
     public static final MapCodec<ElysiumChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -54,6 +55,7 @@ public final class ElysiumChunkGenerator extends ChunkGenerator {
     private static final BlockState AIR = Blocks.AIR.defaultBlockState();
     /** Share of cave-vine blocks that carry glow berries (a little light under the islands, not much). */
     private static final double VINE_BERRY_CHANCE = 0.12;
+    private static final int CLOUD_THICKNESS = 2;
 
     public ElysiumChunkGenerator(BiomeSource biomeSource) {
         super(biomeSource);
@@ -103,13 +105,19 @@ public final class ElysiumChunkGenerator extends ChunkGenerator {
             for (int dz = 0; dz < 16; dz++) {
                 for (int dx = 0; dx < 16; dx++) {
                     Column c = cols.get(dx, dz);
+                    int wx = x0 + dx, wz = z0 + dz;
+                    int cloudTop = world.cloudTop(wx, wz);
+                    BlockState cloud = ElysiumBlocks.cloud(world.cloudTone(wx, wz, cloudTop));
+                    for (int y = cloudTop - CLOUD_THICKNESS + 1; y <= cloudTop; y++) {
+                        chunk.getSection(chunk.getSectionIndex(y)).setBlockState(dx, y & 15, dz, cloud, false);
+                        worldSurface.update(dx, y, dz, cloud);
+                    }
                     int lo = lowest(c), hi = highest(c);
                     if (hi == Integer.MIN_VALUE) {
                         continue;
                     }
                     lo = Math.max(lo, minY);
                     hi = Math.min(hi, maxY);
-                    int wx = x0 + dx, wz = z0 + dz;
                     for (int y = lo; y <= hi; y++) {
                         BlockState state = stateAt(world, c, wx, y, wz);
                         if (state.isAir()) {
@@ -199,6 +207,10 @@ public final class ElysiumChunkGenerator extends ChunkGenerator {
 
     /** The block the core puts at (x, y, z) of an already sampled column. Used by the chunk fill and the base column alike. */
     static BlockState stateAt(ElysiumWorld world, Column c, int x, int y, int z) {
+        if (y < ElysiumWorld.LOWEST_SOLID) {
+            int cloudTop = world.cloudTop(x, z);
+            return y <= cloudTop && y > cloudTop - CLOUD_THICKNESS ? ElysiumBlocks.cloud(world.cloudTone(x, z, cloudTop)) : AIR;
+        }
         if (c.hasArch() && y >= c.archBottom && y <= c.archTop) {
             return ElysiumBlocks.state(world.material(c, y));
         }
@@ -291,17 +303,17 @@ public final class ElysiumChunkGenerator extends ChunkGenerator {
         Column c = new Column();
         world.sample(x, z, c);
         int hi = highest(c);
-        if (hi == Integer.MIN_VALUE) {
-            return level.getMinBuildHeight();
-        }
         Predicate<BlockState> opaque = type.isOpaque();
-        int lo = Math.max(lowest(c), level.getMinBuildHeight());
-        for (int y = Math.min(hi, level.getMaxBuildHeight() - 1); y >= lo; y--) {
-            if (opaque.test(stateAt(world, c, x, y, z))) {
-                return y + 1;
+        if (hi != Integer.MIN_VALUE) {
+            int lo = Math.max(lowest(c), level.getMinBuildHeight());
+            for (int y = Math.min(hi, level.getMaxBuildHeight() - 1); y >= lo; y--) {
+                if (opaque.test(stateAt(world, c, x, y, z))) {
+                    return y + 1;
+                }
             }
         }
-        return level.getMinBuildHeight();
+        int cloudTop = world.cloudTop(x, z);
+        return opaque.test(stateAt(world, c, x, cloudTop, z)) ? cloudTop + 1 : level.getMinBuildHeight();
     }
 
     @Override
