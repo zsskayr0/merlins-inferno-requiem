@@ -1,84 +1,9 @@
 {
   "type": "merlins_inferno:elysium",
   "generator": {
-    "type": "minecraft:noise",
-    "settings": "merlins_inferno:elysium",
+    "type": "merlins_inferno:elysium",
     "biome_source": {
-      "type": "minecraft:multi_noise",
-      "biomes": [
-        {
-          "biome": "merlins_inferno:silent_fields",
-          "parameters": {
-            "temperature": 0.15,
-            "humidity": -0.3,
-            "continentalness": 0.0,
-            "erosion": 0.0,
-            "depth": 0.0,
-            "weirdness": 0.0,
-            "offset": 0.0
-          }
-        },
-        {
-          "biome": "merlins_inferno:silverwood",
-          "parameters": {
-            "temperature": -0.05,
-            "humidity": 0.3,
-            "continentalness": 0.0,
-            "erosion": 0.0,
-            "depth": 0.0,
-            "weirdness": 0.0,
-            "offset": 0.0
-          }
-        },
-        {
-          "biome": "merlins_inferno:silver_sea",
-          "parameters": {
-            "temperature": 0.2,
-            "humidity": 0.75,
-            "continentalness": 0.0,
-            "erosion": 0.0,
-            "depth": 0.0,
-            "weirdness": 0.0,
-            "offset": 0.0
-          }
-        },
-        {
-          "biome": "merlins_inferno:salt_waste",
-          "parameters": {
-            "temperature": 0.8,
-            "humidity": -0.6,
-            "continentalness": 0.0,
-            "erosion": 0.0,
-            "depth": 0.0,
-            "weirdness": 0.0,
-            "offset": 0.0
-          }
-        },
-        {
-          "biome": "merlins_inferno:mute_peaks",
-          "parameters": {
-            "temperature": -0.75,
-            "humidity": -0.15,
-            "continentalness": 0.0,
-            "erosion": 0.0,
-            "depth": 0.0,
-            "weirdness": 0.0,
-            "offset": 0.0
-          }
-        },
-        {
-          "biome": "merlins_inferno:weeping_plains",
-          "parameters": {
-            "temperature": -0.6,
-            "humidity": 0.75,
-            "continentalness": 0.0,
-            "erosion": 0.0,
-            "depth": 0.0,
-            "weirdness": 0.0,
-            "offset": 0.0
-          }
-        }
-      ]
+      "type": "merlins_inferno:elysium"
     }
   }
 }

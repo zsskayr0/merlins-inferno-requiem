@@ -78,7 +78,7 @@ public class Merlins_inferno {
         ModMenuTypes.register(modEventBus);
         ModStructureProcessorTypes.register(modEventBus);
         ModFeatures.register(modEventBus);
-        dev.zsskayr.merlins_inferno.registry.ModDensityFunctions.register(modEventBus);
+        dev.zsskayr.merlins_inferno.registry.ModChunkGenerators.register(modEventBus);
         ModStructureTypes.register(modEventBus);
         ModStructurePieceTypes.register(modEventBus);
         ModEntityTypes.register(modEventBus);

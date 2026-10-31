@@ -14,8 +14,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
-import dev.zsskayr.merlins_inferno.worldgen.elysium.ElysiumTerrain;
-import dev.zsskayr.merlins_inferno.worldgen.elysium.ElysiumTerrains;
+import dev.zsskayr.merlins_inferno.worldgen.elysium.ElysiumSeed;
+import dev.zsskayr.merlins_inferno.worldgen.elysium.core.Column;
+import dev.zsskayr.merlins_inferno.worldgen.elysium.core.ElysiumWorld;
 
 /**
  * El'ysium: the Angelical route's third Circle, a world of floating continents. Travel works like Oblivion's: same
@@ -34,6 +35,8 @@ public final class ElysiumDimension {
     private static final int MIN_INLAND = 60;
     private static final int SEARCH_STEP = 24;
     private static final int SEARCH_RADIUS = 6000;
+    /** Where an arrival goes if no land is found at all (a plinth in the sky, above the cloud sea). */
+    private static final int FALLBACK_Y = 200;
 
     private ElysiumDimension() {
     }
@@ -61,23 +64,23 @@ public final class ElysiumDimension {
         return best.offset(1, 0, 2);
     }
 
-    /** The nearest column to {@code target} that is solid island well inland, spiralling outward over the open sky. */
+    /** The nearest column to {@code target} that is dry island well inland, spiralling outward over the open sky. */
     private static BlockPos findLand(ServerLevel level, BlockPos target) {
-        ElysiumTerrain terrain = ElysiumTerrains.forLevel(level);
-        ElysiumTerrain.Column c = new ElysiumTerrain.Column();
+        ElysiumWorld world = ElysiumSeed.world();
+        Column c = new Column();
         for (int ring = 0; ring <= SEARCH_RADIUS / SEARCH_STEP; ring++) {
             int r = ring * SEARCH_STEP;
             int points = Math.max(1, ring * 8);
             for (int i = 0; i < points; i++) {
                 double a = i * 2.0 * Math.PI / points;
                 int x = target.getX() + (int) Math.round(r * Math.cos(a)), z = target.getZ() + (int) Math.round(r * Math.sin(a));
-                terrain.sample(x, z, c);
-                if (c.land && c.inland >= MIN_INLAND && c.top >= ElysiumTerrain.WATER_Y + 3) {
-                    return new BlockPos(x, (int) c.top, z);
+                world.sample(x, z, c);
+                if (c.land && c.inland >= MIN_INLAND && !c.hasWater()) {
+                    return new BlockPos(x, c.top + 1, z);
                 }
             }
         }
-        return new BlockPos(target.getX(), ElysiumTerrain.BASE_Y, target.getZ());
+        return new BlockPos(target.getX(), FALLBACK_Y, target.getZ());
     }
 
     /** A 4 x 5 Purified Obsidian frame facing north-south on a small plinth; returns its interior's lower block. */
@@ -85,6 +88,9 @@ public final class ElysiumDimension {
         BlockPos land = findLand(level, target);
         level.getChunk(land);
         int ground = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, land.getX(), land.getZ());
+        if (ground <= level.getMinBuildHeight()) {
+            ground = land.getY(); // no land found anywhere near: the plinth floats above the cloud sea
+        }
         BlockPos origin = new BlockPos(land.getX() - 1, ground, land.getZ());
         BlockState frame = ModBlocks.PURIFIED_OBSIDIAN.get().defaultBlockState();
         for (int x = -1; x <= 4; x++) {
