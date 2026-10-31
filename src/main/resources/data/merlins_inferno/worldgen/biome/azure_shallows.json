@@ -1,0 +1,87 @@
+{
+  "carvers": {},
+  "downfall": 0.6,
+  "effects": {
+    "fog_color": 14085880,
+    "foliage_color": 7127107,
+    "grass_color": 9161562,
+    "mood_sound": {
+      "block_search_extent": 8,
+      "offset": 2.0,
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000
+    },
+    "sky_color": 7914232,
+    "water_color": 4445678,
+    "water_fog_color": 2073538
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_iron_upper",
+      "merlins_inferno:elysium_ore_calcite",
+      "merlins_inferno:elysium_ore_quartzite",
+      "merlins_inferno:elysium_ore_diorite",
+      "merlins_inferno:elysium_ore_andesite",
+      "merlins_inferno:elysium_lyrium_geode"
+    ],
+    [],
+    [],
+    [
+      "minecraft:patch_grass_plain",
+      "minecraft:patch_sugar_cane",
+      "minecraft:warm_ocean_vegetation",
+      "minecraft:seagrass_warm",
+      "minecraft:sea_pickle"
+    ],
+    [
+      "minecraft:freeze_top_layer"
+    ]
+  ],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "minecraft:turtle",
+        "maxCount": 5,
+        "minCount": 2,
+        "weight": 5
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [
+      {
+        "type": "minecraft:tropical_fish",
+        "maxCount": 8,
+        "minCount": 8,
+        "weight": 25
+      },
+      {
+        "type": "minecraft:pufferfish",
+        "maxCount": 3,
+        "minCount": 1,
+        "weight": 15
+      }
+    ],
+    "water_creature": [
+      {
+        "type": "minecraft:dolphin",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 2
+      }
+    ]
+  },
+  "temperature": 0.95
+}

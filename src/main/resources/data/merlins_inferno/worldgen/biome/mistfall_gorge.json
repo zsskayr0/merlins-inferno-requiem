@@ -1,0 +1,87 @@
+{
+  "carvers": {},
+  "downfall": 1.0,
+  "effects": {
+    "fog_color": 11122367,
+    "foliage_color": 5215285,
+    "grass_color": 6267711,
+    "mood_sound": {
+      "block_search_extent": 8,
+      "offset": 2.0,
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000
+    },
+    "sky_color": 10335432,
+    "water_color": 3837082,
+    "water_fog_color": 797747,
+    "music": {
+      "max_delay": 24000,
+      "min_delay": 12000,
+      "replace_current_music": false,
+      "sound": "minecraft:music.overworld.lush_caves"
+    },
+    "particle": {
+      "options": {
+        "type": "minecraft:white_ash"
+      },
+      "probability": 0.004
+    }
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_iron_upper",
+      "merlins_inferno:elysium_ore_calcite",
+      "merlins_inferno:elysium_ore_quartzite",
+      "merlins_inferno:elysium_ore_diorite",
+      "merlins_inferno:elysium_ore_andesite",
+      "merlins_inferno:elysium_lyrium_geode"
+    ],
+    [],
+    [],
+    [
+      "minecraft:classic_vines_cave_feature",
+      "minecraft:trees_swamp",
+      "minecraft:patch_large_fern",
+      "minecraft:patch_grass_jungle",
+      "minecraft:brown_mushroom_normal",
+      "minecraft:patch_sugar_cane",
+      "minecraft:patch_waterlily"
+    ],
+    [
+      "minecraft:freeze_top_layer"
+    ]
+  ],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "minecraft:frog",
+        "maxCount": 5,
+        "minCount": 2,
+        "weight": 8
+      },
+      {
+        "type": "minecraft:chicken",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 6
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": 0.65
+}

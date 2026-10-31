@@ -1,0 +1,92 @@
+{
+  "carvers": {},
+  "downfall": 0.6,
+  "effects": {
+    "fog_color": 13691637,
+    "foliage_color": 6271040,
+    "grass_color": 8243034,
+    "mood_sound": {
+      "block_search_extent": 8,
+      "offset": 2.0,
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000
+    },
+    "sky_color": 8307957,
+    "water_color": 4186328,
+    "water_fog_color": 2002074
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_iron_upper",
+      "merlins_inferno:elysium_ore_calcite",
+      "merlins_inferno:elysium_ore_quartzite",
+      "merlins_inferno:elysium_ore_diorite",
+      "merlins_inferno:elysium_ore_andesite",
+      "merlins_inferno:elysium_lyrium_geode"
+    ],
+    [],
+    [],
+    [
+      "minecraft:trees_plains",
+      "minecraft:patch_grass_plain",
+      "minecraft:seagrass_normal",
+      "minecraft:sea_pickle"
+    ],
+    [
+      "minecraft:freeze_top_layer"
+    ]
+  ],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "minecraft:rabbit",
+        "maxCount": 3,
+        "minCount": 2,
+        "weight": 4
+      },
+      {
+        "type": "minecraft:sheep",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 4
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [
+      {
+        "type": "minecraft:cod",
+        "maxCount": 6,
+        "minCount": 3,
+        "weight": 10
+      }
+    ],
+    "water_creature": [
+      {
+        "type": "minecraft:squid",
+        "maxCount": 4,
+        "minCount": 1,
+        "weight": 4
+      },
+      {
+        "type": "minecraft:dolphin",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 1
+      }
+    ]
+  },
+  "temperature": 0.8
+}

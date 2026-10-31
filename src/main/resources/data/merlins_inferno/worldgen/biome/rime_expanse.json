@@ -1,0 +1,84 @@
+{
+  "carvers": {},
+  "downfall": 0.5,
+  "effects": {
+    "fog_color": 15134453,
+    "foliage_color": 6332795,
+    "grass_color": 8434839,
+    "mood_sound": {
+      "block_search_extent": 8,
+      "offset": 2.0,
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000
+    },
+    "sky_color": 11128043,
+    "water_color": 4026326,
+    "water_fog_color": 329011,
+    "music": {
+      "max_delay": 24000,
+      "min_delay": 12000,
+      "replace_current_music": false,
+      "sound": "minecraft:music.overworld.snowy_slopes"
+    }
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:ice_spike",
+      "minecraft:ice_patch"
+    ],
+    [],
+    [
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_iron_upper",
+      "merlins_inferno:elysium_ore_calcite",
+      "merlins_inferno:elysium_ore_quartzite",
+      "merlins_inferno:elysium_ore_diorite",
+      "merlins_inferno:elysium_ore_andesite",
+      "merlins_inferno:elysium_lyrium_geode"
+    ],
+    [],
+    [],
+    [
+      "minecraft:trees_snowy"
+    ],
+    [
+      "minecraft:freeze_top_layer"
+    ]
+  ],
+  "has_precipitation": true,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "minecraft:rabbit",
+        "maxCount": 3,
+        "minCount": 2,
+        "weight": 10
+      },
+      {
+        "type": "minecraft:fox",
+        "maxCount": 4,
+        "minCount": 2,
+        "weight": 4
+      },
+      {
+        "type": "minecraft:polar_bear",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 1
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": 0.0
+}
