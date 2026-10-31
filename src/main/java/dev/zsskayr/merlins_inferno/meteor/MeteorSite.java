@@ -44,7 +44,7 @@ import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
  * obsidian, water, snow or ice), and a star that lands in water leaves no crater at all, only the buried geode.
  * <p>
  * The geode is Lyrium-sized (same layers and spread as the Lyrium geodes), closed all round, with a Luminite lining, a middle layer
- * of Arganite flecked with Quartzite and a Smooth Basalt shell. The sky-drop chest sits in its hollow, so it must be dug into.
+ * of Arganite flecked with Quartzite and a Meteorite shell. The sky-drop chest sits in its hollow, so it must be dug into.
  */
 public final class MeteorSite {
     public static final ResourceKey<LootTable> LOOT = ResourceKey.create(Registries.LOOT_TABLE,
@@ -256,7 +256,7 @@ public final class MeteorSite {
 
     /**
      * Lyrium-sized and closed: the Lyrium geode's layers and spread, no crack, Luminite for the lining (a little Lyrium and Amethyst in
-     * it), Arganite flecked with Quartzite in place of the calcite layer, and a Smooth Basalt shell. Nothing counts as an invalid block,
+     * it), Arganite flecked with Quartzite in place of the calcite layer, and a Meteorite shell. Nothing counts as an invalid block,
      * so it forms under water and lava too.
      */
     private static GeodeConfiguration geodeConfig() {
@@ -269,7 +269,7 @@ public final class MeteorSite {
                             BlockStateProvider.simple(ModBlocks.LUMINITE_BLOCK.get()),
                             BlockStateProvider.simple(ModBlocks.LYRIUM_BLOCK.get()),
                             new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder().add(arganite, 7).add(quartzite, 3).build()),
-                            BlockStateProvider.simple(Blocks.SMOOTH_BASALT),
+                            BlockStateProvider.simple(ModBlocks.METEORITE.get()),
                             List.of(ModBlocks.LUMINITE_CLUSTER.get().defaultBlockState(), ModBlocks.LUMINITE_CLUSTER.get().defaultBlockState(),
                                     ModBlocks.LUMINITE_CLUSTER.get().defaultBlockState(), ModBlocks.LYRIUM_CLUSTER.get().defaultBlockState(),
                                     Blocks.AMETHYST_CLUSTER.defaultBlockState()),
@@ -337,6 +337,9 @@ public final class MeteorSite {
 
     private static BlockState scorched(RandomSource random, Crater crater) {
         int roll = random.nextInt(10);
+        if (roll < 2) {
+            return ModBlocks.METEORITE.get().defaultBlockState();
+        }
         if (roll < 4) {
             return Blocks.SMOOTH_BASALT.defaultBlockState();
         }
