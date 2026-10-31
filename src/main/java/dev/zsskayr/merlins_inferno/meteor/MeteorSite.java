@@ -26,6 +26,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
+import dev.zsskayr.merlins_inferno.compat.lootr.LootrCompat;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 
@@ -104,7 +105,12 @@ public final class MeteorSite {
         }
 
         boolean deep = ProgressionHelper.hasReached(level, ProgressionHelper.THIRD_CIRCLE);
-        level.setBlock(chest, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.Plane.HORIZONTAL.getRandomDirection(random)), 2);
+        // Lootr's chest when it is installed (every player gets their own haul), the vanilla one otherwise.
+        BlockState chestState = LootrCompat.rewardChest().orElse(Blocks.CHEST).defaultBlockState();
+        if (chestState.hasProperty(ChestBlock.FACING)) {
+            chestState = chestState.setValue(ChestBlock.FACING, Direction.Plane.HORIZONTAL.getRandomDirection(random));
+        }
+        level.setBlock(chest, chestState, 2);
         RandomizableContainer.setBlockEntityLootTable(level, random, chest, deep ? LOOT_DEEP : LOOT);
 
         boolean guarded = crater != Crater.NONE && random.nextDouble() < GUARD_CHANCE;
