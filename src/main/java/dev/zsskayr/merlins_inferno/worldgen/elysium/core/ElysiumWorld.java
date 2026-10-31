@@ -24,7 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * stage lists every body that touches a cell so {@link #sample} only scans a handful of candidates.
  * The exception is the Glass Sea at its largest: colossal islands scattered about 14 km apart (see {@link #seaOfBlock}), each
  * owned by one cell and covering the 3x3 cells around it, which stay otherwise empty. Elsewhere, cells whose own climate is
- * near enough pick ordinary MEDIUM or LARGE Glass Seas like any other biome.
+ * near enough pick ordinary MEDIUM or LARGE Glass Seas like any other biome. One more kind of body stands outside the layout:
+ * the spawn islets, each bridged to a land island (see {@link #nearestSpawnIslet}).
  * See docs/elysium/core-notes.md.
  */
 public final class ElysiumWorld {
@@ -55,6 +56,11 @@ public final class ElysiumWorld {
     private static final double SEA_WIDTH = 4200;
     /** Farthest, in super cells, a colossal island's crossings can reach from the cell that owns them. */
     private static final int MEGA_REACH = 3;
+    /** The slots from here up hold the spawn islets of a cell, by their host's slot; Chainfall platforms stop short of them. */
+    private static final int FIRST_ISLET_SLOT = 124;
+    private static final double SPAWN_ISLET_R = 34;
+    /** How many rings of super cells around a block are searched for its nearest islet. */
+    private static final int SPAWN_SEARCH_RINGS = 8;
 
     public final long seed;
     private final Noise nz;
@@ -63,6 +69,7 @@ public final class ElysiumWorld {
     private final ConcurrentHashMap<Long, CellC> cellsC = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, int[]> seaBlocks = new ConcurrentHashMap<>();
     private final ThreadLocal<BiomeCache> biomeColumn = ThreadLocal.withInitial(BiomeCache::new);
+    private final ConcurrentHashMap<Long, CellS> cellsS = new ConcurrentHashMap<>();
 
     /** Last column sampled by {@link #biomeAt} on this thread (the biome source asks many y per column). */
     private static final class BiomeCache {
@@ -192,6 +199,26 @@ public final class ElysiumWorld {
 
     /** Spans (bridges, chains) whose bounding box touches the rectangle. */
     public List<Span> spansIn(int minX, int minZ, int maxX, int maxZ) {
+        List<Span> out = cellSpansIn(minX, minZ, maxX, maxZ);
+        for (int sx = Math.floorDiv(minX, SUPER) - 1; sx <= Math.floorDiv(maxX, SUPER) + 1; sx++) {
+            for (int sz = Math.floorDiv(minZ, SUPER) - 1; sz <= Math.floorDiv(maxZ, SUPER) + 1; sz++) {
+                for (SpawnIslet islet : cellS(sx, sz).islets) {
+                    if (touches(islet.bridge(), minX, minZ, maxX, maxZ)) {
+                        out.add(islet.bridge());
+                    }
+                }
+            }
+        }
+        return out;
+    }
+
+    private static boolean touches(Span s, int minX, int minZ, int maxX, int maxZ) {
+        int pad = s.width() + 2;
+        return Math.max(s.ax(), s.bx()) + pad >= minX && Math.min(s.ax(), s.bx()) - pad <= maxX
+                && Math.max(s.az(), s.bz()) + pad >= minZ && Math.min(s.az(), s.bz()) - pad <= maxZ;
+    }
+
+    private List<Span> cellSpansIn(int minX, int minZ, int maxX, int maxZ) {
         List<Span> out = new ArrayList<>();
         int cx0 = Math.floorDiv(minX, SUPER), cx1 = Math.floorDiv(maxX, SUPER);
         int cz0 = Math.floorDiv(minZ, SUPER), cz1 = Math.floorDiv(maxZ, SUPER);
@@ -203,9 +230,7 @@ public final class ElysiumWorld {
                     continue;
                 }
                 for (Span s : cellB(sx, sz).spans) {
-                    int pad = s.width() + 2;
-                    if (Math.max(s.ax(), s.bx()) + pad >= minX && Math.min(s.ax(), s.bx()) - pad <= maxX
-                            && Math.max(s.az(), s.bz()) + pad >= minZ && Math.min(s.az(), s.bz()) - pad <= maxZ) {
+                    if (touches(s, minX, minZ, maxX, maxZ)) {
                         out.add(s);
                     }
                 }
@@ -276,6 +301,9 @@ public final class ElysiumWorld {
         public static final int MAX_RUN = 20;
     }
 
+    /** The little island players arrive on, joined to its host (the island index) by {@code bridge}. */
+    public record SpawnIslet(Island island, int host, Span bridge) {}
+
     /** A water source on a cliff face or river mouth: place a WATER source at (x,y,z); the game makes the fall. */
     public record Spring(int x, int y, int z) {}
 
@@ -296,6 +324,14 @@ public final class ElysiumWorld {
             return null;
         }
         int sx = (index << 1) >> 20, sz = (index << 13) >> 20, slot = index & 0x7F;
+        if (slot >= FIRST_ISLET_SLOT) {
+            for (IslandPlan p : cellS(sx, sz).plans) {
+                if (p.island.index() == index) {
+                    return p;
+                }
+            }
+            return null;
+        }
         if (slot < 4) {
             for (IslandPlan p : cellA(sx, sz).plans) {
                 if (p.island.index() == index) {
@@ -838,7 +874,7 @@ public final class ElysiumWorld {
         // Chainfall platforms strung along the crossing, linked by vine bridges
         int count = gap < 450 ? 0 : Math.min(3, Math.max(1, (int) (gap / 400)));
         List<IslandPlan> chain = new ArrayList<>();
-        for (int k = 0; k < count && slot < 127; k++) {
+        for (int k = 0; k < count && slot < FIRST_ISLET_SLOT; k++) {
             double t = (k + 0.5 + (r.nextDouble() - 0.5) * 0.3) / count;
             double lat = ((k & 1) == 0 ? 1 : -1) * (28 + 40 * r.nextDouble());
             double Rp = 20 + 60 * r.nextDouble() * r.nextDouble();
@@ -912,6 +948,166 @@ public final class ElysiumWorld {
         return null;
     }
 
+    // ======================================================================== spawn islets
+
+    private static final class CellS {
+        final List<IslandPlan> plans = new ArrayList<>();
+        final List<SpawnIslet> islets = new ArrayList<>();
+    }
+
+    private CellS cellS(int sx, int sz) {
+        long k = key(sx, sz);
+        CellS c = cellsS.get(k);
+        if (c == null) {
+            c = buildS(sx, sz);
+            CellS prev = cellsS.putIfAbsent(k, c);
+            if (prev != null) {
+                c = prev;
+            }
+        }
+        return c;
+    }
+
+    /**
+     * The islets of one super cell, one beside each land island that has room for it. Each stays wholly inside the cell, so
+     * cells never have to look at each other's islets, and is planned from stages A and B only, which never ask for islets,
+     * so stage C and {@link #spansIn} can add them to what they return without a cycle.
+     */
+    private CellS buildS(int sx, int sz) {
+        CellS cell = new CellS();
+        for (IslandPlan host : cellA(sx, sz).plans) {
+            if (canHostSpawn(host.biome)) {
+                spawnBeside(host, sx, sz, cell);
+            }
+        }
+        return cell;
+    }
+
+    /** The islet nearest to a block, or null when none stands within {@link #SPAWN_SEARCH_RINGS} cells of it. */
+    public SpawnIslet nearestSpawnIslet(int x, int z) {
+        int cx = Math.floorDiv(x, SUPER), cz = Math.floorDiv(z, SUPER);
+        SpawnIslet best = null;
+        double bd = Double.POSITIVE_INFINITY;
+        for (int ring = 0; ring <= SPAWN_SEARCH_RINGS && (ring - 1) * (double) SUPER < bd; ring++) {
+            for (int sx = cx - ring; sx <= cx + ring; sx++) {
+                for (int sz = cz - ring; sz <= cz + ring; sz++) {
+                    if (Math.max(Math.abs(sx - cx), Math.abs(sz - cz)) != ring) {
+                        continue;
+                    }
+                    for (SpawnIslet islet : cellS(sx, sz).islets) {
+                        double d = Math.hypot(islet.island().cx() - x, islet.island().cz() - z);
+                        if (d < bd) {
+                            bd = d;
+                            best = islet;
+                        }
+                    }
+                }
+            }
+        }
+        return best;
+    }
+
+    /** Not a sea, whose rim holds water back, and not the cold, which is a poor place to arrive. */
+    private static boolean canHostSpawn(ElysiumBiome b) {
+        return b != ElysiumBiome.GLASS_SEA && b != ElysiumBiome.AZURE_SHALLOWS && b != ElysiumBiome.RIME_EXPANSE && b != ElysiumBiome.FROSTCREST_RANGE;
+    }
+
+    /** Walks the host's coast from a seeded start until an islet fits off it, and adds it to the cell; a host with no room gets none. */
+    private void spawnBeside(IslandPlan host, int sx, int sz, CellS cell) {
+        List<IslandPlan> around = new ArrayList<>(cell.plans);
+        for (int dx = -MEGA_REACH; dx <= MEGA_REACH; dx++) {
+            for (int dz = -MEGA_REACH; dz <= MEGA_REACH; dz++) {
+                if ((Math.abs(dx) <= 1 && Math.abs(dz) <= 1) || isMegaCentre(sx + dx, sz + dz)) {
+                    around.addAll(cellA(sx + dx, sz + dz).plans);
+                    around.addAll(cellB(sx + dx, sz + dz).platforms);
+                }
+            }
+        }
+        double ext = IslandPlan.extent(SPAWN_ISLET_R);
+        double spin = Noise.unit(Noise.hash(seed, host.island.index(), 0, 0x5B4)) * 2 * Math.PI;
+        Column col = new Column();
+        for (int i = 0; i < 24; i++) {
+            double a = spin + i * Math.PI / 12;
+            double[] A = coastToward(host, host.cx + Math.cos(a) * 1000, host.cz + Math.sin(a) * 1000);
+            for (double gap : new double[] {28, 44}) {
+                double qx = A[0] + A[2] * (gap + ext), qz = A[1] + A[3] * (gap + ext);
+                if (spawnFits(host, around, cell, A, qx, qz, ext, sx, sz) && raiseIslet(host, A, qx, qz, ext, sx, sz, col, cell)) {
+                    return;
+                }
+            }
+        }
+    }
+
+    /** True when an islet at (qx, qz) stays in its cell and touches no body and no crossing, and its bridge crosses none either. */
+    private boolean spawnFits(IslandPlan host, List<IslandPlan> around, CellS cell, double[] A, double qx, double qz, double ext, int sx, int sz) {
+        double keep = ext + 4;
+        if (qx - keep < sx * SUPER || qx + keep >= (sx + 1) * SUPER || qz - keep < sz * SUPER || qz + keep >= (sz + 1) * SUPER) {
+            return false;
+        }
+        for (IslandPlan o : around) {
+            double clear = o == host ? 6 : 30;
+            for (int k = 0; k < 16; k++) {
+                double a = k * Math.PI / 8;
+                if (o.inland(qx + Math.cos(a) * (ext + clear), qz + Math.sin(a) * (ext + clear)) > 0) {
+                    return false;
+                }
+            }
+            if (o.inland(qx, qz) > 0) {
+                return false;
+            }
+        }
+        int pad = (int) Math.ceil(ext) + 80;
+        List<Span> spans = cellSpansIn((int) qx - pad, (int) qz - pad, (int) qx + pad, (int) qz + pad);
+        for (SpawnIslet other : cell.islets) {
+            spans.add(other.bridge());
+        }
+        for (Span s : spans) {
+            if (distanceToSegment(qx, qz, s.ax(), s.az(), s.bx(), s.bz()) < ext + 12
+                    || segmentsCross(A[0], A[1], qx, qz, s.ax(), s.az(), s.bx(), s.bz())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static double distanceToSegment(double px, double pz, double ax, double az, double bx, double bz) {
+        double dx = bx - ax, dz = bz - az, len2 = dx * dx + dz * dz;
+        double t = len2 == 0 ? 0 : Noise.clamp(((px - ax) * dx + (pz - az) * dz) / len2, 0, 1);
+        return Math.hypot(px - ax - dx * t, pz - az - dz * t);
+    }
+
+    /** Adds an islet with its ground level with the host's deck anchor, so the bridge runs flat; false if no anchor fits. */
+    private boolean raiseIslet(IslandPlan host, double[] A, double qx, double qz, double ext, int sx, int sz, Column col, CellS cell) {
+        int[] da = deckAnchor(host, A, col);
+        if (da == null) {
+            return false;
+        }
+        int slot = FIRST_ISLET_SLOT + (host.island.index() & 3);
+        IslandPlan islet = isletAt(qx, qz, ext, sx, sz, slot, da[1] - 5);
+        double[] B = coastToward(islet, A[0], A[1]);
+        int[] db = deckAnchor(islet, B, col);
+        if (db == null) {
+            return false;
+        }
+        // the relief does not depend on the base, so this moves the anchor exactly level
+        int baseY = da[1] - 5 + da[1] - db[1];
+        if (baseY < 150 || baseY > 240) {
+            return false;
+        }
+        islet = isletAt(qx, qz, ext, sx, sz, slot, baseY);
+        Span bridge = new Span(Span.Kind.STONE_ARCH, db[0], da[1], db[2], da[0], da[1], da[2], 0, 5);
+        cell.plans.add(islet);
+        cell.islets.add(new SpawnIslet(islet.island, host.island.index(), bridge));
+        return true;
+    }
+
+    private IslandPlan isletAt(double qx, double qz, double ext, int sx, int sz, int slot, int baseY) {
+        int icx = (int) Math.floor(qx), icz = (int) Math.floor(qz), e = (int) Math.ceil(ext);
+        Island is = new Island(packIndex(sx, sz, slot), icx, icz, (int) Math.round(2 * SPAWN_ISLET_R), ElysiumBiome.Size.PLATFORM,
+                ElysiumBiome.LARK_MEADOWS, baseY, icx - e, icz - e, icx + e, icz + e);
+        return new IslandPlan(is, SPAWN_ISLET_R, nz, seed, new ElysiumBiome[0]);
+    }
+
     // ======================================================================== stage C: per-cell query lists
 
     private static final class CellC {
@@ -942,6 +1138,9 @@ public final class ElysiumWorld {
                 }
                 List<IslandPlan> all = new ArrayList<>(cellA(sx + dx, sz + dz).plans);
                 all.addAll(cellB(sx + dx, sz + dz).platforms);
+                if (Math.abs(dx) <= 1 && Math.abs(dz) <= 1) {
+                    all.addAll(cellS(sx + dx, sz + dz).plans);
+                }
                 for (IslandPlan p : all) {
                     Island is = p.island;
                     if (is.maxX() >= x0 && is.minX() <= x1 && is.maxZ() >= z0 && is.minZ() <= z1) {

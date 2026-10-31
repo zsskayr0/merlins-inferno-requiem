@@ -23,6 +23,8 @@ public final class IslandPlan {
     public final ElysiumWorld.Island island;
     public final ElysiumBiome biome;
     public final boolean platform;
+    /** The spawn islet (see {@link ElysiumWorld#nearestSpawnIslet}): a small round mound with nothing on it but grass. */
+    final boolean islet;
     final Noise nz;
     final long salt;
     final double cx, cz, R, aspect, cosA, sinA, warp;
@@ -90,17 +92,18 @@ public final class IslandPlan {
         this.island = island;
         this.biome = island.biome();
         this.platform = biome == ElysiumBiome.CHAINFALL;
+        this.islet = !platform && island.size() == ElysiumBiome.Size.PLATFORM;
         this.nz = nz;
         this.salt = Noise.hash(seed, island.index(), 0x15A1);
         SplittableRandom r = new SplittableRandom(salt);
         this.cx = island.cx() + 0.5;
         this.cz = island.cz() + 0.5;
         this.R = R;
-        this.shape = platform ? Shape.ROUND : Shape.pick(r);
+        this.shape = platform || islet ? Shape.ROUND : Shape.pick(r);
         double figure = r.nextDouble() * Math.PI * 2;
         this.shapeCos = Math.cos(figure);
         this.shapeSin = Math.sin(figure);
-        double flat = platform ? 0.75 + 0.25 * r.nextDouble() : shape.minAspect + (shape.maxAspect - shape.minAspect) * r.nextDouble();
+        double flat = platform || islet ? 0.75 + 0.25 * r.nextDouble() : shape.minAspect + (shape.maxAspect - shape.minAspect) * r.nextDouble();
         // a colossal sea has to read as huge whichever way you cross it
         this.aspect = island.size() == ElysiumBiome.Size.COLOSSAL ? Math.max(flat, 0.72) : flat;
         double ang = r.nextDouble() * Math.PI;
@@ -113,7 +116,7 @@ public final class IslandPlan {
         this.baseY = island.baseY();
         // cone: ~30 + 7.5% of the width deep, clamped so stalactites still stay above LOWEST_SOLID
         double room = baseY - ElysiumWorld.LOWEST_SOLID - 6;
-        this.coneDepth = platform ? Math.min(room, 22 + 0.35 * R) : Math.min(room, (0.15 + 0.07 * r.nextDouble()) * island.width());
+        this.coneDepth = islet ? Math.min(room, 30 + 0.5 * R) : platform ? Math.min(room, 22 + 0.35 * R) : Math.min(room, (0.15 + 0.07 * r.nextDouble()) * island.width());
         this.rim = platform ? 7 + 4 * r.nextDouble() : 7 + 5 * r.nextDouble();
         this.seaLevel = switch (biome) {
             case GLASS_SEA -> baseY + 6;
@@ -136,7 +139,7 @@ public final class IslandPlan {
                 arch = new Arch(cx + Math.cos(a) * d, cz + Math.sin(a) * d, cx - Math.cos(a) * d, cz - Math.sin(a) * d,
                         h, h * (0.25 + 0.15 * r.nextDouble()));
             }
-        } else {
+        } else if (!islet) {
             planRivers(r);
             planLakes(r);
         }
@@ -227,7 +230,9 @@ public final class IslandPlan {
     /** Base terrain height (absolute y, before rivers/lakes) at (x,z). */
     public double relief(double x, double z, double inland) {
         double h;
-        if (regions.length < 2) {
+        if (islet) {
+            h = 5 + 1.2 * n(x, z, 26, 2);
+        } else if (regions.length < 2) {
             h = biomeRelief(biome, x, z, inland);
         } else {
             double qx = regionX(x, z), qz = regionZ(x, z);
@@ -995,6 +1000,9 @@ public final class IslandPlan {
     }
 
     private List<ElysiumWorld.Spring> computeSprings() {
+        if (islet) {
+            return List.of();
+        }
         SplittableRandom r = new SplittableRandom(salt ^ 0x5915);
         int coastal, interior = 0;
         switch (biome) {
@@ -1085,7 +1093,7 @@ public final class IslandPlan {
     /** Loose giant chains: straight down from the underside, and out over the edge from the coast. */
     private List<ElysiumWorld.HangingChain> computeChains() {
         List<ElysiumWorld.HangingChain> out = new ArrayList<>();
-        if (platform) {
+        if (platform || islet) {
             return out;
         }
         SplittableRandom r = new SplittableRandom(salt ^ 0xC4A15L);
@@ -1154,7 +1162,7 @@ public final class IslandPlan {
 
     private List<ElysiumWorld.Site> computeSites() {
         List<ElysiumWorld.Site> out = new ArrayList<>();
-        if (platform) {
+        if (platform || islet) {
             return out;
         }
         SplittableRandom r = new SplittableRandom(salt ^ 0x517E);

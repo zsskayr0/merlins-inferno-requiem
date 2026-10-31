@@ -58,6 +58,8 @@ java -Djava.awt.headless=true -cp /home/claude/work/corebuild Preview 1 /home/cl
 
 15. **Rock**: no strata. Every island is a calcite crust (`ElysiumPalette.CRUST`, wobbled by `patch`) over Arganite, with veins from ore features: andesite through Arganite, quartzite through both. The rock columns of `design-bible.md` are out of date.
 
+16. **Spawn islets**: `ElysiumWorld.buildS` (one per super cell, stage S) puts a small Lark Meadows island (radius `SPAWN_ISLET_R`, no rivers, sites, springs or chains) beside each land island that has room, skipping seas and cold biomes, in a gap clear of other bodies and spans, and wholly inside the cell so cells need not see each other's islets. A flat `STONE_ARCH` joins each to its host, about 50 blocks long. They are planned from stages A and B and merged into `spansIn` and stage C. `nearestSpawnIslet` finds one for a block. Travel (`ElysiumDimension`) is Nether-like at `SCALE` = 70: a way in goes to the portal nearest its scaled coordinates, else to the nearest islet. A portal other than the one you arrived by opens at its coordinates x 70 outside, raising a frame if none is near. Key-lit portals are recorded in `ElysiumPortals`, so they are found again. Terrain already generated in a save stays as it is, so old worlds see only a floating plinth.
+
 ## Tunables
 `EMPTY_CELL_CHANCE`, `EMPTY_PART_CHANCE`, `MEGA`, `SEA_WIDTH`, `SEA_JITTER`, `SEA_MIN_CELLS`, `REGION_BLEND`, `ISLET_LEVEL`, `SUPER`, `CELL_MARGIN`, `MAX_BRIDGE_GAP`, `MAX_CHAIN_GAP` (ElysiumWorld); the climate anchors; the single/quad (0.7)
 and small (0.45) probabilities in `buildA`; per-biome constants in `IslandPlan.relief`, `planRivers`, `planLakes`;
