@@ -48,6 +48,10 @@ final class Pal {
     static final BlockState TUFF_BRICKS = Blocks.TUFF_BRICKS.defaultBlockState();
     static final BlockState POLISHED_ANDESITE = Blocks.POLISHED_ANDESITE.defaultBlockState();
 
+    // ---- giant chains and bridge stringers: dark enough to read against the cloud sea, without going black ----
+    static final BlockState CHAIN_LINK = Blocks.TUFF_BRICKS.defaultBlockState();
+    static final BlockState CHAIN_LINK_ACCENT = Blocks.POLISHED_TUFF.defaultBlockState();
+
     // ---- rusted metal (industrial ruin) ----
     static final BlockState OX_COPPER = Blocks.OXIDIZED_COPPER.defaultBlockState();
     static final BlockState WE_COPPER = Blocks.WEATHERED_COPPER.defaultBlockState();

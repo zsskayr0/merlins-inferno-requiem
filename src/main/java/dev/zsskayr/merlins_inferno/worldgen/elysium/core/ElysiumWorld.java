@@ -16,12 +16,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * Signatures here must not change without the tech lead.
  *
  * <h2>Layout</h2>
- * The plane is cut into {@link #SUPER}-block super cells. Each super cell holds either one LARGE/GIANT island or a
- * 2x2 quad of SMALL/MEDIUM islands, every island kept inside its (sub)cell with a 30-block margin so islands can never
- * overlap and the cloud-sea gap is at least 60. The climate (temperature, humidity, ruggedness; very low frequency)
+ * The plane is cut into {@link #SUPER}-block super cells. Each super cell holds nothing, one LARGE/GIANT island, or two to
+ * four SMALL/MEDIUM islands in uneven parts of the cell, placed loosely so the cell grid does not show; every island stays
+ * inside its part with a 30-block margin so islands can never overlap and the cloud-sea gap is at least 60. The climate (temperature, humidity, ruggedness; very low frequency)
  * at the cell picks the layout and each island's biome among the biomes that allow its size. Spans (bridges, giant
  * chains) and Chainfall platforms between neighbouring islands are computed per super cell in a second stage; a third
  * stage lists every body that touches a cell so {@link #sample} only scans a handful of candidates.
+ * The exception is the Glass Sea at its largest: colossal islands scattered about 14 km apart (see {@link #seaOfBlock}), each
+ * owned by one cell and covering the 3x3 cells around it, which stay otherwise empty. Elsewhere, cells whose own climate is
+ * near enough pick ordinary MEDIUM or LARGE Glass Seas like any other biome.
  * See docs/elysium/core-notes.md.
  */
 public final class ElysiumWorld {
@@ -38,12 +41,27 @@ public final class ElysiumWorld {
     /** Bridges for facing coasts up to this gap; giant chains + Chainfall platforms above it, up to {@link #MAX_CHAIN_GAP}. */
     public static final int MAX_BRIDGE_GAP = 300;
     public static final int MAX_CHAIN_GAP = 1500;
+    /** Side, in super cells, of the blocks that each offer one candidate colossal Glass Sea: about 14 km, once the rows are staggered. */
+    public static final int MEGA = 7;
+    /** How far, in super cells, a sea's owner cell strays from its block's centre. Its 3x3 cells always stay inside the block. */
+    private static final int SEA_JITTER = 2;
+    /** Two seas closer than this many super cells (about 10 km) cannot both stand: the one with the higher priority does. */
+    private static final double SEA_MIN_CELLS = 5.5;
+    /** Share of super cells left as open sky. */
+    private static final double EMPTY_CELL_CHANCE = 0.1;
+    /** Share of the parts of a split super cell left as open sky. */
+    private static final double EMPTY_PART_CHANCE = 0.12;
+    /** A colossal island is three large ones across. */
+    private static final double SEA_WIDTH = 4200;
+    /** Farthest, in super cells, a colossal island's crossings can reach from the cell that owns them. */
+    private static final int MEGA_REACH = 3;
 
     public final long seed;
     private final Noise nz;
     private final ConcurrentHashMap<Long, CellA> cellsA = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, CellB> cellsB = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, CellC> cellsC = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, int[]> seaBlocks = new ConcurrentHashMap<>();
     private final ThreadLocal<BiomeCache> biomeColumn = ThreadLocal.withInitial(BiomeCache::new);
 
     /** Last column sampled by {@link #biomeAt} on this thread (the biome source asks many y per column). */
@@ -122,7 +140,7 @@ public final class ElysiumWorld {
             lowest = y == c.bottom;
         }
         if (m == null || m == Mat.AIR || m == Mat.WATER) {
-            m = Mat.STONE;
+            m = Mat.ARGANITE;
         }
         if (lowest) {
             m = supported(m);
@@ -134,7 +152,7 @@ public final class ElysiumWorld {
     public static Mat supported(Mat m) {
         return switch (m) {
             case SAND -> Mat.SANDSTONE;
-            case GRAVEL -> Mat.STONE;
+            case GRAVEL -> Mat.ARGANITE;
             case SNOW_LAYER, POWDER_SNOW -> Mat.SNOW_BLOCK;
             case MOSS_CARPET, HANGING_ROOTS, CAVE_VINES, GLOW_LICHEN_CEIL -> Mat.DIRT;
             default -> m;
@@ -175,10 +193,15 @@ public final class ElysiumWorld {
     /** Spans (bridges, chains) whose bounding box touches the rectangle. */
     public List<Span> spansIn(int minX, int minZ, int maxX, int maxZ) {
         List<Span> out = new ArrayList<>();
-        int sx0 = Math.floorDiv(minX, SUPER) - 1, sx1 = Math.floorDiv(maxX, SUPER) + 1;
-        int sz0 = Math.floorDiv(minZ, SUPER) - 1, sz1 = Math.floorDiv(maxZ, SUPER) + 1;
-        for (int sx = sx0; sx <= sx1; sx++) {
-            for (int sz = sz0; sz <= sz1; sz++) {
+        int cx0 = Math.floorDiv(minX, SUPER), cx1 = Math.floorDiv(maxX, SUPER);
+        int cz0 = Math.floorDiv(minZ, SUPER), cz1 = Math.floorDiv(maxZ, SUPER);
+        for (int sx = cx0 - MEGA_REACH; sx <= cx1 + MEGA_REACH; sx++) {
+            for (int sz = cz0 - MEGA_REACH; sz <= cz1 + MEGA_REACH; sz++) {
+                // a normal cell's crossings stay within one cell of it; only a colossal island's reach farther
+                boolean near = sx >= cx0 - 1 && sx <= cx1 + 1 && sz >= cz0 - 1 && sz <= cz1 + 1;
+                if (!near && !isMegaCentre(sx, sz)) {
+                    continue;
+                }
                 for (Span s : cellB(sx, sz).spans) {
                     int pad = s.width() + 2;
                     if (Math.max(s.ax(), s.bx()) + pad >= minX && Math.min(s.ax(), s.bx()) - pad <= maxX
@@ -433,9 +456,72 @@ public final class ElysiumWorld {
         return a;
     }
 
+    /** Each row of blocks slides sideways by its own amount, so the seas never line up in columns. */
+    private int seaRowShift(int mz) {
+        return (int) (Noise.unit(Noise.hash(seed, mz, 0, 0x5EC)) * MEGA);
+    }
+
+    private int seaBlockX(int sx, int mz) {
+        return Math.floorDiv(sx - seaRowShift(mz), MEGA);
+    }
+
+    /** The cell block (mx, mz) would put a sea in: {cell x, cell z}. */
+    private int[] seaCandidate(int mx, int mz) {
+        long h = Noise.hash(seed, mx, mz, 0x5EA);
+        int jx = (int) (Noise.unit(Noise.mix(h + 1)) * (2 * SEA_JITTER + 1)) - SEA_JITTER;
+        int jz = (int) (Noise.unit(Noise.mix(h + 2)) * (2 * SEA_JITTER + 1)) - SEA_JITTER;
+        return new int[] {mx * MEGA + seaRowShift(mz) + MEGA / 2 + jx, mz * MEGA + MEGA / 2 + jz};
+    }
+
+    private double seaPriority(int mx, int mz) {
+        return Noise.unit(Noise.mix(Noise.hash(seed, mx, mz, 0x5EA) + 3));
+    }
+
+    /**
+     * The owner cell of the Glass Sea in block (mx, mz), or an empty array when it has none. A candidate stands unless a
+     * neighbouring candidate with a higher priority sits too close, which every chunk can work out alone. Footprints stay
+     * inside their blocks, so a cell only ever has its own block's sea to think about.
+     */
+    private int[] seaOfBlock(int mx, int mz) {
+        return seaBlocks.computeIfAbsent(key(mx, mz), k -> {
+            int[] c = seaCandidate(mx, mz);
+            double priority = seaPriority(mx, mz);
+            for (int row = mz - 1; row <= mz + 1; row++) {
+                int base = seaBlockX(c[0], row);
+                for (int m = base - 1; m <= base + 1; m++) {
+                    if (m == mx && row == mz) {
+                        continue;
+                    }
+                    int[] o = seaCandidate(m, row);
+                    if (Math.hypot(o[0] - c[0], o[1] - c[1]) < SEA_MIN_CELLS && seaPriority(m, row) > priority) {
+                        return new int[0];
+                    }
+                }
+            }
+            return c;
+        });
+    }
+
+    private boolean isMegaCentre(int sx, int sz) {
+        int mz = Math.floorDiv(sz, MEGA);
+        int[] sea = seaOfBlock(seaBlockX(sx, mz), mz);
+        return sea.length > 0 && sea[0] == sx && sea[1] == sz;
+    }
+
     private CellA buildA(int sx, int sz) {
         CellA cell = new CellA();
         SplittableRandom r = new SplittableRandom(Noise.hash(seed, sx, sz, 0xCE11));
+        int mz = Math.floorDiv(sz, MEGA);
+        int[] sea = seaOfBlock(seaBlockX(sx, mz), mz);
+        if (sea.length > 0 && Math.abs(sx - sea[0]) <= 1 && Math.abs(sz - sea[1]) <= 1) {
+            if (sx == sea[0] && sz == sea[1]) {
+                addColossalSea(cell, r, sx, sz);
+            }
+            return cell;
+        }
+        if (r.nextDouble() < EMPTY_CELL_CHANCE) {
+            return cell;
+        }
         double ccx = (sx + 0.5) * SUPER, ccz = (sz + 0.5) * SUPER;
         double[] clim = climate(ccx, ccz);
         ElysiumBiome nearest = pick(clim, null);
@@ -450,29 +536,72 @@ public final class ElysiumWorld {
         if (single) {
             ElysiumBiome.Size size = nearest == ElysiumBiome.LARK_MEADOWS && r.nextDouble() < 0.4
                     ? ElysiumBiome.Size.GIANT : ElysiumBiome.Size.LARGE;
-            double width = size == ElysiumBiome.Size.GIANT ? 1600 + 400 * r.nextDouble() : 1300 + 200 * r.nextDouble();
-            addIsland(cell, r, sx, sz, 0, ccx, ccz, SUPER / 2.0, width, size);
+            // the narrower it is, the farther it can stray from the middle of its cell
+            double width = size == ElysiumBiome.Size.GIANT ? 1600 + 400 * r.nextDouble() : 1000 + 500 * r.nextDouble();
+            addIsland(cell, r, sx, sz, 0, ccx, ccz, SUPER / 2.0, SUPER / 2.0, width, size);
         } else {
-            double half = SUPER / 4.0;
-            for (int i = 0; i < 4; i++) {
-                double qx = sx * SUPER + half * (1 + 2 * (i & 1)), qz = sz * SUPER + half * (1 + 2 * (i >> 1));
+            List<double[]> parts = splitCell(r, sx * SUPER, sz * SUPER);
+            for (int i = 0; i < parts.size(); i++) {
+                if (r.nextDouble() < EMPTY_PART_CHANCE) {
+                    continue;
+                }
+                double[] p = parts.get(i);
                 ElysiumBiome.Size size = r.nextDouble() < 0.45 ? ElysiumBiome.Size.SMALL : ElysiumBiome.Size.MEDIUM;
-                double width = size == ElysiumBiome.Size.SMALL ? 380 + 160 * r.nextDouble() : 650 + 300 * r.nextDouble();
-                addIsland(cell, r, sx, sz, i, qx, qz, half, width, size);
+                double width = size == ElysiumBiome.Size.SMALL ? 320 + 240 * r.nextDouble() : 600 + 400 * r.nextDouble();
+                addIsland(cell, r, sx, sz, i, p[0] + p[2] / 2, p[1] + p[3] / 2, p[2] / 2, p[3] / 2, width, size);
             }
         }
         return cell;
     }
 
-    private void addIsland(CellA cell, SplittableRandom r, int sx, int sz, int slot, double qx, double qz, double half,
+    /** Cuts a super cell into 2 to 4 uneven rectangles {x, z, width, depth}, always splitting the largest along its long side. */
+    private static List<double[]> splitCell(SplittableRandom r, double x, double z) {
+        List<double[]> parts = new ArrayList<>();
+        parts.add(new double[] {x, z, SUPER, SUPER});
+        int n = 2 + r.nextInt(3);
+        while (parts.size() < n) {
+            int big = 0;
+            for (int i = 1; i < parts.size(); i++) {
+                if (parts.get(i)[2] * parts.get(i)[3] > parts.get(big)[2] * parts.get(big)[3]) {
+                    big = i;
+                }
+            }
+            double[] p = parts.remove(big);
+            double cut = 0.36 + 0.28 * r.nextDouble();
+            if (p[2] >= p[3]) {
+                parts.add(new double[] {p[0], p[1], p[2] * cut, p[3]});
+                parts.add(new double[] {p[0] + p[2] * cut, p[1], p[2] * (1 - cut), p[3]});
+            } else {
+                parts.add(new double[] {p[0], p[1], p[2], p[3] * cut});
+                parts.add(new double[] {p[0], p[1] + p[3] * cut, p[2], p[3] * (1 - cut)});
+            }
+        }
+        return parts;
+    }
+
+    /** The Glass Sea: one island inside the 3x3 super cells around (sx, sz). */
+    private void addColossalSea(CellA cell, SplittableRandom r, int sx, int sz) {
+        double half = 1.5 * SUPER, qx = (sx + 0.5) * SUPER, qz = (sz + 0.5) * SUPER;
+        double R = SEA_WIDTH / 2;
+        double slack = Math.max(0, half - CELL_MARGIN - IslandPlan.extent(R));
+        int icx = (int) Math.floor(qx + (r.nextDouble() * 2 - 1) * slack), icz = (int) Math.floor(qz + (r.nextDouble() * 2 - 1) * slack);
+        int ext = (int) Math.ceil(IslandPlan.extent(R));
+        int baseY = 190 + r.nextInt(16);
+        Island is = new Island(packIndex(sx, sz, 0), icx, icz, (int) Math.round(2 * R), ElysiumBiome.Size.COLOSSAL, ElysiumBiome.GLASS_SEA,
+                baseY, icx - ext, icz - ext, icx + ext, icz + ext);
+        cell.plans.add(new IslandPlan(is, R, nz, seed, new ElysiumBiome[0]));
+    }
+
+    private void addIsland(CellA cell, SplittableRandom r, int sx, int sz, int slot, double qx, double qz, double halfX, double halfZ,
                            double width, ElysiumBiome.Size size) {
+        double half = Math.min(halfX, halfZ);
         double maxR = (half - CELL_MARGIN - 2) / (1.062 + IslandPlan.amp(width / 2) + 0.035);
         if (maxR <= 760 && width / 2 > 760) {
             maxR = (half - CELL_MARGIN - 2) / (1.092 + IslandPlan.amp(800));
         }
         double R = Math.min(width / 2, maxR);
-        double slack = Math.max(0, half - CELL_MARGIN - IslandPlan.extent(R));
-        double cx = qx + (r.nextDouble() * 2 - 1) * slack, cz = qz + (r.nextDouble() * 2 - 1) * slack;
+        double reach = CELL_MARGIN + IslandPlan.extent(R);
+        double cx = qx + (r.nextDouble() * 2 - 1) * Math.max(0, halfX - reach), cz = qz + (r.nextDouble() * 2 - 1) * Math.max(0, halfZ - reach);
         double[] clim = climate(cx, cz);
         ElysiumBiome biome = pick(clim, size);
         if (size == ElysiumBiome.Size.SMALL) {
@@ -578,13 +707,29 @@ public final class ElysiumWorld {
     private CellB buildB(int sx, int sz) {
         CellB cell = new CellB();
         List<IslandPlan> around = new ArrayList<>();
-        for (int dx = -1; dx <= 2; dx++) {
-            for (int dz = -2; dz <= 2; dz++) {
-                around.addAll(cellA(sx + dx, sz + dz).plans);
+        boolean colossal = isMegaCentre(sx, sz);
+        for (int dx = -MEGA_REACH; dx <= MEGA_REACH; dx++) {
+            for (int dz = -MEGA_REACH; dz <= MEGA_REACH; dz++) {
+                // crossings may pass near anything in the usual window, and near any colossal island farther off
+                if (colossal || (dx >= -1 && dx <= 2 && dz >= -2 && dz <= 2) || isMegaCentre(sx + dx, sz + dz)) {
+                    around.addAll(cellA(sx + dx, sz + dz).plans);
+                }
             }
         }
         List<double[]> segs = new ArrayList<>();
         int[][] nbr = {{0, 0}, {1, 0}, {0, 1}, {1, 1}, {1, -1}};
+        if (colossal) {
+            // the cells it covers are empty, so a colossal island's neighbours are the cells around them
+            List<int[]> ring = new ArrayList<>();
+            for (int dx = -MEGA_REACH; dx <= MEGA_REACH; dx++) {
+                for (int dz = -MEGA_REACH; dz <= MEGA_REACH; dz++) {
+                    if (Math.abs(dx) > 1 || Math.abs(dz) > 1) {
+                        ring.add(new int[] {dx, dz});
+                    }
+                }
+            }
+            nbr = ring.toArray(new int[0][]);
+        }
         int slot = 4;
         Column col = new Column();
         List<IslandPlan> mine = cellA(sx, sz).plans;
@@ -593,6 +738,9 @@ public final class ElysiumWorld {
                 for (IslandPlan b : cellA(sx + nd[0], sz + nd[1]).plans) {
                     if (nd[0] == 0 && nd[1] == 0 && b.island.index() <= a.island.index()) {
                         continue;
+                    }
+                    if (b.island.size() == ElysiumBiome.Size.COLOSSAL && b.island.index() <= a.island.index()) {
+                        continue; // two seas side by side: either one's turn would do
                     }
                     double cdx = b.cx - a.cx, cdz = b.cz - a.cz;
                     double cd = Math.sqrt(cdx * cdx + cdz * cdz);
@@ -786,8 +934,12 @@ public final class ElysiumWorld {
     private CellC buildC(int sx, int sz) {
         int x0 = sx * SUPER - 1, z0 = sz * SUPER - 1, x1 = x0 + SUPER + 2, z1 = z0 + SUPER + 2;
         List<IslandPlan> out = new ArrayList<>();
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
+        for (int dx = -MEGA_REACH; dx <= MEGA_REACH; dx++) {
+            for (int dz = -MEGA_REACH; dz <= MEGA_REACH; dz++) {
+                // a colossal island strings its platforms well past the usual one cell
+                if ((Math.abs(dx) > 1 || Math.abs(dz) > 1) && !isMegaCentre(sx + dx, sz + dz)) {
+                    continue;
+                }
                 List<IslandPlan> all = new ArrayList<>(cellA(sx + dx, sz + dz).plans);
                 all.addAll(cellB(sx + dx, sz + dz).platforms);
                 for (IslandPlan p : all) {

@@ -178,7 +178,7 @@ public final class ElysiumGameTests {
         int links = 0, lowest = Integer.MAX_VALUE, farthest = Integer.MIN_VALUE;
         for (BlockPos p : BlockPos.betweenClosed(o.offset(-12, -85, -12), o.offset(40, 12, 12))) {
             BlockState state = level.getBlockState(p);
-            if (state.is(ModBlocks.ARGANITE.get()) || state.is(ModBlocks.ARGANITE_BRICKS.get())) {
+            if (state.is(net.minecraft.world.level.block.Blocks.TUFF_BRICKS) || state.is(net.minecraft.world.level.block.Blocks.POLISHED_TUFF)) {
                 links++;
                 lowest = Math.min(lowest, p.getY());
                 farthest = Math.max(farthest, p.getX());

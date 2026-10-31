@@ -47,20 +47,25 @@ java -Djava.awt.headless=true -cp /home/claude/work/corebuild Preview 1 /home/cl
 7. **Stage C**: per super cell, the list of every island and platform whose bbox touches it. `sample()` scans only that list.
 8. **Springs and sites** are computed lazily per island (volatile cache).
 
-9. **Biome regions**: a land island of 2 to 6 seeds (`planRegions`): its own biome plus its nearest climate neighbours, never a sea and never cold next to warm. A column belongs to the nearest seed after a domain warp, and the relief is a weighted mix of every region within `REGION_BLEND`, so borders are ramps. Sea islands keep one biome.
+9. **Biome regions**: a land island has 1 to 6 seeds (`planRegions`), as many as a slow noise and its size allow: its own biome plus its nearest climate neighbours, never a sea and never cold next to warm. A column belongs to the nearest seed after a domain warp, and the relief is a weighted mix of every region within `REGION_BLEND`, so borders are ramps. Sea islands keep one biome.
 10. **Coast**: `coastFall` brings tall relief down to a low lip over 20 + 0.85 x height blocks, in rough ledges. Sea rims and platforms are exempt.
 11. **Hanging chains**: `IslandPlan.computeChains`, drawn by `SpanBuilder.buildHanging` with the giant chain's links. Tied to one island only.
 12. **Cloud layer**: `cloudTop` / `cloudTone` give a 2-block layer of `CloudSeaBlock` in every column. It only renders while a shader pack runs; otherwise `ElysiumCloudSea` draws the sheets.
 
+13. **Glass Sea**: comes in several scales. Ordinary cells pick it like any biome, at MEDIUM or LARGE. Colossal ones, 4200 wide (three large islands), come from a scatter: each `MEGA` x `MEGA` block of super cells offers one candidate, every row of blocks slides by its own hash, the candidate strays up to `SEA_JITTER` cells, and one closer than `SEA_MIN_CELLS` to a higher-priority neighbour is dropped (`seaOfBlock`). That averages about 14 km apart with no lines. A sea covers the 3x3 cells around its owner and its crossings reach `MEGA_REACH` cells, so `spansIn`, `buildB` and `buildC` also look at colossal owners that far away.
+
+14. **Layout and shapes**: a super cell is open sky (`EMPTY_CELL_CHANCE`), one LARGE/GIANT island, or `splitCell`'s 2 to 4 uneven rectangles, each holding a SMALL/MEDIUM island that can stray along the free side of its rectangle or be left empty (`EMPTY_PART_CHANCE`). Each island draws an `IslandPlan.Shape` (round, oval, peanut, trefoil, kidney, crescent, teardrop) that scales the coast radius; it never exceeds the radius, so `extent` still bounds the island, and the underside code is untouched.
+
+15. **Rock**: no strata. Every island is a calcite crust (`ElysiumPalette.CRUST`, wobbled by `patch`) over Arganite, with veins from ore features: andesite through Arganite, quartzite through both. The rock columns of `design-bible.md` are out of date.
+
 ## Tunables
-`REGION_BLEND`, `ISLET_LEVEL`, `SUPER`, `CELL_MARGIN`, `MAX_BRIDGE_GAP`, `MAX_CHAIN_GAP` (ElysiumWorld); the climate anchors; the single/quad (0.7)
+`EMPTY_CELL_CHANCE`, `EMPTY_PART_CHANCE`, `MEGA`, `SEA_WIDTH`, `SEA_JITTER`, `SEA_MIN_CELLS`, `REGION_BLEND`, `ISLET_LEVEL`, `SUPER`, `CELL_MARGIN`, `MAX_BRIDGE_GAP`, `MAX_CHAIN_GAP` (ElysiumWorld); the climate anchors; the single/quad (0.7)
 and small (0.45) probabilities in `buildA`; per-biome constants in `IslandPlan.relief`, `planRivers`, `planLakes`;
 `coneDepth` / `rim` in the IslandPlan constructor.
 
 ## Known limitations
 - Gaps between islands range from 60 to about 900 blocks (single large islands in their 1900 cells leave wide gaps).
   GIANT islands are capped at about 1530 wide by the cell.
-- Glass Sea is rare (about 1% of islands) because its climate anchor is extreme.
 - There are many Chainfall platforms (about 5 per island); reduce `count` in `chainCrossing` if that is too busy.
 - Span crossings are checked only within one super cell, so spans owned by different cells can occasionally cross.
 - Springs and river mouths spill water off cliffs into the void; the MC side must handle where that water ends up (the world bottom).

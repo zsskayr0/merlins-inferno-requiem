@@ -33,6 +33,8 @@ public final class IslandPlan {
     final List<River> rivers = new ArrayList<>();
     final List<Lake> lakes = new ArrayList<>();
     final List<Peak> peaks = new ArrayList<>();
+    final Shape shape;
+    private final double shapeCos, shapeSin;
     /** Biome regions of this island; fewer than 2 means the whole island is {@link #biome}. */
     final Region[] regions;
     /** Chainfall natural arch (platforms only), null when none. */
@@ -44,6 +46,39 @@ public final class IslandPlan {
     record Lake(double x, double z, double r, int level) {}
 
     record Peak(ElysiumBiome biome, double x, double z, double r, double h) {}
+
+    /**
+     * The overall figure of an island's outline, a share of the full radius by direction (at most 1, so {@link #extent} and
+     * every bounding box stay true). The figure is always star-shaped around the centre, so {@link #inland} keeps one
+     * coast per direction, and it fades out towards the centre, so the middle of the underside is not creased by it.
+     */
+    enum Shape {
+        ROUND(0.72, 1.0), OVAL(0.45, 0.65), PEANUT(0.6, 0.85), TREFOIL(0.8, 1.0), KIDNEY(0.7, 1.0), CRESCENT(0.75, 1.0), TEARDROP(0.65, 0.9);
+
+        final double minAspect, maxAspect;
+
+        Shape(double minAspect, double maxAspect) {
+            this.minAspect = minAspect;
+            this.maxAspect = maxAspect;
+        }
+
+        static Shape pick(SplittableRandom r) {
+            double u = r.nextDouble();
+            return u < 0.18 ? ROUND : u < 0.38 ? OVAL : u < 0.53 ? PEANUT : u < 0.65 ? TREFOIL : u < 0.8 ? KIDNEY : u < 0.9 ? CRESCENT : TEARDROP;
+        }
+
+        /** Share of the radius kept in the unit direction (u, v). */
+        double reach(double u, double v) {
+            return switch (this) {
+                case PEANUT -> 0.74 + 0.26 * (u * u - v * v);
+                case TREFOIL -> 0.76 + 0.24 * (u * (u * u - v * v) - v * (2 * u * v));
+                case KIDNEY -> 1 - 0.5 * Noise.smoothstep(0.55, 1, u);
+                case CRESCENT -> 1 - 0.66 * Noise.smoothstep(0.3, 1, u);
+                case TEARDROP -> 0.62 + 0.38 * (u + 1) * (u + 1) / 4;
+                default -> 1;
+            };
+        }
+    }
 
     /** A part of the island that belongs to one biome: the columns nearer to this seed than to any other. */
     record Region(double x, double z, ElysiumBiome biome) {}
@@ -61,7 +96,13 @@ public final class IslandPlan {
         this.cx = island.cx() + 0.5;
         this.cz = island.cz() + 0.5;
         this.R = R;
-        this.aspect = platform ? 0.75 + 0.25 * r.nextDouble() : 0.72 + 0.28 * r.nextDouble();
+        this.shape = platform ? Shape.ROUND : Shape.pick(r);
+        double figure = r.nextDouble() * Math.PI * 2;
+        this.shapeCos = Math.cos(figure);
+        this.shapeSin = Math.sin(figure);
+        double flat = platform ? 0.75 + 0.25 * r.nextDouble() : shape.minAspect + (shape.maxAspect - shape.minAspect) * r.nextDouble();
+        // a colossal sea has to read as huge whichever way you cross it
+        this.aspect = island.size() == ElysiumBiome.Size.COLOSSAL ? Math.max(flat, 0.72) : flat;
         double ang = r.nextDouble() * Math.PI;
         this.cosA = Math.cos(ang);
         this.sinA = Math.sin(ang);
@@ -122,6 +163,10 @@ public final class IslandPlan {
         double edge = R * (1.0 + amp * Noise.clamp(lobes, -1, 1)
                 + 0.045 * nz.noise(cu * 5.3 + 40.0, cv * 5.3 - 21.0)
                 + 0.012 * nz.noise(cu * 23.0 + 9, cv * 23.0 + 1));
+        if (shape != Shape.ROUND && shape != Shape.OVAL) {
+            double kept = shape.reach(cu * shapeCos - cv * shapeSin, cu * shapeSin + cv * shapeCos);
+            edge *= 1 - (1 - kept) * Noise.smoothstep(0, 0.6 * R, d);
+        }
         double f = Math.sqrt(cu * cu + cv * cv * aspect * aspect);
         return (edge - d) * f;
     }
@@ -279,7 +324,7 @@ public final class IslandPlan {
                 double floor = -12 - 22 * Noise.smoothstep(ringW, ringW + 140, inland) + 5 * n(x, z, 70, 2);
                 h = Noise.lerp(rimH, floor, Noise.smoothstep(ringW, ringW + 45, inland));
                 // open water for the most part: an islet is a rare thing to spot far off
-                double iv = n(x + 333, z - 777, 230, 3);
+                double iv = n(x + 333, z - 777, 320, 3);
                 if (iv > ISLET_LEVEL) {
                     h = Math.max(h, 6 + (iv - ISLET_LEVEL) * 70);
                 }
@@ -313,7 +358,7 @@ public final class IslandPlan {
     /** Width of the band where neighbouring regions' reliefs mix (blocks of difference in distance to their seeds). */
     private static final double REGION_BLEND = 110;
     /** Glass Sea islets rise where a slow noise passes this; the fbm rarely gets above 0.6. */
-    private static final double ISLET_LEVEL = 0.56;
+    private static final double ISLET_LEVEL = 0.62;
 
     private double regionX(double x, double z) {
         return x + 130 * nz.noise((x + ox) / 300.0, (z + oz) / 300.0) + 16 * nz.noise((x + oz) / 37.0, (z - ox) / 37.0);
@@ -349,13 +394,21 @@ public final class IslandPlan {
         return best;
     }
 
-    /** Seeds spread around the centre: the island's own biome first, then the climate neighbours in turn. */
+    /**
+     * Seeds spread around the centre: the island's own biome first, then the climate neighbours in turn. A slow noise says
+     * how mixed this part of the sky is, so some islands keep to one biome and others hold as many as their size allows.
+     */
     private Region[] planRegions(SplittableRandom r, ElysiumBiome[] near) {
         if (platform || near.length == 0) {
             return new Region[0];
         }
         int w = island.width();
-        int n = w < 500 ? 2 : (w < 900 ? 3 : (w < 1500 ? 4 : 6));
+        int most = w < 500 ? 2 : (w < 900 ? 3 : (w < 1500 ? 4 : 6));
+        double mixed = 0.5 + 0.5 * Noise.clamp(1.8 * nz.fbm(cx / 5200.0 + 77.0, cz / 5200.0 - 41.0, 2) + 0.5 * (r.nextDouble() - 0.5), -1, 1);
+        int n = (int) Math.round(1 + (most - 1) * mixed);
+        if (n < 2) {
+            return new Region[0];
+        }
         Region[] out = new Region[n];
         double spin = r.nextDouble() * Math.PI * 2;
         for (int i = 0; i < n; i++) {

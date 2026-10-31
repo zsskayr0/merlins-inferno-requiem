@@ -24,9 +24,9 @@ import dev.zsskayr.merlins_inferno.worldgen.elysium.core.ElysiumWorld.Span;
  *       elliptical intrados with alternating voussoirs and a keystone at the crown, vines hanging off the faces.</li>
  *   <li>{@code ROPE}: spruce/oak slab deck (default 3) hanging in a catenary ({@code sag}), log stringers with fence
  *       railings and taller posts every 6 blocks, crossbeams underneath, vine drapes.</li>
- *   <li>{@code VINE_CHAIN}: mossy stone slab deck (default 3) in a catenary, Arganite stringers, two chain handrails on
+ *   <li>{@code VINE_CHAIN}: mossy stone slab deck (default 3) in a catenary, tuff brick stringers, two chain handrails on
  *       vertical chain hangers, moss and long vines.</li>
- *   <li>{@code GIANT_CHAIN}: a huge chain of 9-block diamond links in alternating planes, Arganite, hanging in
+ *   <li>{@code GIANT_CHAIN}: a huge chain of 9-block diamond links in alternating planes, tuff bricks, hanging in
  *       a catenary between the anchors under the two cliffs; moss on top of the links, vines under them.</li>
  * </ul>
  * Bridge anchors are the deck block at each coast; the deck carries on {@value #ABUT} blocks into the island as a flat
@@ -307,11 +307,11 @@ public final class SpanBuilder {
                     return;
                 }
                 // rail: stringer, chain hanger every 3 blocks, horizontal chain handrail on top
-                b.set(x, slabY, z, Pal.ARG_BRICKS);
+                b.set(x, slabY, z, Pal.CHAIN_LINK);
                 boolean hanger = Math.abs(t) < 0.75 || Math.abs(t - line.len) < 0.75 || every(t, 3.0, 0.0);
                 if (hanger) {
                     b.set(x, slabY + 1, z, Pal.CHAIN_Y);
-                    b.set(x, slabY + 2, z, Pal.ARG_BRICKS);
+                    b.set(x, slabY + 2, z, Pal.CHAIN_LINK);
                 } else {
                     b.set(x, slabY + 2, z, Pal.chain(along));
                 }
@@ -442,7 +442,7 @@ public final class SpanBuilder {
                 nx = vx; ny = vy; nz = vz;
                 wx2 = hx; wy2 = 0.0; wz2 = hz;
             }
-            BlockState material = (k % 7 == 3) ? Pal.ARG : Pal.ARG_BRICKS;
+            BlockState material = (k % 7 == 3) ? Pal.CHAIN_LINK_ACCENT : Pal.CHAIN_LINK;
             int steps = LINK * 6;
             for (int edge = 0; edge < 4; edge++) {
                 double[] p = DIAMOND[edge], q = DIAMOND[(edge + 1) % 4];

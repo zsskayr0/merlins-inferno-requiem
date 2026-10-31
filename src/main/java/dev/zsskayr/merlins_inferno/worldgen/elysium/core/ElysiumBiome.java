@@ -1,7 +1,7 @@
 package dev.zsskayr.merlins_inferno.worldgen.elysium.core;
 
 /**
- * The El'ysium biomes. An island has a main biome and, unless it is a sea, regions of its climate neighbours. CHAINFALL is the band of stepping-stone
+ * The El'ysium biomes. An island has a main biome and, unless it is a sea, may hold regions of its climate neighbours. CHAINFALL is the band of stepping-stone
  * platforms around the giant chains; UNDERHANG is the 3D biome of the space under/inside the islands' undersides.
  * {@link #id} is the biome JSON path under data/merlins_inferno/worldgen/biome/.
  */
@@ -14,7 +14,7 @@ public enum ElysiumBiome {
     STONECROWN_CLIFFS("stonecrown_cliffs", Size.MEDIUM, Size.MEDIUM),
     CASCADE_VALE("cascade_vale", Size.MEDIUM, Size.LARGE),
     MISTFALL_GORGE("mistfall_gorge", Size.SMALL, Size.MEDIUM),
-    GLASS_SEA("glass_sea", Size.LARGE, Size.LARGE),
+    GLASS_SEA("glass_sea", Size.MEDIUM, Size.COLOSSAL),
     AZURE_SHALLOWS("azure_shallows", Size.MEDIUM, Size.MEDIUM),
     RIME_EXPANSE("rime_expanse", Size.LARGE, Size.LARGE),
     FROSTCREST_RANGE("frostcrest_range", Size.MEDIUM, Size.MEDIUM),
@@ -23,7 +23,7 @@ public enum ElysiumBiome {
 
     /** Island size classes, by width in blocks. PLATFORM = Chainfall stepping stones (40..160), not a real island. */
     public enum Size {
-        PLATFORM(40, 160), SMALL(300, 500), MEDIUM(500, 900), LARGE(900, 1500), GIANT(1500, 2200);
+        PLATFORM(40, 160), SMALL(300, 500), MEDIUM(500, 900), LARGE(900, 1500), GIANT(1500, 2200), COLOSSAL(3000, 9000);
         public final int minWidth, maxWidth;
         Size(int min, int max) { this.minWidth = min; this.maxWidth = max; }
     }

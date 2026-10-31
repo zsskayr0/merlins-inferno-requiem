@@ -32,12 +32,12 @@ Layer notation: top / sub / stone strata (bottom→top order of the repeating ba
 | Biome | Top / sub | Stone strata | Accents | Vegetation |
 |---|---|---|---|---|
 | Lark Meadows | grass / dirt | arganite 11, stone 4, arganite 7, diorite 1, arganite 3, andesite 3 | clay spots on banks, gravel/clay beds | meadow + plains flowers (yellow/white), sunflowers, tall grass, isolated oaks |
-| Windless Steppe | grass + coarse-dirt patches, rare gravel / dirt+coarse | arganite 8, stone 4, light-grey terracotta 2, arganite 6, terracotta 1, stone 3 | mossy boulders (forest_rock) | tall dry grass, savanna grass, dead bushes |
+| Windless Steppe | grass + coarse-dirt patches, rare gravel / dirt+coarse | arganite 8, stone 4, andesite 2, arganite 6, diorite 1, stone 3 | mossy boulders (forest_rock) | tall dry grass, savanna grass, dead bushes |
 | Highpine Forest | grass + podzol patches, coarse dirt / dirt | stone 9, andesite 4, stone 5, tuff 2, arganite 6 | moss tops on steep ledges, boulders | old-growth spruce, large ferns, taiga grass, berries |
 | Mossy Weald | moss / podzol / rooted dirt patches over grass | stone 8, andesite 3, tuff 2, stone 5, andesite 2 | moss + mossy cobble on cliffs, mud/clay pond beds | dark oaks (dense canopy), ferns, mushrooms, vines, lily pads |
 | Argent Peaks | grass → (thin soil) → snow block, powder snow pockets above ~y 268 | arganite 9, quartzite 2, arganite 6, calcite 1, arganite 4, diorite 1 (wobble 6 = veins) | gravel scree on rocky slopes, snow line y≈256 ±7 dithered | grove spruces on low slopes only (they cannot root on snow) |
 | Stonecrown Cliffs | grass + coarse dirt / dirt 2 | stone 8, andesite 4, stone 5, tuff 2, stone 3, andesite 3 | vertical bare columns (low slope threshold), vines | sparse oaks, grass, flowers |
-| Cascade Vale | grass + coarse dirt / dirt, coarse dirt | stone 5, orange terracotta 2, brown terracotta 2, stone 3, terracotta 2, coarse dirt 1, stone 4, orange terracotta 1, andesite 2 | gravel bars + clay in river | birch & oak, forest grass, flowers, sugar cane, vines |
+| Cascade Vale | grass + coarse dirt / dirt, coarse dirt | stone 5, andesite 2, tuff 2, stone 3, diorite 1, stone 4, andesite 3 | gravel bars + clay in river | birch & oak, forest grass, flowers, sugar cane, vines |
 | Mistfall Gorge | moss / grass / rooted dirt | stone 7, tuff 3, andesite 3, stone 5, tuff 2 | moss-covered walls (steep + patch), mud/clay bed | swamp oaks with vines, ferns, jungle grass, lily pads |
 | Glass Sea | calcite rims (inland<6) + grass | calcite 3, arganite 9, diorite 2, arganite 6, quartzite 1 | calcite beaches, calcite/clay/diorite sea bed (white bed = turquoise water) | seagrass, sea pickles, sparse oaks on islets |
 | Azure Shallows | sand (coast, rivers, patches) over sandstone; grass inland | sandstone 5, arganite 8, calcite 2, arganite 5 | sand beds over sandstone | warm-ocean corals, seagrass, sea pickles, sugar cane |

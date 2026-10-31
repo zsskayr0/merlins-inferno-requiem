@@ -9,8 +9,9 @@ package dev.zsskayr.merlins_inferno.worldgen.elysium.core;
  *
  * <p>Art rules encoded here (see docs/elysium/design-bible.md):
  * <ul>
- *   <li>Steep columns ({@link Column#slope}) lose their soil: cliffs read as rock walls with visible strata.</li>
- *   <li>Strata are bands by ABSOLUTE y, wobbled a few blocks by {@code patch} so they undulate along a cliff.</li>
+ *   <li>Steep columns ({@link Column#slope}) lose their soil: cliffs read as bare rock.</li>
+ *   <li>Every island's rock is a crust of calcite over a body of Arganite. Veins of andesite and quartzite are ore features
+ *       that run through it (andesite only through the Arganite), not part of this palette.</li>
  *   <li>Patches use {@code patch} thresholds, dithered only in a thin border band; column-level decisions use
  *       {@link #colHash} (stable for the whole column) so a column never flips grass/stone vertically.</li>
  *   <li>Gravity blocks (SAND, GRAVEL) only where at least 2 solid blocks lie below inside the column.</li>
@@ -33,83 +34,8 @@ public final class ElysiumPalette {
     /** Frostcrest: below this y, valley floors may show grass (for spruces). */
     static final int FROSTCREST_VALLEY_Y = 205;
 
-    // ---------------------------------------------------------------- strata
-
-    /** A periodic stack of bands by absolute y. Immutable, shared, thread-safe. */
-    static final class Strata {
-        final Mat[] lut;
-        final int wobble;
-
-        Strata(int wobble, Object... bands) {
-            int period = 0;
-            for (int i = 1; i < bands.length; i += 2) period += (Integer) bands[i];
-            lut = new Mat[period];
-            int k = 0;
-            for (int i = 0; i < bands.length; i += 2) {
-                Mat m = (Mat) bands[i];
-                int t = (Integer) bands[i + 1];
-                for (int j = 0; j < t; j++) lut[k++] = m;
-            }
-            this.wobble = wobble;
-        }
-
-        Mat at(int y, double patch) {
-            int yy = y + (int) Math.round(patch * wobble);
-            return lut[Math.floorMod(yy, lut.length)];
-        }
-    }
-
-    static final Strata S_LARK = new Strata(3,
-            Mat.ARGANITE, 11, Mat.STONE, 4, Mat.ARGANITE, 7, Mat.DIORITE, 1, Mat.ARGANITE, 3, Mat.ANDESITE, 3);
-    static final Strata S_STEPPE = new Strata(3,
-            Mat.ARGANITE, 8, Mat.STONE, 4, Mat.LIGHT_GRAY_TERRACOTTA, 2, Mat.ARGANITE, 6, Mat.TERRACOTTA, 1, Mat.STONE, 3);
-    static final Strata S_HIGHPINE = new Strata(3,
-            Mat.STONE, 9, Mat.ANDESITE, 4, Mat.STONE, 5, Mat.TUFF, 2, Mat.ARGANITE, 6);
-    static final Strata S_MOSSY = new Strata(3,
-            Mat.CALCITE, 3, Mat.STONE, 6, Mat.DIORITE, 2, Mat.STONE, 5, Mat.CALCITE, 1);
-    static final Strata S_ARGENT = new Strata(6,
-            Mat.ARGANITE, 9, Mat.QUARTZITE, 2, Mat.ARGANITE, 6, Mat.CALCITE, 1, Mat.ARGANITE, 4, Mat.DIORITE, 1);
-    static final Strata S_STONECROWN = new Strata(2,
-            Mat.STONE, 8, Mat.ANDESITE, 4, Mat.STONE, 5, Mat.TUFF, 2, Mat.STONE, 3, Mat.ANDESITE, 3);
-    static final Strata S_CASCADE = new Strata(3,
-            Mat.STONE, 5, Mat.ORANGE_TERRACOTTA, 2, Mat.BROWN_TERRACOTTA, 2, Mat.STONE, 3, Mat.TERRACOTTA, 2,
-            Mat.COARSE_DIRT, 1, Mat.STONE, 4, Mat.ORANGE_TERRACOTTA, 1, Mat.ANDESITE, 2);
-    static final Strata S_MISTFALL = new Strata(3,
-            Mat.STONE, 7, Mat.TUFF, 3, Mat.ANDESITE, 3, Mat.STONE, 5, Mat.TUFF, 2);
-    static final Strata S_GLASS = new Strata(3,
-            Mat.CALCITE, 3, Mat.ARGANITE, 9, Mat.DIORITE, 2, Mat.ARGANITE, 6, Mat.QUARTZITE, 1);
-    static final Strata S_AZURE = new Strata(2,
-            Mat.SANDSTONE, 5, Mat.ARGANITE, 8, Mat.CALCITE, 2, Mat.ARGANITE, 5);
-    static final Strata S_RIME = new Strata(3,
-            Mat.STONE, 7, Mat.DIORITE, 2, Mat.ARGANITE, 9, Mat.ANDESITE, 3);
-    static final Strata S_FROSTCREST = new Strata(4,
-            Mat.ANDESITE, 5, Mat.STONE, 7, Mat.DIORITE, 2, Mat.ARGANITE, 8, Mat.TUFF, 2);
-    static final Strata S_CHAINFALL = new Strata(3,
-            Mat.ARGANITE, 9, Mat.TUFF, 2, Mat.ANDESITE, 4, Mat.ARGANITE, 6, Mat.TUFF, 1, Mat.ANDESITE, 2);
-    static final Strata S_UNDER = new Strata(4,
-            Mat.ARGANITE, 12, Mat.TUFF, 2, Mat.ARGANITE, 8, Mat.ANDESITE, 1, Mat.ARGANITE, 5, Mat.ANDESITE, 2);
-    /** The bulk of every island, under its biome's crust of rock. */
-    static final Strata S_BODY = new Strata(4,
-            Mat.ARGANITE, 13, Mat.STONE, 2, Mat.ARGANITE, 9, Mat.ANDESITE, 1, Mat.ARGANITE, 6, Mat.CALCITE, 1);
-
-    static Strata strata(ElysiumBiome b) {
-        return switch (b) {
-            case LARK_MEADOWS -> S_LARK;
-            case WINDLESS_STEPPE -> S_STEPPE;
-            case HIGHPINE_FOREST -> S_HIGHPINE;
-            case MOSSY_WEALD -> S_MOSSY;
-            case ARGENT_PEAKS -> S_ARGENT;
-            case STONECROWN_CLIFFS -> S_STONECROWN;
-            case CASCADE_VALE -> S_CASCADE;
-            case MISTFALL_GORGE -> S_MISTFALL;
-            case GLASS_SEA -> S_GLASS;
-            case AZURE_SHALLOWS -> S_AZURE;
-            case RIME_EXPANSE -> S_RIME;
-            case FROSTCREST_RANGE -> S_FROSTCREST;
-            case CHAINFALL -> S_CHAINFALL;
-            case UNDERHANG -> S_UNDER;
-        };
-    }
+    /** Least depth of the calcite crust under the soil. */
+    static final int CRUST = 6;
 
     // ---------------------------------------------------------------- helpers
 
@@ -198,7 +124,7 @@ public final class ElysiumPalette {
                 }
                 if (depth == 0) {
                     if (c.slope > 0.5 && patch < -0.3 && held(c, y)) return Mat.GRAVEL; // scree on rocky slopes
-                    if (y > line - 14 && ch < 0.35) return Mat.STONE;                  // thinning soil under the snow
+                    if (y > line - 14 && ch < 0.35) return Mat.CALCITE;                // thinning soil under the snow
                     return Mat.GRASS_BLOCK;
                 }
                 return depth == 1 ? Mat.DIRT : stone(biome, c, y, hash, patch);
@@ -253,8 +179,7 @@ public final class ElysiumPalette {
             case CHAINFALL: {
                 if (depth == 0) {
                     if (over(patch, 0.2, 0.1, ch)) return Mat.GRASS_BLOCK;
-                    if (patch < -0.4) return Mat.TUFF;
-                    return patch < 0 ? Mat.ANDESITE : Mat.ARGANITE;
+                    return patch < -0.1 ? Mat.CALCITE : Mat.ARGANITE;
                 }
                 return patch > 0.2 && depth == 1 ? Mat.DIRT : stone(biome, c, y, hash, patch);
             }
@@ -264,13 +189,12 @@ public final class ElysiumPalette {
         }
     }
 
-    /** Skin of a steep column: rock strata, with biome dressing (moss walls, ice streaks, terracotta). */
+    /** Skin of a steep column: rock strata, with biome dressing (moss walls, ice streaks). */
     static Mat bareSkin(ElysiumBiome biome, Column c, int y, int depth, double hash, double patch) {
         double ch = colHash(c, 2);
         switch (biome) {
             case MOSSY_WEALD:
                 if (over(patch, 0.4, 0.1, ch)) return Mat.MOSS_BLOCK;
-                if (patch > 0.15 && hash < 0.35) return Mat.MOSSY_COBBLESTONE;
                 break;
             case MISTFALL_GORGE:
                 if (over(patch, 0.3, 0.1, ch)) return Mat.MOSS_BLOCK;   // green walls
@@ -289,7 +213,7 @@ public final class ElysiumPalette {
 
     // ---------------------------------------------------------------- body
 
-    /** Body of the island under the skin: strata by absolute y, so cliffs read as layers. */
+    /** Body of the island under the skin: calcite first, then Arganite all the way down. */
     public static Mat stone(ElysiumBiome biome, Column c, int y, double hash, double patch) {
         int below = c.top - y;
         // Soft soil/rock border: 0..2 extra blocks of dirt under the skin on gentle, soil biomes.
@@ -298,21 +222,7 @@ public final class ElysiumPalette {
                 return biome == ElysiumBiome.CASCADE_VALE || biome == ElysiumBiome.WINDLESS_STEPPE ? Mat.COARSE_DIRT : Mat.DIRT;
             }
         }
-        if (biome == ElysiumBiome.MOSSY_WEALD && below < 10 && patch > 0.55 && hash < 0.3) {
-            return Mat.MOSSY_COBBLESTONE;
-        }
-        return below >= crust(biome, patch) ? S_BODY.at(y, patch) : strata(biome).at(y, patch);
-    }
-
-    /** How deep a biome's own rock goes before the Arganite body starts; the pale biomes are mostly Arganite already. */
-    static int crust(ElysiumBiome biome, double patch) {
-        int base = switch (biome) {
-            case CASCADE_VALE -> 18; // the terracotta bands are the point of that biome
-            case STONECROWN_CLIFFS -> 11;
-            case ARGENT_PEAKS, GLASS_SEA, AZURE_SHALLOWS, CHAINFALL, UNDERHANG -> 1000;
-            default -> 6;
-        };
-        return base + (int) Math.round(2.5 * (patch + 1));
+        return below >= CRUST + (int) Math.round(2.5 * (patch + 1)) ? Mat.ARGANITE : Mat.CALCITE;
     }
 
     static boolean hasSoil(ElysiumBiome b) {
@@ -332,7 +242,6 @@ public final class ElysiumPalette {
             case GLASS_SEA:
                 if (depth <= 2) {
                     if (depth == 0 && !over(patch, -0.5, 0.08, ch)) return Mat.CLAY;
-                    if (depth == 0 && over(patch, 0.55, 0.08, ch)) return Mat.DIORITE;
                     return Mat.CALCITE;   // white bed = turquoise translucent water
                 }
                 break;
@@ -354,7 +263,7 @@ public final class ElysiumPalette {
                 break;
             case RIME_EXPANSE:
             case FROSTCREST_RANGE:
-                if (depth == 0) return over(patch, 0.3, 0.1, ch) ? Mat.CLAY : (safe ? Mat.GRAVEL : Mat.STONE);
+                if (depth == 0) return over(patch, 0.3, 0.1, ch) ? Mat.CLAY : (safe ? Mat.GRAVEL : Mat.CALCITE);
                 if (depth == 1) return Mat.DIRT;
                 break;
             case ARGENT_PEAKS:
@@ -362,7 +271,7 @@ public final class ElysiumPalette {
                 break;
             case CHAINFALL:
             case UNDERHANG:
-                if (depth == 0) return safe && patch > 0 ? Mat.GRAVEL : Mat.TUFF;
+                if (depth == 0) return safe && patch > 0 ? Mat.GRAVEL : Mat.ARGANITE;
                 break;
             case CASCADE_VALE:
                 if (depth == 0) {
@@ -394,7 +303,7 @@ public final class ElysiumPalette {
                 return Mat.SANDSTONE;
             case RIME_EXPANSE:
             case FROSTCREST_RANGE:
-                if (depth == 0) return over(patch, 0.0, 0.1, ch) ? Mat.SNOW_BLOCK : (safe ? Mat.GRAVEL : Mat.STONE);
+                if (depth == 0) return over(patch, 0.0, 0.1, ch) ? Mat.SNOW_BLOCK : (safe ? Mat.GRAVEL : Mat.CALCITE);
                 return depth <= 2 ? Mat.DIRT : stone(biome, c, y, hash, patch);
             case MOSSY_WEALD:
                 if (depth == 0) return over(patch, 0.1, 0.1, ch) ? Mat.MOSS_BLOCK : (safe ? Mat.GRAVEL : Mat.DIRT);
@@ -411,7 +320,7 @@ public final class ElysiumPalette {
             case ARGENT_PEAKS:
             case STONECROWN_CLIFFS:
             case CHAINFALL:
-                if (depth == 0) return over(patch, 0.0, 0.1, ch) ? Mat.GRASS_BLOCK : (safe ? Mat.GRAVEL : Mat.STONE);
+                if (depth == 0) return over(patch, 0.0, 0.1, ch) ? Mat.GRASS_BLOCK : (safe ? Mat.GRAVEL : Mat.CALCITE);
                 return depth == 1 ? Mat.DIRT : stone(biome, c, y, hash, patch);
             case WINDLESS_STEPPE:
                 if (depth == 0 && c.riverDist < 2.5 && safe) return Mat.SAND;
@@ -430,10 +339,10 @@ public final class ElysiumPalette {
 
     /** The underside cone and its stalactites; {@code fromBottom} = y - c.bottom. */
     public static Mat underside(ElysiumBiome biome, Column c, int y, int fromBottom, double hash, double patch) {
-        // Stalactite tips go darker (andesite/tuff) so the underside reads shadowy but never black.
+        // Stalactite tips go darker (andesite) so the underside reads shadowy but never black.
         if (fromBottom < 5) {
             double t = (5 - fromBottom) / 5.0;             // 1 at the tip
-            if (hash < 0.45 * t) return hash < 0.15 * t ? Mat.TUFF : Mat.ANDESITE;
+            if (hash < 0.45 * t) return Mat.ANDESITE;
         }
         // Blobby (not vertical-stripe) accent patches: mix the column patch with a slow y wave.
         double blob = patch * 0.7 + 0.3 * Math.sin(y * 0.45 + patch * 3.0);
@@ -456,7 +365,7 @@ public final class ElysiumPalette {
             default:
                 break;
         }
-        return S_UNDER.at(y, patch);
+        return Mat.ARGANITE;
     }
 
     /** Hanging dressing under the underside (roots, vines). Return AIR for none; the core picks the length. */

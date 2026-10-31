@@ -105,6 +105,9 @@ public final class Validator {
             }
         }
         System.out.println("biomes covered: " + pick.size() + "/12, platforms: " + platforms.size());
+        // the nearest Glass Sea may be an ordinary one: check the biggest colossal one as well
+        world.islandsIn(-30000, -30000, 30000, 30000).stream().filter(is -> is.size() == ElysiumBiome.Size.COLOSSAL).max(java.util.Comparator.comparingInt(ElysiumWorld.Island::width))
+                .ifPresent(platforms::add);
         List<int[]> regions = new ArrayList<>();
         List<Integer> targets = new ArrayList<>();
         for (ElysiumWorld.Island is : pick.values()) {

@@ -98,11 +98,6 @@ public final class ElysiumBlocks {
             case GRAVEL: return Blocks.GRAVEL.defaultBlockState();
             case SAND: return Blocks.SAND.defaultBlockState();
             case SANDSTONE: return Blocks.SANDSTONE.defaultBlockState();
-            case TERRACOTTA: return Blocks.TERRACOTTA.defaultBlockState();
-            case ORANGE_TERRACOTTA: return Blocks.ORANGE_TERRACOTTA.defaultBlockState();
-            case BROWN_TERRACOTTA: return Blocks.BROWN_TERRACOTTA.defaultBlockState();
-            case WHITE_TERRACOTTA: return Blocks.WHITE_TERRACOTTA.defaultBlockState();
-            case LIGHT_GRAY_TERRACOTTA: return Blocks.LIGHT_GRAY_TERRACOTTA.defaultBlockState();
             // cold
             case SNOW_BLOCK: return Blocks.SNOW_BLOCK.defaultBlockState();
             case POWDER_SNOW: return Blocks.POWDER_SNOW.defaultBlockState();
