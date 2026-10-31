@@ -28,7 +28,7 @@ import dev.zsskayr.merlins_inferno.worldgen.elysium.core.ElysiumWorld;
  */
 public final class SiteBuilder {
     /** How far outside the decorating chunk a site may write. */
-    static final int MARGIN = 16;
+    static final int MARGIN = 15; // 15, not 16: neighbour reads (water, vine support) at x+-1 must stay in the 3x3 region
     /** Hard radius around the site origin. */
     static final int RADIUS = 28;
 

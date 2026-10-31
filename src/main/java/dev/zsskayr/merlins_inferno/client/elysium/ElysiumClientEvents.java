@@ -22,12 +22,12 @@ public final class ElysiumClientEvents {
     }
 
     @SubscribeEvent
-    static void onRegisterDimensionEffects(RegisterDimensionSpecialEffectsEvent event) {
+    public static void onRegisterDimensionEffects(RegisterDimensionSpecialEffectsEvent event) {
         event.register(ElysiumSkyEffects.ID, new ElysiumSkyEffects());
     }
 
     @SubscribeEvent
-    static void onRenderLevelStage(RenderLevelStageEvent event) {
+    public static void onRenderLevelStage(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_WEATHER) {
             return;
         }
