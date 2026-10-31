@@ -608,5 +608,14 @@
   "block.merlins_inferno.purified_obsidian": "Purified Obsidian",
   "block.merlins_inferno.elysium_portal": "El'ysium Portal",
   "message.merlins_inferno.elysium_locked": "The portal does not answer: El'ysium is not yet open to you.",
-  "dimension.merlins_inferno.elysium": "El'ysium"
+  "dimension.merlins_inferno.elysium": "El'ysium",
+  "block.merlins_inferno.meteorite": "Meteorito",
+  "block.merlins_inferno.smooth_meteorite": "Meteorito Liso",
+  "block.merlins_inferno.smooth_meteorite_stairs": "Escadas de Meteorito Liso",
+  "block.merlins_inferno.smooth_meteorite_slab": "Laje de Meteorito Liso",
+  "block.merlins_inferno.smooth_meteorite_wall": "Muro de Meteorito Liso",
+  "block.merlins_inferno.meteorite_bricks": "Tijolos de Meteorito",
+  "block.merlins_inferno.meteorite_bricks_stairs": "Escadas de Tijolos de Meteorito",
+  "block.merlins_inferno.meteorite_bricks_slab": "Laje de Tijolos de Meteorito",
+  "block.merlins_inferno.meteorite_bricks_wall": "Muro de Tijolos de Meteorito"
 }

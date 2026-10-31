@@ -10,6 +10,8 @@
     "merlins_inferno:arganite_slab",
     "merlins_inferno:arganite_bricks_slab",
     "merlins_inferno:porcelain_slab",
-    "merlins_inferno:polished_porcelain_slab"
+    "merlins_inferno:polished_porcelain_slab",
+    "merlins_inferno:smooth_meteorite_slab",
+    "merlins_inferno:meteorite_bricks_slab"
   ]
 }

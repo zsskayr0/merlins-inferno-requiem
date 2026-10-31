@@ -274,6 +274,15 @@ public final class ModCreativeModeTabs {
                         // Circle 2: Luminite and the Skyfall Compass
                         output.accept(ModItems.LUMINITE_CLUSTER_ITEM.get());
                         output.accept(ModItems.LUMINITE_BLOCK_ITEM.get());
+                        output.accept(ModItems.METEORITE_ITEM.get());
+                        output.accept(ModItems.SMOOTH_METEORITE_ITEM.get());
+                        output.accept(ModItems.SMOOTH_METEORITE_STAIRS_ITEM.get());
+                        output.accept(ModItems.SMOOTH_METEORITE_SLAB_ITEM.get());
+                        output.accept(ModItems.SMOOTH_METEORITE_WALL_ITEM.get());
+                        output.accept(ModItems.METEORITE_BRICKS_ITEM.get());
+                        output.accept(ModItems.METEORITE_BRICKS_STAIRS_ITEM.get());
+                        output.accept(ModItems.METEORITE_BRICKS_SLAB_ITEM.get());
+                        output.accept(ModItems.METEORITE_BRICKS_WALL_ITEM.get());
                         output.accept(ModItems.LUMINITE_GEM.get());
                         output.accept(ModItems.LUMINITE_SWORD.get());
                         output.accept(ModItems.LUMINITE_AXE.get());

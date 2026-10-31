@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "merlins_inferno:smooth_meteorite"
+  },
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:meteorite_bricks_wall"
+  }
+}

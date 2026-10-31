@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "group": "smooth_meteorite",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "merlins_inferno:meteorite"
+  },
+  "result": {
+    "id": "merlins_inferno:smooth_meteorite"
+  }
+}

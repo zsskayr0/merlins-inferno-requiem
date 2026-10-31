@@ -83,6 +83,9 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.POLISHED_PORCELAIN_SLAB.get(),
                 ModBlocks.HELL_FORGE_CONTROLLER.get(), ModBlocks.DEMONIC_CORE.get(), ModBlocks.HELL_FORGE_VAULT.get(),
                 ModBlocks.LYRIUM_BLOCK.get(), ModBlocks.LUMINITE_BLOCK.get(),
+                ModBlocks.METEORITE.get(), ModBlocks.SMOOTH_METEORITE.get(), ModBlocks.SMOOTH_METEORITE_STAIRS.get(),
+                ModBlocks.SMOOTH_METEORITE_SLAB.get(), ModBlocks.SMOOTH_METEORITE_WALL.get(), ModBlocks.METEORITE_BRICKS.get(),
+                ModBlocks.METEORITE_BRICKS_STAIRS.get(), ModBlocks.METEORITE_BRICKS_SLAB.get(), ModBlocks.METEORITE_BRICKS_WALL.get(),
                 ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.WITHERED_OBSIDIAN.get(), ModBlocks.PURIFIED_OBSIDIAN.get(),
                 ModBlocks.FLESH_BLOCK.get(), ModBlocks.MOUTH_BLOCK.get(), ModBlocks.VISCERA.get(), ModBlocks.FLESH_SLAB.get(), ModBlocks.FLESH_CARPET.get(), ModBlocks.RED_CHAIN.get(),
                 ModBlocks.BLACK_NYLIUM.get(), ModBlocks.BLIGHTSTONE_NYLIUM.get(), ModBlocks.TALL_CRIMSON_ROOTS.get(), ModBlocks.TALL_BLACK_GRASS.get(),
@@ -194,6 +197,15 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         // Ores drop Raw Lyrium (with Fortune) or themselves under Silk Touch, like emerald ore.
         dropSelf(ModBlocks.LYRIUM_BLOCK.get());
         dropSelf(ModBlocks.LUMINITE_BLOCK.get());
+        dropSelf(ModBlocks.METEORITE.get());
+        dropSelf(ModBlocks.SMOOTH_METEORITE.get());
+        dropSelf(ModBlocks.SMOOTH_METEORITE_STAIRS.get());
+        add(ModBlocks.SMOOTH_METEORITE_SLAB.get(), createSlabItemTable(ModBlocks.SMOOTH_METEORITE_SLAB.get()));
+        dropSelf(ModBlocks.SMOOTH_METEORITE_WALL.get());
+        dropSelf(ModBlocks.METEORITE_BRICKS.get());
+        dropSelf(ModBlocks.METEORITE_BRICKS_STAIRS.get());
+        add(ModBlocks.METEORITE_BRICKS_SLAB.get(), createSlabItemTable(ModBlocks.METEORITE_BRICKS_SLAB.get()));
+        dropSelf(ModBlocks.METEORITE_BRICKS_WALL.get());
         dropSelf(ModBlocks.HELL_FORGE_CONTROLLER.get());
         dropSelf(ModBlocks.DEMONIC_CORE.get());
         dropSelf(ModBlocks.HELL_FORGE_VAULT.get());

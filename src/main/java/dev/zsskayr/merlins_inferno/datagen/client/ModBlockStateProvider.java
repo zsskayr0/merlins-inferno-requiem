@@ -56,6 +56,7 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         registerCompressedNetherrack();
         registerBlightstone();
         registerArganiteAndPorcelain();
+        registerMeteorite();
         registerGraceFire();
         registerFleshAndNetherFlora();
 
@@ -164,6 +165,25 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         ResourceLocation clusterTexture = modLoc("block/quartz_cluster");
         directionalBlock(ModBlocks.QUARTZ_CLUSTER.get(), models().cross("quartz_cluster", clusterTexture).renderType("cutout"));
         itemModels().withExistingParent("quartz_cluster", "item/generated").texture("layer0", clusterTexture);
+    }
+
+    /**
+     * Meteorite twinkles: its texture is an animation, and an animation runs in step for every block using it, so three copies with
+     * the flecks out of phase are weighted per position and neighbours do not blink together. The item uses the first.
+     */
+    private void registerMeteorite() {
+        ModelFile[] variants = new ModelFile[3];
+        for (int i = 0; i < 3; i++) {
+            String name = i == 0 ? "meteorite" : "meteorite_" + i;
+            variants[i] = models().cubeAll(name, modLoc("block/" + name));
+        }
+        getVariantBuilder(ModBlocks.METEORITE.get()).partialState().setModels(
+                new ConfiguredModel(variants[0]), new ConfiguredModel(variants[1]), new ConfiguredModel(variants[2]));
+        itemModels().withExistingParent("meteorite", modLoc("block/meteorite"));
+        registerStoneSet(ModBlocks.SMOOTH_METEORITE.get(), ModBlocks.SMOOTH_METEORITE_STAIRS.get(),
+                ModBlocks.SMOOTH_METEORITE_SLAB.get(), ModBlocks.SMOOTH_METEORITE_WALL.get(), "smooth_meteorite");
+        registerStoneSet(ModBlocks.METEORITE_BRICKS.get(), ModBlocks.METEORITE_BRICKS_STAIRS.get(),
+                ModBlocks.METEORITE_BRICKS_SLAB.get(), ModBlocks.METEORITE_BRICKS_WALL.get(), "meteorite_bricks");
     }
 
     private void registerStairsAndSlab(Block full, net.minecraft.world.level.block.StairBlock stairs,

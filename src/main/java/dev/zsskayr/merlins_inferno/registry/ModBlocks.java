@@ -399,6 +399,14 @@ public final class ModBlocks {
             dev.zsskayr.merlins_inferno.block.GraceFireBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.SNOW).replaceable()
                     .noCollission().instabreak().lightLevel(state -> 10).sound(SoundType.WOOL).pushReaction(PushReaction.DESTROY));
 
+    /** Slightly under obsidian's 50. */
+    public static final float METEORITE_HARDNESS = 40.0F;
+
+    private static BlockBehaviour.Properties meteoriteProperties() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops().sound(SoundType.DEEPSLATE);
+    }
+
     private static BlockBehaviour.Properties arganiteProperties() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY).instrument(NoteBlockInstrument.BASEDRUM)
                 .requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE);
@@ -512,6 +520,27 @@ public final class ModBlocks {
     // Block of Luminite: the lining of Luminite geodes in El'ysium, a recolor of the Lyrium Block without its radiance or crystal growth.
     public static final DeferredBlock<Block> LUMINITE_BLOCK = BLOCKS.registerBlock("luminite_block",
             Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK).lightLevel(state -> 12).pushReaction(PushReaction.BLOCK));
+
+    // --- Meteorite: the black, star-flecked rock of fallen meteors. Raw Meteorite is nearly as hard as obsidian (a diamond pickaxe
+    // or better), so breaking a meteor is felt; Smooth Meteorite (smelted) and its bricks are for building and take an iron pickaxe. ---
+    public static final DeferredBlock<Block> METEORITE = BLOCKS.registerBlock("meteorite",
+            Block::new, meteoriteProperties().strength(METEORITE_HARDNESS, 1200.0F).lightLevel(state -> 2));
+    public static final DeferredBlock<Block> SMOOTH_METEORITE = BLOCKS.registerBlock("smooth_meteorite",
+            Block::new, meteoriteProperties().strength(3.5F, 12.0F));
+    public static final DeferredBlock<StairBlock> SMOOTH_METEORITE_STAIRS = BLOCKS.registerBlock("smooth_meteorite_stairs",
+            props -> new StairBlock(SMOOTH_METEORITE.get().defaultBlockState(), props), meteoriteProperties().strength(3.5F, 12.0F));
+    public static final DeferredBlock<SlabBlock> SMOOTH_METEORITE_SLAB = BLOCKS.registerBlock("smooth_meteorite_slab",
+            SlabBlock::new, meteoriteProperties().strength(3.5F, 12.0F));
+    public static final DeferredBlock<WallBlock> SMOOTH_METEORITE_WALL = BLOCKS.registerBlock("smooth_meteorite_wall",
+            WallBlock::new, meteoriteProperties().strength(3.5F, 12.0F).forceSolidOn());
+    public static final DeferredBlock<Block> METEORITE_BRICKS = BLOCKS.registerBlock("meteorite_bricks",
+            Block::new, meteoriteProperties().strength(3.5F, 12.0F));
+    public static final DeferredBlock<StairBlock> METEORITE_BRICKS_STAIRS = BLOCKS.registerBlock("meteorite_bricks_stairs",
+            props -> new StairBlock(METEORITE_BRICKS.get().defaultBlockState(), props), meteoriteProperties().strength(3.5F, 12.0F));
+    public static final DeferredBlock<SlabBlock> METEORITE_BRICKS_SLAB = BLOCKS.registerBlock("meteorite_bricks_slab",
+            SlabBlock::new, meteoriteProperties().strength(3.5F, 12.0F));
+    public static final DeferredBlock<WallBlock> METEORITE_BRICKS_WALL = BLOCKS.registerBlock("meteorite_bricks_wall",
+            WallBlock::new, meteoriteProperties().strength(3.5F, 12.0F).forceSolidOn());
 
     // --- Ebony Debris: Circle 2's answer to Ancient Debris, found in Oblivion. Drops Ebony Scrap (Silk Touch keeps the block). ---
     public static final DeferredBlock<Block> EBONY_DEBRIS = BLOCKS.registerBlock("ebony_debris",

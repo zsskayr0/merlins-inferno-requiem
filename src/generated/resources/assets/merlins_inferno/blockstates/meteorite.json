@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "merlins_inferno:block/meteorite"
+      },
+      {
+        "model": "merlins_inferno:block/meteorite_1"
+      },
+      {
+        "model": "merlins_inferno:block/meteorite_2"
+      }
+    ]
+  }
+}

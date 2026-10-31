@@ -5,6 +5,11 @@
     "merlins_inferno:petrified_skull",
     "merlins_inferno:withered_obsidian",
     "merlins_inferno:ebony_debris",
-    "merlins_inferno:purified_obsidian"
+    "merlins_inferno:purified_obsidian",
+    "merlins_inferno:meteorite",
+    "merlins_inferno:arganite",
+    "merlins_inferno:arganite_stairs",
+    "merlins_inferno:arganite_slab",
+    "merlins_inferno:arganite_wall"
   ]
 }

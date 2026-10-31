@@ -640,6 +640,17 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> LUMINITE_CLUSTER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LUMINITE_CLUSTER);
     public static final DeferredItem<BlockItem> LUMINITE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LUMINITE_BLOCK);
 
+    // Meteorite: the rock of fallen meteors, and what it smelts and cuts into.
+    public static final DeferredItem<BlockItem> METEORITE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.METEORITE);
+    public static final DeferredItem<BlockItem> SMOOTH_METEORITE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SMOOTH_METEORITE);
+    public static final DeferredItem<BlockItem> SMOOTH_METEORITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SMOOTH_METEORITE_STAIRS);
+    public static final DeferredItem<BlockItem> SMOOTH_METEORITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SMOOTH_METEORITE_SLAB);
+    public static final DeferredItem<BlockItem> SMOOTH_METEORITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SMOOTH_METEORITE_WALL);
+    public static final DeferredItem<BlockItem> METEORITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.METEORITE_BRICKS);
+    public static final DeferredItem<BlockItem> METEORITE_BRICKS_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.METEORITE_BRICKS_STAIRS);
+    public static final DeferredItem<BlockItem> METEORITE_BRICKS_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.METEORITE_BRICKS_SLAB);
+    public static final DeferredItem<BlockItem> METEORITE_BRICKS_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.METEORITE_BRICKS_WALL);
+
     public static final DeferredItem<SwordItem> LUMINITE_SWORD = ITEMS.registerItem("luminite_sword",
             props -> new SwordItem(ModTiers.LUMINITE, props.attributes(SwordItem.createAttributes(ModTiers.LUMINITE, 3, -2.4F))));
     public static final DeferredItem<AxeItem> LUMINITE_AXE = ITEMS.registerItem("luminite_axe",
