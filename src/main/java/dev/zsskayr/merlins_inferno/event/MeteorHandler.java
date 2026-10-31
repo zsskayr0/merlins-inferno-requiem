@@ -39,6 +39,9 @@ public class MeteorHandler {
     public static final int CLAIM_DISTANCE = 24;
     /** A player who reaches a guarded crater within this many ticks of it forming (5 minutes) finds the cult still there. */
     public static final long CULT_WINDOW = 6000;
+    /** How many different lines announce a fall, and how many tell of the cult; the lang files hold one key per variant. */
+    private static final int FELL_VARIANTS = 8;
+    private static final int CULT_VARIANTS = 4;
     private static final int NIGHT_START = 13000;
     private static final int CHECK_INTERVAL = 40;
 
@@ -74,15 +77,15 @@ public class MeteorHandler {
                                 context.getSource().sendFailure(Component.literal("No meteor fell: no player in the Overworld, or no spot inside the world border."));
                                 return 0;
                             }
-                            int y = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, meteor.x, meteor.z);
-                            String coords = meteor.x + ", " + y + ", " + meteor.z;
+                            String coords = meteor.x + ", ~, " + meteor.z;
                             Component where = Component.literal("[" + coords + "]").withStyle(style -> style
-                                    .withColor(net.minecraft.ChatFormatting.GREEN)
+                                    .withColor(net.minecraft.ChatFormatting.AQUA).withUnderlined(true)
                                     .withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.SUGGEST_COMMAND,
-                                            "/tp @s " + meteor.x + " " + y + " " + meteor.z))
+                                            "/tp @s " + meteor.x + " ~ " + meteor.z))
                                     .withHoverEvent(new net.minecraft.network.chat.HoverEvent(net.minecraft.network.chat.HoverEvent.Action.SHOW_TEXT,
-                                            Component.literal("Click to suggest a teleport"))));
-                            context.getSource().sendSuccess(() -> Component.literal("A meteor fell at ").append(where), false);
+                                            Component.translatable("message.merlins_inferno.meteor_debug_hover"))));
+                            context.getSource().sendSuccess(() -> Component.translatable("message.merlins_inferno.meteor_debug", where)
+                                    .withStyle(net.minecraft.ChatFormatting.AQUA, net.minecraft.ChatFormatting.ITALIC), false);
                             return 1;
                         }))));
     }
@@ -119,7 +122,7 @@ public class MeteorHandler {
     private static void announce(ServerLevel level, Meteor meteor, RandomSource random) {
         int x = roundTo100(meteor.x + random.nextInt(ANNOUNCE_ERROR * 2 + 1) - ANNOUNCE_ERROR);
         int z = roundTo100(meteor.z + random.nextInt(ANNOUNCE_ERROR * 2 + 1) - ANNOUNCE_ERROR);
-        Component message = Component.translatable("message.merlins_inferno.meteor_fell", x, z)
+        Component message = Component.translatable("message.merlins_inferno.meteor_fell." + random.nextInt(FELL_VARIANTS), x, z)
                 .withStyle(net.minecraft.ChatFormatting.AQUA, net.minecraft.ChatFormatting.ITALIC);
         for (ServerPlayer player : level.players()) {
             player.sendSystemMessage(message);
@@ -150,7 +153,7 @@ public class MeteorHandler {
                 ServerPlayer claimer = claimer(level, meteor);
                 if (claimer != null) {
                     if (meteor.guarded && level.getGameTime() - meteor.builtAt <= CULT_WINDOW) {
-                        claimer.sendSystemMessage(Component.translatable("message.merlins_inferno.meteor_cult")
+                        claimer.sendSystemMessage(Component.translatable("message.merlins_inferno.meteor_cult." + level.random.nextInt(CULT_VARIANTS))
                                 .withStyle(net.minecraft.ChatFormatting.DARK_RED, net.minecraft.ChatFormatting.ITALIC));
                     }
                     gone.add(meteor);
