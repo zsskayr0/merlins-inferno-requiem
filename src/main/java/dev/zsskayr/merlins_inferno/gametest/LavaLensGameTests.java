@@ -27,12 +27,12 @@ public final class LavaLensGameTests {
         h.assertTrue(inventory.isPresent(),"Curios player inventory capability is present");
         Object handler=inventory.orElseThrow();
         ItemStack lens=new ItemStack(ModItems.LAVA_LENS.get());
-        type.getMethod("setEquippedCurio",String.class,int.class,ItemStack.class).invoke(handler,"charm",0,lens);
+        type.getMethod("setEquippedCurio",String.class,int.class,ItemStack.class).invoke(handler,"head",0,lens);
         h.assertTrue(OptionalCurios.equipped(player).stream().anyMatch(stack -> stack==lens),"Optional bridge sees the actual equipped stack");
         player.getPersistentData().putBoolean(LavaLensHandler.ENABLED,true);
         for(int i=0;i<20;i++)LavaLensHandler.refresh(player,true);
         h.assertTrue(player.hasEffect(ModEffects.LAVA_SIGHT) && lens.getDamageValue()==1,"Curios-only lens powers the effect and loses durability");
-        type.getMethod("setEquippedCurio",String.class,int.class,ItemStack.class).invoke(handler,"charm",0,ItemStack.EMPTY);
+        type.getMethod("setEquippedCurio",String.class,int.class,ItemStack.class).invoke(handler,"head",0,ItemStack.EMPTY);
         for(int i=0;i<70;i++)LavaLensHandler.refresh(player,true);
         h.assertTrue(!player.hasEffect(ModEffects.LAVA_SIGHT),"Unequipping disables the effect once the grace period passes");h.succeed();
     }
