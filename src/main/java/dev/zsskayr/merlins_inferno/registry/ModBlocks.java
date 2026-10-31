@@ -509,6 +509,10 @@ public final class ModBlocks {
     public static final DeferredBlock<net.minecraft.world.level.block.AmethystClusterBlock> LUMINITE_CLUSTER = BLOCKS.registerBlock("luminite_cluster",
             props -> new net.minecraft.world.level.block.AmethystClusterBlock(7.0F, 3.0F, props), BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_CLUSTER).lightLevel(state -> 8));
 
+    // Block of Luminite: the lining of Luminite geodes in El'ysium, a recolor of the Lyrium Block without its radiance or crystal growth.
+    public static final DeferredBlock<Block> LUMINITE_BLOCK = BLOCKS.registerBlock("luminite_block",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK).lightLevel(state -> 12).pushReaction(PushReaction.BLOCK));
+
     // --- Ebony Debris: Circle 2's answer to Ancient Debris, found in Oblivion. Drops Ebony Scrap (Silk Touch keeps the block). ---
     public static final DeferredBlock<Block> EBONY_DEBRIS = BLOCKS.registerBlock("ebony_debris",
             dev.zsskayr.merlins_inferno.block.EbonyDebrisBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.ANCIENT_DEBRIS));

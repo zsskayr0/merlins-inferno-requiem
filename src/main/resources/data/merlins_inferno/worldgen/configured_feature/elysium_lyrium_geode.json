@@ -5,10 +5,7 @@
       "alternate_inner_layer_provider": {
         "type": "minecraft:simple_state_provider",
         "state": {
-          "Name": "merlins_inferno:lyrium_block",
-          "Properties": {
-            "placed": "false"
-          }
+          "Name": "merlins_inferno:luminite_block"
         }
       },
       "cannot_replace": "#minecraft:features_cannot_replace",
@@ -33,6 +30,29 @@
           "Properties": {
             "facing": "up",
             "placed": "false",
+            "waterlogged": "false"
+          }
+        },
+        {
+          "Name": "merlins_inferno:lyrium_cluster",
+          "Properties": {
+            "facing": "up",
+            "placed": "false",
+            "waterlogged": "false"
+          }
+        },
+        {
+          "Name": "merlins_inferno:lyrium_cluster",
+          "Properties": {
+            "facing": "up",
+            "placed": "false",
+            "waterlogged": "false"
+          }
+        },
+        {
+          "Name": "merlins_inferno:luminite_cluster",
+          "Properties": {
+            "facing": "up",
             "waterlogged": "false"
           }
         }
@@ -82,7 +102,7 @@
       "min_inclusive": 1,
       "max_inclusive": 2
     },
-    "use_alternate_layer0_chance": 0.083,
+    "use_alternate_layer0_chance": 0.12,
     "use_potential_placements_chance": 0.35
   }
 }

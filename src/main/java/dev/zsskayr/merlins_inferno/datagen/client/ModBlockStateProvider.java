@@ -327,6 +327,8 @@ public final class ModBlockStateProvider extends BlockStateProvider {
     private void registerLyrium() {
         simpleBlock(ModBlocks.LYRIUM_BLOCK.get());
         itemModels().simpleBlockItem(ModBlocks.LYRIUM_BLOCK.get());
+        simpleBlock(ModBlocks.LUMINITE_BLOCK.get());
+        itemModels().simpleBlockItem(ModBlocks.LUMINITE_BLOCK.get());
 
         // Same cross-shaped, cutout model + facing rotations as vanilla's amethyst cluster.
         ResourceLocation clusterTexture = modLoc("block/lyrium_cluster");

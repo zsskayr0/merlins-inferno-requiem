@@ -10,6 +10,8 @@
       "required": false
     },
     "merlins_inferno:lyrium_block",
+    "merlins_inferno:luminite_block",
+    "merlins_inferno:luminite_cluster",
     "merlins_inferno:lyrium_cluster",
     "minecraft:amethyst_cluster",
     "minecraft:spawner"

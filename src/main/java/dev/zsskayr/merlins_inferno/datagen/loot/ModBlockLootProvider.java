@@ -82,7 +82,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.PORCELAIN_SLAB.get(),
                 ModBlocks.POLISHED_PORCELAIN_SLAB.get(),
                 ModBlocks.HELL_FORGE_CONTROLLER.get(), ModBlocks.DEMONIC_CORE.get(), ModBlocks.HELL_FORGE_VAULT.get(),
-                ModBlocks.LYRIUM_BLOCK.get(),
+                ModBlocks.LYRIUM_BLOCK.get(), ModBlocks.LUMINITE_BLOCK.get(),
                 ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.WITHERED_OBSIDIAN.get(), ModBlocks.PURIFIED_OBSIDIAN.get(),
                 ModBlocks.FLESH_BLOCK.get(), ModBlocks.MOUTH_BLOCK.get(), ModBlocks.VISCERA.get(), ModBlocks.FLESH_SLAB.get(), ModBlocks.FLESH_CARPET.get(), ModBlocks.RED_CHAIN.get(),
                 ModBlocks.BLACK_NYLIUM.get(), ModBlocks.BLIGHTSTONE_NYLIUM.get(), ModBlocks.TALL_CRIMSON_ROOTS.get(), ModBlocks.TALL_BLACK_GRASS.get(),
@@ -193,6 +193,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         add(ModBlocks.TALL_BLACK_GRASS.get(), createSinglePropConditionTable(ModBlocks.TALL_BLACK_GRASS.get(), DoublePlantBlock.HALF, DoubleBlockHalf.LOWER));
         // Ores drop Raw Lyrium (with Fortune) or themselves under Silk Touch, like emerald ore.
         dropSelf(ModBlocks.LYRIUM_BLOCK.get());
+        dropSelf(ModBlocks.LUMINITE_BLOCK.get());
         dropSelf(ModBlocks.HELL_FORGE_CONTROLLER.get());
         dropSelf(ModBlocks.DEMONIC_CORE.get());
         dropSelf(ModBlocks.HELL_FORGE_VAULT.get());
