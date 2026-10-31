@@ -640,6 +640,13 @@
   "block.merlins_inferno.meteorite_bricks_stairs": "Escadas de Tijolos de Meteorito",
   "block.merlins_inferno.meteorite_bricks_slab": "Laje de Tijolos de Meteorito",
   "block.merlins_inferno.meteorite_bricks_wall": "Muro de Tijolos de Meteorito",
-  "message.merlins_inferno.meteor_debug": "Uma estrela se arranca do céu e queima o chão em %s.",
+  "message.merlins_inferno.meteor_debug.0": "Uma estrela se arranca do céu e queima o chão em %s.",
+  "message.merlins_inferno.meteor_debug.1": "A cauda de um cometa rasga a escuridão e termina em %s.",
+  "message.merlins_inferno.meteor_debug.2": "O céu se rasga por um instante e algo em chamas despenca em %s.",
+  "message.merlins_inferno.meteor_debug.3": "Um rastro de luz prateada cruza os céus e se apaga em %s.",
+  "message.merlins_inferno.meteor_debug.4": "O chão estremece: algo caiu das estrelas em %s.",
+  "message.merlins_inferno.meteor_debug.5": "Uma estrela cadente ilumina o horizonte. Ela pousou em %s.",
+  "message.merlins_inferno.meteor_debug.6": "O céu da noite chora uma única brasa, e ela cai em %s.",
+  "message.merlins_inferno.meteor_debug.7": "Algo caiu lá de cima. Procure a cratera em %s.",
   "message.merlins_inferno.meteor_debug_hover": "Seguir a estrela caída"
 }

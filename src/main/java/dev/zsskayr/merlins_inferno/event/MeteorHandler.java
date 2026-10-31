@@ -42,6 +42,7 @@ public class MeteorHandler {
     /** How many different lines announce a fall, and how many tell of the cult; the lang files hold one key per variant. */
     private static final int FELL_VARIANTS = 16;
     private static final int CULT_VARIANTS = 8;
+    private static final int DEBUG_VARIANTS = 8;
     private static final int NIGHT_START = 13000;
     private static final int CHECK_INTERVAL = 40;
 
@@ -84,7 +85,7 @@ public class MeteorHandler {
                                             "/tp @s " + meteor.x + " ~ " + meteor.z))
                                     .withHoverEvent(new net.minecraft.network.chat.HoverEvent(net.minecraft.network.chat.HoverEvent.Action.SHOW_TEXT,
                                             Component.translatable("message.merlins_inferno.meteor_debug_hover"))));
-                            context.getSource().sendSuccess(() -> Component.translatable("message.merlins_inferno.meteor_debug", where)
+                            context.getSource().sendSuccess(() -> Component.translatable("message.merlins_inferno.meteor_debug." + level.random.nextInt(DEBUG_VARIANTS), where)
                                     .withStyle(net.minecraft.ChatFormatting.AQUA, net.minecraft.ChatFormatting.ITALIC), false);
                             return 1;
                         }))));

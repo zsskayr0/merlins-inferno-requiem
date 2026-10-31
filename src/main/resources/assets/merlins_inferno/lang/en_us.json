@@ -640,6 +640,13 @@
   "block.merlins_inferno.meteorite_bricks_stairs": "Meteorite Brick Stairs",
   "block.merlins_inferno.meteorite_bricks_slab": "Meteorite Brick Slab",
   "block.merlins_inferno.meteorite_bricks_wall": "Meteorite Brick Wall",
-  "message.merlins_inferno.meteor_debug": "A star tears itself from the sky and burns down upon %s.",
+  "message.merlins_inferno.meteor_debug.0": "A star tears itself from the sky and burns down upon %s.",
+  "message.merlins_inferno.meteor_debug.1": "A comet's tail splits the dark and ends upon %s.",
+  "message.merlins_inferno.meteor_debug.2": "The sky tears open for a heartbeat, and something burning drops onto %s.",
+  "message.merlins_inferno.meteor_debug.3": "A streak of silver light crosses the heavens and dies at %s.",
+  "message.merlins_inferno.meteor_debug.4": "The ground shudders: something fell from the stars at %s.",
+  "message.merlins_inferno.meteor_debug.5": "A falling star lights the horizon. It landed at %s.",
+  "message.merlins_inferno.meteor_debug.6": "The night sky weeps a single ember, and it lands on %s.",
+  "message.merlins_inferno.meteor_debug.7": "Something fell from above. Look for the crater at %s.",
   "message.merlins_inferno.meteor_debug_hover": "Follow the fallen star"
 }
