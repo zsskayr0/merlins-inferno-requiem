@@ -40,8 +40,8 @@ public class MeteorHandler {
     /** A player who reaches a guarded crater within this many ticks of it forming (5 minutes) finds the cult still there. */
     public static final long CULT_WINDOW = 6000;
     /** How many different lines announce a fall, and how many tell of the cult; the lang files hold one key per variant. */
-    private static final int FELL_VARIANTS = 8;
-    private static final int CULT_VARIANTS = 4;
+    private static final int FELL_VARIANTS = 16;
+    private static final int CULT_VARIANTS = 8;
     private static final int NIGHT_START = 13000;
     private static final int CHECK_INTERVAL = 40;
 
