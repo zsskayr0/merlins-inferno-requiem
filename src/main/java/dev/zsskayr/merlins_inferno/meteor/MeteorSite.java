@@ -58,8 +58,8 @@ public final class MeteorSite {
     /** How far the geode's centre sits under the bowl's rim level, and how deep the bowl is, so the top of the geode stands in the bowl. */
     private static final int GEODE_SINK = 7;
     private static final double BOWL_DEPTH = 4.0;
-    /** How far from the centre the cut reaches (must stay inside {@link #LOAD_RADIUS}). */
-    private static final int CUT_REACH = 38;
+    /** How far from the centre the cut reaches on average; the rim's waves push it out to about a quarter more (must stay inside {@link #LOAD_RADIUS}). */
+    private static final int CUT_REACH = 26;
 
     /** A built site: where it ended up, the height of the geode's centre, and whether Templars were left to guard it. */
     public record Built(int x, int y, int z, boolean guarded) {
@@ -251,17 +251,18 @@ public final class MeteorSite {
     private static void carveBowl(ServerLevel level, BlockPos centre, int baseY, double radius, double[] phase, Crater crater, RandomSource random, List<BlockPos> fires) {
         double liquidY = baseY - BOWL_DEPTH * 0.55;
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
-        for (int dx = -CUT_REACH; dx <= CUT_REACH; dx++) {
-            for (int dz = -CUT_REACH; dz <= CUT_REACH; dz++) {
+        int span = CUT_REACH * 5 / 4;
+        for (int dx = -span; dx <= span; dx++) {
+            for (int dz = -span; dz <= span; dz++) {
                 double distance = Math.sqrt(dx * dx + dz * dz);
-                if (distance > CUT_REACH) {
+                double rim = rimRadius(radius, phase, Math.atan2(dz, dx));
+                if (distance > CUT_REACH * rim / radius) {
                     continue;
                 }
-                double rim = rimRadius(radius, phase, Math.atan2(dz, dx));
                 double u = distance / rim;
                 double d = u * radius;
                 double outside = d - radius;
-                double bowl = u <= 1.0 ? baseY - BOWL_DEPTH * (1.0 - u * u) : baseY + 0.55 * outside + 0.006 * outside * outside;
+                double bowl = u <= 1.0 ? baseY - BOWL_DEPTH * (1.0 - u * u) : baseY + 0.8 * outside + 0.008 * outside * outside;
                 int floor = (int) Math.floor(bowl);
                 int x = centre.getX() + dx;
                 int z = centre.getZ() + dz;
