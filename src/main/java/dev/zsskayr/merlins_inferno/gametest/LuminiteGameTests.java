@@ -129,6 +129,38 @@ public final class LuminiteGameTests {
     }
 
     @GameTest(template = "bench_empty")
+    public static void seekersAreWornAsCharms(GameTestHelper helper) throws ReflectiveOperationException {
+        if (!net.neoforged.fml.ModList.get().isLoaded("curios")) {
+            helper.succeed();
+            return;
+        }
+        var api = Class.forName("top.theillusivec4.curios.api.CuriosApi");
+        var slotsOf = api.getMethod("getItemStackSlots", ItemStack.class, boolean.class);
+        helper.assertTrue(((java.util.Map<?, ?>) slotsOf.invoke(null, new ItemStack(ModItems.STAR_SEEKER.get()), false)).keySet().equals(java.util.Set.of("charm")), "The Star Seeker fits only a charm slot");
+        helper.assertTrue(((java.util.Map<?, ?>) slotsOf.invoke(null, new ItemStack(ModItems.CHAMPION_SEEKER.get()), false)).keySet().equals(java.util.Set.of("charm")), "The Champion Seeker fits only a charm slot");
+        helper.assertTrue(((java.util.Map<?, ?>) slotsOf.invoke(null, new ItemStack(ModItems.LAVA_LENS.get()), false)).keySet().equals(java.util.Set.of("head")), "Hell Sight fits only a head slot");
+
+        var player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        Object handler = ((java.util.Optional<?>) api.getMethod("getCuriosInventory", net.minecraft.world.entity.LivingEntity.class).invoke(null, player)).orElseThrow();
+        var seeker = new ItemStack(ModItems.STAR_SEEKER.get());
+        Class.forName("top.theillusivec4.curios.api.type.capability.ICuriosItemHandler")
+                .getMethod("setEquippedCurio", String.class, int.class, ItemStack.class).invoke(handler, "charm", 0, seeker);
+        helper.assertTrue(dev.zsskayr.merlins_inferno.compat.OptionalCurios.visible(player).stream().anyMatch(stack -> stack == seeker), "The HUD finds the worn seeker");
+
+        MeteorData data = MeteorData.get(helper.getLevel().getServer().overworld());
+        var meteor = data.add(player.getBlockX() + 400, player.getBlockZ(), 0L, 70);
+        try {
+            // Curios ticks a worn stack with slot -1; the seeker has to keep its target from there.
+            player.tickCount = 1;
+            seeker.inventoryTick(helper.getLevel(), player, -1, false);
+            helper.assertTrue(seeker.get(DataComponents.LODESTONE_TRACKER) != null, "A worn seeker still finds the meteor");
+        } finally {
+            data.remove(meteor);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "bench_empty")
     public static void meteorSiteBuildsACraterWithOreAndLoot(GameTestHelper helper) {
         var level = helper.getLevel();
         BlockPos origin = helper.absolutePos(new BlockPos(0, 2, 0));
