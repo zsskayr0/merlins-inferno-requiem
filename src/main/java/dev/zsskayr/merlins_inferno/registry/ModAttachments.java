@@ -39,6 +39,11 @@ public final class ModAttachments {
             ATTACHMENT_TYPES.register("elysium_origin", () -> AttachmentType.builder(() -> net.minecraft.core.GlobalPos.of(net.minecraft.world.level.Level.OVERWORLD, net.minecraft.core.BlockPos.ZERO))
                     .serialize(net.minecraft.core.GlobalPos.CODEC).copyOnDeath().build());
 
+    /** The spot in El'ysium a player last arrived at: only the portal there leads back to {@link #ELYSIUM_ORIGIN}; any other opens at its own coordinates. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<net.minecraft.core.BlockPos>> ELYSIUM_GATE =
+            ATTACHMENT_TYPES.register("elysium_gate", () -> AttachmentType.builder(() -> net.minecraft.core.BlockPos.ZERO)
+                    .serialize(net.minecraft.core.BlockPos.CODEC).copyOnDeath().build());
+
     /** Level attachment: the world day Ostara was last called to a Rowanwood tree (see OstaraSpawnHandler). */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> OSTARA_LAST_DAY =
             ATTACHMENT_TYPES.register("ostara_last_day", () -> AttachmentType.builder(() -> -1L).serialize(Codec.LONG).build());

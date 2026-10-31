@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -160,6 +161,9 @@ public class ElysiumPortalShape {
                 this.level.setBlock(pos, portal.setValue(ElysiumPortalBlock.EDGE_LEFT, w == 0).setValue(ElysiumPortalBlock.EDGE_RIGHT, w == this.width - 1)
                         .setValue(ElysiumPortalBlock.EDGE_DOWN, h == 0).setValue(ElysiumPortalBlock.EDGE_UP, h == this.height - 1), 18);
             }
+        }
+        if (this.level instanceof ServerLevel server) {
+            ElysiumPortals.get(server).add(this.bottomLeft);
         }
     }
 

@@ -46,6 +46,8 @@ public class MerlinsJeiPlugin implements IModPlugin {
                 Ingredient.OTHERWORLD, Ingredient.INFERNAL, Ingredient.CELESTIAL));
         list.add(recipe(Recipe.OBLIVION, new ItemStack(ModItems.OBLIVION_KEY.get()), Ingredient.BOOK,
                 Ingredient.NETHERITE, Ingredient.INFERNAL, Ingredient.OTHERWORLD));
+        list.add(recipe(Recipe.ELYSIUM, new ItemStack(ModItems.ELYSIUM_KEY.get()), Ingredient.BOOK,
+                Ingredient.NETHERITE, Ingredient.CELESTIAL, Ingredient.OTHERWORLD));
         list.add(recipe(Recipe.SERAPH_WINGS, new ItemStack(ModItems.SERAPH_WINGS.get()), Ingredient.TATTERED_WINGS,
                 Ingredient.NETHERITE, Ingredient.CELESTIAL, Ingredient.OTHERWORLD));
         list.add(recipe(Recipe.FALLEN_WINGS, new ItemStack(ModItems.FALLEN_WINGS.get()), Ingredient.TATTERED_WINGS,

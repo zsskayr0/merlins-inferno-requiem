@@ -5,7 +5,7 @@
         "axis": "x"
       },
       "apply": {
-        "model": "merlins_inferno:block/oblivion_portal_ns"
+        "model": "merlins_inferno:block/elysium_portal_ns"
       }
     },
     {
@@ -13,7 +13,7 @@
         "axis": "z"
       },
       "apply": {
-        "model": "merlins_inferno:block/oblivion_portal_ew"
+        "model": "merlins_inferno:block/elysium_portal_ew"
       }
     },
     {
@@ -22,7 +22,7 @@
         "edge_right": "true"
       },
       "apply": {
-        "model": "merlins_inferno:block/oblivion_portal_ns_edge_minx"
+        "model": "merlins_inferno:block/elysium_portal_ns_edge_minx"
       }
     },
     {
@@ -31,7 +31,7 @@
         "edge_left": "true"
       },
       "apply": {
-        "model": "merlins_inferno:block/oblivion_portal_ns_edge_maxx"
+        "model": "merlins_inferno:block/elysium_portal_ns_edge_maxx"
       }
     },
     {
@@ -40,7 +40,7 @@
         "edge_up": "true"
       },
       "apply": {
-        "model": "merlins_inferno:block/oblivion_portal_ns_edge_up"
+        "model": "merlins_inferno:block/elysium_portal_ns_edge_up"
       }
     },
     {
@@ -49,7 +49,7 @@
         "edge_down": "true"
       },
       "apply": {
-        "model": "merlins_inferno:block/oblivion_portal_ns_edge_down"
+        "model": "merlins_inferno:block/elysium_portal_ns_edge_down"
       }
     },
     {
@@ -58,7 +58,7 @@
         "edge_right": "true"
       },
       "apply": {
-        "model": "merlins_inferno:block/oblivion_portal_ew_edge_maxz"
+        "model": "merlins_inferno:block/elysium_portal_ew_edge_maxz"
       }
     },
     {
@@ -67,7 +67,7 @@
         "edge_left": "true"
       },
       "apply": {
-        "model": "merlins_inferno:block/oblivion_portal_ew_edge_minz"
+        "model": "merlins_inferno:block/elysium_portal_ew_edge_minz"
       }
     },
     {
@@ -76,7 +76,7 @@
         "edge_up": "true"
       },
       "apply": {
-        "model": "merlins_inferno:block/oblivion_portal_ew_edge_up"
+        "model": "merlins_inferno:block/elysium_portal_ew_edge_up"
       }
     },
     {
@@ -85,7 +85,7 @@
         "edge_down": "true"
       },
       "apply": {
-        "model": "merlins_inferno:block/oblivion_portal_ew_edge_down"
+        "model": "merlins_inferno:block/elysium_portal_ew_edge_down"
       }
     }
   ]

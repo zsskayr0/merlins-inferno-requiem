@@ -9,7 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 
-/** The arrival portals built in Elysium (the lower-left interior block of each), so later arrivals reuse the nearest. */
+/** The El'ysium portals of one level, lit or built (one film block of each), so later travel reuses the nearest. */
 public class ElysiumPortals extends SavedData {
     private static final String KEY = "merlins_inferno_elysium_portals";
     private static final SavedData.Factory<ElysiumPortals> FACTORY = new SavedData.Factory<>(ElysiumPortals::new, ElysiumPortals::load, null);
@@ -39,8 +39,10 @@ public class ElysiumPortals extends SavedData {
     }
 
     public void add(BlockPos pos) {
-        portals.add(pos);
-        setDirty();
+        if (!portals.contains(pos)) {
+            portals.add(pos);
+            setDirty();
+        }
     }
 
     public void remove(BlockPos pos) {

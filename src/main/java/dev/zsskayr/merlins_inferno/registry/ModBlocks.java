@@ -465,7 +465,7 @@ public final class ModBlocks {
             dev.zsskayr.merlins_inferno.block.OblivionPortalBlock::new, BlockBehaviour.Properties.of().noCollission().strength(-1.0F)
                     .sound(SoundType.GLASS).lightLevel(state -> 5).pushReaction(PushReaction.BLOCK).noLootTable());
 
-    // The film of an El'ysium portal; lit like Oblivion's (see OblivionKeyItem). No item, no drops.
+    // The film of an El'ysium portal; lit with the Key of El'ysium (see ElysiumKeyItem). No item, no drops.
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.ElysiumPortalBlock> ELYSIUM_PORTAL = BLOCKS.registerBlock("elysium_portal",
             dev.zsskayr.merlins_inferno.block.ElysiumPortalBlock::new, BlockBehaviour.Properties.of().noCollission().strength(-1.0F)
                     .sound(SoundType.GLASS).lightLevel(state -> 8).pushReaction(PushReaction.BLOCK).noLootTable());

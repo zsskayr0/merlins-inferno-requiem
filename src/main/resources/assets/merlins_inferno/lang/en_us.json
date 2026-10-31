@@ -309,6 +309,8 @@
   "message.merlins_inferno.oblivion_locked": "The portal does not answer: Oblivion is open only to those who have reached the Second Circle.",
   "item.merlins_inferno.oblivion_key_tooltip": "Lights a portal to Oblivion in a Corrupted Obsidian frame, like flint and steel.",
   "item.merlins_inferno.portal_key_dormant": "The portal itself does not exist yet.",
+  "item.merlins_inferno.elysium_key": "Key of El'ysium",
+  "item.merlins_inferno.elysium_key_tooltip": "Lights a portal to El'ysium in a Purified Obsidian frame, like flint and steel.",
   "container.merlins_inferno.pandora_box": "Pandora's Box",
   "gui.merlins_inferno.pandora_box.warning": "This will end you - the Box will remain",
   "gui.merlins_inferno.pandora_box.ritual": "Perform the Ritual",

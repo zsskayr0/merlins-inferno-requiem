@@ -123,6 +123,7 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
         return switch (recipe) {
             case FOREST -> new ItemStack(ModItems.FOREST_KEY.get());
             case OBLIVION -> new ItemStack(ModItems.OBLIVION_KEY.get());
+            case ELYSIUM -> new ItemStack(ModItems.ELYSIUM_KEY.get());
             case SERAPH_WINGS -> new ItemStack(ModItems.SERAPH_WINGS.get());
             case FALLEN_WINGS -> new ItemStack(ModItems.FALLEN_WINGS.get());
             default -> ItemStack.EMPTY;

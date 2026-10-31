@@ -570,6 +570,8 @@ public final class ModItems {
     // Forged in the opened Pandora Box (Circle 2 only). Their portals are future content (Circle 2 dimensions).
     public static final DeferredItem<OblivionKeyItem> OBLIVION_KEY = ITEMS.registerItem("oblivion_key",
             props -> new OblivionKeyItem(props.durability(3).rarity(Rarity.RARE).fireResistant()));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ElysiumKeyItem> ELYSIUM_KEY = ITEMS.registerItem("elysium_key",
+            props -> new dev.zsskayr.merlins_inferno.item.ElysiumKeyItem(props.durability(3).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredItem<PortalKeyItem> FOREST_KEY = ITEMS.registerItem("forest_key",
             props -> new PortalKeyItem(props.stacksTo(1).rarity(Rarity.RARE).fireResistant(), "forest"));
 

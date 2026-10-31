@@ -138,6 +138,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.FLAME_OF_GOD.get());
                         output.accept(ModItems.PANDORA_BOX.get());
                         output.accept(ModItems.OBLIVION_KEY.get());
+                        output.accept(ModItems.ELYSIUM_KEY.get());
                         output.accept(ModItems.FOREST_KEY.get());
                         output.accept(ModItems.CHAMPION_SEEKER.get());
                         output.accept(ModItems.RAW_EDENWEED.get());

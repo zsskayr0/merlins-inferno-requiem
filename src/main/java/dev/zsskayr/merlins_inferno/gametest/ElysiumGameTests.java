@@ -163,6 +163,57 @@ public final class ElysiumGameTests {
         });
     }
 
+    /** Arrivals land on an islet of their own, with a walkable bridge to a real island a short way off. */
+    @GameTest(template = "bench_empty")
+    public static void elysiumSpawnIsletIsBridged(GameTestHelper helper) {
+        ElysiumWorld world = ElysiumSeed.world();
+        int fromX = 90000, fromZ = -90000;
+        ElysiumWorld.SpawnIslet islet = world.nearestSpawnIslet(fromX / dev.zsskayr.merlins_inferno.portal.ElysiumDimension.SCALE, fromZ / dev.zsskayr.merlins_inferno.portal.ElysiumDimension.SCALE);
+        helper.assertTrue(islet != null, "The world has a spawn islet");
+        var is = islet.island();
+        Column c = new Column();
+        world.sample(is.cx(), is.cz(), c);
+        helper.assertTrue(c.land && c.island == is.index() && !c.hasWater(), "The islet's centre is its own dry land");
+        var bridge = islet.bridge();
+        helper.assertTrue(bridge.kind() == ElysiumWorld.Span.Kind.STONE_ARCH, "A walkable stone bridge");
+        helper.assertTrue(world.spansIn(bridge.ax(), bridge.az(), bridge.ax(), bridge.az()).contains(bridge), "The decorator is told about the bridge");
+        world.sample(bridge.ax(), bridge.az(), c);
+        helper.assertTrue(c.land && c.island == is.index(), "The bridge starts on the islet");
+        world.sample(bridge.bx(), bridge.bz(), c);
+        helper.assertTrue(c.land && c.island == islet.host(), "The bridge ends on the host island");
+        double length = Math.hypot(bridge.bx() - bridge.ax(), bridge.bz() - bridge.az());
+        helper.assertTrue(length < 130, "The host is close by, the bridge is " + length + " long");
+
+        // The test server has no El'ysium level, so the frame and the bridge go up on this one: any entry lands on the islet...
+        var level = helper.getLevel();
+        BlockPos arrival = dev.zsskayr.merlins_inferno.portal.ElysiumDimension.ensureArrival(level, new BlockPos(fromX, 70, fromZ));
+        helper.assertTrue(Math.hypot(arrival.getX() - is.cx(), arrival.getZ() - is.cz()) < 12, "An entry with no portal near lands on the nearest islet: " + arrival);
+        helper.assertTrue(level.getBlockState(arrival.below()).isSolid() && level.getBlockState(arrival).isAir(), "The arrival has ground and room: " + arrival);
+        helper.assertTrue(level.getBlockState(arrival.offset(0, 1, -2)).is(ModBlocks.ELYSIUM_PORTAL.get()), "The portal stands beside the arrival");
+        // ...and the bridge, moved here whole, has a deck at its middle
+        BlockPos o = helper.absolutePos(new BlockPos(1, 1, 1)).atY(bridge.ay());
+        int bx = o.getX() + bridge.bx() - bridge.ax(), bz = o.getZ() + bridge.bz() - bridge.az();
+        var moved = new ElysiumWorld.Span(bridge.kind(), o.getX(), bridge.ay(), o.getZ(), bx, bridge.by(), bz, bridge.sag(), bridge.width());
+        for (int cx = (Math.min(o.getX(), bx) >> 4) - 1; cx <= (Math.max(o.getX(), bx) >> 4) + 1; cx++) {
+            for (int cz = (Math.min(o.getZ(), bz) >> 4) - 1; cz <= (Math.max(o.getZ(), bz) >> 4) + 1; cz++) {
+                SpanBuilder.build(level, new ChunkPos(cx, cz), world, java.util.List.of(moved));
+            }
+        }
+        int deckX = (o.getX() + bx) / 2, deckZ = (o.getZ() + bz) / 2;
+        boolean deck = false;
+        for (int y = bridge.ay(); y <= bridge.ay() + 8 && !deck; y++) {
+            deck = level.getBlockState(new BlockPos(deckX, y, deckZ)).isSolid();
+        }
+        helper.assertTrue(deck, "The bridge has a deck at its middle, (" + deckX + ", " + deckZ + ")");
+        // A portal lit far along keeps its place: leaving by it opens outside at scale, and that way back in returns to it.
+        BlockPos far = new BlockPos(is.cx() + 3000, 200, is.cz() - 2000);
+        BlockPos exit = dev.zsskayr.merlins_inferno.portal.ElysiumDimension.ensureExit(level, far);
+        int scale = dev.zsskayr.merlins_inferno.portal.ElysiumDimension.SCALE;
+        helper.assertTrue(Math.hypot(exit.getX() - far.getX() * scale, exit.getZ() - far.getZ() * scale) < 12, "The exit opens at scaled coordinates: " + exit);
+        helper.assertTrue(exit.equals(dev.zsskayr.merlins_inferno.portal.ElysiumDimension.ensureExit(level, far)), "A second exit reuses that frame");
+        helper.succeed();
+    }
+
     /** The decoration pass on a real level, high above the test area: a loose chain across chunks, the two new tree features, the cloud block. */
     @GameTest(template = "bench_empty")
     public static void elysiumDecorationBuilds(GameTestHelper helper) {

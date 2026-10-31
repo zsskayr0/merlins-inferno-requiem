@@ -42,15 +42,11 @@ public class OblivionKeyItem extends Item {
         }
         BlockPos pos = context.getClickedPos().relative(context.getClickedFace());
         Optional<OblivionPortalShape> shape = OblivionPortalShape.findEmptyPortalShape(level, pos, Direction.Axis.X);
-        // A Purified Obsidian frame is lit the same way (placeholder until El'ysium gets a key of its own).
-        Optional<dev.zsskayr.merlins_inferno.portal.ElysiumPortalShape> elysium = shape.isPresent() ? Optional.empty()
-                : dev.zsskayr.merlins_inferno.portal.ElysiumPortalShape.findEmptyPortalShape(level, pos, Direction.Axis.X);
-        if (shape.isEmpty() && elysium.isEmpty()) {
+        if (shape.isEmpty()) {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide) {
-            shape.ifPresent(OblivionPortalShape::createPortalBlocks);
-            elysium.ifPresent(dev.zsskayr.merlins_inferno.portal.ElysiumPortalShape::createPortalBlocks);
+            shape.get().createPortalBlocks();
             level.playSound(null, pos, SoundEvents.END_PORTAL_SPAWN, SoundSource.BLOCKS, 0.6F, 1.6F);
             Player player = context.getPlayer();
             ItemStack stack = context.getItemInHand();

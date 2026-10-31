@@ -42,8 +42,9 @@ import dev.zsskayr.merlins_inferno.registry.ModParticles;
 
 /**
  * The film of an El'ysium portal, behaving like a Nether portal: it lives in an obsidian frame, vanishes when the
- * frame breaks, and teleports players who stand in it. Entering carries you to the portal in Elysium (remembering where
- * you came from); that portal brings you back to that spot. Only players travel.
+ * frame breaks, and teleports players who stand in it. Entering carries you to the portal nearest your scaled coordinates
+ * in Elysium (remembering where you came from); that portal brings you back to that spot, and any other opens at its own
+ * scaled coordinates outside (see {@link ElysiumDimension}). Only players travel.
  */
 public class ElysiumPortalBlock extends Block implements Portal {
     public static final MapCodec<ElysiumPortalBlock> CODEC = simpleCodec(ElysiumPortalBlock::new);
@@ -55,6 +56,8 @@ public class ElysiumPortalBlock extends Block implements Portal {
     public static final BooleanProperty EDGE_DOWN = BooleanProperty.create("edge_down");
     protected static final VoxelShape X_AXIS_AABB = Block.box(0.0, 0.0, 6.0, 16.0, 16.0, 10.0);
     protected static final VoxelShape Z_AXIS_AABB = Block.box(6.0, 0.0, 0.0, 10.0, 16.0, 16.0);
+    /** Any film block of the widest possible frame is this close to the spot in front of it. */
+    private static final double GATE_REACH = 32.0;
 
     public ElysiumPortalBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -115,10 +118,18 @@ public class ElysiumPortalBlock extends Block implements Portal {
                 return null;
             }
             player.setData(ModAttachments.ELYSIUM_ORIGIN, GlobalPos.of(level.dimension(), player.blockPosition()));
-            return new DimensionTransition(elysium, Vec3.atBottomCenterOf(ElysiumDimension.ensureArrival(elysium, player.blockPosition())), Vec3.ZERO, 180.0F, 0.0F,
+            BlockPos arrival = ElysiumDimension.ensureArrival(elysium, player.blockPosition());
+            player.setData(ModAttachments.ELYSIUM_GATE, arrival);
+            return new DimensionTransition(elysium, Vec3.atBottomCenterOf(arrival), Vec3.ZERO, 180.0F, 0.0F,
                     DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET));
         }
         GlobalPos origin = player.getExistingData(ModAttachments.ELYSIUM_ORIGIN).orElse(null);
+        BlockPos gate = player.getExistingData(ModAttachments.ELYSIUM_GATE).orElse(null);
+        if (origin == null || (gate != null && !gate.closerThan(pos, GATE_REACH))) {
+            ServerLevel overworld = level.getServer().overworld();
+            return new DimensionTransition(overworld, Vec3.atBottomCenterOf(ElysiumDimension.ensureExit(overworld, pos)), Vec3.ZERO, player.getYRot(), player.getXRot(),
+                    DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET));
+        }
         ServerLevel back = origin == null ? level.getServer().overworld() : level.getServer().getLevel(origin.dimension());
         if (back == null) {
             back = level.getServer().overworld();
@@ -142,18 +153,14 @@ public class ElysiumPortalBlock extends Block implements Portal {
             level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, SoundEvents.PORTAL_AMBIENT, SoundSource.BLOCKS,
                     0.5F, random.nextFloat() * 0.4F + 0.5F, false);
         }
-        // Runes stream in toward the film from the sides, like glyphs drawn to an enchanting table.
+        // Sanct motes rise off both faces of the film and drift away, as they do from raw Lyrium.
         boolean alongX = state.getValue(AXIS) == Direction.Axis.X;
-        for (int i = 0; i < 2; i++) {
-            double x = pos.getX() + (alongX ? random.nextDouble() : 0.5);
+        for (int i = 0; i < 3; i++) {
+            double across = 0.5 + (random.nextInt(2) * 2 - 1) * 0.15;
+            double x = pos.getX() + (alongX ? random.nextDouble() : across);
             double y = pos.getY() + random.nextDouble();
-            double z = pos.getZ() + (alongX ? 0.5 : random.nextDouble());
-            int side = random.nextInt(2) * 2 - 1;
-            double offAcross = side * (0.8 + random.nextDouble() * 0.8);
-            double offAlong = (random.nextDouble() - 0.5) * 1.6;
-            double ox = alongX ? offAlong : offAcross;
-            double oz = alongX ? offAcross : offAlong;
-            level.addParticle(ModParticles.OBLIVION_RUNE.get(), x, y + 0.6, z, ox, random.nextDouble() * 0.8 - 0.2, oz);
+            double z = pos.getZ() + (alongX ? across : random.nextDouble());
+            level.addParticle(ModParticles.SANCTIFIED_TYPE, x, y, z, 0.0, 0.0, 0.0);
         }
     }
 

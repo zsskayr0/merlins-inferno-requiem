@@ -309,6 +309,8 @@
   "message.merlins_inferno.oblivion_locked": "O portal não responde: o Oblivion só se abre a quem alcançou o Segundo Círculo.",
   "item.merlins_inferno.oblivion_key_tooltip": "Acende um portal para o Oblivion em uma moldura de Corrupted Obsidian, como um isqueiro.",
   "item.merlins_inferno.portal_key_dormant": "O portal em si ainda não existe.",
+  "item.merlins_inferno.elysium_key": "Chave de El'ysium",
+  "item.merlins_inferno.elysium_key_tooltip": "Acende um portal para El'ysium em uma moldura de Purified Obsidian, como um isqueiro.",
   "container.merlins_inferno.pandora_box": "Caixa de Pandora",
   "gui.merlins_inferno.pandora_box.warning": "Isso vai te matar - a Caixa permanece",
   "gui.merlins_inferno.pandora_box.ritual": "Realizar o Ritual",
