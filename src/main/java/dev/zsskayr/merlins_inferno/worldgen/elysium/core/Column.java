@@ -22,7 +22,7 @@ public final class Column {
     public boolean frozen;
     /** True when this column's water is allowed to spill sideways (a waterfall lip at an island edge). */
     public boolean spill;
-    public int archBottom = Integer.MIN_VALUE, archTop = Integer.MIN_VALUE - 1;
+    public int archBottom = 0, archTop = -1;
     public Mat hangMat = Mat.AIR;
     public int hangLength;
     public ElysiumBiome biome = ElysiumBiome.LARK_MEADOWS;
@@ -33,6 +33,12 @@ public final class Column {
     /** Free per-column data the core uses to pick materials (surface depth, slope, river distance...). */
     public double slope, riverDist = Double.POSITIVE_INFINITY;
     public int surfaceDepth = 4;
+    /** Base height of this column's island (the cone hangs below it; material() switches to underside below baseY - 10). */
+    public int baseY;
+    /** Smooth low-frequency noise in [-1,1] at this column (passed to the palette as {@code patch}). */
+    public double patch;
+    /** True for dry banks next to water (river/lake banks within ~3 blocks, sea shores up to 2 above sea level). */
+    public boolean shore;
 
     public boolean hasWater() { return waterTop > top; }
     public boolean hasArch() { return archTop >= archBottom; }
