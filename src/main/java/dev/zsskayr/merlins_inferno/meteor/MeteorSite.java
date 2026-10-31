@@ -55,6 +55,8 @@ public final class MeteorSite {
     /** The chunks within this many blocks of the centre must be loaded before the site is built (the fallout reaches 30). */
     public static final int LOAD_RADIUS = 34;
     private static final int FALLOUT_RADIUS = 30;
+    /** The fallout leaves everything this close to the centre alone: the geode and its hollow. */
+    private static final int GEODE_REACH = 9;
     /** AE2's "meteorite size": it sets how deep the geode sits and how wide the crater opens. */
     private static final int SIZE = 5;
     private static final double CRATER = (SIZE * 2.0 + 5.0) * (SIZE * 2.0 + 5.0);
@@ -72,6 +74,13 @@ public final class MeteorSite {
         }
     }
 
+    /** A built site: the height of the geode's centre, and whether Templars were left to guard it. */
+    public record Built(int y, boolean guarded) {
+    }
+
+    /** The chance a fallen star has the Cult of El at its crater. */
+    public static final double GUARD_CHANCE = 0.5;
+
     private MeteorSite() {
     }
 
@@ -81,8 +90,8 @@ public final class MeteorSite {
                 new BlockPos(x + LOAD_RADIUS, level.getMinBuildHeight(), z + LOAD_RADIUS));
     }
 
-    /** Builds the site around (x, z) and returns the height of the geode's centre. */
-    public static int build(ServerLevel level, int x, int z, RandomSource random) {
+    /** Builds the site around (x, z). */
+    public static Built build(ServerLevel level, int x, int z, RandomSource random) {
         int yOffset = SIZE + 1;
         // Where the ground is, over the meteorite's footprint: its mean, pulled down towards the lowest point on rough ground.
         int scan = SIZE * 2;
@@ -125,7 +134,8 @@ public final class MeteorSite {
         level.setBlock(chest, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.Plane.HORIZONTAL.getRandomDirection(random)), 2);
         RandomizableContainer.setBlockEntityLootTable(level, random, chest, deep ? LOOT_DEEP : LOOT);
 
-        if (crater != Crater.NONE) {
+        boolean guarded = crater != Crater.NONE && random.nextDouble() < GUARD_CHANCE;
+        if (guarded) {
             for (int i = 0; i < (deep ? 3 : 2); i++) {
                 double angle = random.nextDouble() * Math.PI * 2.0;
                 double distance = 8 + random.nextDouble() * 5;
@@ -138,7 +148,7 @@ public final class MeteorSite {
                 }
             }
         }
-        return centreY;
+        return new Built(centreY, guarded);
     }
 
     /** The top of the solid ground in a column, under water, snow cover, leaves and trunks. */
@@ -283,6 +293,9 @@ public final class MeteorSite {
         for (int i = centre.getX() - FALLOUT_RADIUS; i <= centre.getX() + FALLOUT_RADIUS; i++) {
             for (int k = centre.getZ() - FALLOUT_RADIUS; k <= centre.getZ() + FALLOUT_RADIUS; k++) {
                 for (int j = centre.getY() - 9; j < centre.getY() + FALLOUT_RADIUS; j++) {
+                    if (centre.distSqr(new BlockPos(i, j, k)) <= GEODE_REACH * GEODE_REACH) {
+                        continue;
+                    }
                     at.set(i, j, k);
                     up.set(i, j + 1, k);
                     down.set(i, j - 1, k);

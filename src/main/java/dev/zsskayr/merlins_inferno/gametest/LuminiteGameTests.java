@@ -132,8 +132,13 @@ public final class LuminiteGameTests {
     public static void meteorSiteBuildsACraterWithOreAndLoot(GameTestHelper helper) {
         var level = helper.getLevel();
         BlockPos origin = helper.absolutePos(new BlockPos(0, 2, 0));
+        for (int cx = -3; cx <= 3; cx++) {
+            for (int cz = -3; cz <= 3; cz++) {
+                level.getChunk(origin.offset(cx * 16, 0, cz * 16));
+            }
+        }
         helper.assertTrue(MeteorSite.canBuild(level, origin.getX(), origin.getZ()), "The test chunks are loaded");
-        int floor = MeteorSite.build(level, origin.getX(), origin.getZ(), level.random);
+        int floor = MeteorSite.build(level, origin.getX(), origin.getZ(), level.random).y();
         boolean ore = false;
         boolean chest = false;
         for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-10, -24, -10), origin.offset(10, 12, 10))) {

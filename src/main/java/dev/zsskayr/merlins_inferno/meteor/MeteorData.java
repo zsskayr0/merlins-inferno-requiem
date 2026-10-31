@@ -26,6 +26,9 @@ public class MeteorData extends SavedData {
         public final long fell;
         public int y;
         public boolean built;
+        /** The game time its crater was built, and whether Templars were left to guard it. */
+        public long builtAt;
+        public boolean guarded;
 
         public Meteor(int x, int z, long fell, int y, boolean built) {
             this.x = x;
@@ -49,6 +52,9 @@ public class MeteorData extends SavedData {
         for (Tag entry : tag.getList("meteors", Tag.TAG_COMPOUND)) {
             CompoundTag meteor = (CompoundTag) entry;
             data.meteors.add(new Meteor(meteor.getInt("x"), meteor.getInt("z"), meteor.getLong("fell"), meteor.getInt("y"), meteor.getBoolean("built")));
+            Meteor loaded = data.meteors.get(data.meteors.size() - 1);
+            loaded.builtAt = meteor.getLong("built_at");
+            loaded.guarded = meteor.getBoolean("guarded");
         }
         return data;
     }
@@ -64,6 +70,8 @@ public class MeteorData extends SavedData {
             entry.putLong("fell", meteor.fell);
             entry.putInt("y", meteor.y);
             entry.putBoolean("built", meteor.built);
+            entry.putLong("built_at", meteor.builtAt);
+            entry.putBoolean("guarded", meteor.guarded);
             list.add(entry);
         }
         tag.put("meteors", list);

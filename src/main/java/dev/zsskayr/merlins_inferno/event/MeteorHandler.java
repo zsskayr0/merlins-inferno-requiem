@@ -37,6 +37,8 @@ public class MeteorHandler {
     public static final int ANNOUNCE_ERROR = 300;
     /** A meteor is claimed when a player stands this close to its centre. */
     public static final int CLAIM_DISTANCE = 24;
+    /** A player who reaches a guarded crater within this many ticks of it forming (5 minutes) finds the cult still there. */
+    public static final long CULT_WINDOW = 6000;
     private static final int NIGHT_START = 13000;
     private static final int CHECK_INTERVAL = 40;
 
@@ -72,8 +74,15 @@ public class MeteorHandler {
                                 context.getSource().sendFailure(Component.literal("No meteor fell: no player in the Overworld, or no spot inside the world border."));
                                 return 0;
                             }
-                            context.getSource().sendSuccess(() -> Component.literal(
-                                    "Meteor fell at " + meteor.x + ", " + meteor.z + " (built when its chunks load)."), true);
+                            int y = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, meteor.x, meteor.z);
+                            String coords = meteor.x + ", " + y + ", " + meteor.z;
+                            Component where = Component.literal("[" + coords + "]").withStyle(style -> style
+                                    .withColor(net.minecraft.ChatFormatting.GREEN)
+                                    .withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.SUGGEST_COMMAND,
+                                            "/tp @s " + meteor.x + " " + y + " " + meteor.z))
+                                    .withHoverEvent(new net.minecraft.network.chat.HoverEvent(net.minecraft.network.chat.HoverEvent.Action.SHOW_TEXT,
+                                            Component.literal("Click to suggest a teleport"))));
+                            context.getSource().sendSuccess(() -> Component.literal("A meteor fell at ").append(where), false);
                             return 1;
                         }))));
     }
@@ -98,7 +107,9 @@ public class MeteorHandler {
                 continue;
             }
             Meteor meteor = data.add(x, z, level.getGameTime(), level.getSeaLevel());
-            announce(level, meteor, random);
+            if (!force) {
+                announce(level, meteor, random);
+            }
             return meteor;
         }
         return null;
@@ -128,18 +139,28 @@ public class MeteorHandler {
                 gone.add(meteor);
             } else if (!meteor.built) {
                 if (MeteorSite.canBuild(level, meteor.x, meteor.z)) {
-                    meteor.y = MeteorSite.build(level, meteor.x, meteor.z, level.random);
+                    MeteorSite.Built built = MeteorSite.build(level, meteor.x, meteor.z, level.random);
+                    meteor.y = built.y();
+                    meteor.guarded = built.guarded();
+                    meteor.builtAt = level.getGameTime();
                     meteor.built = true;
                     data.touch();
                 }
-            } else if (claimed(level, meteor)) {
-                gone.add(meteor);
+            } else {
+                ServerPlayer claimer = claimer(level, meteor);
+                if (claimer != null) {
+                    if (meteor.guarded && level.getGameTime() - meteor.builtAt <= CULT_WINDOW) {
+                        claimer.sendSystemMessage(Component.translatable("message.merlins_inferno.meteor_cult")
+                                .withStyle(net.minecraft.ChatFormatting.DARK_RED, net.minecraft.ChatFormatting.ITALIC));
+                    }
+                    gone.add(meteor);
+                }
             }
         }
         gone.forEach(data::remove);
     }
 
-    private static boolean claimed(ServerLevel level, Meteor meteor) {
-        return level.getNearestPlayer(meteor.x + 0.5, meteor.y, meteor.z + 0.5, CLAIM_DISTANCE, p -> !p.isSpectator()) != null;
+    private static ServerPlayer claimer(ServerLevel level, Meteor meteor) {
+        return level.getNearestPlayer(meteor.x + 0.5, meteor.y, meteor.z + 0.5, CLAIM_DISTANCE, p -> !p.isSpectator()) instanceof ServerPlayer player ? player : null;
     }
 }
