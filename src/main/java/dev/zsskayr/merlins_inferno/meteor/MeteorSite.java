@@ -58,6 +58,8 @@ public final class MeteorSite {
     /** How far the geode's centre sits under the bowl's rim level, and how deep the bowl is, so the top of the geode stands in the bowl. */
     private static final int GEODE_SINK = 7;
     private static final double BOWL_DEPTH = 4.0;
+    /** How far from the centre the cut reaches (must stay inside {@link #LOAD_RADIUS}). */
+    private static final int CUT_REACH = 38;
 
     /** A built site: where it ended up, the height of the geode's centre, and whether Templars were left to guard it. */
     public record Built(int x, int y, int z, boolean guarded) {
@@ -241,28 +243,35 @@ public final class MeteorSite {
     }
 
     /**
-     * The crater: a smooth bowl, deepest at the geode and rising as a parabola to the ground level at the rim, then a gentle ramp that
-     * trims the hill beyond it. Everything above the bowl is cleared (trees too), and its surface is scorched towards the middle.
+     * The crater: a smooth bowl, deepest at the geode and rising as a parabola to the ground level at the rim. Past the rim the cut keeps
+     * climbing in a long, gentle slope (never steeper than about 40 degrees, like AE2's cone) out to {@link #CUT_REACH} blocks, so on a
+     * hillside the bowl melts into the slope instead of ending in a wall. Everything above the cut is cleared (trees too); the bowl
+     * is scorched towards the middle and the slope keeps the ground cover it had.
      */
     private static void carveBowl(ServerLevel level, BlockPos centre, int baseY, double radius, double[] phase, Crater crater, RandomSource random, List<BlockPos> fires) {
         double liquidY = baseY - BOWL_DEPTH * 0.55;
-        int reach = (int) Math.ceil(radius * 1.5);
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
-        for (int dx = -reach; dx <= reach; dx++) {
-            for (int dz = -reach; dz <= reach; dz++) {
-                double rim = rimRadius(radius, phase, Math.atan2(dz, dx));
-                double u = Math.sqrt(dx * dx + dz * dz) / rim;
-                if (u > 1.3) {
+        for (int dx = -CUT_REACH; dx <= CUT_REACH; dx++) {
+            for (int dz = -CUT_REACH; dz <= CUT_REACH; dz++) {
+                double distance = Math.sqrt(dx * dx + dz * dz);
+                if (distance > CUT_REACH) {
                     continue;
                 }
-                double bowl = u <= 1.0 ? baseY - BOWL_DEPTH * (1.0 - u * u) : baseY + 3.0 * (u - 1.0);
+                double rim = rimRadius(radius, phase, Math.atan2(dz, dx));
+                double u = distance / rim;
+                double d = u * radius;
+                double outside = d - radius;
+                double bowl = u <= 1.0 ? baseY - BOWL_DEPTH * (1.0 - u * u) : baseY + 0.55 * outside + 0.006 * outside * outside;
                 int floor = (int) Math.floor(bowl);
                 int x = centre.getX() + dx;
                 int z = centre.getZ() + dz;
-                int top = level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
-                if (top - 1 <= floor) {
+                int ground = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+                if (ground - 1 <= floor) {
                     continue;
                 }
+                at.set(x, ground - 1, z);
+                BlockState original = level.getBlockState(at);
+                int top = level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
                 for (int y = floor + 1; y < top; y++) {
                     at.set(x, y, z);
                     put(level, at, Blocks.AIR.defaultBlockState());
@@ -274,6 +283,8 @@ public final class MeteorSite {
                     if (surface.is(Blocks.MAGMA_BLOCK) || (surface.is(Blocks.BLACKSTONE) && random.nextInt(14) == 0)) {
                         fires.add(at.immutable());
                     }
+                } else if (original.is(BlockTags.DIRT) || original.is(BlockTags.SAND)) {
+                    put(level, at, original);
                 }
                 if ((crater == Crater.LAVA || crater == Crater.WATER) && floor < liquidY) {
                     BlockState liquid = crater == Crater.LAVA ? Blocks.LAVA.defaultBlockState() : Blocks.WATER.defaultBlockState();
