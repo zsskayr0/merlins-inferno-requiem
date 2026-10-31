@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "merlins_inferno:item/champion_seeker/frame_25"
+    "layer0": "merlins_inferno:item/champion_seeker/pearl",
+    "layer1": "merlins_inferno:item/champion_seeker/pupil_25"
   }
 }

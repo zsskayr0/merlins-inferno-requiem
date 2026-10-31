@@ -15,15 +15,21 @@ import net.minecraft.world.phys.Vec3;
 import dev.zsskayr.merlins_inferno.registry.ModTags;
 
 /**
- * A compass forged around a captured wisp of Mundane and Fae essence: its needle points at the
+ * A dark pearl forged around a captured wisp of Mundane and Fae essence: its red pupil looks at the
  * nearest boss/miniboss (see {@link ModTags.EntityTypes#BOSS_COMPASS_TARGETS}) instead of world
- * spawn or a lodestone. The needle is a baked "angle" item property (16 frame textures under
- * {@code textures/item/champion_seeker/}) driven by a {@code ClampedItemPropertyFunction}
+ * spawn or a lodestone. The pupil is a baked "angle" item property (32 overlays over one animated
+ * pearl under {@code textures/item/champion_seeker/}) driven by a {@code ClampedItemPropertyFunction}
  * registered client-side in {@code client.ModEntityRenderers}.
  */
 public class ChampionSeekerItem extends Item {
     public ChampionSeekerItem(Properties properties) {
         super(properties);
+    }
+
+    /** The red of the pupil. */
+    @Override
+    public Component getName(ItemStack stack) {
+        return super.getName(stack).copy().withColor(0xEC4238);
     }
 
     @Override
