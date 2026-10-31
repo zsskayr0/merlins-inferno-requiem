@@ -53,9 +53,10 @@ public class StarSeekerItem extends Item {
         }
     }
 
+    /** The purple of the pearl. */
     @Override
-    public boolean isFoil(ItemStack stack) {
-        return stack.has(DataComponents.LODESTONE_TRACKER);
+    public Component getName(ItemStack stack) {
+        return super.getName(stack).copy().withColor(0x9861FF);
     }
 
     @Override
