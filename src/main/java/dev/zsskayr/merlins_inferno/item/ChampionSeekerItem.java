@@ -34,7 +34,8 @@ public class ChampionSeekerItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.merlins_inferno.champion_seeker.tooltip").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.merlins_inferno.champion_seeker.tooltip").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+        tooltip.add(Component.translatable("item.merlins_inferno.champion_seeker.tooltip.gaze").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
     }
 
     /** Nearest tagged boss to {@code holder} within {@code searchRadius} blocks, or {@code null} if none is loaded nearby. */

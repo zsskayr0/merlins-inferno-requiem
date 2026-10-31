@@ -61,6 +61,7 @@ public class StarSeekerItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.merlins_inferno.star_seeker.tooltip").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.merlins_inferno.star_seeker.tooltip").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+        tooltip.add(Component.translatable("item.merlins_inferno.star_seeker.tooltip.gaze").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
     }
 }
