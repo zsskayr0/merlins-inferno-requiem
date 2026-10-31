@@ -419,8 +419,8 @@
   "item.merlins_inferno.luminite_chestplate": "Peitoral de Luminite",
   "item.merlins_inferno.luminite_leggings": "Calças de Luminite",
   "item.merlins_inferno.luminite_boots": "Botas de Luminite",
-  "item.merlins_inferno.skyfall_compass": "Bússola da Queda",
-  "item.merlins_inferno.skyfall_compass.tooltip": "Aponta para a estrela caída mais próxima",
+  "item.merlins_inferno.star_seeker": "Star Seeker",
+  "item.merlins_inferno.star_seeker.tooltip": "Aponta para a estrela caída mais próxima",
   "message.merlins_inferno.meteor_fell.0": "Uma estrela cai na noite, em algum lugar perto de %s, %s.",
   "message.merlins_inferno.meteor_fell.1": "O céu se rasga por um instante e algo em chamas despenca perto de %s, %s.",
   "message.merlins_inferno.meteor_fell.2": "Um rastro de luz prateada cruza os céus e se apaga perto de %s, %s.",
@@ -627,5 +627,7 @@
   "block.merlins_inferno.meteorite_bricks": "Tijolos de Meteorito",
   "block.merlins_inferno.meteorite_bricks_stairs": "Escadas de Tijolos de Meteorito",
   "block.merlins_inferno.meteorite_bricks_slab": "Laje de Tijolos de Meteorito",
-  "block.merlins_inferno.meteorite_bricks_wall": "Muro de Tijolos de Meteorito"
+  "block.merlins_inferno.meteorite_bricks_wall": "Muro de Tijolos de Meteorito",
+  "message.merlins_inferno.meteor_debug": "Uma estrela se arranca do céu e queima o chão em %s.",
+  "message.merlins_inferno.meteor_debug_hover": "Seguir a estrela caída"
 }

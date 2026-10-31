@@ -419,8 +419,8 @@
   "item.merlins_inferno.luminite_chestplate": "Luminite Chestplate",
   "item.merlins_inferno.luminite_leggings": "Luminite Leggings",
   "item.merlins_inferno.luminite_boots": "Luminite Boots",
-  "item.merlins_inferno.skyfall_compass": "Skyfall Compass",
-  "item.merlins_inferno.skyfall_compass.tooltip": "Points at the nearest fallen star",
+  "item.merlins_inferno.star_seeker": "Star Seeker",
+  "item.merlins_inferno.star_seeker.tooltip": "Points at the nearest fallen star",
   "message.merlins_inferno.meteor_fell.0": "A star falls in the night, somewhere near %s, %s.",
   "message.merlins_inferno.meteor_fell.1": "The sky tears open for a heartbeat, and something burning drops near %s, %s.",
   "message.merlins_inferno.meteor_fell.2": "A streak of silver light crosses the heavens and dies near %s, %s.",
@@ -627,5 +627,7 @@
   "block.merlins_inferno.meteorite_bricks": "Meteorite Bricks",
   "block.merlins_inferno.meteorite_bricks_stairs": "Meteorite Brick Stairs",
   "block.merlins_inferno.meteorite_bricks_slab": "Meteorite Brick Slab",
-  "block.merlins_inferno.meteorite_bricks_wall": "Meteorite Brick Wall"
+  "block.merlins_inferno.meteorite_bricks_wall": "Meteorite Brick Wall",
+  "message.merlins_inferno.meteor_debug": "A star tears itself from the sky and burns down upon %s.",
+  "message.merlins_inferno.meteor_debug_hover": "Follow the fallen star"
 }

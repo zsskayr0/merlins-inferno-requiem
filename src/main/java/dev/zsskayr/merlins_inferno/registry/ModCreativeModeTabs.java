@@ -271,7 +271,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.SERAPHIUM_LEGGINGS.get());
                         output.accept(ModItems.SERAPHIUM_BOOTS.get());
 
-                        // Circle 2: Luminite and the Skyfall Compass
+                        // Circle 2: Luminite and the Star Seeker
                         output.accept(ModItems.LUMINITE_CLUSTER_ITEM.get());
                         output.accept(ModItems.LUMINITE_BLOCK_ITEM.get());
                         output.accept(ModItems.METEORITE_ITEM.get());
@@ -293,7 +293,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.LUMINITE_CHESTPLATE.get());
                         output.accept(ModItems.LUMINITE_LEGGINGS.get());
                         output.accept(ModItems.LUMINITE_BOOTS.get());
-                        output.accept(ModItems.SKYFALL_COMPASS.get());
+                        output.accept(ModItems.STAR_SEEKER.get());
 
                         // Circle 2: Ebony and the Dark Coven
                         output.accept(ModItems.EBONY_DEBRIS_ITEM.get());

@@ -24,7 +24,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Circle 2's Celestial route: the Skybound set bonus, the Skyfall Compass and the fallen stars. */
+/** Circle 2's Celestial route: the Skybound set bonus, the Star Seeker and the fallen stars. */
 @GameTestHolder("merlins_inferno")
 @PrefixGameTestTemplate(false)
 public final class LuminiteGameTests {
@@ -105,15 +105,15 @@ public final class LuminiteGameTests {
     }
 
     @GameTest(template = "bench_empty")
-    public static void skyfallCompassFollowsTheMeteors(GameTestHelper helper) {
+    public static void starSeekerFollowsTheMeteors(GameTestHelper helper) {
         var level = helper.getLevel();
         MeteorData data = MeteorData.get(level.getServer().overworld());
         BlockPos here = helper.absolutePos(new BlockPos(0, 2, 0));
         var near = data.add(here.getX() + 400, here.getZ(), 0L, 70);
         var far = data.add(here.getX() - 2000, here.getZ(), 0L, 70);
         try {
-            var compass = new ItemStack(ModItems.SKYFALL_COMPASS.get());
-            dev.zsskayr.merlins_inferno.item.SkyfallCompassItem.retarget(compass, level, here);
+            var compass = new ItemStack(ModItems.STAR_SEEKER.get());
+            dev.zsskayr.merlins_inferno.item.StarSeekerItem.retarget(compass, level, here);
             var tracker = compass.get(DataComponents.LODESTONE_TRACKER);
             helper.assertTrue(tracker != null && tracker.target().isPresent() && tracker.target().get().pos().getX() == here.getX() + 400,
                     "It points at the nearest meteor");
@@ -122,8 +122,8 @@ public final class LuminiteGameTests {
             data.remove(near);
             data.remove(far);
         }
-        var empty = new ItemStack(ModItems.SKYFALL_COMPASS.get());
-        dev.zsskayr.merlins_inferno.item.SkyfallCompassItem.retarget(empty, level, here);
+        var empty = new ItemStack(ModItems.STAR_SEEKER.get());
+        dev.zsskayr.merlins_inferno.item.StarSeekerItem.retarget(empty, level, here);
         helper.assertTrue(data.all().isEmpty() ? empty.get(DataComponents.LODESTONE_TRACKER) == null : true, "With no meteor there is no target");
         helper.succeed();
     }
@@ -157,7 +157,7 @@ public final class LuminiteGameTests {
     @GameTest(template = "bench_empty")
     public static void luminiteDataLoads(GameTestHelper helper) {
         var server = helper.getLevel().getServer();
-        for (String recipe : new String[] {"luminite_sword", "luminite_axe", "luminite_pickaxe", "luminite_helmet", "luminite_boots", "skyfall_compass",
+        for (String recipe : new String[] {"luminite_sword", "luminite_axe", "luminite_pickaxe", "luminite_helmet", "luminite_boots", "star_seeker",
                 "luminite_leggings", "luminite_chestplate", "luminite_shovel", "luminite_hoe"}) {
             helper.assertTrue(server.getRecipeManager().byKey(id(recipe)).isPresent(), "Recipe " + recipe);
         }

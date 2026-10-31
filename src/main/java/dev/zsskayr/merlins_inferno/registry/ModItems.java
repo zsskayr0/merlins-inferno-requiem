@@ -671,9 +671,9 @@ public final class ModItems {
     public static final DeferredItem<ArmorItem> LUMINITE_BOOTS = ITEMS.registerItem("luminite_boots",
             props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(40))));
 
-    /** Points at the nearest unclaimed meteor of this world - see SkyfallCompassItem. */
-    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.SkyfallCompassItem> SKYFALL_COMPASS = ITEMS.registerItem("skyfall_compass",
-            props -> new dev.zsskayr.merlins_inferno.item.SkyfallCompassItem(props.stacksTo(1).rarity(Rarity.UNCOMMON)));
+    /** Points at the nearest unclaimed meteor of this world - see StarSeekerItem. */
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.StarSeekerItem> STAR_SEEKER = ITEMS.registerItem("star_seeker",
+            props -> new dev.zsskayr.merlins_inferno.item.StarSeekerItem(props.stacksTo(1).rarity(Rarity.UNCOMMON)));
 
     // --- Circle 2: Ebony (Cain, the Flesh Golem and the Ebony Debris of Oblivion) and the Dark Coven. The scrap comes from
     // Ebony Debris, rarely from Ancient Debris, and from Oblivion's bosses; the Hell Forge turns it into the bar (one to one).
@@ -765,6 +765,8 @@ public final class ModItems {
     }
 
     public static void register(IEventBus modEventBus) {
+        // The Star Seeker was the Skyfall Compass up to v0.0.16-alpha: keep the ones already in players' worlds.
+        ITEMS.addAlias(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "skyfall_compass"), STAR_SEEKER.getId());
         ITEMS.register(modEventBus);
     }
 }

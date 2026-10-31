@@ -138,8 +138,8 @@ public final class ModEntityRenderers {
                         }
                         return ChampionSeekerItem.getAngle(holder, new Vec3(target.getX(), target.getY(), target.getZ()));
                     });
-            // The Skyfall Compass: the server writes the meteor into the stack's lodestone tracker; the needle just follows it.
-            ItemProperties.register(ModItems.SKYFALL_COMPASS.get(), ResourceLocation.withDefaultNamespace("angle"),
+            // The Star Seeker: the server writes the meteor into the stack's lodestone tracker; the pupil just follows it.
+            ItemProperties.register(ModItems.STAR_SEEKER.get(), ResourceLocation.withDefaultNamespace("angle"),
                     (stack, level, entity, seed) -> {
                         if (!(entity instanceof LivingEntity holder)) {
                             return 0.0F;
