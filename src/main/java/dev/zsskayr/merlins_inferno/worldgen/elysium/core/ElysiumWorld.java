@@ -325,7 +325,7 @@ public final class ElysiumWorld {
         anchor(ElysiumBiome.STONECROWN_CLIFFS, 0.15, -0.35, 0.7);
         anchor(ElysiumBiome.CASCADE_VALE, 0.45, -0.1, 0.55);
         anchor(ElysiumBiome.MISTFALL_GORGE, 0.2, 0.55, 0.65);
-        anchor(ElysiumBiome.GLASS_SEA, 0.35, 0.85, -0.6);
+        anchor(ElysiumBiome.GLASS_SEA, 0.3, 0.3, 0.05);
         anchor(ElysiumBiome.AZURE_SHALLOWS, 0.8, 0.55, -0.5);
         anchor(ElysiumBiome.RIME_EXPANSE, -0.85, -0.1, -0.5);
         anchor(ElysiumBiome.FROSTCREST_RANGE, -0.75, 0.25, 0.6);
@@ -392,14 +392,14 @@ public final class ElysiumWorld {
         if (single) {
             ElysiumBiome.Size size = nearest == ElysiumBiome.LARK_MEADOWS && r.nextDouble() < 0.4
                     ? ElysiumBiome.Size.GIANT : ElysiumBiome.Size.LARGE;
-            double width = size == ElysiumBiome.Size.GIANT ? 1600 + 400 * r.nextDouble() : 1050 + 450 * r.nextDouble();
+            double width = size == ElysiumBiome.Size.GIANT ? 1600 + 400 * r.nextDouble() : 1300 + 200 * r.nextDouble();
             addIsland(cell, r, sx, sz, 0, ccx, ccz, SUPER / 2.0, width, size);
         } else {
             double half = SUPER / 4.0;
             for (int i = 0; i < 4; i++) {
                 double qx = sx * SUPER + half * (1 + 2 * (i & 1)), qz = sz * SUPER + half * (1 + 2 * (i >> 1));
                 ElysiumBiome.Size size = r.nextDouble() < 0.45 ? ElysiumBiome.Size.SMALL : ElysiumBiome.Size.MEDIUM;
-                double width = size == ElysiumBiome.Size.SMALL ? 320 + 180 * r.nextDouble() : 560 + 340 * r.nextDouble();
+                double width = size == ElysiumBiome.Size.SMALL ? 380 + 160 * r.nextDouble() : 650 + 300 * r.nextDouble();
                 addIsland(cell, r, sx, sz, i, qx, qz, half, width, size);
             }
         }
@@ -408,7 +408,10 @@ public final class ElysiumWorld {
 
     private void addIsland(CellA cell, SplittableRandom r, int sx, int sz, int slot, double qx, double qz, double half,
                            double width, ElysiumBiome.Size size) {
-        double maxR = (half - CELL_MARGIN - 2) / 1.21;
+        double maxR = (half - CELL_MARGIN - 2) / (1.062 + IslandPlan.amp(width / 2) + 0.035);
+        if (maxR <= 760 && width / 2 > 760) {
+            maxR = (half - CELL_MARGIN - 2) / (1.092 + IslandPlan.amp(800));
+        }
         double R = Math.min(width / 2, maxR);
         double slack = Math.max(0, half - CELL_MARGIN - IslandPlan.extent(R));
         double cx = qx + (r.nextDouble() * 2 - 1) * slack, cz = qz + (r.nextDouble() * 2 - 1) * slack;
@@ -424,7 +427,7 @@ public final class ElysiumWorld {
         }
         if (size == ElysiumBiome.Size.GIANT && biome != ElysiumBiome.LARK_MEADOWS) {
             size = ElysiumBiome.Size.LARGE;
-            R = Math.min(R, 750);
+            R = Math.min(R, (half - CELL_MARGIN - 2) / (1.092 + IslandPlan.amp(0)));
         }
         int w = (int) Math.round(2 * R);
         ElysiumBiome.Size actual = ElysiumBiome.Size.SMALL;
@@ -627,7 +630,7 @@ public final class ElysiumWorld {
             cell.spans.add(new Span(Span.Kind.GIANT_CHAIN, ca[0], ca[1], ca[2], cb[0], cb[1], cb[2], Math.max(0, sag), 3));
         }
         // Chainfall platforms strung along the crossing, linked by vine bridges
-        int count = Math.max(1, (int) (gap / 210));
+        int count = gap < 450 ? 0 : Math.min(3, Math.max(1, (int) (gap / 400)));
         List<IslandPlan> chain = new ArrayList<>();
         for (int k = 0; k < count && slot < 127; k++) {
             double t = (k + 0.5 + (r.nextDouble() - 0.5) * 0.3) / count;

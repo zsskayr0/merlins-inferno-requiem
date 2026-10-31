@@ -26,7 +26,7 @@ public final class IslandPlan {
     final Noise nz;
     final long salt;
     final double cx, cz, R, aspect, cosA, sinA, warp;
-    final double ox, oz;
+    final double ox, oz, amp;
     public final int baseY;
     final double coneDepth, rim;
     public final int seaLevel;
@@ -59,12 +59,13 @@ public final class IslandPlan {
         this.cosA = Math.cos(ang);
         this.sinA = Math.sin(ang);
         this.warp = 0.035 * R;
+        this.amp = amp(R);
         this.ox = r.nextDouble() * 50000 - 25000;
         this.oz = r.nextDouble() * 50000 - 25000;
         this.baseY = island.baseY();
         // cone: ~30 + 7.5% of the width deep, clamped so stalactites still stay above LOWEST_SOLID
-        double room = (baseY - ElysiumWorld.LOWEST_SOLID - 8) / 1.5; // leave room for the central tip and stalactites
-        this.coneDepth = platform ? Math.min(room, 22 + 0.35 * R) : Math.min(room, 30 + 0.075 * island.width());
+        double room = baseY - ElysiumWorld.LOWEST_SOLID - 6;
+        this.coneDepth = platform ? Math.min(room, 22 + 0.35 * R) : Math.min(room, (0.15 + 0.07 * r.nextDouble()) * island.width());
         this.rim = platform ? 7 + 4 * r.nextDouble() : 11 + 6 * r.nextDouble();
         this.seaLevel = switch (biome) {
             case GLASS_SEA -> baseY + 6;
@@ -100,16 +101,24 @@ public final class IslandPlan {
             return R;
         }
         double cu = u / d, cv = v / d;
-        double edge = R * (1.0 + 0.11 * nz.noise(cu * 1.6 + ox * 1e-3, cv * 1.6 + oz * 1e-3)
+        // bays and peninsulas: big low-order lobes plus a sharper mid-frequency term, clamped to the amplitude
+        double lobes = 0.65 * nz.noise(cu * 1.6 + ox * 1e-3, cv * 1.6 + oz * 1e-3)
+                + 0.5 * nz.noise(cu * 3.4 - 7 + oz * 1e-3, cv * 3.4 + 3);
+        double edge = R * (1.0 + amp * Noise.clamp(lobes, -1, 1)
                 + 0.045 * nz.noise(cu * 5.3 + 40.0, cv * 5.3 - 21.0)
-                + (platform ? 0.08 * nz.noise(cu * 3.1 - 7, cv * 3.1 + 3) : 0.012 * nz.noise(cu * 23.0 + 9, cv * 23.0 + 1)));
+                + 0.012 * nz.noise(cu * 23.0 + 9, cv * 23.0 + 1));
         double f = Math.sqrt(cu * cu + cv * cv * aspect * aspect);
         return (edge - d) * f;
     }
 
     /** Max horizontal reach from the centre (for bounding boxes and spacing). */
     static double extent(double R) {
-        return 1.21 * R + 2;
+        return (1 + amp(R) + 0.045 + 0.012 + 0.035) * R + 2;
+    }
+
+    /** Outline lobe amplitude: strong bays/peninsulas, except on GIANT continents (which need the room). */
+    static double amp(double R) {
+        return R > 760 ? 0.06 : 0.17;
     }
 
     /** Typical inland depth of the centre (minor semi-axis). */
@@ -160,13 +169,13 @@ public final class IslandPlan {
         double h;
         switch (biome) {
             case LARK_MEADOWS -> {
-                h = 7 + 3.6 * n(x, z, 170, 3) + 1.4 * n(x, z, 45, 2);
-                h = terrace(h, 3, 0.35) + spires(x, z, 220, 0.12, 3, 5, 9, 20);
+                h = 8 + 5 * n(x, z, 170, 3) + 1.6 * n(x, z, 45, 2);
+                h = terrace(h, 4, 0.4) + spires(x, z, 220, 0.15, 3, 5, 10, 24);
             }
             case WINDLESS_STEPPE -> h = 3 + 1.3 * n(x, z, 300, 2) + 0.5 * n(x, z, 40, 2) + spires(x, z, 150, 0.18, 1.5, 3, 3, 7);
             case HIGHPINE_FOREST -> {
-                h = 17 + 8.5 * n(x, z, 210, 3) + 3 * n(x, z, 55, 2);
-                h = terrace(h, 4, 0.3) + spires(x, z, 130, 0.25, 3, 6, 14, 34);
+                h = 19 + 11 * n(x, z, 210, 3) + 3.5 * n(x, z, 55, 2);
+                h = terrace(h, 5, 0.4) + spires(x, z, 130, 0.3, 3, 6, 16, 40);
             }
             case MOSSY_WEALD -> h = 6 + 2.6 * n(x, z, 140, 3) + 1.1 * n(x, z, 35, 2) + spires(x, z, 170, 0.15, 3, 6, 6, 14);
             case ARGENT_PEAKS, FROSTCREST_RANGE -> {
@@ -192,11 +201,12 @@ public final class IslandPlan {
                 int rowZ = Math.floorDiv((int) Math.floor(z), 5);
                 int colX = Math.floorDiv((int) Math.floor(x) + ((rowZ & 1) != 0 ? 2 : 0), 5);
                 double colHash = Noise.unit(Noise.hash(salt, colX, rowZ, 0xC01));
-                double lv = Math.floor(Noise.clamp((v + 0.85) * 2.7 + 0.45 * colHash, 0, 5));
-                h = 12 + 13 * lv + 2 * colHash + spires(x, z, 95, 0.32, 3, 6, 18, 42);
+                // 3 plateau levels, 30-45 tall columnar walls between them (5x5 offset basalt columns)
+                double lv = Math.floor(Noise.clamp((v + 0.8) * 1.5 + 0.25 * colHash, 0, 2));
+                h = 10 + 36 * lv + 4 * colHash + 3 * n(x, z, 60, 2) + spires(x, z, 85, 0.4, 3, 7, 22, 55);
             }
-            case CASCADE_VALE -> h = 50 + 6 * n(x, z, 200, 3) + 2 * n(x, z, 40, 2) + spires(x, z, 110, 0.25, 3, 6, 12, 30);
-            case MISTFALL_GORGE -> h = 44 + 6 * n(x, z, 180, 3) + 1.5 * n(x, z, 40, 2) + spires(x, z, 120, 0.25, 3, 5, 10, 26);
+            case CASCADE_VALE -> h = 72 + 7 * n(x, z, 200, 3) + 2 * n(x, z, 40, 2) + spires(x, z, 110, 0.3, 3, 6, 14, 36);
+            case MISTFALL_GORGE -> h = 74 + 6 * n(x, z, 180, 3) + 1.5 * n(x, z, 40, 2) + spires(x, z, 120, 0.3, 3, 5, 12, 30);
             case GLASS_SEA -> {
                 double ringW = 16 + 9 * n(x, z, 120, 2);
                 double rimH = 13 + 4 * n(x, z, 90, 2);
@@ -225,7 +235,7 @@ public final class IslandPlan {
                 h += spires(x, z, 150, 0.15, 3, 6, 8, 22);
             }
             case RIME_EXPANSE -> h = 3 + 1.6 * n(x, z, 260, 3) + 0.6 * n(x, z, 40, 2);
-            case CHAINFALL -> h = 3 + 2.2 * n(x, z, 28, 2);
+            case CHAINFALL -> h = 3 + 2.2 * n(x, z, 28, 2) + spires(x, z, 40, 0.35, 2, 4, 8, 22);
             default -> h = 6;
         }
         return baseY + h;
@@ -278,14 +288,15 @@ public final class IslandPlan {
                     switch (hit.river.kind) {
                         case CANYON -> {
                             double ee = e + 2.5 * nz.noise((px + ox) / 17.0, (pz + oz) / 17.0);
-                            bank = ee < 3 ? L + 1 : L + 1 + 8 * Math.ceil((ee - 3) / 6.0);
+                            // 2-3 ledges: 22-block walls with 12-block treads, slight batter so walls read near-vertical
+                            bank = ee < 3 ? L + 1 : L + 1 + 22 * Math.ceil((ee - 3) / 12.0) - Math.max(0, 2 - (ee - 3) % 12) * 0;
                             if (ee >= 3 && bank < h) {
                                 c.slope = 3;
                             }
                         }
                         case GORGE -> {
                             double ee = e + 3.0 * nz.noise((px + ox) / 21.0, (pz + oz) / 21.0) + 1.5;
-                            bank = ee < 2 ? L + 1 : L + 1 + (ee - 2) * 6.5;
+                            bank = ee < 2 ? L + 1 : L + 1 + (ee - 2) * 7.5;
                             if (ee >= 2 && bank < h) {
                                 c.slope = 4;
                             }
@@ -362,8 +373,7 @@ public final class IslandPlan {
         }
 
         // ---- slope (mountain biomes only; others leave the cheap 0)
-        if (c.slope == 0 && (biome == ElysiumBiome.ARGENT_PEAKS || biome == ElysiumBiome.FROSTCREST_RANGE
-                || biome == ElysiumBiome.STONECROWN_CLIFFS)) {
+        if (c.slope == 0) {
             double gx = relief(px + 1, pz, inland) - relief(px - 1, pz, inland);
             double gz = relief(px, pz + 1, inland) - relief(px, pz - 1, inland);
             c.slope = 0.5 * Math.sqrt(gx * gx + gz * gz);
@@ -376,7 +386,8 @@ public final class IslandPlan {
 
         // ---- underside: inverted cone + ribs + stalactites
         double t = Noise.clamp(inland / (0.85 * coreInland()), 0, 1);
-        double thick = rim + (coneDepth - rim) * Math.pow(t, 0.72);
+        // inverted mountain: steep under the rim, then a long taper to the central tip
+        double thick = rim + 0.6 * (coneDepth - rim) * Math.pow(t, 0.75) + 0.4 * (coneDepth - rim) * Math.pow(t, 1.8);
         thick *= 1 + 0.10 * nz.noise((px + ox) / 110.0, (pz + oz) / 110.0);
         thick += 5 * t * nz.ridged((px + oz) / 26.0, (pz - ox) / 26.0, 2);
         double dcx = px - cx, dcz = pz - cz;
@@ -384,7 +395,7 @@ public final class IslandPlan {
         double tipR = 0.28 * coreInland();
         if (dc < tipR) {
             double k = 1 - dc / tipR;
-            thick += 0.45 * coneDepth * k * k;
+            thick += 0.12 * coneDepth * k * k;
         }
         thick += stalactite(x, z, t);
         int bottom = (int) Math.floor(baseY - thick);
@@ -420,7 +431,7 @@ public final class IslandPlan {
             return 0;
         }
         double u = Noise.unit(Noise.mix(h + 4));
-        double len = (5 + 34 * u * u) * (0.35 + t) * Math.max(0.5, coneDepth / 90.0);
+        double len = (5 + 34 * u * u) * (0.3 + 1.6 * t * t) * Math.max(0.5, coneDepth / 90.0);
         return len * Math.pow(1 - d / r, 1.6);
     }
 
@@ -601,8 +612,8 @@ public final class IslandPlan {
             ws[i] = Noise.lerp(wv, 1.25, taper);
         }
         double influence = switch (kind) {
-            case CANYON -> 34;
-            case GORGE -> 22;
+            case CANYON -> 62;
+            case GORGE -> 26;
             default -> 36;
         };
         // ---- levels
@@ -629,7 +640,7 @@ public final class IslandPlan {
                 lv[i] = L;
             }
         } else {
-            double relStart = kind == River.Kind.CANYON ? 22 + 6 * r.nextDouble() : 6 + 3 * r.nextDouble();
+            double relStart = kind == River.Kind.CANYON ? 12 + 5 * r.nextDouble() : 5 + 3 * r.nextDouble();
             double relEnd = kind == River.Kind.CANYON ? 0 : -3;
             int steps = 5 + r.nextInt(4);
             int L = (int) Math.round(baseY + relStart);
