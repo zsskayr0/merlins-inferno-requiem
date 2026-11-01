@@ -64,6 +64,7 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import dev.zsskayr.merlins_inferno.compat.OptionalNumismatic;
 import dev.zsskayr.merlins_inferno.registry.ModAttachments;
 import dev.zsskayr.merlins_inferno.registry.ModEnchantments;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
@@ -468,7 +469,7 @@ public class DruidEntity extends PathfinderMob implements Merchant, GeoEntity {
     }
 
     private static void add(List<TradeEntry> list, int minLevel, boolean rowanwood, ItemCost cost, ItemStack result, int maxUses) {
-        list.add(new TradeEntry(minLevel, rowanwood, new MerchantOffer(cost, result, maxUses, TRADE_XP, PRICE_MULTIPLIER)));
+        list.add(new TradeEntry(minLevel, rowanwood, OptionalNumismatic.convert(cost, result, maxUses, TRADE_XP, PRICE_MULTIPLIER)));
     }
 
     private void addBook(List<TradeEntry> list, ResourceKey<Enchantment> key, int enchantLevel, int price) {
