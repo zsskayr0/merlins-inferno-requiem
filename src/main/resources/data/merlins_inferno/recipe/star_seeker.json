@@ -2,20 +2,20 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
+    "E": {
+      "item": "merlins_inferno:celestial_essence"
+    },
     "G": {
       "item": "merlins_inferno:luminite_gem"
-    },
-    "L": {
-      "item": "merlins_inferno:lyrium_refined"
     },
     "P": {
       "item": "minecraft:ender_pearl"
     }
   },
   "pattern": [
-    "LGL",
+    "EGE",
     "GPG",
-    "LGL"
+    "EGE"
   ],
   "result": {
     "count": 1,

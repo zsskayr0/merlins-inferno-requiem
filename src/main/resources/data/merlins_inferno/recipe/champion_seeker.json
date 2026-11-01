@@ -2,20 +2,20 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "M": {
-      "item": "merlins_inferno:mundane_essence"
+    "E": {
+      "item": "merlins_inferno:infernal_essence"
     },
-    "F": {
-      "item": "merlins_inferno:fae_essence"
+    "D": {
+      "item": "merlins_inferno:demonblood_scrap"
     },
-    "C": {
-      "item": "minecraft:compass"
+    "P": {
+      "item": "minecraft:ender_pearl"
     }
   },
   "pattern": [
-    "MFM",
-    "FCF",
-    "MFM"
+    "EDE",
+    "DPD",
+    "EDE"
   ],
   "result": {
     "count": 1,

@@ -6,9 +6,11 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
@@ -24,9 +26,12 @@ import dev.zsskayr.merlins_inferno.item.StarSeekerItem;
 public final class SeekerHud {
     /** Rests on top of the level number, which starts 35 pixels above the bottom of the screen. */
     private static final int BOTTOM_OFFSET = 52;
+    /** Where the selected item's name has to start to clear the seeker, still below the action bar. */
+    private static final int ITEM_NAME_BOTTOM_OFFSET = 62;
 
     private static long lastScanTick = Long.MIN_VALUE;
     private static ItemStack worn = ItemStack.EMPTY;
+    private static boolean itemNameRaised;
 
     private SeekerHud() {
     }
@@ -36,19 +41,44 @@ public final class SeekerHud {
         event.registerAbove(VanillaGuiLayers.EXPERIENCE_LEVEL, ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "seeker"), (graphics, deltaTracker) -> render(graphics));
     }
 
-    private static void render(GuiGraphics graphics) {
+    /** Last in line, so nothing cancels the layer after this and its Post, which undoes the lift, always fires. */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    static void beforeItemName(RenderGuiLayerEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
-        LocalPlayer player = minecraft.player;
-        if (player == null || player.isSpectator() || minecraft.options.hideGui) {
+        if (!event.getName().equals(VanillaGuiLayers.SELECTED_ITEM_NAME) || shownSeeker(minecraft).isEmpty()) {
             return;
         }
-        ItemStack seeker = wornSeeker(player);
+        // Gui.renderSelectedItemName's position: above the bars, and lower for a player who takes no damage.
+        int nameOffset = Math.max(Math.max(minecraft.gui.leftHeight, minecraft.gui.rightHeight), 59) - (minecraft.gameMode.canHurtPlayer() ? 0 : 14);
+        int lift = ITEM_NAME_BOTTOM_OFFSET - nameOffset;
+        if (lift > 0) {
+            event.getGuiGraphics().pose().pushPose();
+            event.getGuiGraphics().pose().translate(0.0F, -lift, 0.0F);
+            itemNameRaised = true;
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    static void afterItemName(RenderGuiLayerEvent.Post event) {
+        if (itemNameRaised && event.getName().equals(VanillaGuiLayers.SELECTED_ITEM_NAME)) {
+            event.getGuiGraphics().pose().popPose();
+            itemNameRaised = false;
+        }
+    }
+
+    private static void render(GuiGraphics graphics) {
+        ItemStack seeker = shownSeeker(Minecraft.getInstance());
         if (!seeker.isEmpty()) {
             graphics.renderItem(seeker, graphics.guiWidth() / 2 - 8, graphics.guiHeight() - BOTTOM_OFFSET);
         }
     }
 
-    /** Looked up once a tick: the Curios bridge is reflective, and this layer runs every frame. */
+    private static ItemStack shownSeeker(Minecraft minecraft) {
+        LocalPlayer player = minecraft.player;
+        return player == null || player.isSpectator() || minecraft.options.hideGui ? ItemStack.EMPTY : wornSeeker(player);
+    }
+
+    /** Looked up once a tick: the Curios bridge is reflective, and this runs every frame. */
     private static ItemStack wornSeeker(LocalPlayer player) {
         long tick = player.level().getGameTime();
         if (tick != lastScanTick) {
