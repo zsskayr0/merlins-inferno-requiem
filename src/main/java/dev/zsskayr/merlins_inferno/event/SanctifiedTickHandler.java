@@ -37,6 +37,8 @@ public final class SanctifiedTickHandler {
     /** Delay before Sanctified turns on after first contact, and the grace period before it turns off after contact ends. */
     public static final int CONTACT_DELAY_TICKS = 20; // 1s
 
+    /** The debounce is {@value #CONTACT_DELAY_TICKS} ticks, so noticing Raw Lyrium in a pocket a few ticks late changes nothing. */
+    private static final int INVENTORY_SCAN_INTERVAL = 5;
     private static final int HAND_LEVEL = 3;
     private static final int INVENTORY_LEVEL = 1;
     private static final int REFRESH_DURATION = 100; // 5s - just needs to outlast one tick's gap
@@ -50,9 +52,11 @@ public final class SanctifiedTickHandler {
 
         boolean inHand = player.getMainHandItem().is(ModItems.LYRIUM_RAW.get())
                 || player.getOffhandItem().is(ModItems.LYRIUM_RAW.get());
-        boolean hasContact = inHand || hasLyriumRawInInventory(player);
-
         SanctifiedProgress progress = player.getData(ModAttachments.SANCTIFIED_PROGRESS);
+        if (player.tickCount % INVENTORY_SCAN_INTERVAL == 0) {
+            progress.inventoryContact = hasLyriumRawInInventory(player);
+        }
+        boolean hasContact = inHand || progress.inventoryContact;
 
         int rawLevel;
         if (inHand) {
@@ -98,8 +102,9 @@ public final class SanctifiedTickHandler {
     }
 
     private static boolean hasLyriumRawInInventory(Player player) {
+        var lyrium = ModItems.LYRIUM_RAW.get();
         for (ItemStack stack : player.getInventory().items) {
-            if (stack.is(ModItems.LYRIUM_RAW.get())) {
+            if (stack.is(lyrium)) {
                 return true;
             }
         }

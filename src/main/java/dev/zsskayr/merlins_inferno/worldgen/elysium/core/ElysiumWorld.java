@@ -71,6 +71,18 @@ public final class ElysiumWorld {
     private final ThreadLocal<BiomeCache> biomeColumn = ThreadLocal.withInitial(BiomeCache::new);
     private final ConcurrentHashMap<Long, CellS> cellsS = new ConcurrentHashMap<>();
 
+    /**
+     * Cells are pure functions of the seed, so dropping them only costs a rebuild. A cell is 1900 blocks wide, which makes this
+     * cap far beyond any real exploration; it only keeps a very long-running server from growing without bound.
+     */
+    private static final int MAX_CACHED_CELLS = 400;
+
+    private static void trim(ConcurrentHashMap<Long, ?> cache) {
+        if (cache.size() > MAX_CACHED_CELLS) {
+            cache.clear();
+        }
+    }
+
     /** Last column sampled by {@link #biomeAt} on this thread (the biome source asks many y per column). */
     private static final class BiomeCache {
         final Column column = new Column();
@@ -483,6 +495,7 @@ public final class ElysiumWorld {
         long k = key(sx, sz);
         CellA a = cellsA.get(k);
         if (a == null) {
+            trim(cellsA);
             a = buildA(sx, sz);
             CellA prev = cellsA.putIfAbsent(k, a);
             if (prev != null) {
@@ -519,6 +532,7 @@ public final class ElysiumWorld {
      * inside their blocks, so a cell only ever has its own block's sea to think about.
      */
     private int[] seaOfBlock(int mx, int mz) {
+        trim(seaBlocks);
         return seaBlocks.computeIfAbsent(key(mx, mz), k -> {
             int[] c = seaCandidate(mx, mz);
             double priority = seaPriority(mx, mz);
@@ -682,6 +696,7 @@ public final class ElysiumWorld {
         long k = key(sx, sz);
         CellB b = cellsB.get(k);
         if (b == null) {
+            trim(cellsB);
             b = buildB(sx, sz);
             CellB prev = cellsB.putIfAbsent(k, b);
             if (prev != null) {
@@ -959,6 +974,7 @@ public final class ElysiumWorld {
         long k = key(sx, sz);
         CellS c = cellsS.get(k);
         if (c == null) {
+            trim(cellsS);
             c = buildS(sx, sz);
             CellS prev = cellsS.putIfAbsent(k, c);
             if (prev != null) {
@@ -1118,6 +1134,7 @@ public final class ElysiumWorld {
         long k = key(sx, sz);
         CellC c = cellsC.get(k);
         if (c == null) {
+            trim(cellsC);
             c = buildC(sx, sz);
             CellC prev = cellsC.putIfAbsent(k, c);
             if (prev != null) {

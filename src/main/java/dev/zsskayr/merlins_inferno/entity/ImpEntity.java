@@ -353,7 +353,8 @@ public class ImpEntity extends Monster implements GeoEntity {
             this.lootProtectionTicks = this.isCarrying() ? this.lootProtectionTicks - 1 : 0;
         }
         if (--this.groupCheckDelay <= 0) {
-            this.groupCheckDelay = 10;
+            // 8-12 rather than a flat 10, so a pack spawned together does not all scan on the same tick
+            this.groupCheckDelay = 8 + this.random.nextInt(5);
             this.updateCourage();
         }
         if (this.fleeThreat != null && !this.fleeThreat.isAlive()) {

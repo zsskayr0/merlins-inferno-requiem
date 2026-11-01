@@ -98,9 +98,10 @@ public final class WingsItem extends Item implements Equipable {
      * re-set every few ticks to what is left (it is only re-sent that often, not every tick).
      */
     public static void tickGroundRecharge(Player player) {
-        if (!player.onGround() || !(find(player).getItem() instanceof WingsItem wings)
-                || !player.getCooldowns().isOnCooldown(wings)) return;
         long now = player.level().getGameTime();
+        // the cheap checks first: most ticks there is no cooldown running, and find() may walk the Curios slots
+        if (!player.onGround() || player.getData(ModAttachments.WINGS_READY_AT) < now
+                || !(find(player).getItem() instanceof WingsItem wings) || !player.getCooldowns().isOnCooldown(wings)) return;
         long readyAt = player.getData(ModAttachments.WINGS_READY_AT) - 1;
         if (readyAt <= now) {
             player.setData(ModAttachments.WINGS_READY_AT, now);

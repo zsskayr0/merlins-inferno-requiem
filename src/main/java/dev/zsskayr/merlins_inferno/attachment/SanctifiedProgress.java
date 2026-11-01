@@ -9,6 +9,9 @@ public class SanctifiedProgress {
     /** How many continuous ticks Raw Lyrium has been held in a hand - drives the +1-level-per-minute climb. */
     public int ticksHeld;
 
+    /** The last inventory scan's answer; the 36 slots are only walked every few ticks, the counters below run every tick. */
+    public boolean inventoryContact;
+
     /** Whether Sanctified is currently actually applied - see the two counters below for why this lags contact. */
     public boolean active;
 

@@ -24,11 +24,12 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 public final class TiledLines {
     /** Only a guard against a line that never ends; real ones stop at the first gap. */
     private static final int MAX_RUN = 4096;
-    private static final int MAX_ENTRIES = 1 << 20;
+    private static final int MAX_ENTRIES = 1 << 18;
 
+    /** Per axis: position to {@code version << 1 | answer}; an entry from an older version is stale and ignored. */
     @SuppressWarnings("unchecked")
-    private static final Map<Long, Boolean>[] SECOND = new Map[] {
-            new ConcurrentHashMap<Long, Boolean>(), new ConcurrentHashMap<Long, Boolean>(), new ConcurrentHashMap<Long, Boolean>() };
+    private static final Map<Long, Long>[] SECOND = new Map[] {
+            new ConcurrentHashMap<Long, Long>(), new ConcurrentHashMap<Long, Long>(), new ConcurrentHashMap<Long, Long>() };
     private static final AtomicInteger VERSION = new AtomicInteger();
 
     private TiledLines() {
@@ -36,9 +37,6 @@ public final class TiledLines {
 
     public static void invalidate() {
         VERSION.incrementAndGet();
-        for (Map<Long, Boolean> map : SECOND) {
-            map.clear();
-        }
     }
 
     @SubscribeEvent
@@ -56,11 +54,11 @@ public final class TiledLines {
      * @param cache false when the answer depends on more than the world (an AE2 facade is drawn from a side of its cable)
      */
     public static boolean secondHalf(BlockPos pos, Direction.Axis axis, Predicate<BlockPos> same, boolean cache) {
-        Map<Long, Boolean> known = SECOND[axis.ordinal()];
+        Map<Long, Long> known = SECOND[axis.ordinal()];
         if (cache) {
-            Boolean hit = known.get(pos.asLong());
-            if (hit != null) {
-                return hit;
+            Long hit = known.get(pos.asLong());
+            if (hit != null && (hit >> 1) == VERSION.get()) {
+                return (hit & 1L) == 1L;
             }
         }
         int version = VERSION.get();
@@ -74,10 +72,13 @@ public final class TiledLines {
             }
             above++;
         }
-        if (cache && version == VERSION.get() && known.size() < MAX_ENTRIES) {
+        if (cache && version == VERSION.get()) {
+            if (known.size() >= MAX_ENTRIES) {
+                known.clear(); // mostly stale entries by now
+            }
             BlockPos.MutableBlockPos on = pos.mutable();
             for (int walked = 0; walked <= above; walked++) {
-                known.put(on.asLong(), ((above - walked) & 1) == 1);
+                known.put(on.asLong(), ((long) version << 1) | ((above - walked) & 1));
                 on.move(down);
             }
         }

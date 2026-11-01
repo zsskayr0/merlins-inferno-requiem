@@ -3,6 +3,8 @@ package dev.zsskayr.merlins_inferno.event;
 import dev.zsskayr.merlins_inferno.compat.OptionalCurios;
 import dev.zsskayr.merlins_inferno.item.LavaLensItem;
 import dev.zsskayr.merlins_inferno.registry.ModEffects;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -25,8 +27,15 @@ public final class LavaLensHandler {
     /** Ticks without any lens before the lens switches itself off for good. */
     private static final int GRACE_TICKS = 60;
     private LavaLensHandler() {}
+    /** While the lens is off nothing changes between toggles (the item calls {@link #refresh} itself), so tidy up only now and then. */
+    private static final int IDLE_INTERVAL = 20;
     @SubscribeEvent public static void tick(PlayerTickEvent.Post event) {
-        if (!event.getEntity().level().isClientSide) refresh(event.getEntity(), true);
+        Player player = event.getEntity();
+        if (player.level().isClientSide) return;
+        var data = player.getPersistentData();
+        if (!data.getBoolean(ENABLED) && player.tickCount % IDLE_INTERVAL != 0 && data.getInt(MISSING) == 0
+                && !player.hasEffect(ModEffects.LAVA_SIGHT)) return;
+        refresh(player, true);
     }
     private static void forEachLens(Player player, Consumer<ItemStack> action) {
         for (ItemStack stack : player.getInventory().items) if (stack.getItem() instanceof LavaLensItem) action.accept(stack);
@@ -40,6 +49,11 @@ public final class LavaLensHandler {
         forEachLens(player, stack -> { if (found[0].isEmpty()) found[0] = stack; });
         return found[0];
     }
+    private static List<ItemStack> lenses(Player player) {
+        List<ItemStack> found = new ArrayList<>(2);
+        forEachLens(player, found::add);
+        return found;
+    }
     public static void refresh(Player player, boolean tickWear) {
         if (!(player.level() instanceof ServerLevel server)) return;
         var data = player.getPersistentData();
@@ -50,7 +64,8 @@ public final class LavaLensHandler {
             forEachLens(player, stack -> LavaLensItem.setActive(stack, false));
             return;
         }
-        ItemStack lens = findLens(player);
+        List<ItemStack> carried = lenses(player);
+        ItemStack lens = carried.isEmpty() ? ItemStack.EMPTY : carried.get(0);
         if (lens.isEmpty()) {
             // Not found right now: wait before giving up, the effect keeps running on its remaining duration.
             int missing = data.getInt(MISSING) + 1;
@@ -63,7 +78,7 @@ public final class LavaLensHandler {
             return;
         }
         data.putInt(MISSING, 0);
-        forEachLens(player, stack -> LavaLensItem.setActive(stack, stack == lens));
+        for (ItemStack stack : carried) LavaLensItem.setActive(stack, stack == lens);
         if (tickWear) {
             int ticks = data.getInt(WEAR) + 1;
             if (ticks >= 20) {

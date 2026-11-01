@@ -61,7 +61,7 @@ public class ImpDiveGoal extends Goal {
         if (--this.scanDelay > 0) {
             return false;
         }
-        this.scanDelay = SCAN_INTERVAL_TICKS;
+        this.scanDelay = SCAN_INTERVAL_TICKS + this.imp.getRandom().nextInt(3);
         ImpEntity.DiveScan pack = this.imp.scanOtherDivers(SEARCH_RANGE);
         if (pack.divers() >= MAX_SIMULTANEOUS_DIVERS) {
             return false;

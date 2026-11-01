@@ -297,11 +297,28 @@ public final class ElysiumChunkGenerator extends ChunkGenerator {
 
     // ------------------------------------------------------------------------------------------------ queries
 
+    /** The column last asked for on this thread: structure and feature placement query one column for several heightmaps in a row. */
+    private static final class LastColumn {
+        ElysiumWorld world;
+        final Column column = new Column();
+    }
+
+    private static final ThreadLocal<LastColumn> LAST_COLUMN = ThreadLocal.withInitial(LastColumn::new);
+
+    /** Read-only for the caller: the instance is reused by the next query on the same thread. */
+    private static Column columnAt(ElysiumWorld world, int x, int z) {
+        LastColumn last = LAST_COLUMN.get();
+        if (last.world != world || last.column.x != x || last.column.z != z) {
+            world.sample(x, z, last.column);
+            last.world = world;
+        }
+        return last.column;
+    }
+
     @Override
     public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor level, RandomState randomState) {
         ElysiumWorld world = ElysiumSeed.world();
-        Column c = new Column();
-        world.sample(x, z, c);
+        Column c = columnAt(world, x, z);
         int hi = highest(c);
         Predicate<BlockState> opaque = type.isOpaque();
         if (hi != Integer.MIN_VALUE) {
@@ -319,8 +336,7 @@ public final class ElysiumChunkGenerator extends ChunkGenerator {
     @Override
     public NoiseColumn getBaseColumn(int x, int z, LevelHeightAccessor level, RandomState randomState) {
         ElysiumWorld world = ElysiumSeed.world();
-        Column c = new Column();
-        world.sample(x, z, c);
+        Column c = columnAt(world, x, z);
         int minY = level.getMinBuildHeight();
         BlockState[] states = new BlockState[level.getHeight()];
         for (int i = 0; i < states.length; i++) {

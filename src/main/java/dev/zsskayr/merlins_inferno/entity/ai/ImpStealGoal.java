@@ -70,7 +70,7 @@ public class ImpStealGoal extends Goal {
         if (--this.scanDelay > 0) {
             return false;
         }
-        this.scanDelay = 4 + this.imp.getRandom().nextInt(4);
+        this.scanDelay = 6 + this.imp.getRandom().nextInt(6); // three entity queries per scan
         this.target = this.findTarget();
         return this.target != null;
     }
