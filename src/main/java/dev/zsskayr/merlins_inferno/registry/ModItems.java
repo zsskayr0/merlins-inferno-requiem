@@ -121,6 +121,8 @@ public final class ModItems {
     // data/merlins_inferno/loot_modifiers/fae_essence_from_fairies.json (empty tag by default,
     // since this mod doesn't know which fairy-adding mods are installed).
     public static final DeferredItem<Item> FAE_ESSENCE = ITEMS.registerSimpleItem("fae_essence", new Item.Properties());
+    // The rune of the Gates (Runic, Mundane, Demonic and Purifying): the key of their Fae-and-stone craft.
+    public static final DeferredItem<Item> TRANSMOG_RUNE = ITEMS.registerSimpleItem("transmog_rune", new Item.Properties());
     public static final DeferredItem<Item> ROWANWOOD_SCRAP = ITEMS.registerSimpleItem("rowanwood_scrap", new Item.Properties());
 
     public static final DeferredItem<SwordItem> ROWANWOOD_SWORD = ITEMS.registerItem("rowanwood_sword",
