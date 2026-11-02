@@ -1,0 +1,12 @@
+{
+  "loader": "neoforge:composite",
+  "parent": "minecraft:block/block",
+  "children": {
+    "main": {
+      "parent": "merlins_inferno:block/faeric_gate_stage3_base"
+    },
+    "overlay": {
+      "parent": "merlins_inferno:block/faeric_gate_runes"
+    }
+  }
+}

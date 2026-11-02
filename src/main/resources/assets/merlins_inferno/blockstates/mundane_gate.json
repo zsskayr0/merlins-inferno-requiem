@@ -1,16 +1,52 @@
 {
   "variants": {
-    "active=false,vanished=false": {
+    "active=false,fade=0,vanished=false": {
       "model": "merlins_inferno:block/mundane_gate"
     },
-    "active=false,vanished=true": {
+    "active=false,fade=0,vanished=true": {
       "model": "merlins_inferno:block/mundane_gate_ghost"
     },
-    "active=true,vanished=false": {
+    "active=false,fade=1,vanished=false": {
+      "model": "merlins_inferno:block/mundane_gate_stage1"
+    },
+    "active=false,fade=1,vanished=true": {
+      "model": "merlins_inferno:block/mundane_gate_stage3"
+    },
+    "active=false,fade=2,vanished=false": {
+      "model": "merlins_inferno:block/mundane_gate_stage2"
+    },
+    "active=false,fade=2,vanished=true": {
+      "model": "merlins_inferno:block/mundane_gate_stage2"
+    },
+    "active=false,fade=3,vanished=false": {
+      "model": "merlins_inferno:block/mundane_gate_stage3"
+    },
+    "active=false,fade=3,vanished=true": {
+      "model": "merlins_inferno:block/mundane_gate_stage1"
+    },
+    "active=true,fade=0,vanished=false": {
       "model": "merlins_inferno:block/mundane_gate"
     },
-    "active=true,vanished=true": {
+    "active=true,fade=0,vanished=true": {
       "model": "merlins_inferno:block/mundane_gate_ghost"
+    },
+    "active=true,fade=1,vanished=false": {
+      "model": "merlins_inferno:block/mundane_gate_stage1"
+    },
+    "active=true,fade=1,vanished=true": {
+      "model": "merlins_inferno:block/mundane_gate_stage3"
+    },
+    "active=true,fade=2,vanished=false": {
+      "model": "merlins_inferno:block/mundane_gate_stage2"
+    },
+    "active=true,fade=2,vanished=true": {
+      "model": "merlins_inferno:block/mundane_gate_stage2"
+    },
+    "active=true,fade=3,vanished=false": {
+      "model": "merlins_inferno:block/mundane_gate_stage3"
+    },
+    "active=true,fade=3,vanished=true": {
+      "model": "merlins_inferno:block/mundane_gate_stage1"
     }
   }
 }

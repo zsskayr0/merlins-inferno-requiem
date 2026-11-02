@@ -67,7 +67,7 @@ public final class GateGameTests {
     }
 
     /** A click ghosts the whole connected row, and the row turns solid again later. */
-    @GameTest(template = "bench_empty", timeoutTicks = 260)
+    @GameTest(template = "bench_empty", timeoutTicks = 300)
     public static void rippleAndReturn(GameTestHelper helper) {
         var level = helper.getLevel();
         GateBlock gate = ModBlocks.RUNIC_GATE.get();
@@ -80,16 +80,17 @@ public final class GateGameTests {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         level.getBlockState(first).useWithoutItem(level, player,
                 new BlockHitResult(Vec3.atCenterOf(first), Direction.UP, first, false));
-        helper.runAfterDelay(20, () -> {
+        helper.runAfterDelay(50, () -> {
             for (int i = 0; i < 4; i++) {
                 helper.assertTrue(level.getBlockState(first.east(i)).getValue(GateBlock.VANISHED), "Gate " + i + " ghosted by the ripple");
             }
             helper.assertTrue(!level.getBlockState(other).getValue(GateBlock.VANISHED), "A gate of another kind is not rippled");
         });
-        helper.runAfterDelay(200, () -> {
+        helper.runAfterDelay(230, () -> {
             for (int i = 0; i < 4; i++) {
                 BlockState s = level.getBlockState(first.east(i));
-                helper.assertTrue(!s.getValue(GateBlock.VANISHED) && !s.getValue(GateBlock.ACTIVE), "Gate " + i + " turns solid again");
+                helper.assertTrue(!s.getValue(GateBlock.VANISHED) && !s.getValue(GateBlock.ACTIVE) && s.getValue(GateBlock.FADE) == 0,
+                        "Gate " + i + " turns solid again");
             }
             helper.succeed();
         });

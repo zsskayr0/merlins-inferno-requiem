@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -34,15 +35,23 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * waiting while something is still standing inside it. The ripple is a scheduled tick per block, so a big wall opens like
  * a wave.
  *
- * <p>The state is {@code ACTIVE} (the block has been told to vanish, on its next tick) and {@code VANISHED} (it is a ghost).
+ * <p>The state is {@code ACTIVE} (the block has been told to vanish), {@code VANISHED} (it is a ghost) and {@code FADE}, three
+ * steps the look goes through on the way out (stone turning to haze while the runes dim) and again on the way back, so nothing
+ * pops in or out; only the look fades, a gate is solid until it is a ghost and a ghost until the moment it is solid again.
  * Things that are not living (items, arrows, boats) pass through every ghost gate.
  */
 public class GateBlock extends Block {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     public static final BooleanProperty VANISHED = BooleanProperty.create("vanished");
+    /** The step of the fade, 0 when the gate is wholly solid or wholly a ghost. */
+    public static final IntegerProperty FADE = IntegerProperty.create("fade", 0, 3);
+    /** The look of a gate runs from 0 (solid stone, runes at full) to this (a ghost, runes out). */
+    public static final int GHOST_STAGE = 4;
     /** Ticks a gate stays a ghost. */
     private static final int VANISH_TICKS = 100;
-    /** Ticks between one gate vanishing and its neighbours following. */
+    /** Ticks each step of the fade lasts. */
+    private static final int FADE_TICKS = 4;
+    /** Ticks between one gate starting to vanish and its neighbours following. */
     private static final int RIPPLE_TICKS = 2;
     /** Ticks to wait before trying again to turn solid while something stands inside. */
     private static final int RETRY_TICKS = 10;
@@ -82,7 +91,7 @@ public class GateBlock extends Block {
     public GateBlock(Kind kind, Properties properties) {
         super(properties);
         this.kind = kind;
-        registerDefaultState(stateDefinition.any().setValue(ACTIVE, false).setValue(VANISHED, false));
+        registerDefaultState(stateDefinition.any().setValue(ACTIVE, false).setValue(VANISHED, false).setValue(FADE, 0));
     }
 
     public Kind kind() {
@@ -91,7 +100,16 @@ public class GateBlock extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(ACTIVE, VANISHED);
+        builder.add(ACTIVE, VANISHED, FADE);
+    }
+
+    /** How far along its look is: 0 solid stone, 1-3 on the way, 4 a ghost (the fade counts the same steps back when it returns). */
+    public static int stage(BlockState state) {
+        int fade = state.getValue(FADE);
+        if (state.getValue(VANISHED)) {
+            return fade == 0 ? GHOST_STAGE : GHOST_STAGE - fade;
+        }
+        return fade;
     }
 
     @Override
@@ -107,18 +125,18 @@ public class GateBlock extends Block {
 
     @Override
     protected VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.getValue(VANISHED) ? Shapes.empty() : super.getOcclusionShape(state, level, pos);
+        return stage(state) != 0 ? Shapes.empty() : super.getOcclusionShape(state, level, pos);
     }
 
     @Override
     protected VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return state.getValue(VANISHED) ? Shapes.empty() : super.getVisualShape(state, level, pos, context);
+        return stage(state) != 0 ? Shapes.empty() : super.getVisualShape(state, level, pos, context);
     }
 
-    /** Two ghosts side by side would draw the same translucent face twice. */
+    /** Two translucent gates at the same stage side by side would draw the same face twice. */
     @Override
     protected boolean skipRendering(BlockState state, BlockState adjacent, Direction direction) {
-        return state.getValue(VANISHED) && adjacent.is(this) && adjacent.getValue(VANISHED) || super.skipRendering(state, adjacent, direction);
+        return stage(state) != 0 && adjacent.is(this) && stage(adjacent) == stage(state) || super.skipRendering(state, adjacent, direction);
     }
 
     @Override
@@ -152,24 +170,38 @@ public class GateBlock extends Block {
 
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        int fade = state.getValue(FADE);
         if (!state.getValue(VANISHED)) {
-            if (state.getValue(ACTIVE)) {
-                vanish(state, level, pos);
+            if (!state.getValue(ACTIVE)) {
+                return;
+            }
+            if (fade == 0) {
+                startFading(level, pos);
+            }
+            if (fade < 3) {
+                level.setBlockAndUpdate(pos, state.setValue(FADE, fade + 1));
+                level.scheduleTick(pos, this, FADE_TICKS);
+            } else {
+                level.setBlockAndUpdate(pos, state.setValue(VANISHED, true).setValue(FADE, 0));
+                level.scheduleTick(pos, this, VANISH_TICKS);
             }
             return;
         }
-        // solid again means nobody can stand in it, whoever it let in: wait until it is empty
+        // solid again means nobody can stand in it, whoever it let in: wait until it is empty, however far the fade has got
         if (!level.getEntitiesOfClass(LivingEntity.class, new AABB(pos)).isEmpty()) {
+            level.setBlockAndUpdate(pos, state.setValue(FADE, 0));
             level.scheduleTick(pos, this, RETRY_TICKS);
-            return;
+        } else if (fade < 3) {
+            level.setBlockAndUpdate(pos, state.setValue(FADE, fade + 1));
+            level.scheduleTick(pos, this, FADE_TICKS);
+        } else {
+            level.setBlockAndUpdate(pos, state.setValue(VANISHED, false).setValue(ACTIVE, false).setValue(FADE, 0));
+            level.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 0.2F, 1.8F);
         }
-        level.setBlockAndUpdate(pos, state.setValue(VANISHED, false).setValue(ACTIVE, false));
-        level.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 0.2F, 1.8F);
     }
 
-    private void vanish(BlockState state, ServerLevel level, BlockPos pos) {
-        level.setBlockAndUpdate(pos, state.setValue(VANISHED, true));
-        level.scheduleTick(pos, this, VANISH_TICKS);
+    /** The first step of vanishing: a sound, a few sparks, and the gates around start theirs a moment later. */
+    private void startFading(ServerLevel level, BlockPos pos) {
         level.playSound(null, pos, SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS, 0.3F, 1.6F);
         level.sendParticles(ParticleTypes.ENCHANT, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 12, 0.4, 0.4, 0.4, 0.4);
         for (Direction direction : Direction.values()) {

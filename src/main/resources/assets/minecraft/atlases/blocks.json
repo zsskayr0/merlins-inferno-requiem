@@ -83,6 +83,66 @@
     {
       "type": "minecraft:single",
       "resource": "merlins_inferno:block/faeric_gate_runes"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/runic_gate_stage1_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/runic_gate_stage2_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/runic_gate_stage3_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/mundane_gate_stage1_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/mundane_gate_stage2_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/mundane_gate_stage3_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/demonic_gate_stage1_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/demonic_gate_stage2_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/demonic_gate_stage3_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/angel_gate_stage1_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/angel_gate_stage2_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/angel_gate_stage3_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/faeric_gate_stage1_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/faeric_gate_stage2_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/faeric_gate_stage3_connected"
     }
   ]
 }

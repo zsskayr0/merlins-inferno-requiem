@@ -79,8 +79,8 @@ public final class ConnectedTextures {
     }
 
     /**
-     * A gate joins its neighbours in both states, the solid one with its stone sheet and the ghost one with its own
-     * see-through sheet (only the quads with the plain tile are remapped), and carries an animated rune on every face.
+     * A gate joins its neighbours at every stage of its look, with the sheet of that stage (stone, on to haze, a ghost; only the
+     * quads with the stage's plain tile are remapped), and carries an animated rune on every face that dims with the stone.
      */
     private static void wrapGate(ModelEvent.ModifyBakingResult event, Block gate) {
         String name = BuiltInRegistries.BLOCK.getKey(gate).getPath();
@@ -89,19 +89,19 @@ public final class ConnectedTextures {
                 sprites.apply(new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "block/" + path)));
         var runes = sprite.apply(name + "_runes");
         for (BlockState state : gate.getStateDefinition().getPossibleStates()) {
-            boolean ghost = state.getValue(GateBlock.VANISHED);
+            int stage = GateBlock.stage(state);
+            String tile = stage == 0 ? name : stage == GateBlock.GHOST_STAGE ? name + "_ghost" : name + "_stage" + stage;
             ModelResourceLocation key = BlockModelShaper.stateToModelLocation(state);
             BakedModel model = event.getModels().get(key);
             if (model != null) {
-                var joined = new ConnectedBlockModel(model, sprite.apply(name + (ghost ? "_ghost_connected" : "_connected")),
-                        sprite.apply(name + (ghost ? "_ghost" : "")));
-                event.getModels().put(key, new GateRuneModel(joined, runes));
+                var joined = new ConnectedBlockModel(model, sprite.apply(tile + "_connected"), sprite.apply(tile));
+                event.getModels().put(key, new GateRuneModel(joined, runes, stage));
             }
         }
         ModelResourceLocation item = ModelResourceLocation.inventory(BuiltInRegistries.BLOCK.getKey(gate));
         BakedModel itemModel = event.getModels().get(item);
         if (itemModel != null) {
-            event.getModels().put(item, new GateRuneModel(itemModel, runes));
+            event.getModels().put(item, new GateRuneModel(itemModel, runes, 0));
         }
     }
 
