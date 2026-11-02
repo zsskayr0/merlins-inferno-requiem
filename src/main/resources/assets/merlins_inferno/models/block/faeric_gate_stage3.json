@@ -7,6 +7,9 @@
     },
     "overlay": {
       "parent": "merlins_inferno:block/faeric_gate_runes"
+    },
+    "frame": {
+      "parent": "merlins_inferno:block/faeric_gate_frame"
     }
   }
 }

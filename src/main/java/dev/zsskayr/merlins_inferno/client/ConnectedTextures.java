@@ -95,7 +95,8 @@ public final class ConnectedTextures {
             BakedModel model = event.getModels().get(key);
             if (model != null) {
                 var joined = new ConnectedBlockModel(model, sprite.apply(tile + "_connected"), sprite.apply(tile));
-                event.getModels().put(key, new GateRuneModel(joined, runes, stage));
+                var framed = new ConnectedBlockModel(joined, sprite.apply(name + "_frame_connected"), sprite.apply(name + "_frame"));
+                event.getModels().put(key, new GateRuneModel(framed, runes, stage));
             }
         }
         ModelResourceLocation item = ModelResourceLocation.inventory(BuiltInRegistries.BLOCK.getKey(gate));

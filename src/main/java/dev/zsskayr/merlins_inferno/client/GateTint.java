@@ -18,13 +18,15 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 public final class GateTint {
     /** The grey of each stage of the look, 0 (solid) to 4 (a ghost). */
     private static final int[] STAGE_TINT = {0xFFFFFF, 0xB3B3B3, 0x666666, 0x262626, 0x000000};
+    /** The frame dims less, and keeps a faint glow on a ghost. */
+    private static final int[] FRAME_TINT = {0xFFFFFF, 0xE0E0E0, 0xB8B8B8, 0x909090, 0x606060};
 
     private GateTint() {}
 
     @SubscribeEvent
     public static void onColors(RegisterColorHandlersEvent.Block event) {
         event.register((BlockState state, net.minecraft.world.level.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, int index) ->
-                        index == 0 ? STAGE_TINT[GateBlock.stage(state)] : -1,
+                        index == 0 ? STAGE_TINT[GateBlock.stage(state)] : index == 1 ? FRAME_TINT[GateBlock.stage(state)] : -1,
                 ModBlocks.RUNIC_GATE.get(), ModBlocks.MUNDANE_GATE.get(), ModBlocks.DEMONIC_GATE.get(),
                 ModBlocks.ANGEL_GATE.get(), ModBlocks.FAERIC_GATE.get());
     }
