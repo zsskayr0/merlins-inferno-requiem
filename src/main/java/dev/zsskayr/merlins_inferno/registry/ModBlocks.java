@@ -433,7 +433,7 @@ public final class ModBlocks {
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GateBlock> MUNDANE_GATE = BLOCKS.registerBlock("mundane_gate",
             props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.MUNDANE, props), gateProperties());
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GateBlock> DEVIL_GATE = BLOCKS.registerBlock("devil_gate",
-            props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.DEMONIC, props), gateProperties());
+            props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.DEVIL, props), gateProperties());
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GateBlock> ANGEL_GATE = BLOCKS.registerBlock("angel_gate",
             props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.ANGEL, props), gateProperties());
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GateBlock> FAERIC_GATE = BLOCKS.registerBlock("faeric_gate",
