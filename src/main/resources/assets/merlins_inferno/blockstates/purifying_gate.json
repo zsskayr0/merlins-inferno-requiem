@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "active=false,vanished=false": {
+      "model": "merlins_inferno:block/purifying_gate"
+    },
+    "active=false,vanished=true": {
+      "model": "merlins_inferno:block/purifying_gate"
+    },
+    "active=true,vanished=false": {
+      "model": "merlins_inferno:block/purifying_gate"
+    },
+    "active=true,vanished=true": {
+      "model": "merlins_inferno:block/purifying_gate"
+    }
+  }
+}

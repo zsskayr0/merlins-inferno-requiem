@@ -217,6 +217,10 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.GRAVE_SANDSTONE_ITEM.get());
                         output.accept(ModItems.CRYPT_GLASS_ITEM.get());
                         output.accept(ModItems.HELLGLASS_ITEM.get());
+                        output.accept(ModItems.RUNIC_GATE_ITEM.get());
+                        output.accept(ModItems.MUNDANE_GATE_ITEM.get());
+                        output.accept(ModItems.DEMONIC_GATE_ITEM.get());
+                        output.accept(ModItems.PURIFYING_GATE_ITEM.get());
                         output.accept(ModItems.CRYPT_GLASS_PANE_ITEM.get());
                         output.accept(ModItems.HELLGLASS_PANE_ITEM.get());
                         output.accept(ModItems.GOTHIC_IRON_BARS_ITEM.get());

@@ -427,6 +427,22 @@ public final class ModBlocks {
                 .requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.DEEPSLATE_BRICKS);
     }
 
+    // --- Gates: rune-carved blocks that join one another and turn to ghosts when clicked; each lets one kind of creature pass. ---
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GateBlock> RUNIC_GATE = BLOCKS.registerBlock("runic_gate",
+            props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.RUNIC, props), gateProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GateBlock> MUNDANE_GATE = BLOCKS.registerBlock("mundane_gate",
+            props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.MUNDANE, props), gateProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GateBlock> DEMONIC_GATE = BLOCKS.registerBlock("demonic_gate",
+            props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.DEMONIC, props), gateProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GateBlock> PURIFYING_GATE = BLOCKS.registerBlock("purifying_gate",
+            props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.PURIFYING, props), gateProperties());
+
+    private static BlockBehaviour.Properties gateProperties() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops().strength(5.0F, 1200.0F).sound(SoundType.DEEPSLATE_BRICKS)
+                .isValidSpawn((s, l, p, t) -> false);
+    }
+
     private static BlockBehaviour.Properties blightstoneProperties() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.COLOR_BLACK)

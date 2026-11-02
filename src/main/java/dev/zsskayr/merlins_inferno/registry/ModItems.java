@@ -478,6 +478,10 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> GRAVE_SAND_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.GRAVE_SAND);
     public static final DeferredItem<BlockItem> GRAVE_SANDSTONE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.GRAVE_SANDSTONE);
     public static final DeferredItem<BlockItem> CRYPT_GLASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CRYPT_GLASS);
+    public static final DeferredItem<BlockItem> RUNIC_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.RUNIC_GATE);
+    public static final DeferredItem<BlockItem> MUNDANE_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.MUNDANE_GATE);
+    public static final DeferredItem<BlockItem> DEMONIC_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DEMONIC_GATE);
+    public static final DeferredItem<BlockItem> PURIFYING_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PURIFYING_GATE);
     public static final DeferredItem<BlockItem> HELLGLASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELLGLASS, new Item.Properties().fireResistant());
     public static final DeferredItem<BlockItem> CRYPT_GLASS_PANE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CRYPT_GLASS_PANE);
     public static final DeferredItem<BlockItem> GOTHIC_IRON_BARS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.GOTHIC_IRON_BARS);
