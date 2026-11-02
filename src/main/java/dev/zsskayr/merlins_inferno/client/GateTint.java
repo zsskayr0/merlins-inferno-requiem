@@ -27,7 +27,7 @@ public final class GateTint {
     public static void onColors(RegisterColorHandlersEvent.Block event) {
         event.register((BlockState state, net.minecraft.world.level.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, int index) ->
                         index == 0 ? STAGE_TINT[GateBlock.stage(state)] : index == 1 ? FRAME_TINT[GateBlock.stage(state)] : -1,
-                ModBlocks.RUNIC_GATE.get(), ModBlocks.MUNDANE_GATE.get(), ModBlocks.DEMONIC_GATE.get(),
+                ModBlocks.RUNIC_GATE.get(), ModBlocks.MUNDANE_GATE.get(), ModBlocks.DEVIL_GATE.get(),
                 ModBlocks.ANGEL_GATE.get(), ModBlocks.FAERIC_GATE.get());
     }
 }

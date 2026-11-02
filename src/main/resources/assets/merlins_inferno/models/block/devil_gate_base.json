@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "merlins_inferno:block/demonic_gate_item"
+    "all": "merlins_inferno:block/devil_gate"
   }
 }

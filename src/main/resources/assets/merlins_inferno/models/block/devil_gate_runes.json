@@ -2,8 +2,8 @@
   "parent": "minecraft:block/block",
   "render_type": "minecraft:translucent",
   "textures": {
-    "particle": "merlins_inferno:block/demonic_gate",
-    "runes": "merlins_inferno:block/demonic_gate_runes"
+    "particle": "merlins_inferno:block/devil_gate",
+    "runes": "merlins_inferno:block/devil_gate_runes"
   },
   "elements": [
     {

@@ -1,0 +1,15 @@
+{
+  "loader": "neoforge:composite",
+  "parent": "minecraft:block/block",
+  "children": {
+    "main": {
+      "parent": "merlins_inferno:block/devil_gate_stage1_base"
+    },
+    "overlay": {
+      "parent": "merlins_inferno:block/devil_gate_runes"
+    },
+    "frame": {
+      "parent": "merlins_inferno:block/devil_gate_frame"
+    }
+  }
+}

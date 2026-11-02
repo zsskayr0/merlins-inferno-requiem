@@ -63,7 +63,7 @@ public class GateBlock extends Block {
         /** Players only, and not while sneaking. */
         MUNDANE(e -> e instanceof Player p && !p.isShiftKeyDown()),
         /** Holds the hostile: players and passive mobs pass. */
-        DEMONIC(e -> e instanceof Player || isPassive(e)),
+        DEVIL(e -> e instanceof Player || isPassive(e)),
         /** Holds the passive: players and hostile mobs pass. */
         ANGEL(e -> e instanceof Player || e instanceof Enemy),
         /** Holds the players: every creature but a player passes. */

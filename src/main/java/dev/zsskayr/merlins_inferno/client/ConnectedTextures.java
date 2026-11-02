@@ -38,7 +38,7 @@ public final class ConnectedTextures {
         wrapPane(event, ModBlocks.HELLGLASS_PANE.get(), "block/hellglass_connected", "block/hellglass");
         wrapGate(event, ModBlocks.RUNIC_GATE.get());
         wrapGate(event, ModBlocks.MUNDANE_GATE.get());
-        wrapGate(event, ModBlocks.DEMONIC_GATE.get());
+        wrapGate(event, ModBlocks.DEVIL_GATE.get());
         wrapGate(event, ModBlocks.ANGEL_GATE.get());
         wrapGate(event, ModBlocks.FAERIC_GATE.get());
         vanillaTranslucentItem(event, ModBlocks.CRYPT_GLASS.getId());

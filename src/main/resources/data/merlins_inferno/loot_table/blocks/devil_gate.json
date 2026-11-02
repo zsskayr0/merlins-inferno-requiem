@@ -1,6 +1,6 @@
 {
   "type": "minecraft:block",
-  "random_sequence": "merlins_inferno:blocks/demonic_gate",
+  "random_sequence": "merlins_inferno:blocks/devil_gate",
   "pools": [
     {
       "rolls": 1.0,
@@ -8,7 +8,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "merlins_inferno:demonic_gate"
+          "name": "merlins_inferno:devil_gate"
         }
       ],
       "conditions": [

@@ -34,7 +34,7 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "merlins_inferno:block/demonic_gate_connected"
+      "resource": "merlins_inferno:block/devil_gate_connected"
     },
     {
       "type": "minecraft:single",
@@ -50,7 +50,7 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "merlins_inferno:block/demonic_gate_ghost_connected"
+      "resource": "merlins_inferno:block/devil_gate_ghost_connected"
     },
     {
       "type": "minecraft:single",
@@ -66,7 +66,7 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "merlins_inferno:block/demonic_gate_runes"
+      "resource": "merlins_inferno:block/devil_gate_runes"
     },
     {
       "type": "minecraft:single",
@@ -110,15 +110,15 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "merlins_inferno:block/demonic_gate_stage1_connected"
+      "resource": "merlins_inferno:block/devil_gate_stage1_connected"
     },
     {
       "type": "minecraft:single",
-      "resource": "merlins_inferno:block/demonic_gate_stage2_connected"
+      "resource": "merlins_inferno:block/devil_gate_stage2_connected"
     },
     {
       "type": "minecraft:single",
-      "resource": "merlins_inferno:block/demonic_gate_stage3_connected"
+      "resource": "merlins_inferno:block/devil_gate_stage3_connected"
     },
     {
       "type": "minecraft:single",
@@ -154,7 +154,7 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "merlins_inferno:block/demonic_gate_frame_connected"
+      "resource": "merlins_inferno:block/devil_gate_frame_connected"
     },
     {
       "type": "minecraft:single",

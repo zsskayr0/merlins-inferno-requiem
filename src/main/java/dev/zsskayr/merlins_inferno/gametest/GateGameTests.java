@@ -48,7 +48,7 @@ public final class GateGameTests {
                 new boolean[]{true, true, true, true, true, true});
         check(helper, pos, ModBlocks.MUNDANE_GATE.get(), new Entity[]{player, sneaker, cow, wolf, zombie, item},
                 new boolean[]{true, false, false, false, false, true});
-        check(helper, pos, ModBlocks.DEMONIC_GATE.get(), new Entity[]{player, sneaker, cow, wolf, zombie, item},
+        check(helper, pos, ModBlocks.DEVIL_GATE.get(), new Entity[]{player, sneaker, cow, wolf, zombie, item},
                 new boolean[]{true, true, true, false, false, true});
         check(helper, pos, ModBlocks.ANGEL_GATE.get(), new Entity[]{player, sneaker, cow, wolf, zombie, item},
                 new boolean[]{true, true, false, false, true, true});
