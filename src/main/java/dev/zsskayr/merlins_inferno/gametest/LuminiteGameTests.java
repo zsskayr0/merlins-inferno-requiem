@@ -56,37 +56,82 @@ public final class LuminiteGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = "bench_empty")
-    public static void fullSetStaysBetweenNetheriteAndEbony(GameTestHelper helper) {
-        var player = helper.makeMockPlayer(GameType.SURVIVAL);
-        dress(player);
-        SkyboundHandler.refresh(player);
-        // The pieces' own armor is applied by the entity tick; what Skybound adds is a separate modifier.
-        double armor = player.getAttributeValue(Attributes.ARMOR);
-        double toughness = player.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
-        helper.assertTrue(armor >= 0.0 && armor <= SkyboundHandler.ARMOR_PEAK + 1.0E-6, "Skybound adds at most its peak armor, was " + armor);
-        helper.assertTrue(toughness >= 0.0 && toughness <= SkyboundHandler.TOUGHNESS_PEAK + 1.0E-6, "and at most its peak toughness, was " + toughness);
-        var material = dev.zsskayr.merlins_inferno.registry.ModArmorMaterials.LUMINITE.value();
-        int floor = 0;
-        for (var type : new net.minecraft.world.item.ArmorItem.Type[] {net.minecraft.world.item.ArmorItem.Type.HELMET, net.minecraft.world.item.ArmorItem.Type.CHESTPLATE,
-                net.minecraft.world.item.ArmorItem.Type.LEGGINGS, net.minecraft.world.item.ArmorItem.Type.BOOTS}) {
-            floor += material.getDefense(type);
+    private static double swingDamage(ItemStack stack) {
+        double total = 1.0; // the hand
+        for (var entry : stack.getAttributeModifiers().modifiers()) {
+            if (entry.attribute().is(Attributes.ATTACK_DAMAGE)) {
+                total += entry.modifier().amount();
+            }
         }
+        return total;
+    }
+
+    @GameTest(template = "bench_empty")
+    public static void circleTwoGearClimbsFromDragonsteelToTheCoven(GameTestHelper helper) {
+        var types = new net.minecraft.world.item.ArmorItem.Type[] {net.minecraft.world.item.ArmorItem.Type.HELMET, net.minecraft.world.item.ArmorItem.Type.CHESTPLATE,
+                net.minecraft.world.item.ArmorItem.Type.LEGGINGS, net.minecraft.world.item.ArmorItem.Type.BOOTS};
+        var luminite = dev.zsskayr.merlins_inferno.registry.ModArmorMaterials.LUMINITE.value();
         var ebony = dev.zsskayr.merlins_inferno.registry.ModArmorMaterials.EBONY.value();
+        int luminiteTotal = 0;
         int ebonyTotal = 0;
-        for (var type : new net.minecraft.world.item.ArmorItem.Type[] {net.minecraft.world.item.ArmorItem.Type.HELMET, net.minecraft.world.item.ArmorItem.Type.CHESTPLATE,
-                net.minecraft.world.item.ArmorItem.Type.LEGGINGS, net.minecraft.world.item.ArmorItem.Type.BOOTS}) {
+        for (var type : types) {
+            luminiteTotal += luminite.getDefense(type);
             ebonyTotal += ebony.getDefense(type);
         }
-        helper.assertTrue(floor == 20, "The floor is Netherite's 20, was " + floor);
-        helper.assertTrue(floor + SkyboundHandler.ARMOR_PEAK < ebonyTotal && material.toughness() + SkyboundHandler.TOUGHNESS_PEAK < ebony.toughness(),
-                "The peak stays under Ebony");
+        // Ice and Fire's dragonsteel: 34 defense, toughness 6, enchantability 30, 8000 uses and a sword that hits for 28.
+        helper.assertTrue(luminiteTotal >= 34 && luminite.toughness() >= 6.0F && luminite.enchantmentValue() >= 30, "Luminite armor is at least dragonsteel's");
+        helper.assertTrue(ebonyTotal > luminiteTotal && ebony.toughness() >= luminite.toughness() && ebony.knockbackResistance() > luminite.knockbackResistance(),
+                "Ebony armor is above Luminite's");
+        helper.assertTrue(ModItems.LUMINITE_CHESTPLATE.get().getMaxDamage(new ItemStack(ModItems.LUMINITE_CHESTPLATE.get())) >= 2560, "Luminite lasts as long as dragonsteel");
+        helper.assertTrue(ModItems.EBONY_CHESTPLATE.get().getMaxDamage(new ItemStack(ModItems.EBONY_CHESTPLATE.get()))
+                > ModItems.LUMINITE_CHESTPLATE.get().getMaxDamage(new ItemStack(ModItems.LUMINITE_CHESTPLATE.get())), "and Ebony lasts longer");
+        helper.assertTrue(dev.zsskayr.merlins_inferno.item.ModTiers.LUMINITE.getUses() >= 8000 && dev.zsskayr.merlins_inferno.item.ModTiers.EBONY.getUses() > dev.zsskayr.merlins_inferno.item.ModTiers.LUMINITE.getUses(),
+                "The tools too");
+
+        double luminiteSword = swingDamage(new ItemStack(ModItems.LUMINITE_SWORD.get()));
+        double ebonySword = swingDamage(new ItemStack(ModItems.EBONY_SWORD.get()));
+        helper.assertTrue(luminiteSword == 28.0 && ebonySword > luminiteSword, "Luminite hits for 28, Ebony harder: " + luminiteSword + " / " + ebonySword);
+        var coven = new net.minecraft.world.item.Item[] {ModItems.DARK_COVEN_I.get(), ModItems.DARK_COVEN_II.get(), ModItems.DARK_COVEN_III.get(), ModItems.DARK_COVEN_IV.get(),
+                ModItems.DARK_COVEN_V.get(), ModItems.DARK_COVEN_VI.get(), ModItems.DARK_COVEN_VII.get()};
+        double last = ebonySword;
+        for (var stage : coven) {
+            double now = swingDamage(new ItemStack(stage));
+            helper.assertTrue(now > last, "Every stage of the Dark Coven hits harder than the one before it and than the Ebony Sword, " + now);
+            last = now;
+        }
+        helper.assertTrue(last == 48.0, "and the last one hits for 48, was " + last);
+        helper.succeed();
+    }
+
+    @GameTest(template = "bench_empty")
+    public static void skyboundIsLightnessNotArmor(GameTestHelper helper) {
+        var player = helper.makeMockPlayer(GameType.SURVIVAL);
+        dress(player);
+        double before = player.getAttributeValue(Attributes.MOVEMENT_SPEED);
+        SkyboundHandler.refresh(player);
+        double speed = player.getAttributeValue(Attributes.MOVEMENT_SPEED);
+        helper.assertTrue(speed >= before && speed <= before * (1.0 + SkyboundHandler.SPEED_PEAK) + 1.0E-6, "Skybound adds at most its peak speed, was " + speed + " from " + before);
+        helper.assertTrue(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS) == 0.0 && player.getAttributeValue(Attributes.ARMOR) == 0.0, "and no armor of its own");
 
         // Three pieces are not a set: the bonus goes.
         player.setItemSlot(EquipmentSlot.FEET, ItemStack.EMPTY);
         SkyboundHandler.refresh(player);
-        helper.assertTrue(player.getAttributeValue(Attributes.ARMOR) == 0.0 && player.getAttributeValue(Attributes.ARMOR_TOUGHNESS) == 0.0,
-                "Without the boots there is no bonus");
+        helper.assertTrue(player.getAttributeValue(Attributes.MOVEMENT_SPEED) == before, "Without the boots there is no bonus");
+        helper.succeed();
+    }
+
+    @GameTest(template = "bench_empty")
+    public static void routeGearCarriesItsEvilAndHoly(GameTestHelper helper) {
+        helper.assertTrue(dev.zsskayr.merlins_inferno.event.InnateEnchantments.holyLevel(new ItemStack(ModItems.LUMINITE_SWORD.get())) == 2, "Luminite carries Holy II");
+        helper.assertTrue(dev.zsskayr.merlins_inferno.event.InnateEnchantments.holyLevel(new ItemStack(ModItems.SERAPHIUM_SWORD.get())) == 1, "Seraphium carries Holy I");
+        helper.assertTrue(dev.zsskayr.merlins_inferno.event.InnateEnchantments.evilLevel(new ItemStack(ModItems.DEMONBLOOD_SWORD.get())) == 1, "Demonblood carries Evil I");
+        helper.assertTrue(dev.zsskayr.merlins_inferno.event.InnateEnchantments.evilLevel(new ItemStack(ModItems.EBONY_SWORD.get())) == 2, "Ebony carries Evil II");
+        helper.assertTrue(dev.zsskayr.merlins_inferno.event.InnateEnchantments.evilLevel(new ItemStack(ModItems.DARK_COVEN_I.get())) == 3
+                && dev.zsskayr.merlins_inferno.event.InnateEnchantments.evilLevel(new ItemStack(ModItems.DARK_COVEN_VII.get())) == 5, "The Dark Coven climbs from Evil III to V");
+        helper.assertTrue(dev.zsskayr.merlins_inferno.event.InnateEnchantments.holyLevel(new ItemStack(ModItems.EBONY_SWORD.get())) == 0
+                && dev.zsskayr.merlins_inferno.event.InnateEnchantments.evilLevel(new ItemStack(ModItems.LUMINITE_SWORD.get())) == 0, "and the routes do not cross");
+        helper.assertTrue(new ItemStack(ModItems.LUMINITE_SWORD.get()).is(dev.zsskayr.merlins_inferno.registry.ModTags.Items.CELESTIAL_ITEMS), "Luminite is celestial");
+        helper.assertTrue(new ItemStack(ModItems.EBONY_SWORD.get()).is(dev.zsskayr.merlins_inferno.registry.ModTags.Items.DEMONIC_ITEMS), "and Ebony is demonic");
         helper.succeed();
     }
 
@@ -197,11 +242,6 @@ public final class LuminiteGameTests {
             ResourceKey<LootTable> key = ResourceKey.create(Registries.LOOT_TABLE, id(table));
             helper.assertTrue(server.reloadableRegistries().getLootTable(key) != LootTable.EMPTY, "Loot table " + table);
         }
-        // The sword and the axe come out of the table already Holy.
-        var recipe = server.getRecipeManager().byKey(id("luminite_sword")).orElseThrow().value();
-        var result = recipe.getResultItem(helper.getLevel().registryAccess());
-        var holy = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(dev.zsskayr.merlins_inferno.registry.ModEnchantments.HOLY);
-        helper.assertTrue(result.getEnchantmentLevel(holy) == 1, "The Luminite Sword is crafted with Holy");
         helper.assertTrue(MeteorHandler.MAX_DISTANCE == 3000 && MeteorHandler.MAX_ACTIVE > 0, "Meteors keep to their radius and cap");
         helper.succeed();
     }

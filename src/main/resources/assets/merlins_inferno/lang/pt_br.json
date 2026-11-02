@@ -650,5 +650,9 @@
   "message.merlins_inferno.meteor_debug.5": "Uma estrela cadente ilumina o horizonte. Ela pousou em %s.",
   "message.merlins_inferno.meteor_debug.6": "O céu da noite chora uma única brasa, e ela cai em %s.",
   "message.merlins_inferno.meteor_debug.7": "Algo caiu lá de cima. Procure a cratera em %s.",
-  "message.merlins_inferno.meteor_debug_hover": "Seguir a estrela caída"
+  "message.merlins_inferno.meteor_debug_hover": "Seguir a estrela caída",
+  "effect.merlins_inferno.paralysis": "Paralisia",
+  "effect.merlins_inferno.paralysis.description": "Preso pela luz das estrelas: você não anda, não pula e não ataca, e nada que você acerte sofre dano.",
+  "tooltip.merlins_inferno.innate_evil": "Mal %s (inato)",
+  "tooltip.merlins_inferno.innate_holy": "Sagrado %s (inato)"
 }

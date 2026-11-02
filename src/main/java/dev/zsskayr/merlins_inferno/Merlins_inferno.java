@@ -96,6 +96,9 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new VigilsSorrowHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EbonyArmorHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.SkyboundHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.LuminiteCombatHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EbonyCombatHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.InnateEnchantmentHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.MeteorHandler());
         NeoForge.EVENT_BUS.register(new RowanwoodCombatHandler());
         NeoForge.EVENT_BUS.register(new DruidsTouchHandler());

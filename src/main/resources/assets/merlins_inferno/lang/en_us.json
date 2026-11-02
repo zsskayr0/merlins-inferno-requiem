@@ -650,5 +650,9 @@
   "message.merlins_inferno.meteor_debug.5": "A falling star lights the horizon. It landed at %s.",
   "message.merlins_inferno.meteor_debug.6": "The night sky weeps a single ember, and it lands on %s.",
   "message.merlins_inferno.meteor_debug.7": "Something fell from above. Look for the crater at %s.",
-  "message.merlins_inferno.meteor_debug_hover": "Follow the fallen star"
+  "message.merlins_inferno.meteor_debug_hover": "Follow the fallen star",
+  "effect.merlins_inferno.paralysis": "Paralysis",
+  "effect.merlins_inferno.paralysis.description": "Held still by starlight: you cannot walk, jump or swing, and nothing you hit takes damage.",
+  "tooltip.merlins_inferno.innate_evil": "Evil %s (innate)",
+  "tooltip.merlins_inferno.innate_holy": "Holy %s (innate)"
 }

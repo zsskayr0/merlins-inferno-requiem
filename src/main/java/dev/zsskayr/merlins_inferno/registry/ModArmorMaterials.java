@@ -92,44 +92,45 @@ public final class ModArmorMaterials {
     ));
 
     /**
-     * Design (per project decision): Ebony is Circle 2's armor, above Seraphium - 26 total defense (4/8/10/4) vs
-     * Seraphium's 24, toughness 5 vs 4. Its set bonus (Fire Resistance IV) is in {@code event.EbonyArmorHandler}.
+     * Design (per project decision): Ebony is Circle 2's heavy armor, above Luminite - 38 total defense (8/13/10/7) against Luminite's 34, the
+     * same toughness (6 a piece, the 20 the attribute allows), double the knockback resistance, and a durability multiplier of 180 against 160. Past 30
+     * defense nothing counts, so what sets it apart is the weight, the durability and the set bonus in {@code event.EbonyArmorHandler}.
      * Worn-armor textures live at {@code textures/models/armor/ebony_layer_1.png} (and {@code _layer_2.png}).
      */
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> EBONY = ARMOR_MATERIALS.register("ebony", () -> new ArmorMaterial(
             Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-                map.put(ArmorItem.Type.BOOTS, 4);
-                map.put(ArmorItem.Type.LEGGINGS, 8);
-                map.put(ArmorItem.Type.CHESTPLATE, 10);
-                map.put(ArmorItem.Type.HELMET, 4);
-                map.put(ArmorItem.Type.BODY, 8);
+                map.put(ArmorItem.Type.BOOTS, 7);
+                map.put(ArmorItem.Type.LEGGINGS, 10);
+                map.put(ArmorItem.Type.CHESTPLATE, 13);
+                map.put(ArmorItem.Type.HELMET, 8);
+                map.put(ArmorItem.Type.BODY, 11);
             }),
             25,
             SoundEvents.ARMOR_EQUIP_NETHERITE,
             () -> Ingredient.of(ModItems.EBONY_BAR.get()),
             List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "ebony"))),
-            5.0F, // toughness, above Seraphium's 4
-            0.15F // knockback resistance, above Netherite's 0.1
+            6.0F, // toughness, Luminite's: both sit at the 20 the attribute allows over four pieces
+            0.2F  // knockback resistance, double Luminite's: heavy and rooted
     ));
 
     /**
-     * Design (per project decision): Luminite's worn stats are Netherite's - 20 defense (3/6/8/3), toughness 3 - which is its floor
-     * in daylight; the Skybound set bonus ({@code event.SkyboundHandler}) adds armor and toughness toward the night, peaking just
-     * under Ebony's 26 / 5. Worn-armor textures live at {@code textures/models/armor/luminite_layer_1.png} (and {@code _layer_2.png}).
+     * Design (per project decision): Luminite is the weakest armor of Circle 2 and still Ice and Fire's dragonsteel - 34 defense (7/12/9/6), toughness 6,
+     * knockback resistance 0.1, enchantability 30 (a durability multiplier of 160 lives in {@link ModItems}). Light and magical: the Skybound set bonus
+     * ({@code event.SkyboundHandler}) gives speed and a lighter step toward the night, not armor. Worn-armor textures live at {@code textures/models/armor/luminite_layer_1.png} (and {@code _layer_2.png}).
      */
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> LUMINITE = ARMOR_MATERIALS.register("luminite", () -> new ArmorMaterial(
             Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-                map.put(ArmorItem.Type.BOOTS, 3);
-                map.put(ArmorItem.Type.LEGGINGS, 6);
-                map.put(ArmorItem.Type.CHESTPLATE, 8);
-                map.put(ArmorItem.Type.HELMET, 3);
-                map.put(ArmorItem.Type.BODY, 7);
+                map.put(ArmorItem.Type.BOOTS, 6);
+                map.put(ArmorItem.Type.LEGGINGS, 9);
+                map.put(ArmorItem.Type.CHESTPLATE, 12);
+                map.put(ArmorItem.Type.HELMET, 7);
+                map.put(ArmorItem.Type.BODY, 10);
             }),
-            24,
+            30,
             SoundEvents.ARMOR_EQUIP_DIAMOND,
             () -> Ingredient.of(ModItems.LUMINITE_GEM.get()),
             List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "luminite"))),
-            3.0F,
+            6.0F,
             0.1F
     ));
 

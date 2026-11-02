@@ -3,6 +3,7 @@ package dev.zsskayr.merlins_inferno.event;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -16,23 +17,24 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 
 /**
- * Luminite's set bonus, Skybound: the four pieces together grow stronger toward the night and in the dark, and cancel fall damage.
+ * Luminite's set bonus, Skybound: the four pieces together make you light and let the sky answer - faster on your feet and harder to
+ * touch by magic toward the night and in the dark - and cancel fall damage. (The armor itself is already at the attribute's ceiling,
+ * dragonsteel's, so the bonus is lightness rather than more armor.)
  * <p>
  * Two factors, the larger one wins: the <b>time of day</b> (0 at noon, 1 at midnight, smooth) and the <b>local darkness</b> (0 in full
  * light, up to {@link #LIGHT_WEIGHT} in total darkness - so a cave by day never gives as much as the night itself). The factor scales
- * extra armor and toughness on top of the material's Netherite-level floor; at its peak that is just under Ebony's.
+ * a walking-speed bonus up to {@link #SPEED_PEAK} and a cut of up to {@link #MAGIC_SHIELD_PEAK} to magic damage.
  */
 public class SkyboundHandler {
     private static final int CHECK_INTERVAL = 10;
-    /** Armor points added at the peak: 20 -> 25, under Ebony's 26. */
-    public static final double ARMOR_PEAK = 5.0;
-    /** Toughness added at the peak: 3 -> 4.5, under Ebony's 5. */
-    public static final double TOUGHNESS_PEAK = 1.5;
+    /** Walking speed added at the peak, as a fraction of the base. */
+    public static final double SPEED_PEAK = 0.15;
+    /** Share of magic damage (harming potions, evoker fangs and the like) cut at the peak. */
+    public static final double MAGIC_SHIELD_PEAK = 0.30;
     /** How much of the peak the dark alone can give. */
     public static final double LIGHT_WEIGHT = 0.6;
 
-    private static final ResourceLocation ARMOR_ID = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "skybound_armor");
-    private static final ResourceLocation TOUGHNESS_ID = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "skybound_toughness");
+    private static final ResourceLocation SPEED_ID = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "skybound_speed");
 
     /** 0 at noon (6000), 1 at midnight (18000), a cosine in between. */
     public static double nightFactor(long dayTime) {
@@ -57,24 +59,25 @@ public class SkyboundHandler {
                 && player.getItemBySlot(EquipmentSlot.FEET).is(ModItems.LUMINITE_BOOTS.get());
     }
 
-    /** Applies (or clears) the bonus for this instant. */
-    public static void refresh(Player player) {
-        AttributeInstance armor = player.getAttribute(Attributes.ARMOR);
-        AttributeInstance toughness = player.getAttribute(Attributes.ARMOR_TOUGHNESS);
-        if (armor == null || toughness == null) {
-            return;
-        }
-        if (!wearsFullSet(player)) {
-            armor.removeModifier(ARMOR_ID);
-            toughness.removeModifier(TOUGHNESS_ID);
-            return;
-        }
+    /** The wearer's bonus at this instant, in [0, 1]. */
+    public static double currentBonus(Player player) {
         var level = player.level();
         // Nether and End have a fixed time of day: only the light counts there.
         double time = level.dimensionType().hasFixedTime() ? 0.0 : nightFactor(level.getDayTime());
-        double bonus = Math.max(time, darkFactor(level.getMaxLocalRawBrightness(player.blockPosition())));
-        armor.addOrUpdateTransientModifier(new AttributeModifier(ARMOR_ID, ARMOR_PEAK * bonus, AttributeModifier.Operation.ADD_VALUE));
-        toughness.addOrUpdateTransientModifier(new AttributeModifier(TOUGHNESS_ID, TOUGHNESS_PEAK * bonus, AttributeModifier.Operation.ADD_VALUE));
+        return Math.max(time, darkFactor(level.getMaxLocalRawBrightness(player.blockPosition())));
+    }
+
+    /** Applies (or clears) the bonus for this instant. */
+    public static void refresh(Player player) {
+        AttributeInstance speed = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speed == null) {
+            return;
+        }
+        if (!wearsFullSet(player)) {
+            speed.removeModifier(SPEED_ID);
+            return;
+        }
+        speed.addOrUpdateTransientModifier(new AttributeModifier(SPEED_ID, SPEED_PEAK * currentBonus(player), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     }
 
     @SubscribeEvent
@@ -86,9 +89,14 @@ public class SkyboundHandler {
     }
 
     @SubscribeEvent
-    public void onFall(LivingIncomingDamageEvent event) {
-        if (event.getEntity() instanceof Player player && event.getSource().is(DamageTypeTags.IS_FALL) && wearsFullSet(player)) {
+    public void onIncomingDamage(LivingIncomingDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player) || !wearsFullSet(player)) {
+            return;
+        }
+        if (event.getSource().is(DamageTypeTags.IS_FALL)) {
             event.setCanceled(true);
+        } else if (event.getSource().is(DamageTypes.MAGIC) || event.getSource().is(DamageTypes.INDIRECT_MAGIC)) {
+            event.setAmount((float) (event.getAmount() * (1.0 - MAGIC_SHIELD_PEAK * currentBonus(player))));
         }
     }
 }

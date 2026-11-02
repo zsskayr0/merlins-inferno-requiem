@@ -11,6 +11,7 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.effect.DemonicPactEffect;
 import dev.zsskayr.merlins_inferno.effect.DruidicTranceEffect;
 import dev.zsskayr.merlins_inferno.effect.MarkOfDebtEffect;
+import dev.zsskayr.merlins_inferno.effect.ParalysisEffect;
 import dev.zsskayr.merlins_inferno.effect.SanctifiedEffect;
 
 /** Central registry for every {@code MobEffect} this mod adds. */
@@ -42,6 +43,10 @@ public final class ModEffects {
     // The Dark Coven's one effect: its Strength, Speed, jump, Wither and the rest all live inside it (see effect.DemonicPactEffect). The level is the stage.
     public static final DeferredHolder<MobEffect, DemonicPactEffect> DEMONIC_PACT = MOB_EFFECTS.register("demonic_pact",
             () -> new DemonicPactEffect(MobEffectCategory.NEUTRAL, 0x8A0A14));
+
+    // The Luminite weapons' hold: the bearer cannot move or hurt anything for a moment. See effect.ParalysisEffect and event.LuminiteCombatHandler.
+    public static final DeferredHolder<MobEffect, ParalysisEffect> PARALYSIS = MOB_EFFECTS.register("paralysis",
+            () -> new ParalysisEffect(MobEffectCategory.HARMFUL, 0xE9D77A));
 
     private ModEffects() {
     }

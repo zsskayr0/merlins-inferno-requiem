@@ -140,8 +140,12 @@ public final class ModTiers {
      */
     public static final Tier LEGENDARY = legendary(3500, 7.0F, 30);
 
-    /** The Dark Coven's tier: mythic, above {@link #LEGENDARY} in damage, durability and enchantability. Never craftable. */
-    public static final Tier MYTHIC = legendary(5000, 10.0F, 35);
+    /**
+     * The Dark Coven's tier: mythic, above {@link #LEGENDARY} in damage, durability and enchantability. Never craftable. Its
+     * bonus is the Circle 2 floor of the mythic: stage I hits for 36 (the swords of its own Circle sit just under it), and each
+     * stage adds 2 up to 48 at stage VII (see {@code ModItems#registerDarkCoven}); the mundane route's mythic, still to come, will pass 48.
+     */
+    public static final Tier MYTHIC = legendary(5000, 32.0F, 35);
 
     private static Tier legendary(int uses, float attackBonus, int enchantability) {
         return new Tier() {
@@ -185,17 +189,17 @@ public final class ModTiers {
     public static final Tier EBONY = new Tier() {
         @Override
         public int getUses() {
-            return 3000; // above Seraphium's 2500
+            return 10000; // above Luminite's 8000 (Ice and Fire's dragonsteel is the floor of the Circle)
         }
 
         @Override
         public float getSpeed() {
-            return 11.0F; // above Seraphium's 10.0
+            return 11.0F; // heavy: a notch slower than the light Luminite's 12
         }
 
         @Override
         public float getAttackDamageBonus() {
-            return 6.0F; // above Seraphium's 5.0
+            return 27.0F; // the sword hits for 31, above Luminite's 28 and under the Dark Coven's 36
         }
 
         @Override
@@ -215,23 +219,24 @@ public final class ModTiers {
     };
 
     /**
-     * Design (per project decision): Circle 2's Luminite, the Celestial route's meteor metal - above Seraphium on every stat and
-     * below Ebony, the route being the weakest of the Circle. Its set bonus (Skybound) is in {@code event.SkyboundHandler}.
+     * Design (per project decision): Circle 2's Luminite, the Celestial route's meteor metal - the weakest set of the Circle, but
+     * never under Ice and Fire's dragonsteel (8000 uses, +24 damage, enchantability above it), and below Ebony. Light and fast
+     * where Ebony is heavy. Its set bonus (Skybound) is in {@code event.SkyboundHandler}.
      */
     public static final Tier LUMINITE = new Tier() {
         @Override
         public int getUses() {
-            return 2750; // above Seraphium's 2500, below Ebony's 3000
+            return 8000; // dragonsteel's
         }
 
         @Override
         public float getSpeed() {
-            return 10.5F; // above Seraphium's 10.0, below Ebony's 11.0
+            return 12.0F; // light: past dragonsteel's 10 and Ebony's 11
         }
 
         @Override
         public float getAttackDamageBonus() {
-            return 5.5F; // above Seraphium's 5.0, below Ebony's 6.0
+            return 24.0F; // dragonsteel's: the sword hits for 28
         }
 
         @Override
@@ -241,7 +246,7 @@ public final class ModTiers {
 
         @Override
         public int getEnchantmentValue() {
-            return 26;
+            return 30; // magical: above dragonsteel's 21
         }
 
         @Override

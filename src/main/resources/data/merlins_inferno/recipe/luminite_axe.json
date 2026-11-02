@@ -16,13 +16,6 @@
   ],
   "result": {
     "count": 1,
-    "id": "merlins_inferno:luminite_axe",
-    "components": {
-      "minecraft:enchantments": {
-        "levels": {
-          "merlins_inferno:holy": 1
-        }
-      }
-    }
+    "id": "merlins_inferno:luminite_axe"
   }
 }

@@ -134,6 +134,18 @@ public final class ModTags {
         public static final TagKey<Item> SERAPHIUM_TOOLS = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "seraphium_tools"));
 
+        /** Every Ebony tool/weapon - Evil II built in, and the withering touch of EbonyCombatHandler. */
+        public static final TagKey<Item> EBONY_TOOLS = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "ebony_tools"));
+
+        /** Every Luminite tool/weapon - Holy II built in, and the star-struck touch of LuminiteCombatHandler. */
+        public static final TagKey<Item> LUMINITE_TOOLS = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "luminite_tools"));
+
+        /** Anything celestial a player can carry - the mirror of {@link #DEMONIC_ITEMS}; nothing reads it yet. */
+        public static final TagKey<Item> CELESTIAL_ITEMS = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "celestial_items"));
+
         /** Every Rowanwood tool/weapon - see RowanwoodCombatHandler for what this grants. */
         public static final TagKey<Item> ROWANWOOD_TOOLS = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rowanwood_tools"));

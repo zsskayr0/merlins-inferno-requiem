@@ -652,7 +652,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> METEORITE_BRICKS_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.METEORITE_BRICKS_WALL);
 
     public static final DeferredItem<SwordItem> LUMINITE_SWORD = ITEMS.registerItem("luminite_sword",
-            props -> new SwordItem(ModTiers.LUMINITE, props.attributes(SwordItem.createAttributes(ModTiers.LUMINITE, 3, -2.4F))));
+            props -> new SwordItem(ModTiers.LUMINITE, props.attributes(SwordItem.createAttributes(ModTiers.LUMINITE, 3, -2.2F))));
     public static final DeferredItem<AxeItem> LUMINITE_AXE = ITEMS.registerItem("luminite_axe",
             props -> new AxeItem(ModTiers.LUMINITE, props.attributes(AxeItem.createAttributes(ModTiers.LUMINITE, 5.5F, -3.0F))));
     public static final DeferredItem<ShovelItem> LUMINITE_SHOVEL = ITEMS.registerItem("luminite_shovel",
@@ -663,13 +663,13 @@ public final class ModItems {
             props -> new HoeItem(ModTiers.LUMINITE, props.attributes(HoeItem.createAttributes(ModTiers.LUMINITE, -4.5F, 0.0F))));
 
     public static final DeferredItem<ArmorItem> LUMINITE_HELMET = ITEMS.registerItem("luminite_helmet",
-            props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(40))));
+            props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(160))));
     public static final DeferredItem<ArmorItem> LUMINITE_CHESTPLATE = ITEMS.registerItem("luminite_chestplate",
-            props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(40))));
+            props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(160))));
     public static final DeferredItem<ArmorItem> LUMINITE_LEGGINGS = ITEMS.registerItem("luminite_leggings",
-            props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(40))));
+            props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(160))));
     public static final DeferredItem<ArmorItem> LUMINITE_BOOTS = ITEMS.registerItem("luminite_boots",
-            props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(40))));
+            props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(160))));
 
     /** Points at the nearest unclaimed meteor of this world - see StarSeekerItem. */
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.StarSeekerItem> STAR_SEEKER = ITEMS.registerItem("star_seeker",
@@ -693,9 +693,9 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> EBONY_DEBRIS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.EBONY_DEBRIS, new Item.Properties().fireResistant());
 
     public static final DeferredItem<SwordItem> EBONY_SWORD = ITEMS.registerItem("ebony_sword",
-            props -> new SwordItem(ModTiers.EBONY, props.fireResistant().attributes(SwordItem.createAttributes(ModTiers.EBONY, 3, -2.4F))));
+            props -> new SwordItem(ModTiers.EBONY, props.fireResistant().attributes(SwordItem.createAttributes(ModTiers.EBONY, 3, -2.6F))));
     public static final DeferredItem<AxeItem> EBONY_AXE = ITEMS.registerItem("ebony_axe",
-            props -> new AxeItem(ModTiers.EBONY, props.fireResistant().attributes(AxeItem.createAttributes(ModTiers.EBONY, 5.0F, -3.0F))));
+            props -> new AxeItem(ModTiers.EBONY, props.fireResistant().attributes(AxeItem.createAttributes(ModTiers.EBONY, 5.0F, -3.2F))));
     public static final DeferredItem<ShovelItem> EBONY_SHOVEL = ITEMS.registerItem("ebony_shovel",
             props -> new ShovelItem(ModTiers.EBONY, props.fireResistant().attributes(ShovelItem.createAttributes(ModTiers.EBONY, 1.5F, -3.0F))));
     public static final DeferredItem<PickaxeItem> EBONY_PICKAXE = ITEMS.registerItem("ebony_pickaxe",
@@ -704,13 +704,13 @@ public final class ModItems {
             props -> new HoeItem(ModTiers.EBONY, props.fireResistant().attributes(HoeItem.createAttributes(ModTiers.EBONY, -4.0F, 0.0F))));
 
     public static final DeferredItem<ArmorItem> EBONY_HELMET = ITEMS.registerItem("ebony_helmet",
-            props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.HELMET, props.fireResistant().durability(ArmorItem.Type.HELMET.getDurability(42))));
+            props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.HELMET, props.fireResistant().durability(ArmorItem.Type.HELMET.getDurability(180))));
     public static final DeferredItem<ArmorItem> EBONY_CHESTPLATE = ITEMS.registerItem("ebony_chestplate",
-            props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.CHESTPLATE, props.fireResistant().durability(ArmorItem.Type.CHESTPLATE.getDurability(42))));
+            props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.CHESTPLATE, props.fireResistant().durability(ArmorItem.Type.CHESTPLATE.getDurability(180))));
     public static final DeferredItem<ArmorItem> EBONY_LEGGINGS = ITEMS.registerItem("ebony_leggings",
-            props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.LEGGINGS, props.fireResistant().durability(ArmorItem.Type.LEGGINGS.getDurability(42))));
+            props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.LEGGINGS, props.fireResistant().durability(ArmorItem.Type.LEGGINGS.getDurability(180))));
     public static final DeferredItem<ArmorItem> EBONY_BOOTS = ITEMS.registerItem("ebony_boots",
-            props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.BOOTS, props.fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(42))));
+            props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.BOOTS, props.fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(180))));
 
     // The Dark Coven, stages I to VII: see item.DarkCovenItem. A MYTHIC sword (not craftable; Cain drops stage I very rarely),
     // separate from the ordinary Ebony Sword; the stages are raised at a smithing table.
@@ -722,9 +722,10 @@ public final class ModItems {
     public static final DeferredItem<DarkCovenItem> DARK_COVEN_VI = registerDarkCoven("dark_coven_6", 5);
     public static final DeferredItem<DarkCovenItem> DARK_COVEN_VII = registerDarkCoven("dark_coven_7", 6);
 
+    /** Stage I hits for 36 and every stage adds 2, to 48 at stage VII: 1 (hand) + 3 + 2 per stage + the tier's 32. */
     private static DeferredItem<DarkCovenItem> registerDarkCoven(String name, int stage) {
         return ITEMS.registerItem(name, props -> new DarkCovenItem(stage, props.rarity(Rarity.EPIC).fireResistant()
-                .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 3 + stage, -2.4F))));
+                .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 3 + 2 * stage, -2.4F))));
     }
 
     public static final DeferredItem<DeferredSpawnEggItem> CAIN_SPAWN_EGG = ITEMS.registerItem("cain_spawn_egg",
