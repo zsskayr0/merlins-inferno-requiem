@@ -162,6 +162,30 @@ public final class LuminiteGameTests {
         }
         helper.assertTrue(spared > 1100 && spared < 1700, "About 70% of the wear lands at home, was " + spared + " of 2000");
         helper.assertTrue(plain == 2000, "and all of it away from home, was " + plain);
+
+        // The same, standing in the other dimensions, wings included (their wear goes through the same path).
+        var server = helper.getLevel().getServer();
+        var seraphWings = new ItemStack(ModItems.SERAPH_WINGS.get());
+        var fallenWings = new ItemStack(ModItems.FALLEN_WINGS.get());
+        var tatteredWings = new ItemStack(ModItems.TATTERED_WINGS.get());
+        helper.assertTrue(dev.zsskayr.merlins_inferno.event.RouteHome.isHome(seraphWings, end) && dev.zsskayr.merlins_inferno.event.RouteHome.isHome(fallenWings, nether)
+                && dev.zsskayr.merlins_inferno.event.RouteHome.isHome(tatteredWings, overworld) && !dev.zsskayr.merlins_inferno.event.RouteHome.isHome(fallenWings, end), "Each pair of wings has its route's home");
+        Object[][] cases = {{nether, ebony, fallenWings}, {end, luminite, seraphWings}, {oblivion, ebony, fallenWings}, {elysium, luminite, seraphWings}};
+        for (Object[] c : cases) {
+            @SuppressWarnings("unchecked") var key = (ResourceKey<net.minecraft.world.level.Level>) c[0];
+            var world = server.getLevel(key);
+            if (world == null) {
+                continue; // not loaded in this test server
+            }
+            var visitor = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(world);
+            int gear = 0;
+            int wings = 0;
+            for (int i = 0; i < 2000; i++) {
+                gear += dev.zsskayr.merlins_inferno.event.RouteHome.adjustDamage((ItemStack) c[1], 1, visitor);
+                wings += dev.zsskayr.merlins_inferno.event.RouteHome.adjustDamage((ItemStack) c[2], 1, visitor);
+            }
+            helper.assertTrue(gear > 1100 && gear < 1700 && wings > 1100 && wings < 1700, "Home ground wears less in " + key.location() + ": " + gear + " / " + wings);
+        }
         helper.succeed();
     }
 
