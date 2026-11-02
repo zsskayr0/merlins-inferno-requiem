@@ -8,17 +8,17 @@
   ],
   "key": {
     "X": {
-      "item": "merlins_inferno:arganite"
+      "item": "minecraft:amethyst_shard"
     },
     "E": {
-      "item": "merlins_inferno:celestial_essence"
+      "item": "merlins_inferno:fae_essence"
     },
     "R": {
       "item": "merlins_inferno:runic_gate"
     }
   },
   "result": {
-    "id": "merlins_inferno:purifying_gate",
+    "id": "merlins_inferno:faeric_gate",
     "count": 1
   }
 }

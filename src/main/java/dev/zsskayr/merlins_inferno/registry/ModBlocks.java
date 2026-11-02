@@ -434,8 +434,10 @@ public final class ModBlocks {
             props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.MUNDANE, props), gateProperties());
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GateBlock> DEMONIC_GATE = BLOCKS.registerBlock("demonic_gate",
             props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.DEMONIC, props), gateProperties());
-    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GateBlock> PURIFYING_GATE = BLOCKS.registerBlock("purifying_gate",
-            props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.PURIFYING, props), gateProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GateBlock> ANGEL_GATE = BLOCKS.registerBlock("angel_gate",
+            props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.ANGEL, props), gateProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.GateBlock> FAERIC_GATE = BLOCKS.registerBlock("faeric_gate",
+            props -> new dev.zsskayr.merlins_inferno.block.GateBlock(dev.zsskayr.merlins_inferno.block.GateBlock.Kind.FAERIC, props), gateProperties());
 
     private static BlockBehaviour.Properties gateProperties() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).instrument(NoteBlockInstrument.BASEDRUM)

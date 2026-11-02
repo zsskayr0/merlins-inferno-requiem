@@ -1,6 +1,6 @@
 {
   "type": "minecraft:block",
-  "random_sequence": "merlins_inferno:blocks/purifying_gate",
+  "random_sequence": "merlins_inferno:blocks/faeric_gate",
   "pools": [
     {
       "rolls": 1.0,
@@ -8,7 +8,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "merlins_inferno:purifying_gate"
+          "name": "merlins_inferno:faeric_gate"
         }
       ],
       "conditions": [

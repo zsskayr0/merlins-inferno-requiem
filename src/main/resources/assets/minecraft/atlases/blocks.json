@@ -38,7 +38,7 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "merlins_inferno:block/purifying_gate_connected"
+      "resource": "merlins_inferno:block/angel_gate_connected"
     },
     {
       "type": "minecraft:single",
@@ -54,7 +54,35 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "merlins_inferno:block/purifying_gate_ghost_connected"
+      "resource": "merlins_inferno:block/angel_gate_ghost_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/runic_gate_runes"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/mundane_gate_runes"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/demonic_gate_runes"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/angel_gate_runes"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/faeric_gate_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/faeric_gate_ghost_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/faeric_gate_runes"
     }
   ]
 }

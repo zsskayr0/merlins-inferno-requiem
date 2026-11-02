@@ -56,7 +56,9 @@ public class GateBlock extends Block {
         /** Holds the hostile: players and passive mobs pass. */
         DEMONIC(e -> e instanceof Player || isPassive(e)),
         /** Holds the passive: players and hostile mobs pass. */
-        PURIFYING(e -> e instanceof Player || e instanceof Enemy);
+        ANGEL(e -> e instanceof Player || e instanceof Enemy),
+        /** Holds the players: every creature but a player passes. */
+        FAERIC(e -> !(e instanceof Player));
 
         private final Predicate<Entity> passes;
 

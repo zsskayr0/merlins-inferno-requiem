@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XEX",
+    "ERE",
+    "XEX"
+  ],
+  "key": {
+    "X": {
+      "item": "merlins_inferno:arganite"
+    },
+    "E": {
+      "item": "merlins_inferno:celestial_essence"
+    },
+    "R": {
+      "item": "merlins_inferno:runic_gate"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:angel_gate",
+    "count": 1
+  }
+}

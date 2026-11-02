@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 public final class ConnectedBlockModel extends BakedModelWrapper<BakedModel> {
     /** Bit {@code (dx+1) + 3*(dy+1) + 9*(dz+1)}: the block at that offset is the same block. */
     public static final ModelProperty<Integer> NEIGHBOURS = new ModelProperty<>();
-    private static final ModelProperty<BlockPos> POS = new ModelProperty<>();
+    static final ModelProperty<BlockPos> POS = new ModelProperty<>();
     private static final int VERTEX_SIZE = 8; // DefaultVertexFormat.BLOCK, in ints
     private static final int UV_OFFSET = 4;
     private static final int GRID_W = 32, GRID_H = 24, VARIANTS = 16;

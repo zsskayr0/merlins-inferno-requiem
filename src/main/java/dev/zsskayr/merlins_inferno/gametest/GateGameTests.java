@@ -50,8 +50,10 @@ public final class GateGameTests {
                 new boolean[]{true, false, false, false, false, true});
         check(helper, pos, ModBlocks.DEMONIC_GATE.get(), new Entity[]{player, sneaker, cow, wolf, zombie, item},
                 new boolean[]{true, true, true, false, false, true});
-        check(helper, pos, ModBlocks.PURIFYING_GATE.get(), new Entity[]{player, sneaker, cow, wolf, zombie, item},
+        check(helper, pos, ModBlocks.ANGEL_GATE.get(), new Entity[]{player, sneaker, cow, wolf, zombie, item},
                 new boolean[]{true, true, false, false, true, true});
+        check(helper, pos, ModBlocks.FAERIC_GATE.get(), new Entity[]{player, sneaker, cow, wolf, zombie, item},
+                new boolean[]{false, false, true, true, true, true});
         helper.succeed();
     }
 

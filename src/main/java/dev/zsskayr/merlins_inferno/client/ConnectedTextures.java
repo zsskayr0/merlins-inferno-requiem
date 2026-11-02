@@ -39,7 +39,8 @@ public final class ConnectedTextures {
         wrapGate(event, ModBlocks.RUNIC_GATE.get());
         wrapGate(event, ModBlocks.MUNDANE_GATE.get());
         wrapGate(event, ModBlocks.DEMONIC_GATE.get());
-        wrapGate(event, ModBlocks.PURIFYING_GATE.get());
+        wrapGate(event, ModBlocks.ANGEL_GATE.get());
+        wrapGate(event, ModBlocks.FAERIC_GATE.get());
         vanillaTranslucentItem(event, ModBlocks.CRYPT_GLASS.getId());
         vanillaTranslucentItem(event, ModBlocks.HELLGLASS.getId());
     }
@@ -77,19 +78,30 @@ public final class ConnectedTextures {
         }
     }
 
-    /** A gate joins its neighbours in both states: the solid one with its stone sheet, the ghost one with its own see-through sheet. */
+    /**
+     * A gate joins its neighbours in both states, the solid one with its stone sheet and the ghost one with its own
+     * see-through sheet (only the quads with the plain tile are remapped), and carries an animated rune on every face.
+     */
     private static void wrapGate(ModelEvent.ModifyBakingResult event, Block gate) {
         String name = BuiltInRegistries.BLOCK.getKey(gate).getPath();
-        var solid = event.getTextureGetter().apply(new Material(TextureAtlas.LOCATION_BLOCKS,
-                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "block/" + name + "_connected")));
-        var ghost = event.getTextureGetter().apply(new Material(TextureAtlas.LOCATION_BLOCKS,
-                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "block/" + name + "_ghost_connected")));
+        var sprites = event.getTextureGetter();
+        java.util.function.Function<String, net.minecraft.client.renderer.texture.TextureAtlasSprite> sprite = path ->
+                sprites.apply(new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "block/" + path)));
+        var runes = sprite.apply(name + "_runes");
         for (BlockState state : gate.getStateDefinition().getPossibleStates()) {
+            boolean ghost = state.getValue(GateBlock.VANISHED);
             ModelResourceLocation key = BlockModelShaper.stateToModelLocation(state);
             BakedModel model = event.getModels().get(key);
             if (model != null) {
-                event.getModels().put(key, new ConnectedBlockModel(model, state.getValue(GateBlock.VANISHED) ? ghost : solid));
+                var joined = new ConnectedBlockModel(model, sprite.apply(name + (ghost ? "_ghost_connected" : "_connected")),
+                        sprite.apply(name + (ghost ? "_ghost" : "")));
+                event.getModels().put(key, new GateRuneModel(joined, runes));
             }
+        }
+        ModelResourceLocation item = ModelResourceLocation.inventory(BuiltInRegistries.BLOCK.getKey(gate));
+        BakedModel itemModel = event.getModels().get(item);
+        if (itemModel != null) {
+            event.getModels().put(item, new GateRuneModel(itemModel, runes));
         }
     }
 

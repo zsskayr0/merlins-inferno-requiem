@@ -121,7 +121,7 @@ public final class ModItems {
     // data/merlins_inferno/loot_modifiers/fae_essence_from_fairies.json (empty tag by default,
     // since this mod doesn't know which fairy-adding mods are installed).
     public static final DeferredItem<Item> FAE_ESSENCE = ITEMS.registerSimpleItem("fae_essence", new Item.Properties());
-    // The rune of the Gates (Runic, Mundane, Demonic and Purifying): the key of their Fae-and-stone craft.
+    // The rune of the Gates (Runic, Mundane, Demonic, Angel and Faeric): the key of their Fae-and-stone craft.
     public static final DeferredItem<Item> TRANSMOG_RUNE = ITEMS.registerSimpleItem("transmog_rune", new Item.Properties());
     public static final DeferredItem<Item> ROWANWOOD_SCRAP = ITEMS.registerSimpleItem("rowanwood_scrap", new Item.Properties());
 
@@ -481,7 +481,8 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> RUNIC_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.RUNIC_GATE);
     public static final DeferredItem<BlockItem> MUNDANE_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.MUNDANE_GATE);
     public static final DeferredItem<BlockItem> DEMONIC_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DEMONIC_GATE);
-    public static final DeferredItem<BlockItem> PURIFYING_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PURIFYING_GATE);
+    public static final DeferredItem<BlockItem> ANGEL_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ANGEL_GATE);
+    public static final DeferredItem<BlockItem> FAERIC_GATE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.FAERIC_GATE);
     public static final DeferredItem<BlockItem> HELLGLASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELLGLASS, new Item.Properties().fireResistant());
     public static final DeferredItem<BlockItem> CRYPT_GLASS_PANE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CRYPT_GLASS_PANE);
     public static final DeferredItem<BlockItem> GOTHIC_IRON_BARS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.GOTHIC_IRON_BARS);

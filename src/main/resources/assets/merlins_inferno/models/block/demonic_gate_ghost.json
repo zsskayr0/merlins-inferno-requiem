@@ -1,7 +1,12 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "render_type": "minecraft:translucent",
-  "textures": {
-    "all": "merlins_inferno:block/demonic_gate_ghost"
+  "loader": "neoforge:composite",
+  "parent": "minecraft:block/block",
+  "children": {
+    "main": {
+      "parent": "merlins_inferno:block/demonic_gate_ghost_base"
+    },
+    "overlay": {
+      "parent": "merlins_inferno:block/demonic_gate_runes"
+    }
   }
 }

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "active=false,vanished=false": {
+      "model": "merlins_inferno:block/faeric_gate"
+    },
+    "active=false,vanished=true": {
+      "model": "merlins_inferno:block/faeric_gate_ghost"
+    },
+    "active=true,vanished=false": {
+      "model": "merlins_inferno:block/faeric_gate"
+    },
+    "active=true,vanished=true": {
+      "model": "merlins_inferno:block/faeric_gate_ghost"
+    }
+  }
+}
