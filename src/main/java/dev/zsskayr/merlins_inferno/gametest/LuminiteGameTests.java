@@ -136,6 +136,36 @@ public final class LuminiteGameTests {
     }
 
     @GameTest(template = "bench_empty")
+    public static void routeGearIsAtHomeOnlyInItsRoutesDimensions(GameTestHelper helper) {
+        var rowanwood = new ItemStack(ModItems.ROWANWOOD_SWORD.get());
+        var ebony = new ItemStack(ModItems.EBONY_CHESTPLATE.get());
+        var luminite = new ItemStack(ModItems.LUMINITE_PICKAXE.get());
+        var nether = net.minecraft.world.level.Level.NETHER;
+        var overworld = net.minecraft.world.level.Level.OVERWORLD;
+        var end = net.minecraft.world.level.Level.END;
+        var oblivion = ResourceKey.create(Registries.DIMENSION, id("oblivion"));
+        var elysium = ResourceKey.create(Registries.DIMENSION, id("elysium"));
+        helper.assertTrue(dev.zsskayr.merlins_inferno.event.RouteHome.isHome(rowanwood, overworld) && !dev.zsskayr.merlins_inferno.event.RouteHome.isHome(rowanwood, nether), "The mundane route is at home in the Overworld only");
+        helper.assertTrue(dev.zsskayr.merlins_inferno.event.RouteHome.isHome(ebony, nether) && dev.zsskayr.merlins_inferno.event.RouteHome.isHome(ebony, oblivion)
+                && !dev.zsskayr.merlins_inferno.event.RouteHome.isHome(ebony, overworld) && !dev.zsskayr.merlins_inferno.event.RouteHome.isHome(ebony, elysium), "The infernal route: the Nether and Oblivion");
+        helper.assertTrue(dev.zsskayr.merlins_inferno.event.RouteHome.isHome(luminite, elysium) && dev.zsskayr.merlins_inferno.event.RouteHome.isHome(luminite, end)
+                && !dev.zsskayr.merlins_inferno.event.RouteHome.isHome(luminite, nether), "The angelical route: El'ysium and the End");
+        helper.assertTrue(!dev.zsskayr.merlins_inferno.event.RouteHome.isHome(new ItemStack(net.minecraft.world.item.Items.DIAMOND_PICKAXE), overworld), "Vanilla gear has no home");
+
+        // The mock player stands in the Overworld: a Rowanwood sword spares some wear, a Luminite pickaxe none.
+        var player = helper.makeMockPlayer(GameType.SURVIVAL);
+        int spared = 0;
+        int plain = 0;
+        for (int i = 0; i < 2000; i++) {
+            spared += dev.zsskayr.merlins_inferno.event.RouteHome.adjustDamage(rowanwood, 1, player);
+            plain += dev.zsskayr.merlins_inferno.event.RouteHome.adjustDamage(luminite, 1, player);
+        }
+        helper.assertTrue(spared > 1100 && spared < 1700, "About 70% of the wear lands at home, was " + spared + " of 2000");
+        helper.assertTrue(plain == 2000, "and all of it away from home, was " + plain);
+        helper.succeed();
+    }
+
+    @GameTest(template = "bench_empty")
     public static void fullSetCancelsFallDamage(GameTestHelper helper) {
         var level = helper.getLevel();
         var player = helper.makeMockPlayer(GameType.SURVIVAL);

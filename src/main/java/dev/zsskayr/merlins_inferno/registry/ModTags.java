@@ -146,6 +146,14 @@ public final class ModTags {
         public static final TagKey<Item> CELESTIAL_ITEMS = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "celestial_items"));
 
+        /** The gear of each route, whatever its Circle - at home in the route's dimensions it wears slower and digs faster (see RouteHome). Add new sets here. */
+        public static final TagKey<Item> ROUTE_MUNDANE = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "route_mundane"));
+        public static final TagKey<Item> ROUTE_INFERNAL = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "route_infernal"));
+        public static final TagKey<Item> ROUTE_ANGELICAL = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "route_angelical"));
+
         /** Every Rowanwood tool/weapon - see RowanwoodCombatHandler for what this grants. */
         public static final TagKey<Item> ROWANWOOD_TOOLS = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rowanwood_tools"));

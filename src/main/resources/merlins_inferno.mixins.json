@@ -2,6 +2,7 @@
   "required": true,
   "package": "dev.zsskayr.merlins_inferno.mixin",
   "mixins": [
+    "ItemStackMixin",
     "LivingEntityMixin",
     "OverworldBiomeBuilderMixin",
     "PlayerMixin",

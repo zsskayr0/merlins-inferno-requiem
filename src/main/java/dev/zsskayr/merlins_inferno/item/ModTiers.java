@@ -183,7 +183,7 @@ public final class ModTiers {
 
     /**
      * Design (per project decision): Circle 2's Ebony, the tier above Seraphium on every stat (the Infernal route's
-     * Oblivion material). Its signature - Fire Resistance IV with the full armor set - is in
+     * Oblivion material). Its signature - fire and lava immunity with the full armor set - is in
      * {@code event.EbonyArmorHandler}. The Dark Coven uses {@link #MYTHIC}; the Ebony Sword is the ordinary sword of this tier.
      */
     public static final Tier EBONY = new Tier() {
