@@ -25,7 +25,8 @@
             "sky_light": 15
           },
           "texture": "#runes",
-          "cullface": "down"
+          "cullface": "down",
+          "tintindex": 0
         },
         "up": {
           "neoforge_data": {
@@ -33,7 +34,8 @@
             "sky_light": 15
           },
           "texture": "#runes",
-          "cullface": "up"
+          "cullface": "up",
+          "tintindex": 0
         },
         "north": {
           "neoforge_data": {
@@ -41,7 +43,8 @@
             "sky_light": 15
           },
           "texture": "#runes",
-          "cullface": "north"
+          "cullface": "north",
+          "tintindex": 0
         },
         "south": {
           "neoforge_data": {
@@ -49,7 +52,8 @@
             "sky_light": 15
           },
           "texture": "#runes",
-          "cullface": "south"
+          "cullface": "south",
+          "tintindex": 0
         },
         "west": {
           "neoforge_data": {
@@ -57,7 +61,8 @@
             "sky_light": 15
           },
           "texture": "#runes",
-          "cullface": "west"
+          "cullface": "west",
+          "tintindex": 0
         },
         "east": {
           "neoforge_data": {
@@ -65,7 +70,8 @@
             "sky_light": 15
           },
           "texture": "#runes",
-          "cullface": "east"
+          "cullface": "east",
+          "tintindex": 0
         }
       }
     }
