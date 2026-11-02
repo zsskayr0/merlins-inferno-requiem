@@ -39,6 +39,22 @@
     {
       "type": "minecraft:single",
       "resource": "merlins_inferno:block/purifying_gate_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/runic_gate_ghost_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/mundane_gate_ghost_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/demonic_gate_ghost_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/purifying_gate_ghost_connected"
     }
   ]
 }

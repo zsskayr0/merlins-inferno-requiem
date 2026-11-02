@@ -77,19 +77,18 @@ public final class ConnectedTextures {
         }
     }
 
-    /** A solid gate joins its neighbours; a ghost one keeps its own see-through model. */
+    /** A gate joins its neighbours in both states: the solid one with its stone sheet, the ghost one with its own see-through sheet. */
     private static void wrapGate(ModelEvent.ModifyBakingResult event, Block gate) {
         String name = BuiltInRegistries.BLOCK.getKey(gate).getPath();
-        var sheet = event.getTextureGetter().apply(new Material(TextureAtlas.LOCATION_BLOCKS,
+        var solid = event.getTextureGetter().apply(new Material(TextureAtlas.LOCATION_BLOCKS,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "block/" + name + "_connected")));
+        var ghost = event.getTextureGetter().apply(new Material(TextureAtlas.LOCATION_BLOCKS,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "block/" + name + "_ghost_connected")));
         for (BlockState state : gate.getStateDefinition().getPossibleStates()) {
-            if (state.getValue(GateBlock.VANISHED)) {
-                continue;
-            }
             ModelResourceLocation key = BlockModelShaper.stateToModelLocation(state);
             BakedModel model = event.getModels().get(key);
             if (model != null) {
-                event.getModels().put(key, new ConnectedBlockModel(model, sheet));
+                event.getModels().put(key, new ConnectedBlockModel(model, state.getValue(GateBlock.VANISHED) ? ghost : solid));
             }
         }
     }
