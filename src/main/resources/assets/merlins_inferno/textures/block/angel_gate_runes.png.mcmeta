@@ -2,7 +2,7 @@
   "animation": {
     "width": 320,
     "height": 64,
-    "frametime": 8,
+    "frametime": 6,
     "interpolate": true
   }
 }
