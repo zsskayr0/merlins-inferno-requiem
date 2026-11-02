@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XEX",
+    "ERE",
+    "XEX"
+  ],
+  "key": {
+    "X": {
+      "item": "merlins_inferno:blightstone"
+    },
+    "E": {
+      "item": "merlins_inferno:infernal_essence"
+    },
+    "R": {
+      "item": "merlins_inferno:runic_gate"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:demonic_gate",
+    "count": 1
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DDD",
+    "DFD",
+    "DRD"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:deepslate"
+    },
+    "F": {
+      "item": "merlins_inferno:fae_essence"
+    },
+    "R": {
+      "item": "merlins_inferno:transmog_rune"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:runic_gate",
+    "count": 4
+  }
+}

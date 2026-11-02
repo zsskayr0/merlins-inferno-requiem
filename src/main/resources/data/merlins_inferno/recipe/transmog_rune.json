@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " A ",
+    "AFA",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "F": {
+      "item": "merlins_inferno:fae_essence"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:transmog_rune",
+    "count": 1
+  }
+}
