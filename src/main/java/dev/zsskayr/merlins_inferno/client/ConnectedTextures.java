@@ -1,6 +1,7 @@
 package dev.zsskayr.merlins_inferno.client;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.block.GateBlock;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import java.util.List;
 import net.minecraft.client.renderer.RenderType;
@@ -9,6 +10,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -34,6 +36,10 @@ public final class ConnectedTextures {
         wrap(event, ModBlocks.HELLGLASS.get(), "block/hellglass_connected");
         wrapPane(event, ModBlocks.CRYPT_GLASS_PANE.get(), "block/crypt_glass_pane_connected", "block/crypt_glass_pane");
         wrapPane(event, ModBlocks.HELLGLASS_PANE.get(), "block/hellglass_connected", "block/hellglass");
+        wrapGate(event, ModBlocks.RUNIC_GATE.get());
+        wrapGate(event, ModBlocks.MUNDANE_GATE.get());
+        wrapGate(event, ModBlocks.DEMONIC_GATE.get());
+        wrapGate(event, ModBlocks.PURIFYING_GATE.get());
         vanillaTranslucentItem(event, ModBlocks.CRYPT_GLASS.getId());
         vanillaTranslucentItem(event, ModBlocks.HELLGLASS.getId());
     }
@@ -67,6 +73,23 @@ public final class ConnectedTextures {
             BakedModel model = event.getModels().get(key);
             if (model != null) {
                 event.getModels().put(key, new ConnectedBlockModel(model, sheet, face));
+            }
+        }
+    }
+
+    /** A solid gate joins its neighbours; a ghost one keeps its own see-through model. */
+    private static void wrapGate(ModelEvent.ModifyBakingResult event, Block gate) {
+        String name = BuiltInRegistries.BLOCK.getKey(gate).getPath();
+        var sheet = event.getTextureGetter().apply(new Material(TextureAtlas.LOCATION_BLOCKS,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "block/" + name + "_connected")));
+        for (BlockState state : gate.getStateDefinition().getPossibleStates()) {
+            if (state.getValue(GateBlock.VANISHED)) {
+                continue;
+            }
+            ModelResourceLocation key = BlockModelShaper.stateToModelLocation(state);
+            BakedModel model = event.getModels().get(key);
+            if (model != null) {
+                event.getModels().put(key, new ConnectedBlockModel(model, sheet));
             }
         }
     }

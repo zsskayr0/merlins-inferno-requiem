@@ -4,13 +4,13 @@
       "model": "merlins_inferno:block/runic_gate"
     },
     "active=false,vanished=true": {
-      "model": "merlins_inferno:block/runic_gate"
+      "model": "merlins_inferno:block/runic_gate_ghost"
     },
     "active=true,vanished=false": {
       "model": "merlins_inferno:block/runic_gate"
     },
     "active=true,vanished=true": {
-      "model": "merlins_inferno:block/runic_gate"
+      "model": "merlins_inferno:block/runic_gate_ghost"
     }
   }
 }

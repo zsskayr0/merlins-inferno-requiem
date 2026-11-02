@@ -4,13 +4,13 @@
       "model": "merlins_inferno:block/demonic_gate"
     },
     "active=false,vanished=true": {
-      "model": "merlins_inferno:block/demonic_gate"
+      "model": "merlins_inferno:block/demonic_gate_ghost"
     },
     "active=true,vanished=false": {
       "model": "merlins_inferno:block/demonic_gate"
     },
     "active=true,vanished=true": {
-      "model": "merlins_inferno:block/demonic_gate"
+      "model": "merlins_inferno:block/demonic_gate_ghost"
     }
   }
 }

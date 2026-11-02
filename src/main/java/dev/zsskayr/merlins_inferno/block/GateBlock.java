@@ -113,6 +113,12 @@ public class GateBlock extends Block {
         return state.getValue(VANISHED) ? Shapes.empty() : super.getVisualShape(state, level, pos, context);
     }
 
+    /** Two ghosts side by side would draw the same translucent face twice. */
+    @Override
+    protected boolean skipRendering(BlockState state, BlockState adjacent, Direction direction) {
+        return state.getValue(VANISHED) && adjacent.is(this) && adjacent.getValue(VANISHED) || super.skipRendering(state, adjacent, direction);
+    }
+
     @Override
     protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
         return state.getValue(VANISHED);
