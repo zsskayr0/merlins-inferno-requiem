@@ -99,11 +99,6 @@ public final class ConnectedTextures {
                 event.getModels().put(key, new GateRuneModel(framed, runes, stage));
             }
         }
-        ModelResourceLocation item = ModelResourceLocation.inventory(BuiltInRegistries.BLOCK.getKey(gate));
-        BakedModel itemModel = event.getModels().get(item);
-        if (itemModel != null) {
-            event.getModels().put(item, new GateRuneModel(itemModel, runes, 0));
-        }
     }
 
     private static void wrap(ModelEvent.ModifyBakingResult event, Block block, String sheetPath) {

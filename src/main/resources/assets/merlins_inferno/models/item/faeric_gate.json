@@ -1,3 +1,6 @@
 {
-  "parent": "merlins_inferno:block/faeric_gate"
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "merlins_inferno:block/faeric_gate_item"
+  }
 }
