@@ -12,6 +12,7 @@ import dev.zsskayr.merlins_inferno.worldgen.structure.AncientBattlefieldPiece;
 import dev.zsskayr.merlins_inferno.worldgen.structure.AncientBattlefieldScrubPiece;
 import dev.zsskayr.merlins_inferno.worldgen.structure.RowanwoodTreePiece;
 import dev.zsskayr.merlins_inferno.worldgen.structure.SacredChurchPiece;
+import dev.zsskayr.merlins_inferno.worldgen.structure.GiantGeodePiece;
 
 /** Custom {@code StructurePieceType}s this mod adds. */
 public final class ModStructurePieceTypes {
@@ -32,6 +33,9 @@ public final class ModStructurePieceTypes {
 
     public static final DeferredHolder<StructurePieceType, StructurePieceType> ANCIENT_BATTLEFIELD_SCRUB = STRUCTURE_PIECE_TYPES.register("ancient_battlefield_scrub",
             () -> (StructurePieceType) (context, tag) -> new AncientBattlefieldScrubPiece(tag));
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> GIANT_GEODE = STRUCTURE_PIECE_TYPES.register("giant_geode",
+            () -> (StructurePieceType.StructureTemplateType) GiantGeodePiece::new);
 
     private ModStructurePieceTypes() {
     }

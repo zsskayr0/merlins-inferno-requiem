@@ -11,6 +11,7 @@ import dev.zsskayr.merlins_inferno.worldgen.structure.DruidSanctuaryStructure;
 import dev.zsskayr.merlins_inferno.worldgen.structure.AncientBattlefieldStructure;
 import dev.zsskayr.merlins_inferno.worldgen.structure.RowanwoodTreeStructure;
 import dev.zsskayr.merlins_inferno.worldgen.structure.SacredChurchStructure;
+import dev.zsskayr.merlins_inferno.worldgen.structure.GiantGeodeStructure;
 
 /**
  * Custom {@code StructureType}s this mod adds (code-registered, unlike {@code Structure}s
@@ -34,6 +35,9 @@ public final class ModStructureTypes {
 
     public static final DeferredHolder<StructureType<?>, StructureType<AncientBattlefieldStructure>> ANCIENT_BATTLEFIELD =
             STRUCTURE_TYPES.register("ancient_battlefield", () -> () -> AncientBattlefieldStructure.CODEC);
+
+    public static final DeferredHolder<StructureType<?>, StructureType<GiantGeodeStructure>> GIANT_GEODE =
+            STRUCTURE_TYPES.register("giant_geode", () -> () -> GiantGeodeStructure.CODEC);
 
     private ModStructureTypes() {
     }

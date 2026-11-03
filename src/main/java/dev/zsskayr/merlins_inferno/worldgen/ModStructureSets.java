@@ -17,6 +17,7 @@ public final class ModStructureSets {
     public static final ResourceKey<StructureSet> DRUID_SANCTUARY = key("druid_sanctuary");
     public static final ResourceKey<StructureSet> SACRED_CHURCH = key("sacred_church");
     public static final ResourceKey<StructureSet> ANCIENT_BATTLEFIELD = key("ancient_battlefield");
+    public static final ResourceKey<StructureSet> GIANT_GEODE = key("giant_geode");
 
     private ModStructureSets() {
     }
