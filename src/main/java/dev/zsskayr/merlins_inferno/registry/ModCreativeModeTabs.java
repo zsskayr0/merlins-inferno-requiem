@@ -321,6 +321,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DARK_COVEN_V.get());
                         output.accept(ModItems.DARK_COVEN_VI.get());
                         output.accept(ModItems.DARK_COVEN_VII.get());
+                        output.accept(ModItems.ZAELDRIS.get());
                         output.accept(ModItems.CAIN_SPAWN_EGG.get());
                         output.accept(ModItems.FLESH_GOLEM_SPAWN_EGG.get());
 

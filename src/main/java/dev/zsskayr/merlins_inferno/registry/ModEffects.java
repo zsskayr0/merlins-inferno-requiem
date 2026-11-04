@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.effect.DemonicPactEffect;
 import dev.zsskayr.merlins_inferno.effect.DruidicTranceEffect;
+import dev.zsskayr.merlins_inferno.effect.GodTouchEffect;
 import dev.zsskayr.merlins_inferno.effect.MarkOfDebtEffect;
 import dev.zsskayr.merlins_inferno.effect.ParalysisEffect;
 import dev.zsskayr.merlins_inferno.effect.SanctifiedEffect;
@@ -47,6 +48,10 @@ public final class ModEffects {
     // The Luminite weapons' hold: the bearer cannot move or hurt anything for a moment. See effect.ParalysisEffect and event.LuminiteCombatHandler.
     public static final DeferredHolder<MobEffect, ParalysisEffect> PARALYSIS = MOB_EFFECTS.register("paralysis",
             () -> new ParalysisEffect(MobEffectCategory.HARMFUL, 0xE9D77A));
+
+    // Zaeldris' brand: 25 a second through armor, and no healing. See effect.GodTouchEffect and event.ZaeldrisHandler.
+    public static final DeferredHolder<MobEffect, GodTouchEffect> GOD_TOUCH = MOB_EFFECTS.register("god_touch",
+            () -> new GodTouchEffect(MobEffectCategory.HARMFUL, 0x8CE3EC));
 
     private ModEffects() {
     }

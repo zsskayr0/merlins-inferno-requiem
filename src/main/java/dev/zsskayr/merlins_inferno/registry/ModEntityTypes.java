@@ -167,6 +167,12 @@ public final class ModEntityTypes {
                     .sized(1.25F, 1.0F).eyeHeight(.65F).fireImmune().clientTrackingRange(16).updateInterval(1)
                     .build(Merlins_inferno.MODID + ":cinder"));
 
+    // Zaeldris' spear of light - see ZaeldrisSpear. Never saved; small box, synced every other tick so the homing reads smoothly.
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.zsskayr.merlins_inferno.entity.ZaeldrisSpear>> ZAELDRIS_SPEAR = ENTITY_TYPES.register("zaeldris_spear",
+            () -> EntityType.Builder.<dev.zsskayr.merlins_inferno.entity.ZaeldrisSpear>of(dev.zsskayr.merlins_inferno.entity.ZaeldrisSpear::new, MobCategory.MISC)
+                    .sized(0.4F, 0.4F).noSave().fireImmune().clientTrackingRange(8).updateInterval(2)
+                    .build(Merlins_inferno.MODID + ":zaeldris_spear"));
+
     private ModEntityTypes() {
     }
 

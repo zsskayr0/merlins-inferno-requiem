@@ -15,6 +15,14 @@ public final class ModNetwork {
     @SubscribeEvent static void register(RegisterPayloadHandlersEvent event) {
         event.registrar(PROTOCOL).playToServer(WingsBoostPayload.TYPE, WingsBoostPayload.CODEC,
                 (payload, context) -> WingsItem.tryBoost(context.player()));
+        event.registrar(PROTOCOL).playToServer(ZaeldrisBarragePayload.TYPE, ZaeldrisBarragePayload.CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof net.minecraft.server.level.ServerPlayer player) {
+                        dev.zsskayr.merlins_inferno.item.ZaeldrisItem.setBarrage(player, payload.held());
+                    }
+                }));
+        event.registrar(PROTOCOL).playToClient(ZaeldrisPosePayload.TYPE, ZaeldrisPosePayload.CODEC,
+                (payload, context) -> context.enqueueWork(() -> dev.zsskayr.merlins_inferno.client.ZaeldrisPose.set(payload.entityId(), payload.barraging())));
         event.registrar(PROTOCOL).playToClient(CirclePayload.TYPE, CirclePayload.CODEC,
                 (payload, context) -> context.enqueueWork(() -> ProgressionHelper.setClientCircle(payload.circle())));
         event.registrar(PROTOCOL).playToClient(ItemActivationPayload.TYPE, ItemActivationPayload.CODEC,

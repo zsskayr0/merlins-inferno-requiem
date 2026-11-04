@@ -1,0 +1,26 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "merlins_inferno:item/zaeldris_hand"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "merlins_inferno:item/zaeldris_icon"
+    },
+    "ground": {
+      "parent": "merlins_inferno:item/zaeldris_icon"
+    },
+    "fixed": {
+      "parent": "merlins_inferno:item/zaeldris_icon"
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "merlins_inferno:barrage": 1
+      },
+      "model": "merlins_inferno:item/zaeldris_throw"
+    }
+  ]
+}

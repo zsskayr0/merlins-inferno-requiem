@@ -735,6 +735,13 @@ public final class ModItems {
                 .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 3 + 2 * stage, -2.4F))));
     }
 
+    // --- Circle 3, Angelical route: Zaeldris, the lance of light and the strongest weapon in the mod (see item.ZaeldrisItem).
+    // Hits for 120: 1 (hand) + 87 + the MYTHIC tier's 32. A lance's slower swing than the swords. ---
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ZaeldrisItem> ZAELDRIS = ITEMS.registerItem("zaeldris",
+            props -> new dev.zsskayr.merlins_inferno.item.ZaeldrisItem(ModTiers.MYTHIC, props.rarity(Rarity.EPIC).fireResistant()
+                    .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 87, -2.8F))));
+
+
     public static final DeferredItem<DeferredSpawnEggItem> CAIN_SPAWN_EGG = ITEMS.registerItem("cain_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.CAIN, 0x1A1420, 0x7A2BC9, props));
     public static final DeferredItem<DeferredSpawnEggItem> FLESH_GOLEM_SPAWN_EGG = ITEMS.registerItem("flesh_golem_spawn_egg",

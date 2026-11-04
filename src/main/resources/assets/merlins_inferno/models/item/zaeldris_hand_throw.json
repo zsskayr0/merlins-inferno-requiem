@@ -1,0 +1,25 @@
+{
+  "parent": "merlins_inferno:item/zaeldris_hand",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [180, -90, 55],
+      "translation": [0, -5.6, -0.5],
+      "scale": [2.55, 2.55, 1.7]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [180, 90, -55],
+      "translation": [0, -5.6, -0.5],
+      "scale": [2.55, 2.55, 1.7]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, -85, 120],
+      "translation": [-2.2, 6.7, -2.9],
+      "scale": [1.35, 1.35, 0.9]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 85, -120],
+      "translation": [-2.2, 6.7, -2.9],
+      "scale": [1.35, 1.35, 0.9]
+    }
+  }
+}

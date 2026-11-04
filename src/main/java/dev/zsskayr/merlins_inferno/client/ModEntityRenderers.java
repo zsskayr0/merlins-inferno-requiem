@@ -65,6 +65,7 @@ public final class ModEntityRenderers {
         event.registerEntityRenderer(ModEntityTypes.OSTARA.get(), OstaraRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.CAIN.get(), CainRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.FLESH_GOLEM.get(), FleshGolemRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.ZAELDRIS_SPEAR.get(), ZaeldrisSpearRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.DRYING_RACK.get(), DryingRackRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.PANDORA_BOX.get(), context -> new PandoraBoxRenderer());
         event.registerBlockEntityRenderer(ModBlockEntityTypes.SACRED_ALTAR.get(), context -> new CelestialAltarRenderer());
@@ -92,6 +93,7 @@ public final class ModEntityRenderers {
                 return this.renderer;
             }
         }, ModItems.PANDORA_BOX.get());
+        event.registerItem(ZaeldrisPose.INSTANCE, ModItems.ZAELDRIS.get());
     }
 
     @SubscribeEvent
@@ -138,6 +140,10 @@ public final class ModEntityRenderers {
                         }
                         return ChampionSeekerItem.getAngle(holder, new Vec3(target.getX(), target.getY(), target.getZ()));
                     });
+            // Zaeldris mid-barrage swaps to a model turned end for end (models/item/zaeldris_throw.json): the trident throw pose
+            // raises the arm overhead, which would otherwise point the blade backward.
+            ItemProperties.register(ModItems.ZAELDRIS.get(), ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "barrage"),
+                    (stack, level, entity, seed) -> entity != null && net.minecraft.world.item.ItemStack.matches(entity.getMainHandItem(), stack) && ZaeldrisPose.isBarraging(entity) ? 1.0F : 0.0F);
             // The Star Seeker: the server writes the meteor into the stack's lodestone tracker; the pupil just follows it.
             ItemProperties.register(ModItems.STAR_SEEKER.get(), ResourceLocation.withDefaultNamespace("angle"),
                     (stack, level, entity, seed) -> {
