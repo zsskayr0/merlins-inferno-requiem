@@ -23,15 +23,22 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  * spruce NBT files, retextured to Ashwood's own log/wood/leaves at paste time instead of needing
  * hand-edited copies of every file.
  */
-public record StructurePasteConfiguration(List<ResourceLocation> structures, Map<Block, Block> blockSwaps) implements FeatureConfiguration {
+public record StructurePasteConfiguration(List<ResourceLocation> structures, Map<Block, Block> blockSwaps,
+                                           int maxUnevenness) implements FeatureConfiguration {
     public static final Codec<StructurePasteConfiguration> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.listOf().fieldOf("structures").forGetter(StructurePasteConfiguration::structures),
             Codec.unboundedMap(BuiltInRegistries.BLOCK.byNameCodec(), BuiltInRegistries.BLOCK.byNameCodec())
                     .optionalFieldOf("block_swaps", Map.of())
-                    .forGetter(StructurePasteConfiguration::blockSwaps)
+                    .forGetter(StructurePasteConfiguration::blockSwaps),
+            Codec.intRange(0, 16).optionalFieldOf("max_unevenness", 8)
+                    .forGetter(StructurePasteConfiguration::maxUnevenness)
     ).apply(instance, StructurePasteConfiguration::new));
 
     public StructurePasteConfiguration(List<ResourceLocation> structures) {
-        this(structures, Map.of());
+        this(structures, Map.of(), 8);
+    }
+
+    public StructurePasteConfiguration(List<ResourceLocation> structures, Map<Block, Block> blockSwaps) {
+        this(structures, blockSwaps, 8);
     }
 }

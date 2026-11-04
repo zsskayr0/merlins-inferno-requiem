@@ -52,7 +52,7 @@ public final class ElysiumDecorator {
         }
 
         try {
-            SpanBuilder.buildHanging(level, chunkPos, world.hangingChainsIn(minX, minZ, maxX, maxZ));
+            SpanBuilder.buildHanging(level, chunkPos, world, world.hangingChainsIn(minX, minZ, maxX, maxZ));
         } catch (RuntimeException e) {
             if (!spanFailureLogged) {
                 spanFailureLogged = true;

@@ -27,7 +27,9 @@
     [],
     [],
     [
-      "minecraft:ice_spike",
+      "merlins_inferno:snowy_ice_spikes_rime",
+      "merlins_inferno:lyrium_spikes_rime",
+      "merlins_inferno:giant_lyrium_spike_rime",
       "minecraft:ice_patch"
     ],
     [],

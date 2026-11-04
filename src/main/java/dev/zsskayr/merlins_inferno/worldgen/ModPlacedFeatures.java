@@ -15,6 +15,12 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 public final class ModPlacedFeatures {
     public static final ResourceKey<PlacedFeature> ASHWOOD_TREE_PLACED = key("ashwood_tree_placed");
     public static final ResourceKey<PlacedFeature> LYRIUM_GEODE_PLACED = key("lyrium_geode_placed");
+    public static final ResourceKey<PlacedFeature> SNOWY_ICE_SPIKES_FROSTCREST = key("snowy_ice_spikes_frostcrest");
+    public static final ResourceKey<PlacedFeature> SNOWY_ICE_SPIKES_RIME = key("snowy_ice_spikes_rime");
+    public static final ResourceKey<PlacedFeature> LYRIUM_SPIKES_FROSTCREST = key("lyrium_spikes_frostcrest");
+    public static final ResourceKey<PlacedFeature> LYRIUM_SPIKES_RIME = key("lyrium_spikes_rime");
+    public static final ResourceKey<PlacedFeature> GIANT_LYRIUM_SPIKE_FROSTCREST = key("giant_lyrium_spike_frostcrest");
+    public static final ResourceKey<PlacedFeature> GIANT_LYRIUM_SPIKE_RIME = key("giant_lyrium_spike_rime");
 
 
     private ModPlacedFeatures() {

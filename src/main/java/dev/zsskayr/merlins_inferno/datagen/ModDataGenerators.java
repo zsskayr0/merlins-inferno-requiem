@@ -18,6 +18,7 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.datagen.client.ModBlockStateProvider;
 import dev.zsskayr.merlins_inferno.datagen.loot.ModBlockLootProvider;
 import dev.zsskayr.merlins_inferno.datagen.worldgen.ModBiomeProvider;
+import dev.zsskayr.merlins_inferno.datagen.worldgen.ModFrozenSpikeProvider;
 import dev.zsskayr.merlins_inferno.datagen.worldgen.ModLyriumProvider;
 import dev.zsskayr.merlins_inferno.datagen.worldgen.ModStructureProvider;
 import dev.zsskayr.merlins_inferno.datagen.worldgen.ModTreeProvider;
@@ -45,10 +46,12 @@ public final class ModDataGenerators {
                 .add(Registries.CONFIGURED_FEATURE, context -> {
                     ModTreeProvider.bootstrapConfiguredFeatures(context);
                     ModLyriumProvider.bootstrapConfiguredFeatures(context);
+                    ModFrozenSpikeProvider.bootstrapConfiguredFeatures(context);
                 })
                 .add(Registries.PLACED_FEATURE, context -> {
                     ModTreeProvider.bootstrapPlacedFeatures(context);
                     ModLyriumProvider.bootstrapPlacedFeatures(context);
+                    ModFrozenSpikeProvider.bootstrapPlacedFeatures(context);
                 })
                 .add(Registries.BIOME, ModBiomeProvider::bootstrap)
                 .add(Registries.STRUCTURE, ModStructureProvider::bootstrapStructures)

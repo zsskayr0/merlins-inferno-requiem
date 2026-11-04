@@ -1,0 +1,9 @@
+{
+  "type": "merlins_inferno:structure_paste",
+  "config": {
+    "max_unevenness": 3,
+    "structures": [
+      "merlins_inferno:frozen_spike/lyrium_east_01"
+    ]
+  }
+}

@@ -5,11 +5,15 @@ import java.util.List;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 
 import dev.zsskayr.merlins_inferno.worldgen.elysium.core.ElysiumWorld;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.core.ElysiumWorld.Span;
+import dev.zsskayr.merlins_inferno.worldgen.elysium.core.Column;
+import dev.zsskayr.merlins_inferno.worldgen.elysium.core.ElysiumBiome;
 
 /**
  * Draws El'ysium's crossings (bridges and giant chains, see {@link Span}) into one chunk.
@@ -27,7 +31,8 @@ import dev.zsskayr.merlins_inferno.worldgen.elysium.core.ElysiumWorld.Span;
  *   <li>{@code VINE_CHAIN}: mossy stone slab deck (default 3) in a catenary, tuff brick stringers, two chain handrails on
  *       vertical chain hangers, moss and long vines.</li>
  *   <li>{@code GIANT_CHAIN}: a huge chain of 9-block diamond links in alternating planes, tuff bricks, hanging in
- *       a catenary between the anchors under the two cliffs; moss on top of the links, vines under them.</li>
+ *       a catenary between the anchors under the two cliffs; moss and vines in warm regions, ice and icicles near
+ *       Frostcrest Range and Rime Expanse anchors.</li>
  * </ul>
  * Bridge anchors are the deck block at each coast; the deck carries on {@value #ABUT} blocks into the island as a flat
  * abutment on a foundation, with headroom carved through any terrain in the way. Nothing is ever placed below
@@ -61,7 +66,7 @@ public final class SpanBuilder {
                 case STONE_ARCH -> new Deck(brush, span, 5).stoneArch();
                 case ROPE -> new Deck(brush, span, 3).rope();
                 case VINE_CHAIN -> new Deck(brush, span, 3).vineChain();
-                case GIANT_CHAIN -> giantChain(brush, span);
+                case GIANT_CHAIN -> giantChain(brush, world, span);
             }
         }
     }
@@ -336,7 +341,7 @@ public final class SpanBuilder {
      * The giant chain: diamond links in alternating planes along a catenary from A to B (both extended a little into the
      * islands). Each chunk walks the whole curve (cheap: a few hundred samples) and draws only links near it.
      */
-    private static void giantChain(Brush b, Span s) {
+    private static void giantChain(Brush b, ElysiumWorld world, Span s) {
         long salt = salt(s);
         double dx = s.bx() - s.ax(), dz = s.bz() - s.az(), len = Math.max(1.0, Math.hypot(dx, dz));
         double ux = dx / len, uz = dz / len;
@@ -357,24 +362,27 @@ public final class SpanBuilder {
                 arc[i] = arc[i - 1] + Math.sqrt(sq(pts[i][0] - pts[i - 1][0]) + sq(pts[i][1] - pts[i - 1][1]) + sq(pts[i][2] - pts[i - 1][2]));
             }
         }
-        drawLinks(b, salt, pts, arc, n);
+        drawLinks(b, salt, pts, arc, n,
+                coldAnchor(world, s.ax(), s.az()) ? 1.0 : 0.0,
+                coldAnchor(world, s.bx(), s.bz()) ? 1.0 : 0.0);
     }
 
     /**
      * Loose chains, tied to one island only: from under an island straight down, or from the coast out over the edge and
      * down. Same links as the giant chains, drawn the same way, one chunk at a time.
      */
-    public static void buildHanging(WorldGenLevel level, ChunkPos chunk, List<ElysiumWorld.HangingChain> chains) {
+    public static void buildHanging(WorldGenLevel level, ChunkPos chunk, ElysiumWorld world,
+            List<ElysiumWorld.HangingChain> chains) {
         if (chains.isEmpty()) {
             return;
         }
         Brush brush = Brush.chunk(level, chunk);
         for (ElysiumWorld.HangingChain h : chains) {
-            hangingChain(brush, h);
+            hangingChain(brush, world, h);
         }
     }
 
-    private static void hangingChain(Brush b, ElysiumWorld.HangingChain h) {
+    private static void hangingChain(Brush b, ElysiumWorld world, ElysiumWorld.HangingChain h) {
         double ax = h.x() + 0.5 - h.outX() * CHAIN_EMBED, az = h.z() + 0.5 - h.outZ() * CHAIN_EMBED;
         double ay = h.y() + (h.run() == 0 ? CHAIN_EMBED : 0.5);
         double total = h.run() + CHAIN_EMBED;
@@ -395,19 +403,30 @@ public final class SpanBuilder {
                 arc[i] = arc[i - 1] + Math.sqrt(sq(pts[i][0] - pts[i - 1][0]) + sq(pts[i][1] - pts[i - 1][1]) + sq(pts[i][2] - pts[i - 1][2]));
             }
         }
-        drawLinks(b, h.salt(), pts, arc, n);
+        double frost = coldAnchor(world, h.x(), h.z()) ? 1.0 : 0.0;
+        drawLinks(b, h.salt(), pts, arc, n, frost, frost);
     }
 
-    /** Diamond links in alternating planes along a polyline with cumulative lengths {@code arc}, plus moss and vines. */
-    private static void drawLinks(Brush b, long salt, double[][] pts, double[] arc, int n) {
+    /** The island's local surface biome, independent of the 3D Underhang biome around the anchor. */
+    private static boolean coldAnchor(ElysiumWorld world, int x, int z) {
+        Column column = new Column();
+        world.sample(x, z, column);
+        return column.land && (column.biome == ElysiumBiome.FROSTCREST_RANGE
+                || column.biome == ElysiumBiome.RIME_EXPANSE);
+    }
+
+    /** Diamond links in alternating planes, dressed for the climate of their anchor islands. */
+    private static void drawLinks(Brush b, long salt, double[][] pts, double[] arc, int n,
+            double coldStart, double coldEnd) {
         int links = (int) (arc[n] / LINK_SPACING);
         int seg = 0;
         double reach = LINK + 2.0;
         // collected for the dressing pass: (x, y, z) of every block this chunk placed
-        int[] placed = new int[1024 * 3];
+        int[] placed = new int[1024 * 4];
         int count = 0;
         for (int k = 0; k < links; k++) {
             double at = (k + 0.5) * LINK_SPACING;
+            double frost = Shapes.lerp(coldStart, coldEnd, at / Math.max(1.0, arc[n]));
             while (seg < n - 1 && arc[seg + 1] < at) {
                 seg++;
             }
@@ -454,25 +473,41 @@ public final class SpanBuilder {
                         double py = cy + ty * sAlong + ny * sAcross + wy2 * (thick - 0.5);
                         double pz = cz + tz * sAlong + nz * sAcross + wz2 * (thick - 0.5);
                         int ix = (int) Math.floor(px), iy = (int) Math.floor(py), iz = (int) Math.floor(pz);
-                        if (b.inside(ix, iy, iz) && b.put(ix, iy, iz, material)) {
-                            if (count + 3 > placed.length) {
+                        BlockState linkBlock = material;
+                        if (frost > 0 && Rng.unit(salt ^ 0x1CE5L, ix, iy, iz) < 0.28 * frost) {
+                            linkBlock = Rng.unit(salt ^ 0xB1E1L, ix, iy, iz) < 0.22
+                                    ? Blocks.BLUE_ICE.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState();
+                        }
+                        if (b.inside(ix, iy, iz) && b.put(ix, iy, iz, linkBlock)) {
+                            if (count + 4 > placed.length) {
                                 placed = java.util.Arrays.copyOf(placed, placed.length * 2);
                             }
                             placed[count++] = ix;
                             placed[count++] = iy;
                             placed[count++] = iz;
+                            placed[count++] = (int) Math.round(frost * 1000);
                         }
                     }
                 }
             }
         }
-        // dressing: moss on top of the links, vines trailing from their undersides
-        for (int i = 0; i < count; i += 3) {
+        // Dressing: snow and short ice spikes on cold links, moss and vines on warm ones.
+        for (int i = 0; i < count; i += 4) {
             int x = placed[i], y = placed[i + 1], z = placed[i + 2];
+            double frost = placed[i + 3] / 1000.0;
             double r = Rng.unit(salt, x, y, z);
-            if (r < 0.16) {
+            if (frost > 0 && r < 0.38 * frost) {
+                int layers = 1 + (int) (Rng.unit(salt ^ 0x5A07L, x, y, z) * 3);
+                b.carpet(x, y + 1, z, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers));
+            } else if (frost > 0.45 && r > 0.982 && b.get(x, y - 1, z).isAir()) {
+                int length = 2 + (int) (Rng.unit(salt ^ 0x5F1CEL, z, y, x) * 3 * frost);
+                for (int j = 1; j <= length; j++) {
+                    b.put(x, y - j, z, j == length ? Blocks.BLUE_ICE.defaultBlockState()
+                            : Blocks.PACKED_ICE.defaultBlockState());
+                }
+            } else if (frost < 0.35 && r < 0.16 * (1.0 - frost)) {
                 b.carpet(x, y + 1, z, Pal.MOSS_CARPET);
-            } else if (r > 0.95 && b.get(x, y - 1, z).isAir()) {
+            } else if (frost < 0.35 && r > 0.95 && b.get(x, y - 1, z).isAir()) {
                 b.hangingVines(x, y - 1, z, 2 + (int) (Rng.unit(salt, z, y, x) * 6),
                         Direction.from2DDataValue((int) (Rng.hash(salt, x, y, z) >>> 60) & 3));
             }

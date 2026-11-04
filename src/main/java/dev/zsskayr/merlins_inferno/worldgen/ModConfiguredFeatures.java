@@ -14,6 +14,9 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 public final class ModConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> ASHWOOD_TREE = key("ashwood_tree");
     public static final ResourceKey<ConfiguredFeature<?, ?>> LYRIUM_GEODE = key("lyrium_geode");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> SNOWY_ICE_SPIKES = key("snowy_ice_spikes");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> LYRIUM_SPIKES = key("lyrium_spikes");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> GIANT_LYRIUM_SPIKE = key("giant_lyrium_spike");
 
     // No Rowanwood entry here anymore - it's a real Structure now (see RowanwoodTreeStructure),
     // not a decoration Feature. See ModStructures instead.

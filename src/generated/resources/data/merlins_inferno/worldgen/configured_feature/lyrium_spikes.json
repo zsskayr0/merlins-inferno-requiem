@@ -1,0 +1,27 @@
+{
+  "type": "merlins_inferno:structure_paste",
+  "config": {
+    "max_unevenness": 4,
+    "structures": [
+      "merlins_inferno:frozen_spike/lyrium_west_01",
+      "merlins_inferno:frozen_spike/lyrium_west_02",
+      "merlins_inferno:frozen_spike/lyrium_west_03",
+      "merlins_inferno:frozen_spike/lyrium_west_04",
+      "merlins_inferno:frozen_spike/lyrium_west_05",
+      "merlins_inferno:frozen_spike/lyrium_west_06",
+      "merlins_inferno:frozen_spike/lyrium_west_07",
+      "merlins_inferno:frozen_spike/lyrium_west_08",
+      "merlins_inferno:frozen_spike/lyrium_west_09",
+      "merlins_inferno:frozen_spike/lyrium_west_10",
+      "merlins_inferno:frozen_spike/lyrium_west_11",
+      "merlins_inferno:frozen_spike/lyrium_west_12",
+      "merlins_inferno:frozen_spike/lyrium_east_02",
+      "merlins_inferno:frozen_spike/lyrium_east_03",
+      "merlins_inferno:frozen_spike/lyrium_east_04",
+      "merlins_inferno:frozen_spike/lyrium_east_05",
+      "merlins_inferno:frozen_spike/lyrium_east_06",
+      "merlins_inferno:frozen_spike/lyrium_east_07",
+      "merlins_inferno:frozen_spike/lyrium_east_08"
+    ]
+  }
+}

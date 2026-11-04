@@ -46,12 +46,8 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 public class StructurePasteFeature extends Feature<StructurePasteConfiguration> {
     /** Sample every 3 blocks across the footprint instead of every block - plenty for trees this size, far cheaper. */
     private static final int SAMPLE_STEP = 3;
-    // Reject the spot if the ground varies more than this across the footprint (steps/cliffs ->
-    // floating trees). Loose enough for Rowanwood's 48x39 footprint to still find spots on rolling
-    // terrain (a tight value tuned for Ashwood's ~13-wide footprint made a footprint this size
-    // fail almost everywhere) - some minor embedding/floating at the edges of a tree this size is
-    // much less noticeable than never spawning at all.
-    private static final int MAX_FOOTPRINT_UNEVENNESS = 8;
+    // The tolerated height variation comes from the configuration: trees keep the default 8,
+    // while the snow-footed spikes need flatter ground.
     // Extra margin checked *beyond* the footprint itself in footprintHasExistingTree - without
     // this, "no overlap" still let canopies grow edge-to-edge/touching. Gives every tree (Ashwood
     // or the Rowanwood structure, which places its blocks first - see StructureSettings) some
@@ -88,11 +84,14 @@ public class StructurePasteFeature extends Feature<StructurePasteConfiguration> 
                 maxHeight = Math.max(maxHeight, height);
             }
         }
-        if (maxHeight - minHeight > MAX_FOOTPRINT_UNEVENNESS) {
+        if (maxHeight - minHeight > config.maxUnevenness()) {
             return false;
         }
 
         BlockPos placeAt = new BlockPos(corner.getX(), minHeight, corner.getZ());
+        if (minHeight < level.getMinBuildHeight() || minHeight + size.getY() > level.getMaxBuildHeight()) {
+            return false;
+        }
         if (footprintHasExistingTree(level, placeAt, size)) {
             return false;
         }

@@ -1,0 +1,22 @@
+{
+  "type": "merlins_inferno:structure_paste",
+  "config": {
+    "max_unevenness": 4,
+    "structures": [
+      "merlins_inferno:frozen_spike/snowy_ice_01",
+      "merlins_inferno:frozen_spike/snowy_ice_02",
+      "merlins_inferno:frozen_spike/snowy_ice_03",
+      "merlins_inferno:frozen_spike/snowy_ice_04",
+      "merlins_inferno:frozen_spike/snowy_ice_05",
+      "merlins_inferno:frozen_spike/snowy_ice_06",
+      "merlins_inferno:frozen_spike/snowy_ice_07",
+      "merlins_inferno:frozen_spike/snowy_ice_08",
+      "merlins_inferno:frozen_spike/snowy_ice_09",
+      "merlins_inferno:frozen_spike/snowy_ice_10",
+      "merlins_inferno:frozen_spike/snowy_ice_11",
+      "merlins_inferno:frozen_spike/snowy_ice_12",
+      "merlins_inferno:frozen_spike/snowy_ice_13",
+      "merlins_inferno:frozen_spike/snowy_ice_14"
+    ]
+  }
+}
