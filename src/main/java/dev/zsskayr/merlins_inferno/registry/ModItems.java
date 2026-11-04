@@ -741,6 +741,22 @@ public final class ModItems {
             props -> new dev.zsskayr.merlins_inferno.item.ZaeldrisItem(ModTiers.MYTHIC, props.rarity(Rarity.EPIC).fireResistant()
                     .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 87, -2.8F))));
 
+    // --- Circle 2, Mundane route: Excalibur, the fae-forged sword of the dragon's mouth. Creative-only until the mundane
+    // route's dimension exists. Hits for 64 in Circle 2: 1 (hand) + 31 + the MYTHIC tier's 32 - above the Dark Coven VII
+    // (48; ~82 with its Strength and a Mark of Cain, vs ~83 for this with the same Mark). In Circle 3 it becomes
+    // EXCALIBUR_TRUE (see item.ExcaliburItem): 96 = 1 + 63 + 32, under Zaeldris' 120. Its own ability comes later. ---
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ExcaliburItem> EXCALIBUR = ITEMS.registerItem("excalibur",
+            props -> new dev.zsskayr.merlins_inferno.item.ExcaliburItem(ModTiers.MYTHIC, props.rarity(Rarity.EPIC).fireResistant()
+                    .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 31, -2.4F))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ExcaliburItem> EXCALIBUR_TRUE = ITEMS.registerItem("excalibur_true",
+            props -> new dev.zsskayr.merlins_inferno.item.ExcaliburItem(ModTiers.MYTHIC, props.rarity(Rarity.EPIC).fireResistant()
+                    .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 63, -2.4F))));
+    /** Display only: the sword floating in the awakening ritual, turning from worn to true (entity.ExcaliburAwakening). */
+    public static final DeferredItem<Item> EXCALIBUR_AWAKENING = ITEMS.registerSimpleItem("excalibur_awakening",
+            new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
+    /** The outline holding Excalibur's slot while it is out of the inventory for its awakening (item.ExcaliburSlotItem). */
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ExcaliburSlotItem> EXCALIBUR_SLOT = ITEMS.registerItem("excalibur_slot",
+            props -> new dev.zsskayr.merlins_inferno.item.ExcaliburSlotItem(props.stacksTo(1).rarity(Rarity.EPIC)));
 
     public static final DeferredItem<DeferredSpawnEggItem> CAIN_SPAWN_EGG = ITEMS.registerItem("cain_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntityTypes.CAIN, 0x1A1420, 0x7A2BC9, props));

@@ -173,6 +173,11 @@ public final class ModEntityTypes {
                     .sized(0.4F, 0.4F).noSave().fireImmune().clientTrackingRange(8).updateInterval(2)
                     .build(Merlins_inferno.MODID + ":zaeldris_spear"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.zsskayr.merlins_inferno.entity.ExcaliburAwakening>> EXCALIBUR_AWAKENING = ENTITY_TYPES.register("excalibur_awakening",
+            () -> EntityType.Builder.<dev.zsskayr.merlins_inferno.entity.ExcaliburAwakening>of(dev.zsskayr.merlins_inferno.entity.ExcaliburAwakening::new, MobCategory.MISC)
+                    .sized(0.6F, 0.6F).noSave().noSummon().fireImmune().clientTrackingRange(10).updateInterval(1)
+                    .build(Merlins_inferno.MODID + ":excalibur_awakening"));
+
     private ModEntityTypes() {
     }
 

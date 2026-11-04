@@ -85,6 +85,14 @@ public final class ModAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> ARGANITE_VEINS_DONE =
             ATTACHMENT_TYPES.register("arganite_veins_done", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
 
+    /**
+     * The Excalibur a player's awakening took out of their inventory (entity.ExcaliburAwakening), until it is put back.
+     * Saved and kept through death, so a ritual cut short by death, logout or a crash still gives the sword back.
+     */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<net.minecraft.world.item.ItemStack>> EXCALIBUR_HELD =
+            ATTACHMENT_TYPES.register("excalibur_held", () -> AttachmentType.builder(() -> net.minecraft.world.item.ItemStack.EMPTY)
+                    .serialize(net.minecraft.world.item.ItemStack.OPTIONAL_CODEC).copyOnDeath().build());
+
     private ModAttachments() {
     }
 

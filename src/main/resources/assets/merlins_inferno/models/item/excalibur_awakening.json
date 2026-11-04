@@ -1,0 +1,74 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "merlins_inferno:item/excalibur_awakening_0"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "merlins_inferno:awakening": 0.0909
+      },
+      "model": "merlins_inferno:item/excalibur_awakening_1"
+    },
+    {
+      "predicate": {
+        "merlins_inferno:awakening": 0.1818
+      },
+      "model": "merlins_inferno:item/excalibur_awakening_2"
+    },
+    {
+      "predicate": {
+        "merlins_inferno:awakening": 0.2727
+      },
+      "model": "merlins_inferno:item/excalibur_awakening_3"
+    },
+    {
+      "predicate": {
+        "merlins_inferno:awakening": 0.3636
+      },
+      "model": "merlins_inferno:item/excalibur_awakening_4"
+    },
+    {
+      "predicate": {
+        "merlins_inferno:awakening": 0.4545
+      },
+      "model": "merlins_inferno:item/excalibur_awakening_5"
+    },
+    {
+      "predicate": {
+        "merlins_inferno:awakening": 0.5455
+      },
+      "model": "merlins_inferno:item/excalibur_awakening_6"
+    },
+    {
+      "predicate": {
+        "merlins_inferno:awakening": 0.6364
+      },
+      "model": "merlins_inferno:item/excalibur_awakening_7"
+    },
+    {
+      "predicate": {
+        "merlins_inferno:awakening": 0.7273
+      },
+      "model": "merlins_inferno:item/excalibur_awakening_8"
+    },
+    {
+      "predicate": {
+        "merlins_inferno:awakening": 0.8182
+      },
+      "model": "merlins_inferno:item/excalibur_awakening_9"
+    },
+    {
+      "predicate": {
+        "merlins_inferno:awakening": 0.9091
+      },
+      "model": "merlins_inferno:item/excalibur_awakening_10"
+    },
+    {
+      "predicate": {
+        "merlins_inferno:awakening": 1.0
+      },
+      "model": "merlins_inferno:item/excalibur_awakening_11"
+    }
+  ]
+}

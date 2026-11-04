@@ -40,6 +40,13 @@ public class MerlinsJeiPlugin implements IModPlugin {
         registration.addRecipeCatalyst(new ItemStack(ModItems.PANDORA_BOX.get()), PandoraJeiCategory.TYPE);
     }
 
+    /** Display-only items stay out of JEI's list. */
+    @Override
+    public void onRuntimeAvailable(mezz.jei.api.runtime.IJeiRuntime runtime) {
+        runtime.getIngredientManager().removeIngredientsAtRuntime(mezz.jei.api.constants.VanillaTypes.ITEM_STACK,
+                List.of(new ItemStack(ModItems.EXCALIBUR_AWAKENING.get()), new ItemStack(ModItems.EXCALIBUR_SLOT.get())));
+    }
+
     private static List<PandoraJeiRecipe> recipes() {
         List<PandoraJeiRecipe> list = new ArrayList<>();
         list.add(recipe(Recipe.FOREST, new ItemStack(ModItems.FOREST_KEY.get()), Ingredient.VOID,
