@@ -38,9 +38,11 @@
     [],
     [
       "minecraft:classic_vines_cave_feature",
-      "minecraft:trees_birch_and_oak",
-      "minecraft:patch_grass_forest",
-      "minecraft:flower_default",
+      "merlins_inferno:cascade_blue_spruce_placed",
+      "merlins_inferno:cascade_pink_tree_placed",
+      "merlins_inferno:cascade_tall_pink_grass",
+      "merlins_inferno:cascade_pink_grass",
+      "merlins_inferno:cascade_flowers",
       "minecraft:patch_sugar_cane",
       "minecraft:patch_waterlily"
     ],

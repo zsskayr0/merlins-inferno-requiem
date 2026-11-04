@@ -34,17 +34,20 @@ Layer notation: top / sub / stone strata (bottom→top order of the repeating ba
 | Lark Meadows | grass / dirt | arganite 11, stone 4, arganite 7, diorite 1, arganite 3, andesite 3 | clay spots on banks, gravel/clay beds | meadow + plains flowers (yellow/white), sunflowers, tall grass, isolated oaks |
 | Windless Steppe | grass + coarse-dirt patches, rare gravel / dirt+coarse | arganite 8, stone 4, andesite 2, arganite 6, diorite 1, stone 3 | mossy boulders (forest_rock) | tall dry grass, savanna grass, dead bushes |
 | Highpine Forest | grass + podzol patches, coarse dirt / dirt | stone 9, andesite 4, stone 5, tuff 2, arganite 6 | moss tops on steep ledges, boulders | old-growth spruce, large ferns, taiga grass, berries |
-| Mossy Weald | moss / podzol / rooted dirt patches over grass | stone 8, andesite 3, tuff 2, stone 5, andesite 2 | moss + mossy cobble on cliffs, mud/clay pond beds | dark oaks (dense canopy), ferns, mushrooms, vines, lily pads |
+| Mossy Weald | moss / podzol / rooted dirt patches over grass | calcite crust over arganite, with narrow mossy arganite veins in shallow rock | moss + mossy cobble on cliffs, mud/clay pond beds | dark oaks (dense canopy), ferns, mushrooms, vines, lily pads |
 | Argent Peaks | grass → (thin soil) → snow block, powder snow pockets above ~y 268 | arganite 9, quartzite 2, arganite 6, calcite 1, arganite 4, diorite 1 (wobble 6 = veins) | gravel scree on rocky slopes, snow line y≈256 ±7 dithered | grove spruces on low slopes only (they cannot root on snow) |
 | Stonecrown Cliffs | grass + coarse dirt / dirt 2 | stone 8, andesite 4, stone 5, tuff 2, stone 3, andesite 3 | vertical bare columns (low slope threshold), vines | sparse oaks, grass, flowers |
-| Cascade Vale | grass + coarse dirt / dirt, coarse dirt | stone 5, andesite 2, tuff 2, stone 3, diorite 1, stone 4, andesite 3 | gravel bars + clay in river | birch & oak, forest grass, flowers, sugar cane, vines |
+| Cascade Vale | pink Cascade Grass on Arganite, no ordinary grass or dirt layer | Arganite, with narrow calcite veins at least 24 blocks below the surface | gravel bars + clay in river; canyon banks blend continuously into the hillside | the mod's Hallowed Grove tree shapes with spruce logs and wood in both pink- and blue-leaf variants, clustered pink short grass and lush two-block pink tall grass, pink Cascade Blossom and Sun Flower, sugar cane, vines |
 | Mistfall Gorge | moss / grass / rooted dirt | stone 7, tuff 3, andesite 3, stone 5, tuff 2 | moss-covered walls (steep + patch), mud/clay bed | swamp oaks with vines, ferns, jungle grass, lily pads |
 | Glass Sea | calcite rims (inland<6) + grass | calcite 3, arganite 9, diorite 2, arganite 6, quartzite 1 | calcite beaches, calcite/clay/diorite sea bed (white bed = turquoise water) | seagrass, sea pickles, sparse oaks on islets |
 | Azure Shallows | sand (coast, rivers, patches) over sandstone; grass inland | sandstone 5, arganite 8, calcite 2, arganite 5 | sand beds over sandstone | warm-ocean corals, seagrass, sea pickles, sugar cane |
 | Rime Expanse | snow block / grass patches (both under freeze snow) | stone 7, diorite 2, arganite 9, andesite 3 | ice spikes (crystals), ice patches, frozen lakes | sparse spruces only on the grass patches |
 | Frostcrest Range | snow; packed ice / blue ice patches; grass in valleys < y 205 | andesite 5, stone 7, diorite 2, arganite 8, tuff 2 | packed-ice streaks on cliffs (frozen falls) | grove spruces in valleys |
 | Chainfall | grass patches / bare arganite, andesite, tuff | arganite 9, tuff 2, andesite 4, arganite 6, tuff 1, andesite 2 | vines on cliffs/chains | sparse grass |
+
 | Underhang | — | arganite 12, tuff 2, arganite 8, deepslate 1, arganite 5, andesite 2 | tuff/deepslate stalactite tips; moss/rooted dirt (forest islands), packed ice (snow islands), calcite (sea/peak islands) | hanging roots, cave vines (glow berries), glow lichen; sparse vanilla glow lichen / vines |
+
+Frozen surface spikes: Frostcrest Range and Rime Expanse use the 14 Snowy Ice Spike schematics by Northling64, and 20 separated crystal forms from `amethyst-crystal-spikes-by-bslbuilds.schem`, converted from amethyst to Lyrium. The crystal gallery's wool display floor is excluded. Northling64's source and requested credit: [Thorns and Spikes Repository](https://www.planetminecraft.com/member/northling64/). The original schematics are not bundled; the converted block structures live under `data/merlins_inferno/structure/frozen_spike/`.
 
 ### Colours (biome JSON)
 | Biome | sky | fog | water / water fog | grass / foliage | temp | music |
@@ -87,13 +90,13 @@ snow starts at ≈ y 256, matching the palette snow line. Do not lower these wit
 - Falls end in the cloud sea (no splash basin needed); mid-cliff springs on Stonecrown/Cascade.
 
 ## 7. Bridges & chains (structures agent)
+- **Geode Fort** (`docs/elysium/wall_geode_reference.jpg`): a 25-block-wide cut-open amethyst geode attached to an island wall. Its front calcite edge and amethyst band use the fixed row-by-row outline in `WallGeode.java`; the lower centre holds a recessed two-level stone refuge, doors, barred windows, hanging lanterns and a chest. The ring may protrude from thin island rims so its full silhouette remains visible. `docs/elysium/wall_geode_blueprint.png` shows the front block grid. It is a registered Minecraft structure; locate it from El'ysium with `/locate structure merlins_inferno:geode_fort`.
 - **Stone arch** (refs 6, 18): stone bricks / mossy stone bricks / cracked + tuff bricks, deep arches with short
   stalactite drips under each pier, overgrown with vines & moss carpet. Belongs to the *dark ruin* family.
 - **White span** (ref 3): arganite bricks + polished porcelain deck, quartz/porcelain balusters, curved colonnade.
 - **Rope** (refs 1, 16): spruce/dark-oak plank deck, fence/chain rails, sagging, few lanterns.
 - **Vine chain** (ref 1): iron chains with vines and glow-berry cave vines hanging, sag 6–15.
-- **Giant chain** (Chainfall): oversized links in iron/dark-grey (smooth basalt or polished deepslate + chain blocks),
-  moss and hanging vines on the lower half.
+- **Giant and loose chains**: oversized tuff-brick links carry moss and vines in temperate regions. Links anchored in Frostcrest Range or Rime Expanse gain packed/blue ice, snow on top, and hanging ice spikes. A span between warm and cold islands changes gradually along its length.
 
 ## 8. Reference images (what each teaches) — /home/claude/refs
 - `14ee07…` pixel-art spire castle over glowing cloud sea — silhouette: spire + stalactite base, dark mass on bright clouds.

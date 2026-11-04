@@ -145,6 +145,8 @@ public class Merlins_inferno {
         fire.setFlammable(ModBlocks.ASHWOOD_SLAB.get(), 5, 20);
         fire.setFlammable(ModBlocks.ASHWOOD_FENCE.get(), 5, 20);
         fire.setFlammable(ModBlocks.ASHWOOD_LEAVES.get(), 30, 60);
+        fire.setFlammable(ModBlocks.PINK_ASHWOOD_LEAVES.get(), 30, 60);
+        fire.setFlammable(ModBlocks.BLUE_SPRUCE_LEAVES.get(), 30, 60);
     }
 
     @SubscribeEvent

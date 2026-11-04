@@ -37,6 +37,12 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         itemModels().simpleBlockItem(ModBlocks.ASHWOOD_PLANKS.get());
         simpleBlock(ModBlocks.ASHWOOD_LEAVES.get());
         itemModels().simpleBlockItem(ModBlocks.ASHWOOD_LEAVES.get());
+        simpleBlock(ModBlocks.PINK_ASHWOOD_LEAVES.get(), models().cubeAll("pink_ashwood_leaves",
+                modLoc("block/pink_ashwood_leaves")).renderType("cutout_mipped"));
+        itemModels().simpleBlockItem(ModBlocks.PINK_ASHWOOD_LEAVES.get());
+        simpleBlock(ModBlocks.BLUE_SPRUCE_LEAVES.get(), models().cubeAll("blue_spruce_leaves",
+                modLoc("block/blue_spruce_leaves")).renderType("cutout_mipped"));
+        itemModels().simpleBlockItem(ModBlocks.BLUE_SPRUCE_LEAVES.get());
         stairsBlock(ModBlocks.ASHWOOD_STAIRS.get(), blockTexture(ModBlocks.ASHWOOD_PLANKS.get()));
         itemModels().simpleBlockItem(ModBlocks.ASHWOOD_STAIRS.get());
         slabBlock(ModBlocks.ASHWOOD_SLAB.get(), blockTexture(ModBlocks.ASHWOOD_PLANKS.get()), blockTexture(ModBlocks.ASHWOOD_PLANKS.get()));
@@ -136,6 +142,41 @@ public final class ModBlockStateProvider extends BlockStateProvider {
     private void registerArganiteAndPorcelain() {
         registerStoneSet(ModBlocks.ARGANITE.get(), ModBlocks.ARGANITE_STAIRS.get(), ModBlocks.ARGANITE_SLAB.get(),
                 ModBlocks.ARGANITE_WALL.get(), "arganite");
+        simpleBlock(ModBlocks.MOSSY_ARGANITE.get(), models().cubeAll("mossy_arganite", modLoc("block/mossy_arganite")));
+        itemModels().simpleBlockItem(ModBlocks.MOSSY_ARGANITE.get());
+        ModelFile cascadeGrass = models().cubeBottomTop("cascade_grass", modLoc("block/cascade_grass_side"),
+                modLoc("block/arganite"), modLoc("block/cascade_grass_top"));
+        ModelFile cascadeFlowers1 = models().cubeBottomTop("cascade_grass_flowery_1", modLoc("block/cascade_grass_side"),
+                modLoc("block/arganite"), modLoc("block/cascade_grass_top_flowery_1"));
+        ModelFile cascadeFlowers2 = models().cubeBottomTop("cascade_grass_flowery_2", modLoc("block/cascade_grass_side"),
+                modLoc("block/arganite"), modLoc("block/cascade_grass_top_flowery_2"));
+        ModelFile cascadeFlowers3 = models().cubeBottomTop("cascade_grass_flowery_3", modLoc("block/cascade_grass_side"),
+                modLoc("block/arganite"), modLoc("block/cascade_grass_top_flowery_3"));
+        ModelFile cascadeFlowers4 = models().cubeBottomTop("cascade_grass_flowery_4", modLoc("block/cascade_grass_side"),
+                modLoc("block/arganite"), modLoc("block/cascade_grass_top_flowery_4"));
+        getVariantBuilder(ModBlocks.CASCADE_GRASS.get())
+                .partialState().with(net.minecraft.world.level.block.GrassBlock.SNOWY, false).modelForState()
+                .modelFile(cascadeGrass).weight(4).nextModel().modelFile(cascadeFlowers1).weight(1)
+                .nextModel().modelFile(cascadeFlowers2).weight(1).nextModel().modelFile(cascadeFlowers3).weight(1)
+                .nextModel().modelFile(cascadeFlowers4).weight(1).addModel()
+                .partialState().with(net.minecraft.world.level.block.GrassBlock.SNOWY, true).modelForState()
+                .modelFile(cascadeGrass).weight(4).nextModel().modelFile(cascadeFlowers1).weight(1)
+                .nextModel().modelFile(cascadeFlowers2).weight(1).nextModel().modelFile(cascadeFlowers3).weight(1)
+                .nextModel().modelFile(cascadeFlowers4).weight(1).addModel();
+        itemModels().simpleBlockItem(ModBlocks.CASCADE_GRASS.get());
+        simpleBlock(ModBlocks.PINK_GRASS.get(), models().cross("pink_grass", modLoc("block/pink_grass")).renderType("cutout"));
+        itemModels().withExistingParent("pink_grass", "item/generated").texture("layer0", modLoc("block/pink_grass"));
+        ModelFile tallPinkBottom = models().getExistingFile(modLoc("block/tall_pink_grass_lush_bottom"));
+        ModelFile tallPinkTop = models().getExistingFile(modLoc("block/tall_pink_grass_lush_top"));
+        getVariantBuilder(ModBlocks.TALL_PINK_GRASS.get())
+                .partialState().with(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER).modelForState().modelFile(tallPinkBottom).addModel()
+                .partialState().with(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER).modelForState().modelFile(tallPinkTop).addModel();
+        itemModels().withExistingParent("tall_pink_grass", "item/generated")
+                .texture("layer0", modLoc("block/tall_pink_grass_top"));
+        simpleBlock(ModBlocks.CASCADE_BLOSSOM.get(), models().cross("cascade_blossom", modLoc("block/cascade_blossom")).renderType("cutout"));
+        itemModels().withExistingParent("cascade_blossom", "item/generated").texture("layer0", modLoc("block/cascade_blossom"));
+        simpleBlock(ModBlocks.SUN_FLOWER.get(), models().cross("sun_flower", modLoc("block/sun_flower")).renderType("cutout"));
+        itemModels().withExistingParent("sun_flower", "item/generated").texture("layer0", modLoc("block/sun_flower"));
         registerStoneSet(ModBlocks.ARGANITE_BRICKS.get(), ModBlocks.ARGANITE_BRICKS_STAIRS.get(),
                 ModBlocks.ARGANITE_BRICKS_SLAB.get(), ModBlocks.ARGANITE_BRICKS_WALL.get(), "arganite_bricks");
         simpleBlock(ModBlocks.QUARTZITE.get());

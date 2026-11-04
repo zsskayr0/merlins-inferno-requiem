@@ -105,6 +105,10 @@ public final class ModBlocks {
                     .ignitedByLava()
                     .pushReaction(PushReaction.DESTROY)
                     .isRedstoneConductor((state, level, pos) -> false));
+    public static final DeferredBlock<LeavesBlock> PINK_ASHWOOD_LEAVES = BLOCKS.registerBlock("pink_ashwood_leaves",
+            props -> new LeavesBlock(props), cascadeLeavesProperties(MapColor.COLOR_PINK));
+    public static final DeferredBlock<LeavesBlock> BLUE_SPRUCE_LEAVES = BLOCKS.registerBlock("blue_spruce_leaves",
+            props -> new LeavesBlock(props), cascadeLeavesProperties(MapColor.COLOR_LIGHT_BLUE));
     public static final DeferredBlock<SaplingBlock> ASHWOOD_SAPLING = BLOCKS.registerBlock("ashwood_sapling",
             props -> new SaplingBlock(ModTreeGrowers.ASHWOOD, props), BlockBehaviour.Properties.of()
                     .mapColor(MapColor.PLANT)
@@ -357,6 +361,23 @@ public final class ModBlocks {
     // (ground, mixed into dusts, smelted). Arganite hurts to land on (x2), porcelain is gentle (x0.2). ---
     public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.ArganiteBlock> ARGANITE = BLOCKS.registerBlock("arganite",
             dev.zsskayr.merlins_inferno.block.ArganiteBlock::new, arganiteProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.ArganiteBlock> MOSSY_ARGANITE = BLOCKS.registerBlock("mossy_arganite",
+            dev.zsskayr.merlins_inferno.block.ArganiteBlock::new, arganiteProperties());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.CascadeGrassBlock> CASCADE_GRASS = BLOCKS.registerBlock("cascade_grass",
+            dev.zsskayr.merlins_inferno.block.CascadeGrassBlock::new,
+            arganiteProperties().strength(1.2F, 6.0F).mapColor(MapColor.COLOR_PINK).randomTicks());
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.PinkGrassBlock> PINK_GRASS = BLOCKS.registerBlock("pink_grass",
+            dev.zsskayr.merlins_inferno.block.PinkGrassBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).noCollission().instabreak().replaceable().sound(SoundType.GRASS));
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.TallPinkGrassBlock> TALL_PINK_GRASS = BLOCKS.registerBlock("tall_pink_grass",
+            dev.zsskayr.merlins_inferno.block.TallPinkGrassBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).noCollission().instabreak().replaceable().sound(SoundType.GRASS));
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.CascadeFlowerBlock> CASCADE_BLOSSOM = BLOCKS.registerBlock("cascade_blossom",
+            dev.zsskayr.merlins_inferno.block.CascadeFlowerBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).noCollission().instabreak().sound(SoundType.GRASS));
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.CascadeFlowerBlock> SUN_FLOWER = BLOCKS.registerBlock("sun_flower",
+            dev.zsskayr.merlins_inferno.block.CascadeFlowerBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_YELLOW).noCollission().instabreak().sound(SoundType.GRASS));
     public static final DeferredBlock<StairBlock> ARGANITE_STAIRS = BLOCKS.registerBlock("arganite_stairs",
             props -> new StairBlock(ARGANITE.get().defaultBlockState(), props), arganiteProperties());
     public static final DeferredBlock<SlabBlock> ARGANITE_SLAB = BLOCKS.registerBlock("arganite_slab",
@@ -800,6 +821,16 @@ public final class ModBlocks {
                     .sound(SoundType.GRASS)
                     .offsetType(BlockBehaviour.OffsetType.XZ)
                     .pushReaction(PushReaction.DESTROY));
+
+    private static BlockBehaviour.Properties cascadeLeavesProperties(MapColor color) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(color).strength(0.2F).randomTicks().sound(SoundType.GRASS).noOcclusion()
+                .isValidSpawn((state, level, pos, type) -> false)
+                .isSuffocating((state, level, pos) -> false)
+                .isViewBlocking((state, level, pos) -> false)
+                .ignitedByLava().pushReaction(PushReaction.DESTROY)
+                .isRedstoneConductor((state, level, pos) -> false);
+    }
 
     private static BlockBehaviour.Properties netherPlantProperties(MapColor color) {
         return BlockBehaviour.Properties.of()

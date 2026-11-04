@@ -48,7 +48,8 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         // loot table for every one of them - restrict it to just this mod's blocks.
         java.util.List<Block> known = new java.util.ArrayList<>(List.of(
                 ModBlocks.ASHWOOD_LOG.get(), ModBlocks.ASHWOOD_WOOD.get(), ModBlocks.ASHWOOD_PLANKS.get(),
-                ModBlocks.ASHWOOD_LEAVES.get(), ModBlocks.ASHWOOD_SAPLING.get(), ModBlocks.ASHWOOD_STAIRS.get(),
+                ModBlocks.ASHWOOD_LEAVES.get(), ModBlocks.PINK_ASHWOOD_LEAVES.get(), ModBlocks.BLUE_SPRUCE_LEAVES.get(),
+                ModBlocks.ASHWOOD_SAPLING.get(), ModBlocks.ASHWOOD_STAIRS.get(),
                 ModBlocks.ASHWOOD_SLAB.get(), ModBlocks.ASHWOOD_FENCE.get(),
                 ModBlocks.STRIPPED_ASHWOOD_LOG.get(), ModBlocks.STRIPPED_ASHWOOD_WOOD.get(), ModBlocks.ASHWOOD_FENCE_GATE.get(),
                 ModBlocks.ASHWOOD_DOOR.get(), ModBlocks.ASHWOOD_TRAPDOOR.get(), ModBlocks.ASHWOOD_PRESSURE_PLATE.get(),
@@ -66,6 +67,11 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.BLIGHTSTONE_SMALL_BRICK_SLAB.get(), ModBlocks.BLIGHTSTONE_SMALL_BRICK_WALL.get(),
                 ModBlocks.CRACKED_BLIGHTSTONE_BRICKS.get(),
                 ModBlocks.ARGANITE.get(),
+                ModBlocks.MOSSY_ARGANITE.get(),
+                ModBlocks.CASCADE_GRASS.get(),
+                ModBlocks.PINK_GRASS.get(),
+                 ModBlocks.TALL_PINK_GRASS.get(),
+                ModBlocks.CASCADE_BLOSSOM.get(), ModBlocks.SUN_FLOWER.get(),
                 ModBlocks.ARGANITE_STAIRS.get(),
                 ModBlocks.ARGANITE_WALL.get(),
                 ModBlocks.ARGANITE_BRICKS.get(),
@@ -127,6 +133,10 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.ASHWOOD_HANGING_SIGN.get());
         add(ModBlocks.ASHWOOD_LEAVES.get(),
                 createLeavesDrops(ModBlocks.ASHWOOD_LEAVES.get(), ModBlocks.ASHWOOD_SAPLING.get(), LEAVES_SAPLING_CHANCES));
+        add(ModBlocks.PINK_ASHWOOD_LEAVES.get(), createSilkTouchOrShearsDispatchTable(
+                ModBlocks.PINK_ASHWOOD_LEAVES.get(), net.minecraft.world.level.storage.loot.entries.EmptyLootItem.emptyItem()));
+        add(ModBlocks.BLUE_SPRUCE_LEAVES.get(), createSilkTouchOrShearsDispatchTable(
+                ModBlocks.BLUE_SPRUCE_LEAVES.get(), net.minecraft.world.level.storage.loot.entries.EmptyLootItem.emptyItem()));
 
         // rowanwood_log: see class javadoc - hand-authored, not here.
 
@@ -159,6 +169,18 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.BLIGHTSTONE_SMALL_BRICK_WALL.get());
         dropSelf(ModBlocks.CRACKED_BLIGHTSTONE_BRICKS.get());
         dropSelf(ModBlocks.ARGANITE.get());
+        dropSelf(ModBlocks.MOSSY_ARGANITE.get());
+        add(ModBlocks.CASCADE_GRASS.get(), createSingleItemTableWithSilkTouch(ModBlocks.CASCADE_GRASS.get(), ModBlocks.ARGANITE.get()));
+        add(ModBlocks.PINK_GRASS.get(), createShearsOnlyDrop(ModBlocks.PINK_GRASS.get()));
+        add(ModBlocks.TALL_PINK_GRASS.get(), LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .when(HAS_SHEARS)
+                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.TALL_PINK_GRASS.get())
+                        .setProperties(StatePropertiesPredicate.Builder.properties()
+                                .hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER)))
+                .add(LootItem.lootTableItem(ModBlocks.TALL_PINK_GRASS.get()))));
+        dropSelf(ModBlocks.CASCADE_BLOSSOM.get());
+        dropSelf(ModBlocks.SUN_FLOWER.get());
         dropSelf(ModBlocks.ARGANITE_STAIRS.get());
         dropSelf(ModBlocks.ARGANITE_WALL.get());
         dropSelf(ModBlocks.ARGANITE_BRICKS.get());

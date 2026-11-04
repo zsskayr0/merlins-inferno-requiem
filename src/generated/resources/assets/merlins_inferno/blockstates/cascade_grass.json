@@ -1,0 +1,40 @@
+{
+  "variants": {
+    "snowy=false": [
+      {
+        "model": "merlins_inferno:block/cascade_grass",
+        "weight": 4
+      },
+      {
+        "model": "merlins_inferno:block/cascade_grass_flowery_1"
+      },
+      {
+        "model": "merlins_inferno:block/cascade_grass_flowery_2"
+      },
+      {
+        "model": "merlins_inferno:block/cascade_grass_flowery_3"
+      },
+      {
+        "model": "merlins_inferno:block/cascade_grass_flowery_4"
+      }
+    ],
+    "snowy=true": [
+      {
+        "model": "merlins_inferno:block/cascade_grass",
+        "weight": 4
+      },
+      {
+        "model": "merlins_inferno:block/cascade_grass_flowery_1"
+      },
+      {
+        "model": "merlins_inferno:block/cascade_grass_flowery_2"
+      },
+      {
+        "model": "merlins_inferno:block/cascade_grass_flowery_3"
+      },
+      {
+        "model": "merlins_inferno:block/cascade_grass_flowery_4"
+      }
+    ]
+  }
+}

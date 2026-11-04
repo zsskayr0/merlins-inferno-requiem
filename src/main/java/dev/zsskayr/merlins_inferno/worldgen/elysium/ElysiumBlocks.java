@@ -79,6 +79,7 @@ public final class ElysiumBlocks {
             case AIR: return Blocks.AIR.defaultBlockState();
             // stone family
             case ARGANITE: return ModBlocks.ARGANITE.get().defaultBlockState();
+            case MOSSY_ARGANITE: return ModBlocks.MOSSY_ARGANITE.get().defaultBlockState();
             case QUARTZITE: return ModBlocks.QUARTZITE.get().defaultBlockState();
             case CALCITE: return Blocks.CALCITE.defaultBlockState();
             case STONE: return Blocks.STONE.defaultBlockState();
@@ -88,6 +89,7 @@ public final class ElysiumBlocks {
             case SMOOTH_BASALT: return Blocks.SMOOTH_BASALT.defaultBlockState();
             // soils
             case GRASS_BLOCK: return Blocks.GRASS_BLOCK.defaultBlockState();
+            case CASCADE_GRASS: return ModBlocks.CASCADE_GRASS.get().defaultBlockState();
             case DIRT: return Blocks.DIRT.defaultBlockState();
             case COARSE_DIRT: return Blocks.COARSE_DIRT.defaultBlockState();
             case ROOTED_DIRT: return Blocks.ROOTED_DIRT.defaultBlockState();

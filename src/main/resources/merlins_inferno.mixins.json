@@ -16,7 +16,8 @@
     "LocalPlayerMixin",
     "LevelRendererMixin",
     "Ae2FacadeAccessMixin",
-    "Ae2FacadeBuilderMixin"
+    "Ae2FacadeBuilderMixin",
+    "IrisGrassAliasesMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -353,6 +353,8 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> ASHWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_WOOD);
     public static final DeferredItem<BlockItem> ASHWOOD_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_PLANKS);
     public static final DeferredItem<BlockItem> ASHWOOD_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_LEAVES);
+    public static final DeferredItem<BlockItem> PINK_ASHWOOD_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PINK_ASHWOOD_LEAVES);
+    public static final DeferredItem<BlockItem> BLUE_SPRUCE_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLUE_SPRUCE_LEAVES);
     public static final DeferredItem<BlockItem> ASHWOOD_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_SAPLING);
     public static final DeferredItem<BlockItem> ASHWOOD_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_STAIRS);
     public static final DeferredItem<BlockItem> ASHWOOD_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ASHWOOD_SLAB);
@@ -448,6 +450,12 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> BLIGHTSTONE_SMALL_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTONE_SMALL_BRICK_WALL);
     public static final DeferredItem<BlockItem> CRACKED_BLIGHTSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CRACKED_BLIGHTSTONE_BRICKS);
     public static final DeferredItem<BlockItem> ARGANITE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ARGANITE);
+    public static final DeferredItem<BlockItem> MOSSY_ARGANITE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.MOSSY_ARGANITE);
+    public static final DeferredItem<BlockItem> CASCADE_GRASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CASCADE_GRASS);
+    public static final DeferredItem<BlockItem> PINK_GRASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PINK_GRASS);
+    public static final DeferredItem<BlockItem> TALL_PINK_GRASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.TALL_PINK_GRASS);
+    public static final DeferredItem<BlockItem> CASCADE_BLOSSOM_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.CASCADE_BLOSSOM);
+    public static final DeferredItem<BlockItem> SUN_FLOWER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SUN_FLOWER);
     public static final DeferredItem<BlockItem> ARGANITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ARGANITE_STAIRS);
     public static final DeferredItem<BlockItem> ARGANITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ARGANITE_SLAB);
     public static final DeferredItem<BlockItem> ARGANITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ARGANITE_WALL);

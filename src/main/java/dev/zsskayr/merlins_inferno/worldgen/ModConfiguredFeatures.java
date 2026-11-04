@@ -13,6 +13,8 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
  */
 public final class ModConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> ASHWOOD_TREE = key("ashwood_tree");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> CASCADE_PINK_TREE = key("cascade_pink_tree");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> CASCADE_BLUE_SPRUCE = key("cascade_blue_spruce");
     public static final ResourceKey<ConfiguredFeature<?, ?>> LYRIUM_GEODE = key("lyrium_geode");
     public static final ResourceKey<ConfiguredFeature<?, ?>> SNOWY_ICE_SPIKES = key("snowy_ice_spikes");
     public static final ResourceKey<ConfiguredFeature<?, ?>> LYRIUM_SPIKES = key("lyrium_spikes");

@@ -62,6 +62,8 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.STRIPPED_ASHWOOD_LOG_ITEM.get());
                         output.accept(ModItems.STRIPPED_ASHWOOD_WOOD_ITEM.get());
                         output.accept(ModItems.ASHWOOD_LEAVES_ITEM.get());
+                        output.accept(ModItems.PINK_ASHWOOD_LEAVES_ITEM.get());
+                        output.accept(ModItems.BLUE_SPRUCE_LEAVES_ITEM.get());
                         output.accept(ModItems.STRIPPED_HAUNTED_LOG_ITEM.get());
                         output.accept(ModItems.HAUNTED_WOOD_ITEM.get());
                         output.accept(ModItems.STRIPPED_HAUNTED_WOOD_ITEM.get());
@@ -185,6 +187,12 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.BLIGHTSTONE_SMALL_BRICK_WALL_ITEM.get());
                         output.accept(ModItems.CRACKED_BLIGHTSTONE_BRICKS_ITEM.get());
                         output.accept(ModItems.ARGANITE_ITEM.get());
+                        output.accept(ModItems.MOSSY_ARGANITE_ITEM.get());
+                        output.accept(ModItems.CASCADE_GRASS_ITEM.get());
+                        output.accept(ModItems.PINK_GRASS_ITEM.get());
+                        output.accept(ModItems.TALL_PINK_GRASS_ITEM.get());
+                        output.accept(ModItems.CASCADE_BLOSSOM_ITEM.get());
+                        output.accept(ModItems.SUN_FLOWER_ITEM.get());
                         output.accept(ModItems.ARGANITE_STAIRS_ITEM.get());
                         output.accept(ModItems.ARGANITE_SLAB_ITEM.get());
                         output.accept(ModItems.ARGANITE_WALL_ITEM.get());

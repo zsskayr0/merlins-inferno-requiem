@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:match_tool",
+          "predicate": {
+            "items": "minecraft:shears"
+          }
+        },
+        {
+          "block": "merlins_inferno:tall_pink_grass",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "half": "lower"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "merlins_inferno:tall_pink_grass"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "merlins_inferno:blocks/tall_pink_grass"
+}

@@ -26,10 +26,8 @@ import dev.zsskayr.merlins_inferno.worldgen.ModPlacedFeatures;
 import dev.zsskayr.merlins_inferno.worldgen.feature.StructurePasteConfiguration;
 
 /**
- * Ashwood's natural-generation shape and placement for the Hallowed Grove - a structure-paste
- * feature (see {@code StructurePasteFeature}) rather than a procedural trunk/foliage placer,
- * ported from a friend's structure-based tree pack (spruce shapes, retextured to Ashwood via
- * block swap).
+ * Shared spruce-shaped tree templates for Hallowed Grove Ashwood and Cascade Vale's pink/blue
+ * trees. Structure-paste features swap only the blocks needed for each variant.
  * <p>
  * Rowanwood (the biome's other tree) is NOT here - it's a real {@code Structure} instead of a
  * decoration Feature, so it's findable with {@code /locate}. See {@code RowanwoodTreeStructure}
@@ -43,6 +41,14 @@ public final class ModTreeProvider {
         context.register(ModConfiguredFeatures.ASHWOOD_TREE,
                 new ConfiguredFeature<>(ModFeatures.STRUCTURE_PASTE.get(),
                         new StructurePasteConfiguration(ashwoodStructurePool(), ashwoodBlockSwaps())));
+        context.register(ModConfiguredFeatures.CASCADE_PINK_TREE,
+                new ConfiguredFeature<>(ModFeatures.STRUCTURE_PASTE.get(),
+                        new StructurePasteConfiguration(ashwoodStructurePool(), Map.of(
+                                Blocks.SPRUCE_LEAVES, ModBlocks.PINK_ASHWOOD_LEAVES.get()))));
+        context.register(ModConfiguredFeatures.CASCADE_BLUE_SPRUCE,
+                new ConfiguredFeature<>(ModFeatures.STRUCTURE_PASTE.get(),
+                        new StructurePasteConfiguration(ashwoodStructurePool(), Map.of(
+                                Blocks.SPRUCE_LEAVES, ModBlocks.BLUE_SPRUCE_LEAVES.get()))));
     }
 
     public static void bootstrapPlacedFeatures(BootstrapContext<PlacedFeature> context) {
@@ -54,6 +60,12 @@ public final class ModTreeProvider {
         context.register(ModPlacedFeatures.ASHWOOD_TREE_PLACED,
                 new PlacedFeature(configuredFeatures.getOrThrow(ModConfiguredFeatures.ASHWOOD_TREE),
                         treePlacement(PlacementUtils.countExtra(2, 0.1F, 1))));
+        context.register(ModPlacedFeatures.CASCADE_BLUE_SPRUCE_PLACED,
+                new PlacedFeature(configuredFeatures.getOrThrow(ModConfiguredFeatures.CASCADE_BLUE_SPRUCE),
+                        treePlacement(PlacementUtils.countExtra(2, 0.1F, 1))));
+        context.register(ModPlacedFeatures.CASCADE_PINK_TREE_PLACED,
+                new PlacedFeature(configuredFeatures.getOrThrow(ModConfiguredFeatures.CASCADE_PINK_TREE),
+                        treePlacement(PlacementUtils.countExtra(1, 0.2F, 1))));
     }
 
     /** Mirrors vanilla's standard "scatter a tree across the chunk" placement chain. */

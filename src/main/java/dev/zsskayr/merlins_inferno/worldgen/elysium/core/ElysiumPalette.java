@@ -10,8 +10,7 @@ package dev.zsskayr.merlins_inferno.worldgen.elysium.core;
  * <p>Art rules encoded here (see docs/elysium/design-bible.md):
  * <ul>
  *   <li>Steep columns ({@link Column#slope}) lose their soil: cliffs read as bare rock.</li>
- *   <li>Every island's rock is a crust of calcite over a body of Arganite. Veins of andesite and quartzite are ore features
- *       that run through it (andesite only through the Arganite), not part of this palette.</li>
+ *   <li>Most islands have a calcite crust over Arganite. Cascade Vale has Arganite at the surface and only deep calcite veins.</li>
  *   <li>Patches use {@code patch} thresholds, dithered only in a thin border band; column-level decisions use
  *       {@link #colHash} (stable for the whole column) so a column never flips grass/stone vertically.</li>
  *   <li>Gravity blocks (SAND, GRAVEL) only where at least 2 solid blocks lie below inside the column.</li>
@@ -134,8 +133,8 @@ public final class ElysiumPalette {
                 return depth <= 2 ? Mat.DIRT : stone(biome, c, y, hash, patch);
             }
             case CASCADE_VALE: {
-                if (depth == 0) return over(patch, 0.6, 0.08, ch) ? Mat.COARSE_DIRT : Mat.GRASS_BLOCK;
-                return depth >= 2 && patch < 0 ? Mat.COARSE_DIRT : Mat.DIRT;
+                if (depth == 0) return Mat.CASCADE_GRASS;
+                return Mat.ARGANITE;
             }
             case MISTFALL_GORGE: {
                 if (depth == 0) {
@@ -213,13 +212,28 @@ public final class ElysiumPalette {
 
     // ---------------------------------------------------------------- body
 
-    /** Body of the island under the skin: calcite first, then Arganite all the way down. */
+    /** Body of the island: a calcite crust over Arganite, except Cascade Vale. */
     public static Mat stone(ElysiumBiome biome, Column c, int y, double hash, double patch) {
         int below = c.top - y;
+        if (biome == ElysiumBiome.CASCADE_VALE) {
+            // No pale crust at the surface. Calcite survives only as narrow, deep veins.
+            if (below >= 24) {
+                double vein = 0.5 * Math.sin(c.x * 0.095 + y * 0.17)
+                        + 0.5 * Math.sin(c.z * 0.11 - y * 0.13 + 1.7);
+                if (vein > 0.91) return Mat.CALCITE;
+            }
+            return Mat.ARGANITE;
+        }
+        if (biome == ElysiumBiome.MOSSY_WEALD && below >= 0 && below < 80) {
+            // Thin, winding seams cross exposed cliff rock and the shallow stone body.
+            double vein = Math.sin(c.x * 0.085 + c.z * 0.055 + y * 0.13)
+                    + 0.35 * Math.sin(c.x * 0.21 - c.z * 0.13 - y * 0.07);
+            if (vein > 1.16 && patch > -0.45) return Mat.MOSSY_ARGANITE;
+        }
         // Soft soil/rock border: 0..2 extra blocks of dirt under the skin on gentle, soil biomes.
         if (below >= c.surfaceDepth && below < c.surfaceDepth + 2 && hasSoil(biome) && !bare(biome, c)) {
             if (hash < 0.55 - 0.25 * (below - c.surfaceDepth)) {
-                return biome == ElysiumBiome.CASCADE_VALE || biome == ElysiumBiome.WINDLESS_STEPPE ? Mat.COARSE_DIRT : Mat.DIRT;
+                return biome == ElysiumBiome.WINDLESS_STEPPE ? Mat.COARSE_DIRT : Mat.DIRT;
             }
         }
         return below >= CRUST + (int) Math.round(2.5 * (patch + 1)) ? Mat.ARGANITE : Mat.CALCITE;
@@ -227,7 +241,7 @@ public final class ElysiumPalette {
 
     static boolean hasSoil(ElysiumBiome b) {
         return switch (b) {
-            case LARK_MEADOWS, WINDLESS_STEPPE, HIGHPINE_FOREST, MOSSY_WEALD, CASCADE_VALE, MISTFALL_GORGE, RIME_EXPANSE -> true;
+            case LARK_MEADOWS, WINDLESS_STEPPE, HIGHPINE_FOREST, MOSSY_WEALD, MISTFALL_GORGE, RIME_EXPANSE -> true;
             default -> false;
         };
     }
@@ -315,8 +329,8 @@ public final class ElysiumPalette {
                 if (depth == 0) return over(patch, 0.2, 0.1, ch) ? Mat.PODZOL : Mat.COARSE_DIRT;
                 return depth <= 2 ? Mat.DIRT : stone(biome, c, y, hash, patch);
             case CASCADE_VALE:
-                if (depth == 0) return over(patch, 0.2, 0.1, ch) ? Mat.GRASS_BLOCK : (safe ? Mat.GRAVEL : Mat.COARSE_DIRT);
-                return depth <= 2 ? Mat.COARSE_DIRT : stone(biome, c, y, hash, patch);
+                if (depth == 0) return over(patch, 0.2, 0.1, ch) ? Mat.CASCADE_GRASS : (safe ? Mat.GRAVEL : Mat.ARGANITE);
+                return Mat.ARGANITE;
             case ARGENT_PEAKS:
             case STONECROWN_CLIFFS:
             case CHAINFALL:
