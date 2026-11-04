@@ -475,12 +475,13 @@ public final class IslandPlan {
                     double bank;
                     switch (hit.river.kind) {
                         case CANYON -> {
-                            double ee = e + 2.5 * nz.noise((px + ox) / 17.0, (pz + oz) / 17.0);
-                            // 2-3 ledges: 22-block walls with 12-block treads, slight batter so walls read near-vertical
-                            bank = ee < 3 ? L + 1 : L + 1 + 22 * Math.ceil((ee - 3) / 12.0) - Math.max(0, 2 - (ee - 3) % 12) * 0;
-                            if (ee >= 3 && bank < h) {
-                                c.slope = 3;
-                            }
+                            // Blend the cut into the existing hillside. The old 22-block height steps
+                            // made a smooth, vertical arc that exposed the river's terrain mask.
+                            double ee = e + 1.8 * nz.noise((px + ox) / 17.0, (pz + oz) / 17.0)
+                                    + 1.2 * nz.noise((px + ox) / 47.0, (pz + oz) / 47.0);
+                            double rise = Math.max(0, ee - 1.5);
+                            bank = L + 1 + rise * (1.2 + 0.12 * nz.noise((px + ox) / 39.0, (pz + oz) / 39.0))
+                                    + 0.015 * rise * rise;
                         }
                         case GORGE -> {
                             double ee = e + 3.0 * nz.noise((px + ox) / 21.0, (pz + oz) / 21.0) + 1.5;
@@ -1240,7 +1241,76 @@ public final class IslandPlan {
                 break;
             }
         }
+        planWallGeode(out, r, c, q);
         return List.copyOf(out);
+    }
+
+    /** One cut-open amethyst geode on a dry, thick island wall. */
+    private void planWallGeode(List<ElysiumWorld.Site> sites, SplittableRandom random, Column face, Column back) {
+        if (island.width() < 240) {
+            return;
+        }
+        for (int attempt = 0; attempt < 64; attempt++) {
+            int rot = random.nextInt(4);
+            int dx = switch (rot) { case 1 -> -1; case 3 -> 1; default -> 0; };
+            int dz = switch (rot) { case 0 -> 1; case 2 -> -1; default -> 0; };
+            int rx = -dz, rz = dx;
+            double offset = (random.nextDouble() - 0.5) * Math.min(R * 0.65, 160);
+            double startX = cx + rx * offset, startZ = cz + rz * offset;
+            double last = -1;
+            for (double d = 0; d <= extent(R) + 6; d += 2) {
+                if (inland(startX + dx * d, startZ + dz * d) > 0) {
+                    last = d;
+                } else if (last >= 0) {
+                    break;
+                }
+            }
+            if (last < 0) continue;
+            for (double d = last; d <= last + 3; d += 1) {
+                if (inland(startX + dx * d, startZ + dz * d) > 0) last = d;
+            }
+            int wallX = (int) Math.floor(startX + dx * last), wallZ = (int) Math.floor(startZ + dz * last);
+            double in = inland(wallX + 0.5, wallZ + 0.5);
+            if (in <= 0) continue;
+            fill(wallX, wallZ, in, face);
+            if (face.hasWater() || face.hasArch() || face.top - face.bottom < 8) continue;
+            int y = (face.top + face.bottom) / 2;
+
+            // A centre-only coast check can bury half the ring behind a projecting flank.
+            // Trace the entire 25-block face and anchor it beyond the farthest cliff column.
+            double nearEdge = Double.POSITIVE_INFINITY, farEdge = Double.NEGATIVE_INFINITY;
+            boolean complete = true;
+            for (int v = -12; v <= 12; v++) {
+                double vx = startX + rx * v, vz = startZ + rz * v;
+                double edge = -1;
+                for (double d = Math.max(0, last - 24); d <= last + 24; d++) {
+                    if (inland(vx + dx * d, vz + dz * d) > 0) edge = d;
+                }
+                if (edge < 0 || edge >= last + 24) {
+                    complete = false;
+                    break;
+                }
+                nearEdge = Math.min(nearEdge, edge);
+                farEdge = Math.max(farEdge, edge);
+            }
+            if (!complete || farEdge - nearEdge > 6) continue;
+            int x = (int) Math.floor(startX + dx * (farEdge + 1));
+            int z = (int) Math.floor(startZ + dz * (farEdge + 1));
+            double inner = inland(x - dx * 9 + 0.5, z - dz * 9 + 0.5);
+            if (inner <= 0) continue;
+            fill(x - dx * 9, z - dz * 9, inner, back);
+            if (back.hasWater() || back.top < y + 6 || back.bottom > y - 6) continue;
+            boolean nearStructure = false;
+            for (ElysiumWorld.Site other : sites) {
+                if (Math.hypot(other.x() - x, other.z() - z) < 42) {
+                    nearStructure = true;
+                    break;
+                }
+            }
+            if (nearStructure) continue;
+            sites.add(new ElysiumWorld.Site("geode_fort", x, y, z, rot, Noise.mix(salt + 0x6E0D + attempt)));
+            return;
+        }
     }
 
     private boolean flatDry(int x, int z, int top, int radius, boolean allowWaterFar, Column q) {

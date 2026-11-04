@@ -2,22 +2,33 @@ package dev.zsskayr.merlins_inferno.gametest;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
+import dev.zsskayr.merlins_inferno.worldgen.ModConfiguredFeatures;
+import dev.zsskayr.merlins_inferno.worldgen.ModPlacedFeatures;
+import dev.zsskayr.merlins_inferno.worldgen.ModStructureSets;
+import dev.zsskayr.merlins_inferno.worldgen.ModStructures;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.ElysiumChunkGenerator;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.ElysiumSeed;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.core.Column;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.core.ElysiumWorld;
+import dev.zsskayr.merlins_inferno.worldgen.elysium.core.ElysiumBiome;
+import dev.zsskayr.merlins_inferno.worldgen.elysium.core.River;
 import dev.zsskayr.merlins_inferno.worldgen.elysium.structure.SpanBuilder;
+import dev.zsskayr.merlins_inferno.worldgen.elysium.structure.WallGeode;
+import dev.zsskayr.merlins_inferno.worldgen.feature.StructurePasteConfiguration;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ProtoChunk;
@@ -42,6 +53,146 @@ public final class ElysiumGameTests {
 
     private record Result(Map<String, Integer> biomes, Map<String, Integer> blocks, int mismatches, int biomeMismatches,
                           int sampled, String center) {}
+
+    /** Cascade's canyon must join the hillside without a one-column, 22-block cliff. */
+    @GameTest(template = "bench_empty")
+    public static void cascadeRiverBanksBlend(GameTestHelper helper) {
+        ElysiumWorld world = ElysiumSeed.world();
+        Column a = new Column(), b = new Column();
+        int sampled = 0, largestStep = 0;
+        for (var island : world.islandsIn(-1800, -1800, 1800, 1800)) {
+            if (island.biome() != ElysiumBiome.CASCADE_VALE) continue;
+            for (River river : world.riversOf(island.index())) {
+                if (river.kind != River.Kind.CANYON) continue;
+                for (int i = 4; i + 1 < river.size(); i += 11) {
+                    double dx = river.xs[i + 1] - river.xs[i - 1];
+                    double dz = river.zs[i + 1] - river.zs[i - 1];
+                    double length = Math.hypot(dx, dz);
+                    if (length < 1) continue;
+                    for (int side : new int[] {-1, 1}) {
+                        for (int e = 3; e < 45; e++) {
+                            double distance = river.w[i] + e;
+                            int x = (int) Math.floor(river.xs[i] - side * dz / length * distance);
+                            int z = (int) Math.floor(river.zs[i] + side * dx / length * distance);
+                            int x2 = (int) Math.floor(river.xs[i] - side * dz / length * (distance + 1));
+                            int z2 = (int) Math.floor(river.zs[i] + side * dx / length * (distance + 1));
+                            world.sample(x, z, a);
+                            world.sample(x2, z2, b);
+                            if (!a.land || !b.land || a.inland < 80 || b.inland < 80
+                                    || a.biome != ElysiumBiome.CASCADE_VALE || b.biome != ElysiumBiome.CASCADE_VALE
+                                    || a.riverDist > 46 || b.riverDist > 46) continue;
+                            sampled++;
+                            largestStep = Math.max(largestStep, Math.abs(a.top - b.top));
+                        }
+                    }
+                }
+            }
+        }
+        helper.assertTrue(sampled > 100, "Sampled enough Cascade riverbank columns: " + sampled);
+        // The rounded perpendicular step can cross two block columns on a diagonal; natural relief remains rugged.
+        helper.assertTrue(largestStep <= 10, "Cascade riverbank has a cliff of " + largestStep + " blocks");
+        helper.succeed();
+    }
+
+    /** The pink surface accepts ordinary plants, while its short grass matches vanilla's scale. */
+    @GameTest(template = "bench_empty")
+    public static void cascadeGrassPlantCompatibility(GameTestHelper helper) {
+        var level = helper.getLevel();
+        BlockPos soilPos = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos plantPos = soilPos.above();
+        BlockState soil = ModBlocks.CASCADE_GRASS.get().defaultBlockState();
+        level.setBlock(soilPos, soil, 3);
+        level.setBlock(plantPos, Blocks.AIR.defaultBlockState(), 3);
+
+        helper.assertTrue(soil.is(BlockTags.DIRT), "Cascade Grass participates in vanilla dirt plant support");
+        helper.assertTrue(Blocks.POPPY.defaultBlockState().canSurvive(level, plantPos), "Vanilla flowers survive on Cascade Grass");
+        helper.assertTrue(Blocks.SHORT_GRASS.defaultBlockState().canSurvive(level, plantPos), "Vanilla short grass can use the soil");
+        BlockState pink = ModBlocks.PINK_GRASS.get().defaultBlockState();
+        helper.assertTrue(pink.canSurvive(level, plantPos), "Pink Grass survives on Cascade Grass");
+        helper.assertTrue(pink.is(BlockTags.REPLACEABLE) && pink.is(BlockTags.REPLACEABLE_BY_TREES),
+                "Pink Grass replaces like vanilla short grass");
+        double vanillaHeight = Blocks.SHORT_GRASS.defaultBlockState().getShape(level, plantPos).max(Direction.Axis.Y);
+        double pinkHeight = pink.getShape(level, plantPos).max(Direction.Axis.Y);
+        helper.assertTrue(Math.abs(vanillaHeight - pinkHeight) < 1.0e-6, "Pink Grass matches vanilla short grass height");
+        BlockState tall = ModBlocks.TALL_PINK_GRASS.get().defaultBlockState();
+        helper.assertTrue(tall.canSurvive(level, plantPos), "Tall Pink Grass survives on Cascade Grass");
+        helper.assertTrue(tall.is(BlockTags.REPLACEABLE_BY_TREES), "Trees can replace Tall Pink Grass");
+        net.minecraft.world.level.block.DoublePlantBlock.placeAt(level, tall, plantPos, 3);
+        helper.assertTrue(level.getBlockState(plantPos.above()).is(ModBlocks.TALL_PINK_GRASS.get())
+                        && level.getBlockState(plantPos.above()).getValue(net.minecraft.world.level.block.DoublePlantBlock.HALF)
+                        == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER,
+                "Tall Pink Grass places its upper half");
+        helper.assertTrue(ModBlocks.PINK_ASHWOOD_LEAVES.get().defaultBlockState().is(BlockTags.LEAVES)
+                        && ModBlocks.BLUE_SPRUCE_LEAVES.get().defaultBlockState().is(BlockTags.LEAVES),
+                "Cascade tree foliage participates in vanilla leaves behavior");
+        var configured = level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE);
+        var blueTree = configured.getHolderOrThrow(ModConfiguredFeatures.CASCADE_BLUE_SPRUCE).value();
+        var pinkTree = configured.getHolderOrThrow(ModConfiguredFeatures.CASCADE_PINK_TREE).value();
+        helper.assertTrue(blueTree.config() instanceof StructurePasteConfiguration blue
+                        && blue.blockSwaps().get(Blocks.SPRUCE_LEAVES) == ModBlocks.BLUE_SPRUCE_LEAVES.get()
+                        && !blue.blockSwaps().containsKey(Blocks.SPRUCE_LOG),
+                "Blue Cascade trees keep spruce wood and replace only the leaves");
+        helper.assertTrue(pinkTree.config() instanceof StructurePasteConfiguration pinkConfig
+                        && pinkConfig.blockSwaps().get(Blocks.SPRUCE_LEAVES) == ModBlocks.PINK_ASHWOOD_LEAVES.get()
+                        && !pinkConfig.blockSwaps().containsKey(Blocks.SPRUCE_LOG)
+                        && !pinkConfig.blockSwaps().containsKey(Blocks.SPRUCE_WOOD),
+                "Pink Cascade trees keep spruce wood and replace only the leaves");
+        var placed = level.registryAccess().registryOrThrow(Registries.PLACED_FEATURE);
+        helper.assertTrue(placed.containsKey(ModPlacedFeatures.CASCADE_BLUE_SPRUCE_PLACED.location())
+                        && placed.containsKey(ModPlacedFeatures.CASCADE_PINK_TREE_PLACED.location()),
+                "Both Cascade tree variants have placement rules");
+        helper.succeed();
+    }
+
+    /** The reference's calcite/amethyst face, open cavity, and refuge survive chunk clipping. */
+    @GameTest(template = "bench_empty", timeoutTicks = 200)
+    public static void elysiumWallGeodeBuilds(GameTestHelper helper) {
+        var level = helper.getLevel();
+        BlockPos origin = helper.absolutePos(new BlockPos(1, 1, 1)).atY(300);
+        var site = new ElysiumWorld.Site("geode_fort", origin.getX(), origin.getY(), origin.getZ(), 0, 971L);
+        for (int cx = Math.floorDiv(origin.getX() - 24, 16); cx <= Math.floorDiv(origin.getX() + 24, 16); cx++) {
+            for (int cz = Math.floorDiv(origin.getZ() - 24, 16); cz <= Math.floorDiv(origin.getZ() + 24, 16); cz++) {
+                WallGeode.build(level, new ChunkPos(cx, cz), site);
+            }
+        }
+        helper.assertTrue(level.getBlockState(origin.offset(3, 13, 2)).is(net.minecraft.world.level.block.Blocks.CALCITE),
+                "The upper rim is calcite");
+        BlockState amethyst = level.getBlockState(origin.offset(1, 13, 2));
+        helper.assertTrue(amethyst.is(net.minecraft.world.level.block.Blocks.AMETHYST_BLOCK)
+                || amethyst.is(net.minecraft.world.level.block.Blocks.BUDDING_AMETHYST), "The next rim is amethyst");
+        helper.assertTrue(level.getBlockState(origin.offset(0, 7, 2)).isAir(), "The visible face opens into a cavity");
+        helper.assertTrue(level.getBlockState(origin.offset(0, 7, -8)).is(net.minecraft.world.level.block.Blocks.AMETHYST_BLOCK)
+                || level.getBlockState(origin.offset(0, 7, -8)).is(net.minecraft.world.level.block.Blocks.BUDDING_AMETHYST),
+                "The chamber has an amethyst back wall");
+        helper.assertTrue(level.getBlockState(origin.offset(1, -8, -1)).is(net.minecraft.world.level.block.Blocks.DARK_OAK_DOOR),
+                "The refuge has a double-door entry");
+        helper.assertTrue(level.getBlockState(origin.offset(-4, -8, -5)).is(net.minecraft.world.level.block.Blocks.CHEST),
+                "The lower room has a loot chest");
+        ElysiumWorld core = new ElysiumWorld(0L);
+        var forts = core.geodeFortsIn(-1000, -1000, 1000, 1000);
+        helper.assertTrue(!forts.isEmpty(),
+                "Natural islands receive wall geode sites");
+        ElysiumWorld.Site located = forts.get(0);
+        int[] stepX = {0, -1, 0, 1}, stepZ = {1, 0, -1, 0};
+        int fx = stepX[located.rot()], fz = stepZ[located.rot()], rx = -fz, rz = fx;
+        Column sample = new Column();
+        for (int v = -12; v <= 12; v++) {
+            core.sample(located.x() + fx * 2 + rx * v, located.z() + fz * 2 + rz * v, sample);
+            helper.assertTrue(!sample.land, "The full geode face is visible outside the cliff");
+            core.sample(located.x() - fx * 8 + rx * v, located.z() - fz * 8 + rz * v, sample);
+            helper.assertTrue(sample.land, "The full geode back is anchored to the cliff");
+        }
+        helper.assertTrue(level.registryAccess().registryOrThrow(Registries.STRUCTURE).containsKey(ModStructures.GEODE_FORT.location()),
+                "The Geode Fort is registered as a vanilla structure");
+        helper.assertTrue(level.registryAccess().registryOrThrow(Registries.STRUCTURE_SET).containsKey(ModStructureSets.GEODE_FORT.location()),
+                "The Geode Fort has a vanilla structure placement");
+        var commands = level.getServer().getCommands();
+        var locate = commands.getDispatcher().parse("locate structure merlins_inferno:geode_fort",
+                level.getServer().createCommandSourceStack().withPermission(4));
+        helper.assertTrue(!locate.getReader().canRead() && locate.getExceptions().isEmpty(),
+                "Vanilla /locate structure accepts the Geode Fort ID");
+        helper.succeed();
+    }
 
     @GameTest(template = "bench_empty", timeoutTicks = 24000)
     public static void elysiumGeneratesFloatingIslands(GameTestHelper helper) {
@@ -223,13 +374,14 @@ public final class ElysiumGameTests {
         ChunkPos home = new ChunkPos(o);
         for (int dx = -1; dx <= 3; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
-                SpanBuilder.buildHanging(level, new ChunkPos(home.x + dx, home.z + dz), java.util.List.of(chain));
+                SpanBuilder.buildHanging(level, new ChunkPos(home.x + dx, home.z + dz), ElysiumSeed.world(), java.util.List.of(chain));
             }
         }
         int links = 0, lowest = Integer.MAX_VALUE, farthest = Integer.MIN_VALUE;
         for (BlockPos p : BlockPos.betweenClosed(o.offset(-12, -85, -12), o.offset(40, 12, 12))) {
             BlockState state = level.getBlockState(p);
-            if (state.is(net.minecraft.world.level.block.Blocks.TUFF_BRICKS) || state.is(net.minecraft.world.level.block.Blocks.POLISHED_TUFF)) {
+            if (state.is(Blocks.TUFF_BRICKS) || state.is(Blocks.POLISHED_TUFF)
+                    || state.is(Blocks.PACKED_ICE) || state.is(Blocks.BLUE_ICE)) {
                 links++;
                 lowest = Math.min(lowest, p.getY());
                 farthest = Math.max(farthest, p.getX());

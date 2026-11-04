@@ -283,7 +283,22 @@ public final class ElysiumWorld {
         List<Site> out = new ArrayList<>();
         for (IslandPlan p : plansIn(minX, minZ, maxX, maxZ)) {
             for (Site s : p.sites()) {
-                if (s.x() >= minX && s.x() <= maxX && s.z() >= minZ && s.z() <= maxZ) {
+                if (!s.kind().equals("geode_fort") && s.x() >= minX && s.x() <= maxX && s.z() >= minZ && s.z() <= maxZ) {
+                    out.add(s);
+                }
+            }
+        }
+        return out;
+    }
+
+    /** Planned Geode Forts intersecting a rectangle, including the reach of their structure pieces. */
+    public List<Site> geodeFortsIn(int minX, int minZ, int maxX, int maxZ) {
+        final int reach = 24;
+        List<Site> out = new ArrayList<>();
+        for (IslandPlan p : plansIn(minX - reach, minZ - reach, maxX + reach, maxZ + reach)) {
+            for (Site s : p.sites()) {
+                if (s.kind().equals("geode_fort") && s.x() + reach >= minX && s.x() - reach <= maxX
+                        && s.z() + reach >= minZ && s.z() - reach <= maxZ) {
                     out.add(s);
                 }
             }
@@ -319,7 +334,7 @@ public final class ElysiumWorld {
     /** A water source on a cliff face or river mouth: place a WATER source at (x,y,z); the game makes the fall. */
     public record Spring(int x, int y, int z) {}
 
-    /** A structure site. kind ids are owned by the structures agent (e.g. "overgrown_ruin", "white_colonnade", "spire_chapel"). y = surface. rot 0..3. */
+    /** A structure site. y = surface for buildings, vertical face centre for geode_fort. rot 0..3. */
     public record Site(String kind, int x, int y, int z, int rot, long salt) {}
 
     // ======================================================================== extra public helpers

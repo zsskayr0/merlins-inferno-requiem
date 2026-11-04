@@ -9,14 +9,14 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 
 /**
  * {@link ResourceKey} constants for this mod's {@code StructureSet}s (the spacing/rarity rules
- * for a {@code Structure}). Actual data built in
- * {@code dev.zsskayr.merlins_inferno.datagen.worldgen.ModStructureProvider}.
+ * for a {@code Structure}). Their datapack entries live in generated or main resources.
  */
 public final class ModStructureSets {
     public static final ResourceKey<StructureSet> ROWANWOOD_TREE = key("rowanwood_tree");
     public static final ResourceKey<StructureSet> DRUID_SANCTUARY = key("druid_sanctuary");
     public static final ResourceKey<StructureSet> SACRED_CHURCH = key("sacred_church");
     public static final ResourceKey<StructureSet> ANCIENT_BATTLEFIELD = key("ancient_battlefield");
+    public static final ResourceKey<StructureSet> GEODE_FORT = key("geode_fort");
     public static final ResourceKey<StructureSet> GIANT_GEODE = key("giant_geode");
 
     private ModStructureSets() {

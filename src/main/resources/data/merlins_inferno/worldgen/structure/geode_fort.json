@@ -1,0 +1,21 @@
+{
+  "type": "merlins_inferno:geode_fort",
+  "biomes": [
+    "merlins_inferno:lark_meadows",
+    "merlins_inferno:windless_steppe",
+    "merlins_inferno:highpine_forest",
+    "merlins_inferno:mossy_weald",
+    "merlins_inferno:argent_peaks",
+    "merlins_inferno:stonecrown_cliffs",
+    "merlins_inferno:cascade_vale",
+    "merlins_inferno:mistfall_gorge",
+    "merlins_inferno:glass_sea",
+    "merlins_inferno:azure_shallows",
+    "merlins_inferno:rime_expanse",
+    "merlins_inferno:frostcrest_range",
+    "merlins_inferno:chainfall",
+    "merlins_inferno:underhang"
+  ],
+  "spawn_overrides": {},
+  "step": "top_layer_modification"
+}
