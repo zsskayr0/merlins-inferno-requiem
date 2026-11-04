@@ -141,9 +141,8 @@ public final class ModTiers {
     public static final Tier LEGENDARY = legendary(3500, 7.0F, 30);
 
     /**
-     * The Dark Coven's tier: mythic, above {@link #LEGENDARY} in damage, durability and enchantability. Never craftable. Its
-     * bonus is the Circle 2 floor of the mythic: stage I hits for 36 (the swords of its own Circle sit just under it), and each
-     * stage adds 2 up to 48 at stage VII (see {@code ModItems#registerDarkCoven}); the mundane route's mythic, still to come, will pass 48.
+     * The mythic tier: no longer used by the Dark Coven (now LEGENDARY). It is the damage scale of the true mythics (Excalibur,
+     * Zaeldris), never craftable.
      */
     public static final Tier MYTHIC = legendary(5000, 32.0F, 35);
 
@@ -184,7 +183,7 @@ public final class ModTiers {
     /**
      * Design (per project decision): Circle 2's Ebony, the tier above Seraphium on every stat (the Infernal route's
      * Oblivion material). Its signature - fire and lava immunity with the full armor set - is in
-     * {@code event.EbonyArmorHandler}. The Dark Coven uses {@link #MYTHIC}; the Ebony Sword is the ordinary sword of this tier.
+     * {@code event.EbonyArmorHandler}. The Dark Coven uses {@link #LEGENDARY}; the Ebony Sword is the ordinary sword of this tier.
      */
     public static final Tier EBONY = new Tier() {
         @Override

@@ -33,7 +33,7 @@ import dev.zsskayr.merlins_inferno.registry.ModDataComponents;
 import dev.zsskayr.merlins_inferno.registry.ModEffects;
 
 /**
- * The Dark Coven - the mythic sword of Cain (not craftable; he drops it very rarely), a Circle 2 weapon far above the ordinary Ebony Sword. It exists as seven items, one per
+ * The Dark Coven - the Circle 2 legendary sword of the Infernal route (craftable; Cain no longer drops it), a Circle 2 weapon far above the ordinary Ebony Sword. It exists as seven items, one per
  * stage (I to VII): each stage is the next step of the same blade, reached at a smithing table with one Ebony Bar and a
  * Withered Bone as the template - the last step (VI to VII) asks for a Nether Star instead of the bar. Smithing keeps
  * the enchantments.
@@ -135,24 +135,35 @@ public class DarkCovenItem extends SwordItem {
         return WITHER[stage];
     }
 
-    /** Strength and Speed amplifier (0 = level I) at a stage. */
+    /** Speed amplifier (0 = level I) at a stage. */
     public static int boon(int stage) {
         return BOON[stage];
+    }
+
+    /** Strength amplifier (0 = level I) at a stage; it only counts while a Dark Coven is in hand (see DemonicPactEffect). */
+    public static int strength(int stage) {
+        return STRENGTH[stage];
     }
 
     /** Jump Boost amplifier at a stage, or -1 for none. */
     public static int jump(int stage) {
         return JUMP[stage];
     }
-    /** Strength and Speed amplifier per stage (the original's values: III up to X). */
+    /** Speed amplifier per stage (the original's values: III up to X). */
     private static final int[] BOON = {2, 3, 4, 5, 6, 7, 9};
+    /**
+     * Strength amplifier per stage: I, I, II, III, III, IV, V (+3 to +15 damage). The original's III to X (+30 at the last
+     * stage) was free with a Mark of Cain and outhit the mythics; balanced 2026-11-04 so stage VII with the Mark tops out
+     * around (48 + 15) x 1.3 = 82, just under the Excalibur with the same Mark.
+     */
+    private static final int[] STRENGTH = {0, 0, 1, 2, 2, 3, 4};
     /** Jump Boost amplifier per stage, or -1 for none. */
     private static final int[] JUMP = {-1, -1, -1, -1, -1, 3, 1};
 
     private final int stage;
 
     public DarkCovenItem(int stage, Properties properties) {
-        super(ModTiers.MYTHIC, properties);
+        super(ModTiers.LEGENDARY, properties);
         this.stage = stage;
     }
 
@@ -351,7 +362,7 @@ public class DarkCovenItem extends SwordItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
-        tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.mythic").withStyle(ChatFormatting.LIGHT_PURPLE));
+        tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.tooltip.legendary").withStyle(ChatFormatting.GOLD));
         tooltip.add(Component.translatable("item.merlins_inferno.dark_coven.stage", ROMAN[this.stage], ROMAN[MAX_STAGE])
                 .withStyle(ChatFormatting.DARK_PURPLE));
         if (this.stage < MAX_STAGE) {

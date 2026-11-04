@@ -47,7 +47,8 @@ public final class EbonyGameTests {
         press(ModItems.DARK_COVEN_I.get(), first);
         helper.assertTrue(DarkCovenItem.isInvoked(first.getMainHandItem()), "Sneak + right-click invokes the coven");
         double baseDamage = first.getAttributeBaseValue(Attributes.ATTACK_DAMAGE);
-        helper.assertTrue(Math.abs(first.getAttributeValue(Attributes.ATTACK_DAMAGE) - (baseDamage + 9.0)) < 1.0E-6, "Stage I gives Strength III worth of damage");
+        dev.zsskayr.merlins_inferno.effect.DemonicPactEffect.syncStrength(first);
+        helper.assertTrue(Math.abs(first.getAttributeValue(Attributes.ATTACK_DAMAGE) - (baseDamage + 3.0)) < 1.0E-6, "Stage I gives Strength I worth of damage");
         helper.assertTrue(first.getEffect(ModEffects.DEMONIC_PACT) != null && first.getEffect(ModEffects.DEMONIC_PACT).getAmplifier() == 0,
                 "The whole coven is one effect, whose level is the stage");
         helper.assertTrue(first.getEffect(ModEffects.DEMONIC_PACT).getDuration() == 20 * 20, "Stage I lasts 20 seconds");
@@ -79,8 +80,9 @@ public final class EbonyGameTests {
         last.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.DARK_COVEN_VII.get()));
         last.setShiftKeyDown(true);
         press(ModItems.DARK_COVEN_VII.get(), last);
-        helper.assertTrue(Math.abs(last.getAttributeValue(Attributes.ATTACK_DAMAGE) - (last.getAttributeBaseValue(Attributes.ATTACK_DAMAGE) + 30.0)) < 1.0E-6,
-                "The pact gives Strength X worth of damage");
+        dev.zsskayr.merlins_inferno.effect.DemonicPactEffect.syncStrength(last);
+        helper.assertTrue(Math.abs(last.getAttributeValue(Attributes.ATTACK_DAMAGE) - (last.getAttributeBaseValue(Attributes.ATTACK_DAMAGE) + 15.0)) < 1.0E-6,
+                "The pact gives Strength V worth of damage");
         helper.assertTrue(last.getAttributeValue(Attributes.LUCK) < 0.0, "The pact costs luck");
         helper.assertTrue(last.getEffect(ModEffects.DEMONIC_PACT).getDuration() == 60 * 20, "Stage VII lasts 60 seconds");
 
@@ -91,10 +93,16 @@ public final class EbonyGameTests {
         press(ModItems.DARK_COVEN_VII.get(), pact);
         helper.assertTrue(DarkCovenItem.isInvoked(pactStack) && pact.getEffect(ModEffects.DEMONIC_PACT).getDuration() == 60 * 20,
                 "A plain right-click invokes the pact for a minute");
+        dev.zsskayr.merlins_inferno.effect.DemonicPactEffect.syncStrength(pact);
+        double pactBase = pact.getAttributeBaseValue(Attributes.ATTACK_DAMAGE);
+        helper.assertTrue(pact.getAttributeValue(Attributes.ATTACK_DAMAGE) > pactBase, "The pact's Strength counts with the sword in hand");
         pact.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(net.minecraft.world.item.Items.IRON_SWORD));
         pactStack.inventoryTick(level, pact, 5, false);
-        helper.assertTrue(DarkCovenItem.isInvoked(pactStack) && pact.getAttributeValue(Attributes.ATTACK_DAMAGE) > 20.0,
+        dev.zsskayr.merlins_inferno.effect.DemonicPactEffect.syncStrength(pact);
+        helper.assertTrue(DarkCovenItem.isInvoked(pactStack) && pact.getEffect(ModEffects.DEMONIC_PACT) != null,
                 "The pact keeps going with the sword put away");
+        helper.assertTrue(pact.getAttributeValue(Attributes.ATTACK_DAMAGE) == pactBase,
+                "...but its Strength does not lend itself to another weapon");
         pact.removeEffect(ModEffects.DEMONIC_PACT);
         pactStack.inventoryTick(level, pact, 5, false);
         helper.assertTrue(!DarkCovenItem.isInvoked(pactStack) && !pact.getCooldowns().isOnCooldown(ModItems.DARK_COVEN_VII.get()),

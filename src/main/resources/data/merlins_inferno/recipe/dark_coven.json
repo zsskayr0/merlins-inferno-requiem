@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "E": {
+      "item": "merlins_inferno:infernal_essence"
+    },
+    "B": {
+      "item": "merlins_inferno:ebony_bar"
+    },
+    "S": {
+      "item": "merlins_inferno:ebony_sword"
+    },
+    "H": {
+      "item": "merlins_inferno:hell_seal"
+    },
+    "W": {
+      "item": "merlins_inferno:withered_bone"
+    }
+  },
+  "pattern": [
+    "EBE",
+    "BSB",
+    "HWH"
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:dark_coven"
+  }
+}

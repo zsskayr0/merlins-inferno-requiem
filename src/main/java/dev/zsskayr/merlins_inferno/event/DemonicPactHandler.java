@@ -4,10 +4,13 @@ import net.minecraft.tags.DamageTypeTags;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.minecraft.world.entity.LivingEntity;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.effect.DemonicPactAura;
+import dev.zsskayr.merlins_inferno.effect.DemonicPactEffect;
 import dev.zsskayr.merlins_inferno.item.DarkCovenItem;
 import dev.zsskayr.merlins_inferno.registry.ModEffects;
 
@@ -28,6 +31,14 @@ public final class DemonicPactHandler {
             if (pact != null) {
                 DemonicPactAura.emit(level, player, pact.getAmplifier());
             }
+        }
+    }
+
+    /** The coven's Strength follows the sword in hand (players and Cain alike). */
+    @SubscribeEvent
+    public static void onEntityTick(EntityTickEvent.Post event) {
+        if (event.getEntity() instanceof LivingEntity living && !living.level().isClientSide()) {
+            DemonicPactEffect.syncStrength(living);
         }
     }
 

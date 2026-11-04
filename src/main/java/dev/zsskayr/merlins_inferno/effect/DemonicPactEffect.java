@@ -12,10 +12,12 @@ import net.minecraft.core.Holder;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.item.DarkCovenItem;
+import dev.zsskayr.merlins_inferno.registry.ModEffects;
 
 /**
  * The Dark Coven's one effect. Its level is the stage, and it carries everything the coven used to lend as separate
- * potion effects (which showed up as a row of icons): Strength and Speed as attribute modifiers, Jump Boost as jump
+ * potion effects (which showed up as a row of icons): Speed as an attribute modifier, Strength as one that only holds
+ * while a Dark Coven is in hand (see syncStrength), Jump Boost as jump
  * strength and safe fall distance, the Pact's bad luck, and the Wither as a damage tick of its own (same damage type, so
  * a Mark of Cain still shrugs it off). The Pact's Resistance lives in {@code event.DemonicPactHandler}. Because it is one
  * effect, milk, a totem or running out ends all of it at once, and the modifiers go with it.
@@ -49,11 +51,32 @@ public class DemonicPactEffect extends MobEffect {
         }
     }
 
+    /**
+     * The Strength half of the coven belongs to the blade: +3 damage a level, and only while a Dark Coven is in the main
+     * hand, so a Pact kept going with the sword put away no longer lends its damage to another weapon. Called every tick
+     * (event.DemonicPactHandler); everything else the effect carries stays on for as long as the effect does.
+     */
+    public static void syncStrength(LivingEntity entity) {
+        var instance = entity.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (instance == null) {
+            return;
+        }
+        var pact = entity.getEffect(ModEffects.DEMONIC_PACT);
+        if (pact != null && entity.getMainHandItem().getItem() instanceof DarkCovenItem) {
+            double amount = 3.0 * (DarkCovenItem.strength(pact.getAmplifier()) + 1);
+            var current = instance.getModifier(STRENGTH);
+            if (current == null || current.amount() != amount) {
+                instance.addOrReplacePermanentModifier(new AttributeModifier(STRENGTH, amount, AttributeModifier.Operation.ADD_VALUE));
+            }
+        } else if (instance.hasModifier(STRENGTH)) {
+            instance.removeModifier(STRENGTH);
+        }
+    }
+
     @Override
     public void addAttributeModifiers(AttributeMap map, int stage) {
         int boon = DarkCovenItem.boon(stage) + 1;
-        // Strength: +3 damage a level; Speed: +20% a level - what the potion effects gave.
-        put(map, Attributes.ATTACK_DAMAGE, STRENGTH, 3.0 * boon, AttributeModifier.Operation.ADD_VALUE);
+        // Speed: +20% a level - what the potion effect gave. Strength is synced per tick, see syncStrength.
         put(map, Attributes.MOVEMENT_SPEED, SPEED, 0.2 * boon, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         int jump = DarkCovenItem.jump(stage);
         if (jump >= 0) {

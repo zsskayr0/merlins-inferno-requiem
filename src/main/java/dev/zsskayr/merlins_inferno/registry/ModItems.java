@@ -719,7 +719,7 @@ public final class ModItems {
     public static final DeferredItem<ArmorItem> EBONY_BOOTS = ITEMS.registerItem("ebony_boots",
             props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.BOOTS, props.fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(180))));
 
-    // The Dark Coven, stages I to VII: see item.DarkCovenItem. A MYTHIC sword (not craftable; Cain drops stage I very rarely),
+    // The Dark Coven, stages I to VII: see item.DarkCovenItem. The LEGENDARY sword of Circle 2, Infernal route (craftable; later stages by smithing),
     // separate from the ordinary Ebony Sword; the stages are raised at a smithing table.
     public static final DeferredItem<DarkCovenItem> DARK_COVEN_I = registerDarkCoven("dark_coven", 0);
     public static final DeferredItem<DarkCovenItem> DARK_COVEN_II = registerDarkCoven("dark_coven_2", 1);
@@ -729,10 +729,10 @@ public final class ModItems {
     public static final DeferredItem<DarkCovenItem> DARK_COVEN_VI = registerDarkCoven("dark_coven_6", 5);
     public static final DeferredItem<DarkCovenItem> DARK_COVEN_VII = registerDarkCoven("dark_coven_7", 6);
 
-    /** Stage I hits for 36 and every stage adds 2, to 48 at stage VII: 1 (hand) + 3 + 2 per stage + the tier's 32. */
+    /** Stage I hits for 36 and every stage adds 2, to 48 at stage VII: 1 (hand) + 28 + 2 per stage + the LEGENDARY tier's 7. */
     private static DeferredItem<DarkCovenItem> registerDarkCoven(String name, int stage) {
         return ITEMS.registerItem(name, props -> new DarkCovenItem(stage, props.rarity(Rarity.EPIC).fireResistant()
-                .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 3 + 2 * stage, -2.4F))));
+                .attributes(SwordItem.createAttributes(ModTiers.LEGENDARY, 28 + 2 * stage, -2.4F))));
     }
 
     // --- Circle 3, Angelical route: Zaeldris, the lance of light and the strongest weapon in the mod (see item.ZaeldrisItem).
