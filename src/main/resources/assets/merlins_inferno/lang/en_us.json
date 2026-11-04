@@ -680,6 +680,9 @@
   "effect.merlins_inferno.paralysis.description": "Held still by starlight: you cannot walk, jump or swing, and nothing you hit takes damage.",
   "tooltip.merlins_inferno.innate_evil": "Evil %s (innate)",
   "tooltip.merlins_inferno.innate_holy": "Holy %s (innate)",
+  "tooltip.merlins_inferno.home.mundane.wear": "Home ground (Overworld): wears %1$s%% less",
+  "tooltip.merlins_inferno.home.infernal.wear": "Home ground (Nether, Oblivion): wears %1$s%% less",
+  "tooltip.merlins_inferno.home.angelical.wear": "Home ground (El'ysium, the End): wears %1$s%% less",
   "tooltip.merlins_inferno.home.mundane": "Home ground (Overworld): wears %1$s%% less, mines %2$s%% faster",
   "tooltip.merlins_inferno.home.infernal": "Home ground (Nether, Oblivion): wears %1$s%% less, mines %2$s%% faster",
   "tooltip.merlins_inferno.home.angelical": "Home ground (El'ysium, the End): wears %1$s%% less, mines %2$s%% faster"

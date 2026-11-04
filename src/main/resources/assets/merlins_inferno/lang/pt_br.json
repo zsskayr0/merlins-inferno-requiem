@@ -680,6 +680,9 @@
   "effect.merlins_inferno.paralysis.description": "Preso pela luz das estrelas: você não anda, não pula e não ataca, e nada que você acerte sofre dano.",
   "tooltip.merlins_inferno.innate_evil": "Mal %s (inato)",
   "tooltip.merlins_inferno.innate_holy": "Sagrado %s (inato)",
+  "tooltip.merlins_inferno.home.mundane.wear": "Terreno de casa (Overworld): desgasta %1$s%% menos",
+  "tooltip.merlins_inferno.home.infernal.wear": "Terreno de casa (Nether, Oblivion): desgasta %1$s%% menos",
+  "tooltip.merlins_inferno.home.angelical.wear": "Terreno de casa (El'ysium, o End): desgasta %1$s%% menos",
   "tooltip.merlins_inferno.home.mundane": "Terreno de casa (Overworld): desgasta %1$s%% menos, minera %2$s%% mais rápido",
   "tooltip.merlins_inferno.home.infernal": "Terreno de casa (Nether, Oblivion): desgasta %1$s%% menos, minera %2$s%% mais rápido",
   "tooltip.merlins_inferno.home.angelical": "Terreno de casa (El'ysium, o End): desgasta %1$s%% menos, minera %2$s%% mais rápido"

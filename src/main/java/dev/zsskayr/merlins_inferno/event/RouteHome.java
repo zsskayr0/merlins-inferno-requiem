@@ -106,8 +106,10 @@ public final class RouteHome {
         Route route = routeOf(event.getItemStack());
         if (route != null) {
             List<Component> tooltip = event.getToolTip();
-            tooltip.add(Component.translatable("tooltip.merlins_inferno.home." + route.id,
-                    Math.round(SAVE_CHANCE * 100), Math.round(SPEED_BONUS * 100)).withStyle(ChatFormatting.GRAY));
+            // Only a digging tool gains anything from the mining bonus; weapons and armor just get the wear line.
+            String key = "tooltip.merlins_inferno.home." + route.id
+                    + (event.getItemStack().getItem() instanceof net.minecraft.world.item.DiggerItem ? "" : ".wear");
+            tooltip.add(Component.translatable(key, Math.round(SAVE_CHANCE * 100), Math.round(SPEED_BONUS * 100)).withStyle(ChatFormatting.GRAY));
         }
     }
 }
