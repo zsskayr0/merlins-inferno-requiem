@@ -9,7 +9,7 @@ import dev.zsskayr.merlins_inferno.registry.ModAttachments;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 
 /**
- * The Pandora Box and Primary Circle Rune return to their owner after death.
+ * The Pandora Box and Rune of Primary Circle return to their owner after death.
  */
 public class PandoraHandler {
     /** Cancels the Box and rune drops, remembering what to return on respawn. */

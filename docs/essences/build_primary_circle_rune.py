@@ -1,4 +1,4 @@
-"""Draw the Primary Circle Rune at its native 32x32 pixel-art resolution."""
+"""Draw the Rune of Primary Circle at its native 32x32 pixel-art resolution."""
 from pathlib import Path
 
 from PIL import Image, ImageDraw
