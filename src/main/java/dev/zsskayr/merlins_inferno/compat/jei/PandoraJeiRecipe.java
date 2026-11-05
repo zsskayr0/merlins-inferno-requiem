@@ -6,4 +6,5 @@ import net.minecraft.world.item.ItemStack;
 
 /** One Pandora's Box ritual as JEI shows it: the catalyst, the three offerings (with the counts the rules demand) and the result. */
 public record PandoraJeiRecipe(PandoraRecipeRules.Recipe rule, ItemStack catalyst, List<ItemStack> offerings, ItemStack result) {
+    public boolean reusableCatalyst() { return rule == PandoraRecipeRules.Recipe.FOREST || rule == PandoraRecipeRules.Recipe.OBLIVION; }
 }

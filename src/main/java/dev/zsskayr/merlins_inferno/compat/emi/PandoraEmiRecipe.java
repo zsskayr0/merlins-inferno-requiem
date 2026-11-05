@@ -15,7 +15,9 @@ final class PandoraEmiRecipe extends BasicEmiRecipe {
         super(MerlinsEmiPlugin.PANDORA, MerlinsEmiPlugin.id("pandora_box/" + entry.rule().name().toLowerCase(java.util.Locale.ROOT)),
                 PandoraRecipePreview.WIDTH, PandoraRecipePreview.HEIGHT);
         rule = entry.rule();
-        inputs.add(EmiStack.of(entry.catalystStack()));
+        boolean reusable = rule == Recipe.FOREST || rule == Recipe.OBLIVION;
+        if (reusable) catalysts.add(EmiStack.of(entry.catalystStack()));
+        else inputs.add(EmiStack.of(entry.catalystStack()));
         entry.offeringStacks().forEach(stack -> inputs.add(EmiStack.of(stack)));
         if (!entry.result().isEmpty()) outputs.add(EmiStack.of(entry.result()));
     }
@@ -24,9 +26,11 @@ final class PandoraEmiRecipe extends BasicEmiRecipe {
     public void addWidgets(WidgetHolder widgets) {
         widgets.addDrawable(0, 0, PandoraRecipePreview.WIDTH, PandoraRecipePreview.HEIGHT,
                 (graphics, mouseX, mouseY, delta) -> PandoraRecipePreview.render(graphics, 0, 0, rule));
-        widgets.addSlot(inputs.getFirst(), PandoraLayout.CENTER_X - 9, PandoraLayout.CENTER_Y - 9).drawBack(false);
+        boolean reusable = !catalysts.isEmpty();
+        widgets.addSlot(reusable ? catalysts.getFirst() : inputs.getFirst(),
+                PandoraLayout.CENTER_X - 9, PandoraLayout.CENTER_Y - 9).drawBack(false).catalyst(reusable);
         for (int i = 0; i < 3; i++) {
-            widgets.addSlot(inputs.get(i + 1), PandoraLayout.slotX(i, PandoraLayout.INITIAL_ANGLE) - 1,
+            widgets.addSlot(inputs.get(i + (reusable ? 0 : 1)), PandoraLayout.slotX(i, PandoraLayout.INITIAL_ANGLE) - 1,
                     PandoraLayout.slotY(i, PandoraLayout.INITIAL_ANGLE) - 1).drawBack(false);
         }
         if (!outputs.isEmpty()) widgets.addSlot(outputs.getFirst(), PandoraRecipePreview.RESULT_X - 1,

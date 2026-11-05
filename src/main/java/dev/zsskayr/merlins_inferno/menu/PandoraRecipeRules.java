@@ -2,7 +2,7 @@ package dev.zsskayr.merlins_inferno.menu;
 
 /** Pure recipe rules shared by preview and server execution; offering order never matters. */
 public final class PandoraRecipeRules {
-    public enum Ingredient { EMPTY, OTHER, BOOK, EVE, FLAME, STAR, FAE, INFERNAL, ANGELIC, VOID, NETHERITE, TATTERED_WINGS }
+    public enum Ingredient { EMPTY, OTHER, BOOK, EVE, FLAME, STAR, FAE, INFERNAL, ANGELIC, RUNE, NETHERITE, TATTERED_WINGS }
     public enum Recipe { NONE, AWAKENING, FOREST, OBLIVION, SERAPH_WINGS, FALLEN_WINGS, ELYSIUM }
     public static final int ESSENCE_COST = 16;
     private PandoraRecipeRules() {}
@@ -19,8 +19,8 @@ public final class PandoraRecipeRules {
     public static Recipe match(boolean opened, Ingredient catalyst, Ingredient[] offerings, int[] counts) {
         if (offerings.length != 3 || counts.length != 3) return Recipe.NONE;
         if (!opened && catalyst == Ingredient.STAR && distinct(Recipe.AWAKENING, offerings, counts, Ingredient.BOOK, Ingredient.EVE, Ingredient.FLAME)) return Recipe.AWAKENING;
-        if (opened && catalyst == Ingredient.VOID && distinct(Recipe.FOREST, offerings, counts, Ingredient.FAE, Ingredient.INFERNAL, Ingredient.ANGELIC)) return Recipe.FOREST;
-        if (opened && catalyst == Ingredient.BOOK && distinct(Recipe.OBLIVION, offerings, counts, Ingredient.NETHERITE, Ingredient.INFERNAL, Ingredient.FAE)) return Recipe.OBLIVION;
+        if (opened && catalyst == Ingredient.RUNE && distinct(Recipe.FOREST, offerings, counts, Ingredient.FAE, Ingredient.INFERNAL, Ingredient.ANGELIC)) return Recipe.FOREST;
+        if (opened && catalyst == Ingredient.RUNE && distinct(Recipe.OBLIVION, offerings, counts, Ingredient.NETHERITE, Ingredient.INFERNAL, Ingredient.FAE)) return Recipe.OBLIVION;
         if (opened && catalyst == Ingredient.BOOK && distinct(Recipe.ELYSIUM, offerings, counts, Ingredient.NETHERITE, Ingredient.ANGELIC, Ingredient.FAE)) return Recipe.ELYSIUM;
         // Tattered Wings take the road of the essence that is not shared with Oblivion: Angelic to the Seraph, Infernal to the Fallen.
         if (opened && catalyst == Ingredient.TATTERED_WINGS && distinct(Recipe.SERAPH_WINGS, offerings, counts, Ingredient.NETHERITE, Ingredient.ANGELIC, Ingredient.FAE)) return Recipe.SERAPH_WINGS;

@@ -25,6 +25,10 @@ public final class ModAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> RETURN_PANDORA_BOX =
             ATTACHMENT_TYPES.register("return_pandora_box", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).copyOnDeath().build());
 
+    /** Set by the awakening ritual so its rune is awarded after the ritual's forced death. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> AWARD_PRIMARY_CIRCLE_RUNE =
+            ATTACHMENT_TYPES.register("award_primary_circle_rune", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).copyOnDeath().build());
+
     /** Set once the player has ever held a Rowanwood Scrap: it opens the Druid's tool and enchantment trades. */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> ROWANWOOD_UNLOCKED =
             ATTACHMENT_TYPES.register("rowanwood_unlocked", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).copyOnDeath().build());

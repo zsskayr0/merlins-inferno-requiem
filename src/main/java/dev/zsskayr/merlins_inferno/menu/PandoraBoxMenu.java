@@ -18,13 +18,14 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
+import dev.zsskayr.merlins_inferno.registry.ModAttachments;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 import dev.zsskayr.merlins_inferno.registry.ModMenuTypes;
 import dev.zsskayr.merlins_inferno.menu.PandoraRecipeRules.Ingredient;
 import dev.zsskayr.merlins_inferno.menu.PandoraRecipeRules.Recipe;
 
-/** Four inputs, one forge action. The server owns the timer, validation, consumption and result. */
+/** Four inputs, one forge action. The central rune is retained by its two key recipes. */
 public class PandoraBoxMenu extends AbstractContainerMenu {
     public static final int BUTTON_FORGE = 0;
     public static final int CRAFT_TICKS = 60;
@@ -110,10 +111,10 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
         if (stack.is(ModItems.EVES_SECRET.get())) return Ingredient.EVE;
         if (stack.is(ModItems.FLAME_OF_GOD.get())) return Ingredient.FLAME;
         if (stack.is(Items.NETHER_STAR)) return Ingredient.STAR;
+        if (stack.is(ModItems.PRIMARY_CIRCLE_RUNE.get())) return Ingredient.RUNE;
         if (stack.is(ModItems.FAE_ESSENCE.get())) return Ingredient.FAE;
         if (stack.is(ModItems.INFERNAL_ESSENCE.get())) return Ingredient.INFERNAL;
         if (stack.is(ModItems.ANGELIC_ESSENCE.get())) return Ingredient.ANGELIC;
-        if (stack.is(ModBlocks.WITHERED_OBSIDIAN.get().asItem())) return Ingredient.VOID;
         if (stack.is(Items.NETHERITE_INGOT)) return Ingredient.NETHERITE;
         if (stack.is(ModItems.TATTERED_WINGS.get())) return Ingredient.TATTERED_WINGS;
         return Ingredient.OTHER;
@@ -121,6 +122,7 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
 
     public static ItemStack result(Recipe recipe) {
         return switch (recipe) {
+            case AWAKENING -> new ItemStack(ModItems.PRIMARY_CIRCLE_RUNE.get());
             case FOREST -> new ItemStack(ModItems.FOREST_KEY.get());
             case OBLIVION -> new ItemStack(ModItems.OBLIVION_KEY.get());
             case ELYSIUM -> new ItemStack(ModItems.ELYSIUM_KEY.get());
@@ -164,7 +166,7 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
         Recipe completed = workingRecipe;
         // Exact recipe quantities, retaining surplus stacks.
         for (int i = 0; i < 3; i++) container.removeItem(i, PandoraRecipeRules.required(completed, ingredient(container.getItem(i))));
-        container.removeItem(3, 1);
+        if (completed != Recipe.FOREST && completed != Recipe.OBLIVION) container.removeItem(3, 1);
         lastRecipe = completed;
         completionSerial = (completionSerial + 1) & 0x7FFF;
         cancelCraft();
@@ -172,6 +174,8 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
             ProgressionHelper.setCircle(server, ProgressionHelper.SECOND_CIRCLE);
             server.level().playSound(null, server.blockPosition(), SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 1, 0.6F);
             boolean spared = server.level().getLevelData().isHardcore() || server.isCreative();
+            if (spared) givePrimaryRune(server);
+            else server.setData(ModAttachments.AWARD_PRIMARY_CIRCLE_RUNE, true);
             server.displayClientMessage(Component.translatable(spared
                     ? "message.merlins_inferno.pandora_box.opened_spared" : "message.merlins_inferno.pandora_box.opened"), false);
             if (!spared) {
@@ -182,6 +186,11 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
             resultContainer.setItem(0, result(completed));
             server.level().playSound(null, server.blockPosition(), SoundEvents.SMITHING_TABLE_USE, SoundSource.PLAYERS, 1, 0.8F);
         }
+    }
+
+    private static void givePrimaryRune(ServerPlayer player) {
+        ItemStack rune = new ItemStack(ModItems.PRIMARY_CIRCLE_RUNE.get());
+        if (!player.getInventory().add(rune)) player.drop(rune, false);
     }
 
     @Override
@@ -195,8 +204,8 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
         } else {
             if (isCrafting()) return ItemStack.EMPTY;
             Ingredient kind = ingredient(stack);
-            // The Book is an offering for the Awakening, but the catalyst once the Box is open.
-            boolean catalyst = kind == Ingredient.STAR || kind == Ingredient.VOID || kind == Ingredient.TATTERED_WINGS
+            // The Book is an offering for the Awakening and an El'ysium catalyst once the Box is open.
+            boolean catalyst = kind == Ingredient.STAR || kind == Ingredient.RUNE || kind == Ingredient.TATTERED_WINGS
                     || (kind == Ingredient.BOOK && getCircle() >= ProgressionHelper.SECOND_CIRCLE);
             if (catalyst && hasResult()) return ItemStack.EMPTY;
             if (!moveItemStackTo(stack, catalyst ? 3 : 0, catalyst ? 4 : 3, false)) return ItemStack.EMPTY;
@@ -242,4 +251,5 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
         @Override public boolean mayPlace(ItemStack stack) { return false; }
         @Override public boolean mayPickup(Player player) { return !isCrafting() && hasResult(); }
     }
+
 }

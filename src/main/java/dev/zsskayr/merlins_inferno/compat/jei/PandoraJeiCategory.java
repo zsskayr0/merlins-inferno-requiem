@@ -48,7 +48,8 @@ public class PandoraJeiCategory implements IRecipeCategory<PandoraJeiRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PandoraJeiRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, PandoraLayout.CENTER_X - 9, PandoraLayout.CENTER_Y - 9)
+        builder.addSlot(recipe.reusableCatalyst() ? RecipeIngredientRole.CATALYST : RecipeIngredientRole.INPUT,
+                PandoraLayout.CENTER_X - 9, PandoraLayout.CENTER_Y - 9)
                 .addItemStack(recipe.catalyst());
         for (int i = 0; i < recipe.offerings().size(); i++) {
             builder.addSlot(RecipeIngredientRole.INPUT,
