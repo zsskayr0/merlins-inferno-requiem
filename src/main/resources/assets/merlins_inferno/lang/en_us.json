@@ -606,6 +606,8 @@
   "jei.merlins_inferno.pandora_box.offerings": "Offerings",
   "jei.merlins_inferno.pandora_box.requires_opened": "The box must already be opened",
   "jei.merlins_inferno.pandora_box.awakening": "Opens the Second Circle (no item output)",
+  "jei.merlins_inferno.pandora_box.awakening_short": "Opens Circle II",
+  "jei.merlins_inferno.pandora_box.requires_opened_short": "Requires Circle II",
   "jei.merlins_inferno.hell_forge": "Hell Forge",
   "emi.category.merlins_inferno.pandora_box": "Pandora's Box",
   "emi.category.merlins_inferno.hell_forge_smelting": "Hell Forge",

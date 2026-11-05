@@ -1,8 +1,9 @@
 package dev.zsskayr.merlins_inferno.compat.jei;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import dev.zsskayr.merlins_inferno.client.PandoraRecipePreview;
+import dev.zsskayr.merlins_inferno.menu.PandoraLayout;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
-import dev.zsskayr.merlins_inferno.menu.PandoraRecipeRules.Recipe;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -11,22 +12,18 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 public class PandoraJeiCategory implements IRecipeCategory<PandoraJeiRecipe> {
     public static final RecipeType<PandoraJeiRecipe> TYPE = RecipeType.create(Merlins_inferno.MODID, "pandora_box", PandoraJeiRecipe.class);
-    private static final int WIDTH = 126;
-    private static final int HEIGHT = 56;
-
     private final IDrawable icon;
     private final IDrawable background;
 
     public PandoraJeiCategory(IGuiHelper helper) {
         this.icon = helper.createDrawableItemStack(new ItemStack(ModItems.PANDORA_BOX.get()));
-        this.background = helper.createBlankDrawable(WIDTH, HEIGHT);
+        this.background = helper.createBlankDrawable(PandoraRecipePreview.WIDTH, PandoraRecipePreview.HEIGHT);
     }
 
     @Override
@@ -51,23 +48,22 @@ public class PandoraJeiCategory implements IRecipeCategory<PandoraJeiRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PandoraJeiRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 2, 20).addItemStack(recipe.catalyst());
+        builder.addSlot(RecipeIngredientRole.INPUT, PandoraLayout.CENTER_X - 9, PandoraLayout.CENTER_Y - 9)
+                .addItemStack(recipe.catalyst());
         for (int i = 0; i < recipe.offerings().size(); i++) {
-            builder.addSlot(RecipeIngredientRole.INPUT, 28 + i * 20, 20).addItemStack(recipe.offerings().get(i));
+            builder.addSlot(RecipeIngredientRole.INPUT,
+                    PandoraLayout.slotX(i, PandoraLayout.INITIAL_ANGLE) - 1,
+                    PandoraLayout.slotY(i, PandoraLayout.INITIAL_ANGLE) - 1)
+                    .addItemStack(recipe.offerings().get(i));
         }
         if (!recipe.result().isEmpty()) {
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 106, 20).addItemStack(recipe.result());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, PandoraRecipePreview.RESULT_X - 1,
+                    PandoraRecipePreview.RESULT_Y - 1).addItemStack(recipe.result());
         }
     }
 
     @Override
     public void draw(PandoraJeiRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
-        var font = Minecraft.getInstance().font;
-        graphics.drawString(font, Component.translatable("jei.merlins_inferno.pandora_box.catalyst"), 0, 4, 0xFF808080, false);
-        graphics.drawString(font, Component.translatable("jei.merlins_inferno.pandora_box.offerings"), 28, 4, 0xFF808080, false);
-        graphics.drawString(font, Component.literal("->"), 88, 24, 0xFF808080, false);
-        graphics.drawString(font, Component.translatable(recipe.rule() == Recipe.AWAKENING
-                ? "jei.merlins_inferno.pandora_box.awakening" : "jei.merlins_inferno.pandora_box.requires_opened"),
-                0, 44, 0xFF8A2B2B, false);
+        PandoraRecipePreview.render(graphics, 0, 0, recipe.rule());
     }
 }

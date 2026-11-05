@@ -606,6 +606,8 @@
   "jei.merlins_inferno.pandora_box.offerings": "Oferendas",
   "jei.merlins_inferno.pandora_box.requires_opened": "A caixa precisa já estar aberta",
   "jei.merlins_inferno.pandora_box.awakening": "Abre o Segundo Círculo (sem item de saída)",
+  "jei.merlins_inferno.pandora_box.awakening_short": "Abre o 2º Círculo",
+  "jei.merlins_inferno.pandora_box.requires_opened_short": "Requer o 2º Círculo",
   "jei.merlins_inferno.hell_forge": "Forja Infernal",
   "emi.category.merlins_inferno.pandora_box": "Caixa de Pandora",
   "emi.category.merlins_inferno.hell_forge_smelting": "Forja Infernal",
