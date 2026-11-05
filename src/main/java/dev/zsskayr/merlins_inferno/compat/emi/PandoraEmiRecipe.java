@@ -23,7 +23,7 @@ final class PandoraEmiRecipe extends BasicEmiRecipe {
     @Override
     public void addWidgets(WidgetHolder widgets) {
         widgets.addDrawable(0, 0, PandoraRecipePreview.WIDTH, PandoraRecipePreview.HEIGHT,
-                (graphics, x, y, delta) -> PandoraRecipePreview.render(graphics, x, y, rule));
+                (graphics, mouseX, mouseY, delta) -> PandoraRecipePreview.render(graphics, 0, 0, rule));
         widgets.addSlot(inputs.getFirst(), PandoraLayout.CENTER_X - 9, PandoraLayout.CENTER_Y - 9).drawBack(false);
         for (int i = 0; i < 3; i++) {
             widgets.addSlot(inputs.get(i + 1), PandoraLayout.slotX(i, PandoraLayout.INITIAL_ANGLE) - 1,
