@@ -80,10 +80,10 @@ public final class ModBlockStateProvider extends BlockStateProvider {
 
         simpleBlock(ModBlocks.WITHERED_OBSIDIAN.get());
         itemModels().simpleBlockItem(ModBlocks.WITHERED_OBSIDIAN.get());
-        // Purified Obsidian borrows the Withered Obsidian texture until it gets its own
-        ModelFile purifiedObsidian = models().cubeAll("purified_obsidian", modLoc("block/withered_obsidian"));
-        simpleBlock(ModBlocks.PURIFIED_OBSIDIAN.get(), purifiedObsidian);
+        simpleBlock(ModBlocks.PURIFIED_OBSIDIAN.get());
         itemModels().simpleBlockItem(ModBlocks.PURIFIED_OBSIDIAN.get());
+        simpleBlock(ModBlocks.MOSSY_OBSIDIAN.get());
+        itemModels().simpleBlockItem(ModBlocks.MOSSY_OBSIDIAN.get());
     }
 
     /**

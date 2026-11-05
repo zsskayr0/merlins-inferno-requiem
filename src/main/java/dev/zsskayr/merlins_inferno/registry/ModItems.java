@@ -108,14 +108,11 @@ public final class ModItems {
     // same shape (see data/merlins_inferno/recipe/rowanwood_scrap_from_*.json), crafts into a
     // Rowanwood Scrap - which then smelts (or blasts) into the bar itself. Plain items, no
     // in-world behavior of their own.
-    // The three essences (design decision):
+    // The Rowanwood essences:
     //  - Mundane Essence: early game, obtained from the Druids (DruidEntity#updateTrades - it's
     //    what they hand over, not a currency the player pays them with).
     //  - Fae Essence: dropped by the Dullahan.
     //  - Mundane and Fae both craft the Rowanwood Scrap (data/.../recipe/rowanwood_scrap_from_*.json).
-    //  - Otherworld Essence: something far more mystical, reserved for mid game and beyond - kept
-    //    registered but deliberately has no source or recipe yet.
-    public static final DeferredItem<Item> OTHERWORLD_ESSENCE = ITEMS.registerSimpleItem("otherworld_essence", new Item.Properties());
     public static final DeferredItem<Item> MUNDANE_ESSENCE = ITEMS.registerSimpleItem("mundane_essence", new Item.Properties());
     // Dropped by third-party "fairy" mobs at 10% - see ModTags.EntityTypes.FAIRIES and
     // data/merlins_inferno/loot_modifiers/fae_essence_from_fairies.json (empty tag by default,
@@ -278,10 +275,12 @@ public final class ModItems {
     public static final DeferredItem<Item> LYRIUM_PURE = ITEMS.registerSimpleItem("lyrium_pure", new Item.Properties());
     public static final DeferredItem<Item> LYRIUM_TRUE = ITEMS.registerSimpleItem("lyrium_true", new Item.Properties());
 
-    // Dropped by Elias (see loot_table/entities/elias.json); the Seraphium Scrap recipe needs it.
+    // Elias' essence retains the existing holy recipes; Celestial Essence is a separate cosmic resource.
+    public static final DeferredItem<Item> ANGELIC_ESSENCE = ITEMS.registerSimpleItem("angelic_essence", new Item.Properties());
     public static final DeferredItem<Item> CELESTIAL_ESSENCE = ITEMS.registerSimpleItem("celestial_essence", new Item.Properties());
+    public static final DeferredItem<Item> DAEDRIC_ESSENCE = ITEMS.registerSimpleItem("daedric_essence", new Item.Properties());
 
-    // Mirrors Rowanwood's own 2-stage chain: refined Lyrium + Diamond + Celestial Essence crafts
+    // Mirrors Rowanwood's own 2-stage chain: refined Lyrium + Diamond + Angelic Essence crafts
     // into this Scrap, which then smelts into the actual Bar (see
     // data/merlins_inferno/recipe/seraphium_scrap.json / seraphium_bar_from_smelting.json).
     public static final DeferredItem<Item> SERAPHIUM_SCRAP = ITEMS.registerSimpleItem("seraphium_scrap", new Item.Properties());
@@ -422,6 +421,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> PETRIFIED_SKULL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PETRIFIED_SKULL);
     public static final DeferredItem<BlockItem> WITHERED_OBSIDIAN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.WITHERED_OBSIDIAN);
     public static final DeferredItem<BlockItem> PURIFIED_OBSIDIAN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PURIFIED_OBSIDIAN);
+    public static final DeferredItem<BlockItem> MOSSY_OBSIDIAN_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.MOSSY_OBSIDIAN);
 
     // --- Hell Forge ingredients + the block itself (see ModBlocks). ---
 
@@ -748,6 +748,13 @@ public final class ModItems {
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ZaeldrisItem> ZAELDRIS = ITEMS.registerItem("zaeldris",
             props -> new dev.zsskayr.merlins_inferno.item.ZaeldrisItem(ModTiers.MYTHIC, props.rarity(Rarity.EPIC).fireResistant()
                     .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 87, -2.8F))));
+
+    // --- Circle 1, Infernal route: Gehenna, the demon's warhammer (see item.GehennaItem and its Unique in
+    // event.GehennaHandler). Hits for 20 in Circle 1: 1 (hand) - 13 + the MYTHIC tier's 32 - above every C1 legendary
+    // (Debt Collector 15) and slow like a hammer. Its one upgrade comes in Circle 2. ---
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.GehennaItem> GEHENNA = ITEMS.registerItem("gehenna",
+            props -> new dev.zsskayr.merlins_inferno.item.GehennaItem(ModTiers.MYTHIC, props.rarity(Rarity.EPIC).fireResistant()
+                    .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, -13, -3.1F))));
 
     // --- Circle 2, Mundane route: Excalibur, the fae-forged sword of the dragon's mouth. Creative-only until the mundane
     // route's dimension exists. Hits for 64 in Circle 2: 1 (hand) + 31 + the MYTHIC tier's 32 - above the Dark Coven VII

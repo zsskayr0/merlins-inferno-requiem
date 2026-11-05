@@ -121,6 +121,11 @@
     },
     {
       "rolls": 1.0,
+      "conditions": [ { "condition": "minecraft:random_chance", "chance": 0.08 } ],
+      "entries": [ { "type": "minecraft:item", "name": "merlins_inferno:fae_essence" } ]
+    },
+    {
+      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "conditions": [
         {

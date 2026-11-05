@@ -4,7 +4,7 @@
   "key": {
     "D": { "tag": "c:gems/diamond" },
     "L": { "item": "merlins_inferno:lyrium_refined" },
-    "C": { "item": "merlins_inferno:celestial_essence" }
+    "C": { "item": "merlins_inferno:angelic_essence" }
   },
   "pattern": [
     "DLD",

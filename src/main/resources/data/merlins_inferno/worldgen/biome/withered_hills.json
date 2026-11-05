@@ -6,8 +6,8 @@
   "has_precipitation": false,
   "temperature": 2.0,
   "effects": {
-    "fog_color": 855314,
-    "sky_color": 855314,
+    "fog_color": 6317165,
+    "sky_color": 6317165,
     "water_color": 4159204,
     "water_fog_color": 329011,
     "particle": {

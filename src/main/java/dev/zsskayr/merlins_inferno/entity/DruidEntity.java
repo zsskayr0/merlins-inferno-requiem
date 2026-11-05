@@ -85,7 +85,7 @@ import dev.zsskayr.merlins_inferno.registry.ModItems;
  * 3 skin variants (see {@link #getVariant()}), randomized on spawn. Animated with GeckoLib (see the animation notes below).
  * Implements {@link Merchant} directly (rather than extending {@code AbstractVillager}, which
  * drags in the profession/reputation/leveling system this doesn't need) for a single fixed trade -
- * emeralds for Otherworld Essence, see {@link #updateTrades()} - closing the loop the design doc
+ * emeralds for Mundane Essence, see the trade list - closing the loop the design doc
  * describes: without this trade, raw
  * Rowanwood collected from the tree has no way to become the finished Rowanwood Bar. Only spawns
  * in the Hallowed Grove (see {@code ModBiomeProvider}'s mob spawn list - it's simply never added

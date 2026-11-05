@@ -518,7 +518,7 @@ public final class ModBlocks {
                     .sound(SoundType.GLASS).lightLevel(state -> 8).pushReaction(PushReaction.BLOCK).noLootTable());
 
     // --- Purified Obsidian: the frame of an El'ysium portal. The Angelical route's mobs drop it from Circle 2 on (see
-    // PurifiedObsidianDropHandler). Obsidian's own toughness; it borrows the Withered Obsidian texture for now. ---
+    // PurifiedObsidianDropHandler). Obsidian's own toughness. ---
     public static final DeferredBlock<Block> PURIFIED_OBSIDIAN = BLOCKS.registerBlock("purified_obsidian",
             Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN).requiresCorrectToolForDrops());
 
@@ -590,12 +590,15 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> PETRIFIED_SKULL = BLOCKS.registerBlock("petrified_skull",
             Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN));
 
-    // --- Withered Obsidian: crafted from Petrified Skull, Rowanwood, Lyrium and Otherworld Essence (see the recipe).
-    // Also builds the Withered Hills' spires. Far tougher than Obsidian: 5x its hardness and a blast resistance
+    // --- Withered Obsidian: mined from the Withered Hills' spires. Far tougher than Obsidian: 5x its hardness and a blast resistance
     // so high that no explosion, Wither or Ender Dragon breaks it, and pistons can't move it. ---
     public static final DeferredBlock<Block> WITHERED_OBSIDIAN = BLOCKS.registerBlock("withered_obsidian",
             Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
                     .strength(250.0F, 3600000.0F).requiresCorrectToolForDrops().pushReaction(PushReaction.BLOCK));
+
+    // Decorative obsidian reclaimed by moss; keeps ordinary obsidian's mining properties.
+    public static final DeferredBlock<Block> MOSSY_OBSIDIAN = BLOCKS.registerBlock("mossy_obsidian",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN).requiresCorrectToolForDrops());
 
     // --- Flesh: Netherrack-like, the Nether's answer to Moss Block (slab and carpet included). Not craftable -
     // only found in the world; the slab/carpet recipes go from and back to the block. ---

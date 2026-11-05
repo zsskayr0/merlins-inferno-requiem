@@ -110,9 +110,9 @@ public class PandoraBoxMenu extends AbstractContainerMenu {
         if (stack.is(ModItems.EVES_SECRET.get())) return Ingredient.EVE;
         if (stack.is(ModItems.FLAME_OF_GOD.get())) return Ingredient.FLAME;
         if (stack.is(Items.NETHER_STAR)) return Ingredient.STAR;
-        if (stack.is(ModItems.OTHERWORLD_ESSENCE.get())) return Ingredient.OTHERWORLD;
+        if (stack.is(ModItems.FAE_ESSENCE.get())) return Ingredient.FAE;
         if (stack.is(ModItems.INFERNAL_ESSENCE.get())) return Ingredient.INFERNAL;
-        if (stack.is(ModItems.CELESTIAL_ESSENCE.get())) return Ingredient.CELESTIAL;
+        if (stack.is(ModItems.ANGELIC_ESSENCE.get())) return Ingredient.ANGELIC;
         if (stack.is(ModBlocks.WITHERED_OBSIDIAN.get().asItem())) return Ingredient.VOID;
         if (stack.is(Items.NETHERITE_INGOT)) return Ingredient.NETHERITE;
         if (stack.is(ModItems.TATTERED_WINGS.get())) return Ingredient.TATTERED_WINGS;

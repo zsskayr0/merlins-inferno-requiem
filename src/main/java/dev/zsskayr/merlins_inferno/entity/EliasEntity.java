@@ -68,7 +68,7 @@ import dev.zsskayr.merlins_inferno.worldgen.structure.GreatBell;
  *     The rule elsewhere is that mobs never spread it ({@code SanctifiedCombatHandler}); he does it
  *     deliberately, here, and nowhere else. Milk clears it.</li>
  *     <li><b>Fury:</b> the Sanctified effect climbs one level higher.</li>
- *     <li><b>Loot:</b> Celestial Essence (data/merlins_inferno/loot_table/entities/elias.json).</li>
+ *     <li><b>Loot:</b> Angelic Essence (data/merlins_inferno/loot_table/entities/elias.json).</li>
  * </ul>
  * Death starts the altar's cooldown; a diamond on the altar wakes the next one.
  * <p>

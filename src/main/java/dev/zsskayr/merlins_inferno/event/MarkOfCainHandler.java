@@ -51,7 +51,7 @@ public class MarkOfCainHandler {
     private static final long MURDER_INTERVAL = 7L * 60 * SECOND;
     private static final double MURDER_CHANCE = 0.5;
     private static final float MURDER_FACTOR = 7.0F;
-    private static final long KILL_WINDOW = 20L * 60 * SECOND;
+    public static final long KILL_WINDOW = 20L * 60 * SECOND;
     /** While the Dark Coven's Pact lasts under the Mark: exhaustion a second (about a hunger point every 4 s), and ticks the kill deadline loses a second on top of the usual - 4x the clock. */
     private static final float PACT_EXHAUSTION_PER_SECOND = 1.0F;
     private static final long PACT_CLOCK_EXTRA = 3L * SECOND;
@@ -184,6 +184,13 @@ public class MarkOfCainHandler {
         if (entered && player.getRandom().nextDouble() < OMEN_CHANCE) {
             player.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, OMEN_DURATION, 0));
         }
+
+        // The bearer's clock (client.CainHud): time to the next kill, and the Murder when armed.
+        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+            long left = player.getData(ModAttachments.CAIN_KILL_DEADLINE) - now;
+            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(serverPlayer, new dev.zsskayr.merlins_inferno.network.CainStatePayload(
+                    true, (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, left)), player.getData(ModAttachments.CAIN_MURDER_ARMED)));
+        }
     }
 
     /** Forgets everything of the Mark when the player no longer bears it. */
@@ -194,6 +201,10 @@ public class MarkOfCainHandler {
             player.setData(ModAttachments.CAIN_KILL_DEADLINE, 0L);
             player.setData(ModAttachments.CAIN_MURDER_AT, 0L);
             player.setData(ModAttachments.CAIN_MURDER_ARMED, false);
+            if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+                net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(serverPlayer,
+                        new dev.zsskayr.merlins_inferno.network.CainStatePayload(false, 0, false));
+            }
         }
     }
 
@@ -282,7 +293,9 @@ public class MarkOfCainHandler {
             }
         }
         if (changed) {
-            event.setAmount(amount);
+            // /kill deals Float.MAX_VALUE: scaled up it turns infinite, and vanilla's absorption maths then makes NaN
+            // health (inf - inf) that never dies. Stay finite.
+            event.setAmount(Math.min(amount, Float.MAX_VALUE));
         }
     }
 }

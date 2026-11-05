@@ -92,7 +92,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.METEORITE.get(), ModBlocks.SMOOTH_METEORITE.get(), ModBlocks.SMOOTH_METEORITE_STAIRS.get(),
                 ModBlocks.SMOOTH_METEORITE_SLAB.get(), ModBlocks.SMOOTH_METEORITE_WALL.get(), ModBlocks.METEORITE_BRICKS.get(),
                 ModBlocks.METEORITE_BRICKS_STAIRS.get(), ModBlocks.METEORITE_BRICKS_SLAB.get(), ModBlocks.METEORITE_BRICKS_WALL.get(),
-                ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.WITHERED_OBSIDIAN.get(), ModBlocks.PURIFIED_OBSIDIAN.get(),
+                ModBlocks.CORRUPTED_OBSIDIAN.get(), ModBlocks.PETRIFIED_SKULL.get(), ModBlocks.WITHERED_OBSIDIAN.get(), ModBlocks.PURIFIED_OBSIDIAN.get(), ModBlocks.MOSSY_OBSIDIAN.get(),
                 ModBlocks.FLESH_BLOCK.get(), ModBlocks.MOUTH_BLOCK.get(), ModBlocks.VISCERA.get(), ModBlocks.FLESH_SLAB.get(), ModBlocks.FLESH_CARPET.get(), ModBlocks.RED_CHAIN.get(),
                 ModBlocks.BLACK_NYLIUM.get(), ModBlocks.BLIGHTSTONE_NYLIUM.get(), ModBlocks.TALL_CRIMSON_ROOTS.get(), ModBlocks.TALL_BLACK_GRASS.get(),
                 ModBlocks.LUST_FLOWER.get(),
@@ -201,6 +201,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.PETRIFIED_SKULL.get());
         dropSelf(ModBlocks.WITHERED_OBSIDIAN.get());
         dropSelf(ModBlocks.PURIFIED_OBSIDIAN.get());
+        dropSelf(ModBlocks.MOSSY_OBSIDIAN.get());
         dropSelf(ModBlocks.FLESH_BLOCK.get());
         dropSelf(ModBlocks.MOUTH_BLOCK.get());
         add(ModBlocks.VISCERA.get(), noDrop());

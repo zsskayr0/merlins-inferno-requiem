@@ -57,7 +57,7 @@
         {
           "type": "minecraft:item",
           "name": "merlins_inferno:celestial_essence",
-          "weight": 4,
+          "weight": 1,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -185,6 +185,7 @@
     {
       "rolls": 1.0,
       "bonus_rolls": 0.0,
+      "conditions": [ { "condition": "minecraft:random_chance", "chance": 0.12 } ],
       "entries": [
         {
           "type": "minecraft:item",

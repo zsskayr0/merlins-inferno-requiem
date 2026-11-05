@@ -83,9 +83,10 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.ROWANWOOD_LEAVES_ITEM.get());
                         output.accept(ModItems.ROWANWOOD_BAR.get());
                         output.accept(ModItems.ROWANWOOD_SCRAP.get());
-                        output.accept(ModItems.OTHERWORLD_ESSENCE.get());
                         output.accept(ModItems.MUNDANE_ESSENCE.get());
                         output.accept(ModItems.FAE_ESSENCE.get());
+                        output.accept(ModItems.DAEDRIC_ESSENCE.get());
+                        output.accept(ModItems.CELESTIAL_ESSENCE.get());
                         output.accept(ModItems.TRANSMOG_RUNE.get());
                         output.accept(ModItems.ANTIDOTE.get());
                         output.accept(ModItems.ROWANWOOD_SWORD.get());
@@ -163,6 +164,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.PETRIFIED_SKULL_ITEM.get());
                         output.accept(ModItems.WITHERED_OBSIDIAN_ITEM.get());
                         output.accept(ModItems.PURIFIED_OBSIDIAN_ITEM.get());
+                        output.accept(ModItems.MOSSY_OBSIDIAN_ITEM.get());
                         output.accept(ModItems.INFERNAL_ESSENCE.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_ITEM.get());
                         output.accept(ModItems.COMPRESSED_NETHERRACK_STAIRS_ITEM.get());
@@ -272,7 +274,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.LYRIUM_REFINED.get());
                         output.accept(ModItems.LYRIUM_PURE.get());
                         output.accept(ModItems.LYRIUM_TRUE.get());
-                        output.accept(ModItems.CELESTIAL_ESSENCE.get());
+                        output.accept(ModItems.ANGELIC_ESSENCE.get());
                         output.accept(ModItems.SERAPHIUM_SCRAP.get());
                         output.accept(ModItems.SERAPHIUM_BAR.get());
                         output.accept(ModItems.SERAPHIUM_SWORD.get());
@@ -330,6 +332,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DARK_COVEN_VI.get());
                         output.accept(ModItems.DARK_COVEN_VII.get());
                         output.accept(ModItems.ZAELDRIS.get());
+                        output.accept(ModItems.GEHENNA.get());
                         output.accept(ModItems.EXCALIBUR.get());
                         output.accept(ModItems.EXCALIBUR_TRUE.get());
                         output.accept(ModItems.CAIN_SPAWN_EGG.get());

@@ -29,6 +29,7 @@
     "drops": [
       "merlins_inferno:book_of_contracts",
       "merlins_inferno:demon_blood",
+      "merlins_inferno:daedric_essence",
       "merlins_inferno:hell_seal",
       "merlins_inferno:hollow_relic"
     ]
@@ -45,7 +46,7 @@
     "type": 1,
     "mod_version": "0.0.12-alpha",
     "drops": [
-      "merlins_inferno:celestial_essence",
+      "merlins_inferno:angelic_essence",
       "merlins_inferno:flame_of_god",
       "merlins_inferno:hollow_relic",
       "merlins_inferno:lyrium_raw",
@@ -90,6 +91,7 @@
     "drops": [
       "merlins_inferno:dark_coven",
       "merlins_inferno:ebony_scrap",
+      "merlins_inferno:daedric_essence",
       "merlins_inferno:hollow_relic",
       "minecraft:nether_star",
       "minecraft:netherite_scrap",

@@ -5,12 +5,14 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.registry.ModEffects;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Properties;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -28,8 +30,10 @@ import org.slf4j.Logger;
 public final class IrisFogCompat {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final String IRIS = "net.irisshaders.iris.Iris";
-    /** Pack name prefix -> {option, lowered value}. Values must be in the pack's own option list. */
-    private static final Map<String, String[]> PACKS = Map.of("photon", new String[]{"NETHER_FOG_INTENSITY", "0.22"});
+    /** Pack name prefix -> {option, Hell Sight value, pack default}. Values must be in the pack's own option list. */
+    private static final Map<String, String[]> PACKS = Map.of(
+            "photon", new String[]{"NETHER_FOG_INTENSITY", "0.22", "1.00"},
+            "complementaryunbound", new String[]{"BORDER_FOG", "false", "true"});
     private static final int SETTLE_TICKS = 7;
 
     private static Class<?> iris;
@@ -41,6 +45,7 @@ public final class IrisFogCompat {
     private static boolean recovered;
     /** Set after a failed or unsupported attempt so a reload is never retried until the Hell Sight turns off. */
     private static boolean gaveUp;
+    private static String gaveUpPack;
     private static int settle;
 
     private IrisFogCompat() {}
@@ -112,7 +117,9 @@ public final class IrisFogCompat {
     private static void restore(String pack, String key, String value) {
         try {
             if (pack.equals(call("getCurrentPackName"))) {
-                setOption(pack, key, value == null || value.isEmpty() ? "1.00" : value);
+                setOption(pack, key, value == null || value.isEmpty() ? defaultValue(pack, key) : value);
+            } else {
+                restoreInactivePack(pack, key, value);
             }
         } catch (ReflectiveOperationException | IOException | RuntimeException e) {
             LOGGER.warn("Hell Sight: could not restore the shader fog option", e);
@@ -120,6 +127,28 @@ public final class IrisFogCompat {
             applied = false;
             try { Files.deleteIfExists(backupFile()); } catch (IOException ignored) {}
         }
+    }
+
+    /** Switching packs while the lens is active must also put the old pack's saved option back. */
+    private static void restoreInactivePack(String pack, String key, String value)
+            throws ReflectiveOperationException, IOException {
+        Path dir = ((Path) call("getShaderpacksDirectory")).toAbsolutePath().normalize();
+        Path file = dir.resolve(pack + ".txt").normalize();
+        if (!file.startsWith(dir) || !Files.isRegularFile(file)) return;
+        Properties options = new Properties();
+        try (Reader reader = Files.newBufferedReader(file)) { options.load(reader); }
+        if (value == null || value.isEmpty()) options.remove(key);
+        else options.setProperty(key, value);
+        try (Writer writer = Files.newBufferedWriter(file)) { options.store(writer, null); }
+    }
+
+    private static String defaultValue(String pack, String key) {
+        String lower = pack.toLowerCase(java.util.Locale.ROOT);
+        for (var entry : PACKS.entrySet()) {
+            String[] spec = entry.getValue();
+            if (lower.startsWith(entry.getKey()) && spec[0].equals(key)) return spec[2];
+        }
+        return "1.00";
     }
 
     /** A leftover backup means the game ended while the option was still lowered. */
@@ -140,26 +169,40 @@ public final class IrisFogCompat {
             if (mc.player != null) return;
             recoverAfterCrash();
         }
-        boolean want = mc.player != null && mc.player.hasEffect(ModEffects.LAVA_SIGHT);
-        if (!want) gaveUp = false;
+        boolean ready = irisReady();
+        String name = null;
+        if (ready) {
+            try { name = String.valueOf(call("getCurrentPackName")); }
+            catch (ReflectiveOperationException | RuntimeException e) { LOGGER.debug("Hell Sight: could not read shader pack", e); }
+        }
+        if (applied && name != null && !name.equals(appliedPack)) {
+            restore(appliedPack, appliedKey, original);
+        }
+        if (gaveUp && name != null && !name.equals(gaveUpPack)) gaveUp = false;
+        boolean want = mc.player != null && mc.player.hasEffect(ModEffects.LAVA_SIGHT)
+                && mc.level != null && mc.level.dimensionType().effectsLocation().equals(BuiltinDimensionTypes.NETHER_EFFECTS);
+        if (!want) {
+            gaveUp = false;
+            gaveUpPack = null;
+        }
         if (want == applied || gaveUp) {
             settle = 0;
             return;
         }
-        if (++settle < SETTLE_TICKS || !irisReady()) return;
+        if (++settle < SETTLE_TICKS || !ready || name == null) return;
         settle = 0;
         if (want) {
-            String name;
-            try { name = String.valueOf(call("getCurrentPackName")); } catch (ReflectiveOperationException | RuntimeException e) { return; }
             String lower = name.toLowerCase(java.util.Locale.ROOT);
             for (var entry : PACKS.entrySet()) {
                 if (lower.startsWith(entry.getKey())) {
                     apply(name, entry.getValue());
                     gaveUp = !applied;
+                    if (gaveUp) gaveUpPack = name;
                     return;
                 }
             }
             gaveUp = true;
+            gaveUpPack = name;
         } else {
             restore(appliedPack, appliedKey, original);
         }

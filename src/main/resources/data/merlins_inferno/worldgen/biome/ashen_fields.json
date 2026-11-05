@@ -6,15 +6,15 @@
   "has_precipitation": false,
   "temperature": 2.0,
   "effects": {
-    "fog_color": 1842209,
-    "sky_color": 1842209,
+    "fog_color": 6840176,
+    "sky_color": 6840176,
     "water_color": 4159204,
     "water_fog_color": 329011,
     "particle": {
       "options": {
         "type": "minecraft:white_ash"
       },
-      "probability": 0.06
+      "probability": 0.03
     },
     "ambient_sound": "minecraft:ambient.crimson_forest.loop",
     "mood_sound": {

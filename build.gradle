@@ -12,6 +12,7 @@ repositories {
     mavenLocal()
     // Patchouli's own maven - see the dependencies block below.
     maven { url 'https://maven.blamejared.com' }
+    maven { url 'https://repo.sleeping.town/' }
     // GeckoLib (animated entity models) - required mod, see neoforge.mods.toml.
     maven {
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
@@ -142,6 +143,7 @@ dependencies {
 
     // JEI: compile-time API only; the Pandora's Box category lives in compat/jei and is only loaded by JEI itself.
     compileOnly "mezz.jei:jei-1.21.1-neoforge-api:19.21.0.247"
+    compileOnly "dev.emi:emi-neoforge:1.1.24+1.21.1:api"
 
     // Curios: compile-time API only (optional at runtime; compat/curios is loaded only when Curios is).
     compileOnly "top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1"

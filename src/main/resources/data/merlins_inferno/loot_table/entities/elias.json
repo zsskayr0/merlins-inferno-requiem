@@ -17,7 +17,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "merlins_inferno:celestial_essence",
+          "name": "merlins_inferno:angelic_essence",
           "functions": [
             {
               "function": "minecraft:set_count",

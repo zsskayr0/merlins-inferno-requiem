@@ -93,6 +93,14 @@ public final class ModAttachments {
             ATTACHMENT_TYPES.register("excalibur_held", () -> AttachmentType.builder(() -> net.minecraft.world.item.ItemStack.EMPTY)
                     .serialize(net.minecraft.world.item.ItemStack.OPTIONAL_CODEC).copyOnDeath().build());
 
+    /** Gehenna's Bloody (event.GehennaHandler): blows left of the fed boon, the tick the frenzy runs out, the last damage dealt. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> GEHENNA_FED =
+            ATTACHMENT_TYPES.register("gehenna_fed", () -> AttachmentType.builder(() -> 0).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> GEHENNA_FRENZY_UNTIL =
+            ATTACHMENT_TYPES.register("gehenna_frenzy_until", () -> AttachmentType.builder(() -> 0L).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Float>> GEHENNA_LAST_DAMAGE =
+            ATTACHMENT_TYPES.register("gehenna_last_damage", () -> AttachmentType.builder(() -> 0.0F).build());
+
     private ModAttachments() {
     }
 
