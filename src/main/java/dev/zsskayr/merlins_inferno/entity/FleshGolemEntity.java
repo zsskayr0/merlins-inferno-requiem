@@ -24,6 +24,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.server.level.ServerLevel;
 
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
 import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 
 /**
@@ -37,13 +44,20 @@ import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
  * Circle 2 only, and alone-ish: a natural spawn needs the nearest player to have reached Circle 2. Where it spawns is
  * Oblivion's own worldgen/biome spawn list. Vanilla Husk sounds as placeholders.
  */
-public class FleshGolemEntity extends Monster {
+public class FleshGolemEntity extends Monster implements GeoEntity {
     public static final double MAX_HEALTH = 220.0;
     public static final double ATTACK_DAMAGE = 14.0;
     public static final double ARMOR = 6.0;
     public static final double MOVEMENT_SPEED = 0.24;
 
     private static final float HEAL_PER_HIT = 6.0F;
+    private static final int DEATH_ANIMATION_TICKS = 68;
+    private static final RawAnimation IDLE_ANIMATION = RawAnimation.begin().thenLoop("animation.flesh_golem.idle");
+    private static final RawAnimation WALK_ANIMATION = RawAnimation.begin().thenLoop("animation.flesh_golem.walk");
+    private static final RawAnimation ATTACK_ANIMATION = RawAnimation.begin().thenPlay("animation.flesh_golem.attack");
+    private static final RawAnimation DEATH_ANIMATION = RawAnimation.begin().thenPlayAndHold("animation.flesh_golem.death");
+
+    private final AnimatableInstanceCache animationCache = GeckoLibUtil.createInstanceCache(this);
 
     public FleshGolemEntity(EntityType<? extends FleshGolemEntity> type, Level level) {
         super(type, level);
@@ -99,11 +113,38 @@ public class FleshGolemEntity extends Monster {
 
     @Override
     public boolean doHurtTarget(Entity target) {
+        if (!this.level().isClientSide) {
+            this.triggerAnim("move", "attack");
+        }
         boolean hit = super.doHurtTarget(target);
         if (hit) {
             this.heal(HEAL_PER_HIT);
         }
         return hit;
+    }
+
+    @Override
+    protected void tickDeath() {
+        ++this.deathTime;
+        if (this.deathTime >= DEATH_ANIMATION_TICKS && !this.level().isClientSide() && !this.isRemoved()) {
+            this.level().broadcastEntityEvent(this, (byte) 60);
+            this.remove(Entity.RemovalReason.KILLED);
+        }
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "move", 4, state -> {
+            if (this.isDeadOrDying()) {
+                return state.setAndContinue(DEATH_ANIMATION);
+            }
+            return state.setAndContinue(state.isMoving() ? WALK_ANIMATION : IDLE_ANIMATION);
+        }).triggerableAnim("attack", ATTACK_ANIMATION));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.animationCache;
     }
 
     @Override

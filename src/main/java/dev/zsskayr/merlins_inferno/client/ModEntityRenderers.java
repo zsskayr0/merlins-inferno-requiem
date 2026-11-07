@@ -43,11 +43,6 @@ public final class ModEntityRenderers {
     }
 
     @SubscribeEvent
-    static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(FleshGolemModel.LAYER_LOCATION, FleshGolemModel::createBodyLayer);
-    }
-
-    @SubscribeEvent
     static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntityTypes.BENCH_SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.HAUNTED_BOAT.get(), HauntedBoatRenderer::new);

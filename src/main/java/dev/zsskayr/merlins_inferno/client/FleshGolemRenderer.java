@@ -1,23 +1,22 @@
 package dev.zsskayr.merlins_inferno.client;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
 
-import dev.zsskayr.merlins_inferno.Merlins_inferno;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
+
 import dev.zsskayr.merlins_inferno.entity.FleshGolemEntity;
 
-/** Renders {@link FleshGolemEntity} with {@link FleshGolemModel} and its original texture. */
-public class FleshGolemRenderer extends MobRenderer<FleshGolemEntity, FleshGolemModel> {
-    private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "textures/entity/flesh_golem/flesh_golem.png");
-
+/** Renders the Flesh Golem's animated Blockbench model and its glow mask. */
+public class FleshGolemRenderer extends GeoEntityRenderer<FleshGolemEntity> {
     public FleshGolemRenderer(EntityRendererProvider.Context context) {
-        super(context, new FleshGolemModel(context.bakeLayer(FleshGolemModel.LAYER_LOCATION)), 0.9F);
+        super(context, new FleshGolemModel());
+        this.withScale(0.6F);
+        this.shadowRadius = 0.9F;
+        this.addRenderLayer(new FleshGolemGlowLayer(this));
     }
 
     @Override
-    public ResourceLocation getTextureLocation(FleshGolemEntity entity) {
-        return TEXTURE;
+    protected float getDeathMaxRotation(FleshGolemEntity animatable) {
+        return 0.0F;
     }
 }
