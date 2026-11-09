@@ -76,7 +76,7 @@ public final class MarkHelper {
 
     /**
      * Frees the player of whatever Mark they bear: the state and, with Curios, the item in the slot. This is what a
-     * Scroll of Salvation does - the Mark itself is gone, it does not come back as an item.
+     * Scroll of Splitter does - the Mark itself is gone, it does not come back as an item.
      */
     public static void clear(Player player) {
         player.setData(ModAttachments.EQUIPPED_MARK, "");

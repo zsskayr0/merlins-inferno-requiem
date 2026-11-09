@@ -396,6 +396,12 @@ public final class ModBlockStateProvider extends BlockStateProvider {
         ModelFile cluster = models().cross("lyrium_cluster", clusterTexture).renderType("cutout");
         directionalBlock(ModBlocks.LYRIUM_CLUSTER.get(), cluster);
         itemModels().withExistingParent("lyrium_cluster", "item/generated").texture("layer0", clusterTexture);
+        simpleBlock(ModBlocks.RED_LYRIUM_BLOCK.get());
+        itemModels().simpleBlockItem(ModBlocks.RED_LYRIUM_BLOCK.get());
+        ResourceLocation redTexture = modLoc("block/red_lyrium_cluster");
+        ModelFile redCluster = models().cross("red_lyrium_cluster", redTexture).renderType("cutout");
+        directionalBlock(ModBlocks.RED_LYRIUM_CLUSTER.get(), redCluster);
+        itemModels().withExistingParent("red_lyrium_cluster", "item/generated").texture("layer0", redTexture);
     }
 
     /** The Sacred Church's altar (vanilla chiselled-quartz look) and its gold crystal (the Lyrium cluster's model). */

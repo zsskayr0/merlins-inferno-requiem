@@ -23,6 +23,9 @@ public final class ModFeatures {
     // trunk/foliage placer setup.
     public static final DeferredHolder<Feature<?>, StructurePasteFeature> STRUCTURE_PASTE = FEATURES.register("structure_paste",
             () -> new StructurePasteFeature(StructurePasteConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.GiantRedLyriumGeodeFeature> GIANT_RED_LYRIUM_GEODE =
+            FEATURES.register("giant_red_lyrium_geode", () -> new dev.zsskayr.merlins_inferno.worldgen.feature.GiantRedLyriumGeodeFeature(
+                    net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration.CODEC));
 
     // A taller, wider huge fungus for the Oblivion Forest (stem/hat/decor and height range are data).
     public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.TallFungusFeature> TALL_FUNGUS =

@@ -88,7 +88,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
                 ModBlocks.PORCELAIN_SLAB.get(),
                 ModBlocks.POLISHED_PORCELAIN_SLAB.get(),
                 ModBlocks.HELL_FORGE_CONTROLLER.get(), ModBlocks.DEMONIC_CORE.get(), ModBlocks.HELL_FORGE_VAULT.get(),
-                ModBlocks.LYRIUM_BLOCK.get(), ModBlocks.LUMINITE_BLOCK.get(),
+                ModBlocks.LYRIUM_BLOCK.get(), ModBlocks.RED_LYRIUM_BLOCK.get(), ModBlocks.LUMINITE_BLOCK.get(),
                 ModBlocks.METEORITE.get(), ModBlocks.SMOOTH_METEORITE.get(), ModBlocks.SMOOTH_METEORITE_STAIRS.get(),
                 ModBlocks.SMOOTH_METEORITE_SLAB.get(), ModBlocks.SMOOTH_METEORITE_WALL.get(), ModBlocks.METEORITE_BRICKS.get(),
                 ModBlocks.METEORITE_BRICKS_STAIRS.get(), ModBlocks.METEORITE_BRICKS_SLAB.get(), ModBlocks.METEORITE_BRICKS_WALL.get(),
@@ -219,6 +219,7 @@ public final class ModBlockLootProvider extends BlockLootSubProvider {
         add(ModBlocks.TALL_BLACK_GRASS.get(), createSinglePropConditionTable(ModBlocks.TALL_BLACK_GRASS.get(), DoublePlantBlock.HALF, DoubleBlockHalf.LOWER));
         // Ores drop Raw Lyrium (with Fortune) or themselves under Silk Touch, like emerald ore.
         dropSelf(ModBlocks.LYRIUM_BLOCK.get());
+        dropSelf(ModBlocks.RED_LYRIUM_BLOCK.get());
         dropSelf(ModBlocks.LUMINITE_BLOCK.get());
         dropSelf(ModBlocks.METEORITE.get());
         dropSelf(ModBlocks.SMOOTH_METEORITE.get());

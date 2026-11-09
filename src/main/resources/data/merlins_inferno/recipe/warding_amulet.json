@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " G ",
+    "GLG",
+    " A "
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "L": {
+      "item": "merlins_inferno:luminite_gem"
+    },
+    "A": {
+      "item": "merlins_inferno:angelic_essence"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:warding_amulet"
+  }
+}

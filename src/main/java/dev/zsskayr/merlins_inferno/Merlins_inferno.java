@@ -89,6 +89,7 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.CircleSyncHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.ArganiteRetrogen());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.RedLyriumSpikeRetrogen());
         NeoForge.EVENT_BUS.register(new DemonbloodCombatHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.OblivionSpawnBias());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.PurifiedObsidianDropHandler());
@@ -106,6 +107,8 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.AntivenomHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.RowanwoodUnlockHandler());
         NeoForge.EVENT_BUS.register(new SanctifiedTickHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.DemonifiedTickHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.DemonifiedCombatHandler());
         NeoForge.EVENT_BUS.register(new SanctifiedCombatHandler());
         NeoForge.EVENT_BUS.register(new SeraphiumCombatHandler());
         NeoForge.EVENT_BUS.register(new HolyCombatHandler());

@@ -16,6 +16,9 @@ public final class ModConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> CASCADE_PINK_TREE = key("cascade_pink_tree");
     public static final ResourceKey<ConfiguredFeature<?, ?>> CASCADE_BLUE_SPRUCE = key("cascade_blue_spruce");
     public static final ResourceKey<ConfiguredFeature<?, ?>> LYRIUM_GEODE = key("lyrium_geode");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> RED_LYRIUM_GEODE = key("red_lyrium_geode");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> LYRIUM_GEODE_MIX = key("lyrium_geode_mix");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> GIANT_RED_LYRIUM_GEODE = key("giant_red_lyrium_geode");
     public static final ResourceKey<ConfiguredFeature<?, ?>> SNOWY_ICE_SPIKES = key("snowy_ice_spikes");
     public static final ResourceKey<ConfiguredFeature<?, ?>> LYRIUM_SPIKES = key("lyrium_spikes");
     public static final ResourceKey<ConfiguredFeature<?, ?>> GIANT_LYRIUM_SPIKE = key("giant_lyrium_spike");

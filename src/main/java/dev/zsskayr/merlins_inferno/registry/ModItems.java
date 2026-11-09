@@ -262,6 +262,7 @@ public final class ModItems {
     // item - holding it already triggers Sanctified (see SanctifiedTickHandler) at a level that
     // includes the Undead damage bonus, which is the whole point of carrying it into a fight.
     public static final DeferredItem<Item> LYRIUM_RAW = ITEMS.registerSimpleItem("lyrium_raw", new Item.Properties());
+    public static final DeferredItem<Item> RED_LYRIUM_RAW = ITEMS.registerSimpleItem("red_lyrium_raw", new Item.Properties());
     // Stage 2: smelting raw Lyrium (the "quick and dirty" process, early-game accessible) gives
     // this - safe to carry/store (does not trigger Sanctified) and usable in basic potions later.
     public static final DeferredItem<Item> LYRIUM_IMPURE = ITEMS.registerSimpleItem("lyrium_impure", new Item.Properties());
@@ -274,6 +275,11 @@ public final class ModItems {
     // for future altar/structure content).
     public static final DeferredItem<Item> LYRIUM_PURE = ITEMS.registerSimpleItem("lyrium_pure", new Item.Properties());
     public static final DeferredItem<Item> LYRIUM_TRUE = ITEMS.registerSimpleItem("lyrium_true", new Item.Properties());
+    // Red Lyrium mirrors the same stages.
+    public static final DeferredItem<Item> RED_LYRIUM_IMPURE = ITEMS.registerSimpleItem("red_lyrium_impure", new Item.Properties());
+    public static final DeferredItem<Item> RED_LYRIUM_REFINED = ITEMS.registerSimpleItem("red_lyrium_refined", new Item.Properties());
+    public static final DeferredItem<Item> RED_LYRIUM_PURE = ITEMS.registerSimpleItem("red_lyrium_pure", new Item.Properties());
+    public static final DeferredItem<Item> RED_LYRIUM_TRUE = ITEMS.registerSimpleItem("red_lyrium_true", new Item.Properties());
 
     // Elias' essence retains the existing holy recipes; Celestial Essence is a separate cosmic resource.
     public static final DeferredItem<Item> ANGELIC_ESSENCE = ITEMS.registerSimpleItem("angelic_essence", new Item.Properties());
@@ -414,6 +420,8 @@ public final class ModItems {
     // --- Lyrium geode blocks (see ModBlocks). The cluster drops Raw Lyrium. ---
     public static final DeferredItem<BlockItem> LYRIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LYRIUM_BLOCK);
     public static final DeferredItem<BlockItem> LYRIUM_CLUSTER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LYRIUM_CLUSTER);
+    public static final DeferredItem<BlockItem> RED_LYRIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.RED_LYRIUM_BLOCK);
+    public static final DeferredItem<BlockItem> RED_LYRIUM_CLUSTER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.RED_LYRIUM_CLUSTER);
 
     // --- Sacred Church blocks (creative/admin only in practice: the altar is unbreakable). ---
     public static final DeferredItem<BlockItem> SACRED_ALTAR_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SACRED_ALTAR);
@@ -577,6 +585,11 @@ public final class ModItems {
     /** Drinkable: ten minutes of immunity to Poison. */
     public static final DeferredItem<AntidoteItem> ANTIDOTE = ITEMS.registerItem("antidote",
             props -> new AntidoteItem(props.stacksTo(16).rarity(Rarity.UNCOMMON)));
+    // Wards against Red Lyrium's Demonified (mark.DemonifiedWard): the amulet anywhere in the inventory or a Curios slot, the elixir for five minutes.
+    public static final DeferredItem<Item> WARDING_AMULET = ITEMS.registerSimpleItem("warding_amulet",
+            new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.WardingElixirItem> WARDING_ELIXIR = ITEMS.registerItem("warding_elixir",
+            props -> new dev.zsskayr.merlins_inferno.item.WardingElixirItem(props.stacksTo(16).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<Item> FLAME_OF_GOD = ITEMS.registerSimpleItem("flame_of_god",
             new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
     // Found in the Sacred Church's chest. Survives death (see event.PandoraHandler).
@@ -594,12 +607,27 @@ public final class ModItems {
             props -> new PortalKeyItem(props.stacksTo(1).rarity(Rarity.RARE).fireResistant(), "forest"));
 
     // --- Marks (item.MarkItem): cursed, soulbound power that binds to its bearer; the Curios slot is "mark". ---
-    /** 6% from Cain. What it does lives in the Mark handlers; it is cured only by a Scroll of Salvation. */
+    /** 6% from Cain. What it does lives in the Mark handlers; it is cured only by a Scroll of Splitter. */
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MarkItem> MARK_OF_CAIN = ITEMS.registerItem("mark_of_cain",
             props -> new dev.zsskayr.merlins_inferno.item.MarkItem(props.rarity(Rarity.EPIC)));
     /** The only cure for a Mark: a Cleric's expensive trade, or rarely the Sacred Priest's drop. */
-    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ScrollOfSalvationItem> SCROLL_OF_SALVATION = ITEMS.registerItem("scroll_of_salvation",
-            props -> new dev.zsskayr.merlins_inferno.item.ScrollOfSalvationItem(props.stacksTo(1).rarity(Rarity.RARE)));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ScrollOfSplitterItem> SCROLL_OF_SPLITTER = ITEMS.registerItem("scroll_of_splitter",
+            props -> new dev.zsskayr.merlins_inferno.item.ScrollOfSplitterItem(props.stacksTo(1).rarity(Rarity.RARE)));
+
+    // --- Runes: crafting reagents, no use yet. Which rune is which is meant to be shuffled per world (planned). ---
+    public static final DeferredItem<Item> RUNE_KAUNAN = ITEMS.registerSimpleItem("rune_kaunan", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> RUNE_SOWILO = ITEMS.registerSimpleItem("rune_sowilo", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> RUNE_LAGUZ = ITEMS.registerSimpleItem("rune_laguz", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> RUNE_YNGVI = ITEMS.registerSimpleItem("rune_yngvi", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> RUNE_GYFU = ITEMS.registerSimpleItem("rune_gyfu", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> RUNE_RAIDO = ITEMS.registerSimpleItem("rune_raido", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> RUNE_ISAZ = ITEMS.registerSimpleItem("rune_isaz", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> RUNE_MANNAZ = ITEMS.registerSimpleItem("rune_mannaz", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> RUNE_NAUDIZ = ITEMS.registerSimpleItem("rune_naudiz", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> RUNE_BERKANAN = ITEMS.registerSimpleItem("rune_berkanan", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> RUNE_ODAL = ITEMS.registerSimpleItem("rune_odal", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> RUNE_TIWAZ = ITEMS.registerSimpleItem("rune_tiwaz", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> RUNE_SKULL = ITEMS.registerSimpleItem("rune_skull", new Item.Properties().rarity(Rarity.UNCOMMON));
 
     // --- Circle 1 legendary swords (one per route, equal power): the Hollow Relic (very rare boss/miniboss drop, one use) is the crafting core of each. ---
     public static final DeferredItem<SwordItem> HOLLOW_RELIC = ITEMS.registerItem("hollow_relic",

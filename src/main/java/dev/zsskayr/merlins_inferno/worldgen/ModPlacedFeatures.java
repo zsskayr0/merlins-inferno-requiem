@@ -17,6 +17,10 @@ public final class ModPlacedFeatures {
     public static final ResourceKey<PlacedFeature> CASCADE_PINK_TREE_PLACED = key("cascade_pink_tree_placed");
     public static final ResourceKey<PlacedFeature> CASCADE_BLUE_SPRUCE_PLACED = key("cascade_blue_spruce_placed");
     public static final ResourceKey<PlacedFeature> LYRIUM_GEODE_PLACED = key("lyrium_geode_placed");
+    public static final ResourceKey<PlacedFeature> LYRIUM_GEODE_SELECTOR_NORMAL = key("lyrium_geode_selector_normal");
+    public static final ResourceKey<PlacedFeature> LYRIUM_GEODE_SELECTOR_RED = key("lyrium_geode_selector_red");
+    public static final ResourceKey<PlacedFeature> OBLIVION_RED_LYRIUM_GEODE = key("oblivion_red_lyrium_geode");
+    public static final ResourceKey<PlacedFeature> OBLIVION_GIANT_RED_LYRIUM_GEODE = key("oblivion_giant_red_lyrium_geode");
     public static final ResourceKey<PlacedFeature> SNOWY_ICE_SPIKES_FROSTCREST = key("snowy_ice_spikes_frostcrest");
     public static final ResourceKey<PlacedFeature> SNOWY_ICE_SPIKES_RIME = key("snowy_ice_spikes_rime");
     public static final ResourceKey<PlacedFeature> LYRIUM_SPIKES_FROSTCREST = key("lyrium_spikes_frostcrest");

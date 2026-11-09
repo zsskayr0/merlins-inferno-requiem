@@ -28,10 +28,16 @@ public final class ModEffects {
     // generic recolored ENTITY_EFFECT swirl - a SimpleParticleType doubles as its own ParticleOptions.
     public static final DeferredHolder<MobEffect, SanctifiedEffect> SANCTIFIED = MOB_EFFECTS.register("sanctified",
             () -> new SanctifiedEffect(MobEffectCategory.HARMFUL, 0xAEE8FF, ModParticles.SANCTIFIED_TYPE));
+    public static final DeferredHolder<MobEffect, dev.zsskayr.merlins_inferno.effect.DemonifiedEffect> DEMONIFIED = MOB_EFFECTS.register("demonified",
+            dev.zsskayr.merlins_inferno.effect.DemonifiedEffect::new);
 
     // Andras' brand: the bearer takes extra damage (see event.MarkOfDebtHandler). Blood red.
     public static final DeferredHolder<MobEffect, MarkOfDebtEffect> MARK_OF_DEBT = MOB_EFFECTS.register("mark_of_debt",
             () -> new MarkOfDebtEffect(MobEffectCategory.HARMFUL, 0x8B1A1A));
+
+    // Drunk from an Elixir of Warding: immunity to Demonified. See mark.DemonifiedWard.
+    public static final DeferredHolder<MobEffect, MarkOfDebtEffect> WARDED = MOB_EFFECTS.register("warded",
+            () -> new MarkOfDebtEffect(MobEffectCategory.BENEFICIAL, 0xF2DC8A));
 
     // Drunk from an Antidote: immunity to Poison (Ostara's petals included). See event.AntivenomHandler.
     public static final DeferredHolder<MobEffect, MarkOfDebtEffect> ANTIVENOM = MOB_EFFECTS.register("antivenom",

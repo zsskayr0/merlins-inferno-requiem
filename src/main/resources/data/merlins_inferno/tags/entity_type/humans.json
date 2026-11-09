@@ -7,6 +7,9 @@
     "merlins_inferno:sacred_cultist",
     "merlins_inferno:sacred_priest",
     "merlins_inferno:templar",
+    "merlins_inferno:elias",
+    "merlins_inferno:druid",
+    "merlins_inferno:ostara",
     {"id": "#tensura:human_like", "required": false}
   ]
 }

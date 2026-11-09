@@ -245,11 +245,18 @@ public class MarkOfCainHandler {
 
     @SubscribeEvent
     public void onEffectApplicable(MobEffectEvent.Applicable event) {
-        if (bearsCain(event.getEntity())) {
-            MobEffectInstance effect = event.getEffectInstance();
-            if (effect != null && effect.is(MobEffects.POISON)) {
-                event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
-            }
+        MobEffectInstance effect = event.getEffectInstance();
+        if (effect == null) return;
+        LivingEntity entity = event.getEntity();
+        if (bearsCain(entity) && effect.is(MobEffects.POISON)) {
+            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
+        }
+        // Red Lyrium's corruption has nothing left to take from Cain's bearer, or from whoever wields the Dark Coven.
+        if (effect.is(dev.zsskayr.merlins_inferno.registry.ModEffects.DEMONIFIED) && (bearsCain(entity)
+                || dev.zsskayr.merlins_inferno.mark.DemonifiedWard.isWarded(entity)
+                || entity.getMainHandItem().getItem() instanceof dev.zsskayr.merlins_inferno.item.DarkCovenItem
+                || entity.getOffhandItem().getItem() instanceof dev.zsskayr.merlins_inferno.item.DarkCovenItem)) {
+            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
         }
     }
 

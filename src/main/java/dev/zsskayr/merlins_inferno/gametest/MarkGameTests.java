@@ -154,14 +154,14 @@ public final class MarkGameTests {
     }
 
     @GameTest(template = "bench_empty")
-    public static void theScrollOfSalvationFreesAMarkedPlayerOnly(GameTestHelper h) {
+    public static void theScrollOfSplitterFreesAMarkedPlayerOnly(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
-        ItemStack scroll = new ItemStack(ModItems.SCROLL_OF_SALVATION.get());
+        ItemStack scroll = new ItemStack(ModItems.SCROLL_OF_SPLITTER.get());
         player.setItemInHand(InteractionHand.MAIN_HAND, scroll);
-        ModItems.SCROLL_OF_SALVATION.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        ModItems.SCROLL_OF_SPLITTER.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
         h.assertTrue(!scroll.isEmpty(), "Without a Mark the scroll is not wasted");
         MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
-        ModItems.SCROLL_OF_SALVATION.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        ModItems.SCROLL_OF_SPLITTER.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
         h.assertTrue(!MarkHelper.hasMark(player), "Reading it frees the bearer");
         h.assertTrue(scroll.isEmpty(), "and it is used up");
         h.succeed();

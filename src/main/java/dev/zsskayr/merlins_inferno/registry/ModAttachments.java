@@ -20,6 +20,8 @@ public final class ModAttachments {
     /** See {@link SanctifiedProgress} - deliberately not serialized, this is throwaway state. */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<SanctifiedProgress>> SANCTIFIED_PROGRESS =
             ATTACHMENT_TYPES.register("sanctified_progress", () -> AttachmentType.builder(SanctifiedProgress::new).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SanctifiedProgress>> DEMONIFIED_PROGRESS =
+            ATTACHMENT_TYPES.register("demonified_progress", () -> AttachmentType.builder(SanctifiedProgress::new).build());
 
     /** Set when the player died holding a Pandora Box: it is handed back on respawn (see PandoraHandler). */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> RETURN_PANDORA_BOX =
@@ -88,6 +90,10 @@ public final class ModAttachments {
     /** Chunk attachment: set once the Arganite vein retrogen has run on the chunk (see ArganiteRetrogen). */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> ARGANITE_VEINS_DONE =
             ATTACHMENT_TYPES.register("arganite_veins_done", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
+
+    /** Chunk attachment: set once the Oblivion's Red Lyrium spikes have been rolled on the chunk (see RedLyriumSpikeRetrogen). */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> RED_SPIKES_DONE =
+            ATTACHMENT_TYPES.register("red_spikes_done", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
 
     /**
      * The Excalibur a player's awakening took out of their inventory (entity.ExcaliburAwakening), until it is put back.

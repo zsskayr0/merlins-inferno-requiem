@@ -1,0 +1,9 @@
+{
+  "feature": "merlins_inferno:red_lyrium_geode",
+  "placement": [
+    {
+      "type": "merlins_inferno:circle_at_least",
+      "circle": 2
+    }
+  ]
+}

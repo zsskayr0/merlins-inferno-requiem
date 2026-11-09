@@ -14,6 +14,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.portal.OblivionDimension;
+import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
 
 /**
  * Placement modifiers of this mod. {@code merlins_inferno:in_oblivion} lets a feature generate only in the Oblivion
@@ -25,6 +26,10 @@ public final class ModPlacementModifiers {
 
     public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<InOblivion>> IN_OBLIVION =
             PLACEMENT_MODIFIERS.register("in_oblivion", () -> () -> InOblivion.CODEC);
+    public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<CircleAtLeast>> CIRCLE_AT_LEAST =
+            PLACEMENT_MODIFIERS.register("circle_at_least", () -> () -> CircleAtLeast.CODEC);
+    public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<CircleBelow>> CIRCLE_BELOW =
+            PLACEMENT_MODIFIERS.register("circle_below", () -> () -> CircleBelow.CODEC);
 
     private ModPlacementModifiers() {
     }
@@ -45,5 +50,25 @@ public final class ModPlacementModifiers {
         public PlacementModifierType<?> type() {
             return IN_OBLIVION.get();
         }
+    }
+
+    public static final class CircleAtLeast extends PlacementFilter {
+        public static final MapCodec<CircleAtLeast> CODEC = net.minecraft.util.ExtraCodecs.POSITIVE_INT.fieldOf("circle").xmap(CircleAtLeast::new, value -> value.circle);
+        private final int circle;
+        public CircleAtLeast(int circle) { this.circle = circle; }
+        @Override protected boolean shouldPlace(PlacementContext context, RandomSource random, BlockPos pos) {
+            return ProgressionHelper.hasReached(context.getLevel().getLevel(), circle);
+        }
+        @Override public PlacementModifierType<?> type() { return CIRCLE_AT_LEAST.get(); }
+    }
+
+    public static final class CircleBelow extends PlacementFilter {
+        public static final MapCodec<CircleBelow> CODEC = net.minecraft.util.ExtraCodecs.POSITIVE_INT.fieldOf("circle").xmap(CircleBelow::new, value -> value.circle);
+        private final int circle;
+        public CircleBelow(int circle) { this.circle = circle; }
+        @Override protected boolean shouldPlace(PlacementContext context, RandomSource random, BlockPos pos) {
+            return !ProgressionHelper.hasReached(context.getLevel().getLevel(), circle);
+        }
+        @Override public PlacementModifierType<?> type() { return CIRCLE_BELOW.get(); }
     }
 }

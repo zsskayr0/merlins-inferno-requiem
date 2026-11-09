@@ -17,8 +17,8 @@ import net.minecraft.world.level.Level;
 import dev.zsskayr.merlins_inferno.mark.MarkHelper;
 
 /** The one cure for a Mark (besides creative): read it - with the Totem of Undying's pop-up - and the bearer is free; the Mark is gone for good. */
-public class ScrollOfSalvationItem extends Item {
-    public ScrollOfSalvationItem(Properties properties) {
+public class ScrollOfSplitterItem extends Item {
+    public ScrollOfSplitterItem(Properties properties) {
         super(properties);
     }
 
@@ -27,7 +27,7 @@ public class ScrollOfSalvationItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         if (!MarkHelper.hasMark(player)) {
             if (!level.isClientSide) {
-                player.displayClientMessage(Component.translatable("item.merlins_inferno.scroll_of_salvation.no_mark"), true);
+                player.displayClientMessage(Component.translatable("item.merlins_inferno.scroll_of_splitter.no_mark"), true);
             }
             return InteractionResultHolder.fail(stack);
         }
@@ -41,7 +41,7 @@ public class ScrollOfSalvationItem extends Item {
                 serverPlayer.serverLevel().sendParticles(net.minecraft.core.particles.ParticleTypes.TOTEM_OF_UNDYING,
                         player.getX(), player.getY() + 1.0, player.getZ(), 30, 0.4, 0.8, 0.4, 0.4);
             }
-            player.displayClientMessage(Component.translatable("item.merlins_inferno.scroll_of_salvation.freed"), true);
+            player.displayClientMessage(Component.translatable("item.merlins_inferno.scroll_of_splitter.freed"), true);
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
@@ -51,6 +51,6 @@ public class ScrollOfSalvationItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.merlins_inferno.scroll_of_salvation.tooltip").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.merlins_inferno.scroll_of_splitter.tooltip").withStyle(ChatFormatting.GRAY));
     }
 }

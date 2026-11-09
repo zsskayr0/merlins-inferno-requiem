@@ -1,0 +1,26 @@
+{
+  "feature": "merlins_inferno:giant_red_lyrium_geode",
+  "placement": [
+    {
+      "type": "merlins_inferno:in_oblivion"
+    },
+    {
+      "type": "merlins_inferno:circle_at_least",
+      "circle": 3
+    },
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 600
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "OCEAN_FLOOR_WG"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

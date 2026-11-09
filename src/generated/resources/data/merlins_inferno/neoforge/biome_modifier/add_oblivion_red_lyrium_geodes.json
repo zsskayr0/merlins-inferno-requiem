@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_nether",
+  "features": [
+    "merlins_inferno:oblivion_red_lyrium_geode",
+    "merlins_inferno:oblivion_giant_red_lyrium_geode"
+  ],
+  "step": "underground_decoration"
+}

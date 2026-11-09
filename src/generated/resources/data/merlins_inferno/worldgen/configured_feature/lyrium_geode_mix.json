@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "default": "merlins_inferno:lyrium_geode_selector_normal",
+    "features": [
+      {
+        "chance": 0.13,
+        "feature": "merlins_inferno:lyrium_geode_selector_red"
+      }
+    ]
+  }
+}

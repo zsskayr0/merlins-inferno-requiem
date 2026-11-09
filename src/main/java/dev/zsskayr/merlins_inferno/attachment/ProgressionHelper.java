@@ -11,7 +11,7 @@ import dev.zsskayr.merlins_inferno.network.CirclePayload;
 
 /**
  * The world's Circle: 1 until the Pandora Box ritual is performed by anyone, 2 after it; 3 is a valid value that does
- * nothing yet. The ritual only raises it; {@code /gamerule circle <1-3>} sets it either way. The value is the world's
+ * enables later content such as giant Oblivion red-lyrium geodes. The ritual only raises it; {@code /gamerule circle <1-3>} sets it either way. The value is the world's
  * {@code circle} game rule, so it is saved with the world; clients keep a synced copy that {@link #circle(Player)}
  * reads on the logical client.
  */

@@ -495,6 +495,12 @@ public final class ModBlocks {
     // Same shape/size as an amethyst cluster (height 7, offset 3), drops Raw Lyrium - see its loot table.
     public static final DeferredBlock<LyriumClusterBlock> LYRIUM_CLUSTER = BLOCKS.registerBlock("lyrium_cluster",
             props -> new LyriumClusterBlock(7.0F, 3.0F, props), BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_CLUSTER).lightLevel(state -> 15));
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.RedLyriumBlock> RED_LYRIUM_BLOCK = BLOCKS.registerBlock("red_lyrium_block",
+            dev.zsskayr.merlins_inferno.block.RedLyriumBlock::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK).lightLevel(state -> 12).pushReaction(PushReaction.BLOCK));
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.RedLyriumClusterBlock> RED_LYRIUM_CLUSTER = BLOCKS.registerBlock("red_lyrium_cluster",
+            props -> new dev.zsskayr.merlins_inferno.block.RedLyriumClusterBlock(7.0F, 3.0F, props),
+            BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_CLUSTER).lightLevel(state -> 12));
 
     // --- Sacred Church (Elias's). The altar holds the church's state, so it can't be broken in survival and
     // drops nothing. The Great Bell that empowers Elias is built from vanilla blocks (see GreatBell). ---

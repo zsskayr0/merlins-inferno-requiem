@@ -20,6 +20,9 @@ import net.minecraft.world.level.levelgen.GeodeLayerSettings;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.GeodeConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.WeightedPlacedFeature;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -34,6 +37,9 @@ import net.neoforged.neoforge.common.world.BiomeModifier;
 
 import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.registry.ModBlocks;
+import dev.zsskayr.merlins_inferno.registry.ModFeatures;
+import dev.zsskayr.merlins_inferno.registry.ModPlacementModifiers;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import dev.zsskayr.merlins_inferno.worldgen.ModConfiguredFeatures;
 import dev.zsskayr.merlins_inferno.worldgen.ModPlacedFeatures;
 
@@ -71,10 +77,32 @@ public final class ModLyriumProvider {
                 0.35, 0.083, false,
                 UniformInt.of(4, 6), UniformInt.of(3, 4), UniformInt.of(1, 2),
                 -16, 16, 0.05, 1)));
+        BlockStateProvider redLining = BlockStateProvider.simple(ModBlocks.RED_LYRIUM_BLOCK.get());
+        context.register(ModConfiguredFeatures.RED_LYRIUM_GEODE, new ConfiguredFeature<>(Feature.GEODE, new GeodeConfiguration(
+                new GeodeBlockSettings(BlockStateProvider.simple(Blocks.AIR), redLining, redLining,
+                        BlockStateProvider.simple(ModBlocks.BLIGHTSTONE.get()), BlockStateProvider.simple(Blocks.SMOOTH_BASALT),
+                        List.of(ModBlocks.RED_LYRIUM_CLUSTER.get().defaultBlockState()),
+                        BlockTags.FEATURES_CANNOT_REPLACE, BlockTags.GEODE_INVALID_BLOCKS),
+                new GeodeLayerSettings(1.7, 2.2, 3.2, 4.2), new GeodeCrackSettings(0.95, 2.0, 2),
+                0.35, 0.083, false, UniformInt.of(4, 6), UniformInt.of(3, 4), UniformInt.of(1, 2),
+                -16, 16, 0.05, 1)));
+        HolderGetter<PlacedFeature> placed = context.lookup(Registries.PLACED_FEATURE);
+        context.register(ModConfiguredFeatures.LYRIUM_GEODE_MIX, new ConfiguredFeature<>(Feature.RANDOM_SELECTOR,
+                new RandomFeatureConfiguration(List.of(new WeightedPlacedFeature(
+                        placed.getOrThrow(ModPlacedFeatures.LYRIUM_GEODE_SELECTOR_RED), 0.13F)),
+                        placed.getOrThrow(ModPlacedFeatures.LYRIUM_GEODE_SELECTOR_NORMAL))));
+        context.register(ModConfiguredFeatures.GIANT_RED_LYRIUM_GEODE,
+                new ConfiguredFeature<>(ModFeatures.GIANT_RED_LYRIUM_GEODE.get(), NoneFeatureConfiguration.INSTANCE));
     }
 
     public static void bootstrapPlacedFeatures(BootstrapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configured = context.lookup(Registries.CONFIGURED_FEATURE);
+        context.register(ModPlacedFeatures.LYRIUM_GEODE_SELECTOR_NORMAL,
+                new PlacedFeature(configured.getOrThrow(ModConfiguredFeatures.LYRIUM_GEODE), List.of()));
+        context.register(ModPlacedFeatures.LYRIUM_GEODE_SELECTOR_RED,
+                new PlacedFeature(configured.getOrThrow(ModConfiguredFeatures.RED_LYRIUM_GEODE),
+                        // Red Lyrium belongs to Circle 2 onwards; before that the roll simply comes up empty.
+                        List.of(new ModPlacementModifiers.CircleAtLeast(2))));
 
         // One in 16 chunks of mountain (vanilla's amethyst geode is one in 24, but it can generate
         // anywhere underground - this one only in mountains, so it has to be denser to be found). The origin goes
@@ -83,7 +111,7 @@ public final class ModLyriumProvider {
         // beside it is lower than the ground above it: 12-22 blocks still left the shell of most geodes standing on
         // the hillside. Down here it stays under the surface and is found where mountain caves, ravines and cliffs
         // crack it open.
-        context.register(ModPlacedFeatures.LYRIUM_GEODE_PLACED, new PlacedFeature(configured.getOrThrow(ModConfiguredFeatures.LYRIUM_GEODE), List.of(
+        context.register(ModPlacedFeatures.LYRIUM_GEODE_PLACED, new PlacedFeature(configured.getOrThrow(ModConfiguredFeatures.LYRIUM_GEODE_MIX), List.of(
                 RarityFilter.onAverageOnceEvery(16),
                 InSquarePlacement.spread(),
                 HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG),
@@ -91,6 +119,19 @@ public final class ModLyriumProvider {
                 RandomOffsetPlacement.vertical(UniformInt.of(-15, -12)),
                 RandomOffsetPlacement.vertical(UniformInt.of(-15, -12)),
                 BiomeFilter.biome())));
+        context.register(ModPlacedFeatures.OBLIVION_RED_LYRIUM_GEODE,
+                new PlacedFeature(configured.getOrThrow(ModConfiguredFeatures.RED_LYRIUM_GEODE), List.of(
+                        new ModPlacementModifiers.InOblivion(), new ModPlacementModifiers.CircleAtLeast(2),
+                        RarityFilter.onAverageOnceEvery(48),
+                        InSquarePlacement.spread(), HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG),
+                        RandomOffsetPlacement.vertical(UniformInt.of(-14, -11)),
+                        RandomOffsetPlacement.vertical(UniformInt.of(-14, -11)), BiomeFilter.biome())));
+        context.register(ModPlacedFeatures.OBLIVION_GIANT_RED_LYRIUM_GEODE,
+                new PlacedFeature(configured.getOrThrow(ModConfiguredFeatures.GIANT_RED_LYRIUM_GEODE), List.of(
+                        new ModPlacementModifiers.InOblivion(), new ModPlacementModifiers.CircleAtLeast(3),
+                        // A landmark, not scenery: about one per 25x25 chunks.
+                        RarityFilter.onAverageOnceEvery(600), InSquarePlacement.spread(),
+                        HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG), BiomeFilter.biome())));
     }
 
     public static void bootstrapBiomeModifiers(BootstrapContext<BiomeModifier> context) {
@@ -100,6 +141,11 @@ public final class ModLyriumProvider {
         context.register(modifierKey("add_lyrium_geode"), new BiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_MOUNTAIN),
                 HolderSet.direct(placed.getOrThrow(ModPlacedFeatures.LYRIUM_GEODE_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_DECORATION));
+        context.register(modifierKey("add_oblivion_red_lyrium_geodes"), new BiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_NETHER),
+                HolderSet.direct(placed.getOrThrow(ModPlacedFeatures.OBLIVION_RED_LYRIUM_GEODE),
+                        placed.getOrThrow(ModPlacedFeatures.OBLIVION_GIANT_RED_LYRIUM_GEODE)),
                 GenerationStep.Decoration.UNDERGROUND_DECORATION));
     }
 
