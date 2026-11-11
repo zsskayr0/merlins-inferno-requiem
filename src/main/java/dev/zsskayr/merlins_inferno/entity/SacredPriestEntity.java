@@ -105,6 +105,9 @@ public class SacredPriestEntity extends PathfinderMob implements GeoEntity, Chur
     @Nullable
     private MerchantOffers offers;
     private long restockDay = -1;
+    /** He levels like a villager: 1 to {@link LyriumVillagerTrades#PRIEST_MAX_LEVEL}, each level opening a tier of offers. */
+    private int priestLevel = 1;
+    private int priestXp;
     /** Where he stands during the night service - behind the altar, facing the nave - or null if he has no post. */
     @Nullable
     private Vec3 servicePost;
@@ -269,7 +272,7 @@ public class SacredPriestEntity extends PathfinderMob implements GeoEntity, Chur
         }
         if (!this.level().isClientSide) {
             this.setTradingPlayer(player);
-            this.openTradingScreen(player, this.getDisplayName(), 1);
+            this.openTradingScreen(player, this.getDisplayName(), this.priestLevel);
         }
         return InteractionResult.sidedSuccess(this.level().isClientSide);
     }
@@ -292,7 +295,10 @@ public class SacredPriestEntity extends PathfinderMob implements GeoEntity, Chur
     @Override
     public MerchantOffers getOffers() {
         if (this.offers == null) {
-            this.offers = LyriumVillagerTrades.priestOffers(this.registryAccess());
+            this.offers = new MerchantOffers();
+            for (int tier = 1; tier <= this.priestLevel; tier++) {
+                this.offers.addAll(LyriumVillagerTrades.priestTier(this.registryAccess(), tier));
+            }
         }
         return this.offers;
     }
@@ -305,6 +311,14 @@ public class SacredPriestEntity extends PathfinderMob implements GeoEntity, Chur
     @Override
     public void notifyTrade(MerchantOffer offer) {
         offer.increaseUses();
+        if (offer.shouldRewardExp() && this.priestLevel < LyriumVillagerTrades.PRIEST_MAX_LEVEL) {
+            this.priestXp += offer.getXp();
+            if (this.priestXp >= net.minecraft.world.entity.npc.VillagerData.getMaxXpPerLevel(this.priestLevel)) {
+                this.priestLevel++;
+                this.getOffers().addAll(LyriumVillagerTrades.priestTier(this.registryAccess(), this.priestLevel));
+                this.playSound(SoundEvents.VILLAGER_CELEBRATE);
+            }
+        }
         this.ambientSoundTime = -this.getAmbientSoundInterval();
     }
 
@@ -318,17 +332,17 @@ public class SacredPriestEntity extends PathfinderMob implements GeoEntity, Chur
 
     @Override
     public int getVillagerXp() {
-        return 0;
+        return this.priestXp;
     }
 
     @Override
     public void overrideXp(int xp) {
-        // no leveling: his offers are fixed
+        this.priestXp = xp;
     }
 
     @Override
     public boolean showProgressBar() {
-        return false;
+        return this.priestLevel < LyriumVillagerTrades.PRIEST_MAX_LEVEL;
     }
 
     @Override
@@ -458,6 +472,8 @@ public class SacredPriestEntity extends PathfinderMob implements GeoEntity, Chur
             compound.putFloat("PostYaw", this.serviceYaw);
         }
         compound.putBoolean("Alarmed", this.alarmed);
+        compound.putInt("PriestLevel", this.priestLevel);
+        compound.putInt("PriestXp", this.priestXp);
         if (this.offers != null) {
             MerchantOffers.CODEC.encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), this.offers)
                     .ifSuccess(tag -> compound.put("Offers", tag));
@@ -475,7 +491,12 @@ public class SacredPriestEntity extends PathfinderMob implements GeoEntity, Chur
             this.serviceYaw = compound.getFloat("PostYaw");
         }
         this.alarmed = compound.getBoolean("Alarmed");
-        if (compound.contains("Offers")) {
+        if (compound.contains("PriestLevel")) {
+            this.priestLevel = Math.max(1, Math.min(LyriumVillagerTrades.PRIEST_MAX_LEVEL, compound.getInt("PriestLevel")));
+            this.priestXp = compound.getInt("PriestXp");
+        }
+        // Offers saved before he had levels are dropped, so he rebuilds his stock from level 1.
+        if (compound.contains("Offers") && compound.contains("PriestLevel")) {
             MerchantOffers.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.get("Offers"))
                     .ifSuccess(loaded -> this.offers = loaded);
         }
