@@ -2,8 +2,11 @@
   "type": "neoforge:add_table",
   "conditions": [
     {
-      "condition": "neoforge:loot_table_id",
-      "loot_table_id": "minecraft:entities/piglin"
+      "condition": "minecraft:any_of",
+      "terms": [
+        { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:entities/piglin" },
+        { "condition": "minecraft:entity_properties", "entity": "this", "predicate": { "type": "#merlins_inferno:piglin_like" } }
+      ]
     }
   ],
   "table": "merlins_inferno:inject/infernal_sinew"

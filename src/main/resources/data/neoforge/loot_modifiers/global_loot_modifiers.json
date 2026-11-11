@@ -2,6 +2,7 @@
   "replace": false,
   "entries": [
     "merlins_inferno:infernal_essence_from_piglin_bartering",
+    "merlins_inferno:infernal_essence_from_demons",
     "merlins_inferno:infernal_sinew_from_piglins",
     "merlins_inferno:withered_bone_from_wither_skeletons",
     "merlins_inferno:lyrium_refined_from_pillager_loot",
@@ -10,6 +11,8 @@
     "merlins_inferno:devil_flesh_from_nether_chests",
     "merlins_inferno:double_essence",
     "merlins_inferno:ebony_scrap_from_ancient_debris",
-    "merlins_inferno:reaping_book"
+    "merlins_inferno:reaping_book",
+    "merlins_inferno:angelic_essence_from_aether_chests",
+    "merlins_inferno:devil_flesh_from_modded_nether_chests"
   ]
 }

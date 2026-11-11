@@ -1,0 +1,11 @@
+{
+  "type": "neoforge:add_table",
+  "conditions": [
+    {
+      "condition": "minecraft:entity_properties",
+      "entity": "this",
+      "predicate": { "type": "#merlins_inferno:infernal_essence_sources" }
+    }
+  ],
+  "table": "merlins_inferno:inject/infernal_essence_from_demons"
+}

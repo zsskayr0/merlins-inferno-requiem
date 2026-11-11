@@ -2,6 +2,11 @@
   "type": "minecraft:chest",
   "pools": [
     {
+      "rolls": { "type": "minecraft:uniform", "min": 1.0, "max": 3.0 },
+      "bonus_rolls": 0.0,
+      "entries": [ { "type": "minecraft:tag", "name": "merlins_inferno:loot/church", "expand": true } ]
+    },
+    {
       "rolls": {
         "type": "minecraft:uniform",
         "min": 4.0,
@@ -102,6 +107,11 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:diamond",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "merlins_inferno:lyrium_refined",
           "weight": 1
         },
         {

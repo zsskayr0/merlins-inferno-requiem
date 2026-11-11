@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_table",
+  "conditions": [
+    {
+      "condition": "merlins_inferno:loot_table_matches",
+      "patterns": [ "(?!minecraft:|merlins_inferno:)[a-z0-9_.-]+:chests/.*(nether|bastion|fortress|hell|piglin|crimson|warped|soul).*" ]
+    }
+  ],
+  "table": "merlins_inferno:inject/devil_flesh"
+}

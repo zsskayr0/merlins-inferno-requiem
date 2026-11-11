@@ -1,0 +1,60 @@
+{
+  "values": [
+    {
+      "id": "twilightforest:torchberries",
+      "required": false
+    },
+    {
+      "id": "twilightforest:liveroot",
+      "required": false
+    },
+    {
+      "id": "twilightforest:four_leaf_clover",
+      "required": false
+    },
+    {
+      "id": "twilightforest:raven_feather",
+      "required": false
+    },
+    {
+      "id": "twilightforest:magic_map",
+      "required": false
+    },
+    {
+      "id": "iceandfire:pixie_dust",
+      "required": false
+    },
+    {
+      "id": "iceandfire:amythest_gem",
+      "required": false
+    },
+    {
+      "id": "iceandfire:stymphalian_bird_feather",
+      "required": false
+    },
+    {
+      "id": "tensura:elemental_essence",
+      "required": false
+    },
+    {
+      "id": "tensura:magic_ore_shard",
+      "required": false
+    },
+    {
+      "id": "apotheosis:gem_dust",
+      "required": false
+    },
+    {
+      "id": "apotheosis:lucky_foot",
+      "required": false
+    },
+    {
+      "id": "ancient_artifacts:amulet_of_the_sylphs",
+      "required": false
+    },
+    {
+      "id": "ancient_artifacts:sash_of_quickness",
+      "required": false
+    }
+  ]
+}

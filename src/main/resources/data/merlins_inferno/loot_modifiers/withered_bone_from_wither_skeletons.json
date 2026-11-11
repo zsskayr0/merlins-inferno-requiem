@@ -2,8 +2,11 @@
   "type": "neoforge:add_table",
   "conditions": [
     {
-      "condition": "neoforge:loot_table_id",
-      "loot_table_id": "minecraft:entities/wither_skeleton"
+      "condition": "minecraft:any_of",
+      "terms": [
+        { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:entities/wither_skeleton" },
+        { "condition": "minecraft:entity_properties", "entity": "this", "predicate": { "type": "#merlins_inferno:wither_skeleton_like" } }
+      ]
     }
   ],
   "table": "merlins_inferno:inject/withered_bone"

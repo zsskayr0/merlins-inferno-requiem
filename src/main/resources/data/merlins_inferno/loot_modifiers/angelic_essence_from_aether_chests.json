@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_table",
+  "conditions": [
+    {
+      "condition": "merlins_inferno:loot_table_matches",
+      "patterns": [ "(aether|aether_redux|deep_aether|lost_aether_content):chests/.*" ]
+    }
+  ],
+  "table": "merlins_inferno:inject/angelic_essence"
+}

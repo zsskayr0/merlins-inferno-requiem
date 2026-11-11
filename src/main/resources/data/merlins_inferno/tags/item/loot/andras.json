@@ -1,0 +1,56 @@
+{
+  "values": [
+    {
+      "id": "cataclysm:blood_clot",
+      "required": false
+    },
+    {
+      "id": "cataclysm:cursed_eye",
+      "required": false
+    },
+    {
+      "id": "cataclysm:monstrous_horn",
+      "required": false
+    },
+    {
+      "id": "cataclysm:witherite_ingot",
+      "required": false
+    },
+    {
+      "id": "tensura:daemon_essence",
+      "required": false
+    },
+    {
+      "id": "tensura:daemon_core",
+      "required": false
+    },
+    {
+      "id": "iceandfire:witherbone",
+      "required": false
+    },
+    {
+      "id": "iceandfire:dread_shard",
+      "required": false
+    },
+    {
+      "id": "apotheosis:sigil_of_malice",
+      "required": false
+    },
+    {
+      "id": "apotheosis:timeworn_fabric",
+      "required": false
+    },
+    {
+      "id": "twilightforest:fiery_blood",
+      "required": false
+    },
+    {
+      "id": "ancient_artifacts:shadowbind_bracelet",
+      "required": false
+    },
+    {
+      "id": "ancient_artifacts:horns_of_observation",
+      "required": false
+    }
+  ]
+}

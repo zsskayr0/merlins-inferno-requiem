@@ -1,0 +1,72 @@
+{
+  "values": [
+    {
+      "id": "apotheosis:gem_dust",
+      "required": false
+    },
+    {
+      "id": "apotheosis:sigil_of_socketing",
+      "required": false
+    },
+    {
+      "id": "apotheosis:luminous_crystal_shard",
+      "required": false
+    },
+    {
+      "id": "iceandfire:manuscript",
+      "required": false
+    },
+    {
+      "id": "iceandfire:silver_ingot",
+      "required": false
+    },
+    {
+      "id": "iceandfire:ambrosia",
+      "required": false
+    },
+    {
+      "id": "iceandfire:bestiary",
+      "required": false
+    },
+    {
+      "id": "cataclysm:lacrima",
+      "required": false
+    },
+    {
+      "id": "tensura:revival_elixir",
+      "required": false
+    },
+    {
+      "id": "tensura:low_potion",
+      "required": false
+    },
+    {
+      "id": "tensura:silver_ingot",
+      "required": false
+    },
+    {
+      "id": "twilightforest:charm_of_life_1",
+      "required": false
+    },
+    {
+      "id": "twilightforest:charm_of_keeping_1",
+      "required": false
+    },
+    {
+      "id": "twilightforest:four_leaf_clover",
+      "required": false
+    },
+    {
+      "id": "ancient_artifacts:amulet_of_the_sylphs",
+      "required": false
+    },
+    {
+      "id": "ancient_artifacts:lion_emblem",
+      "required": false
+    },
+    {
+      "id": "ancient_artifacts:war_pendant",
+      "required": false
+    }
+  ]
+}

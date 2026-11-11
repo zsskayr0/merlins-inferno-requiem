@@ -1,0 +1,52 @@
+{
+  "values": [
+    {
+      "id": "cataclysm:void_shard",
+      "required": false
+    },
+    {
+      "id": "cataclysm:ancient_metal_ingot",
+      "required": false
+    },
+    {
+      "id": "cataclysm:essence_of_the_storm",
+      "required": false
+    },
+    {
+      "id": "apotheosis:star_cube",
+      "required": false
+    },
+    {
+      "id": "apotheosis:mysterious_scrap_metal",
+      "required": false
+    },
+    {
+      "id": "apotheosis:gem_fused_slate",
+      "required": false
+    },
+    {
+      "id": "tensura:magic_ore",
+      "required": false
+    },
+    {
+      "id": "tensura:orichalcum_ingot",
+      "required": false
+    },
+    {
+      "id": "tensura:mithril_ingot",
+      "required": false
+    },
+    {
+      "id": "twilightforest:carminite",
+      "required": false
+    },
+    {
+      "id": "twilightforest:knightmetal_ingot",
+      "required": false
+    },
+    {
+      "id": "iceandfire:dragonbone",
+      "required": false
+    }
+  ]
+}
