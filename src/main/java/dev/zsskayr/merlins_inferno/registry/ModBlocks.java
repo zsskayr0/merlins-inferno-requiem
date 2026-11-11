@@ -45,6 +45,7 @@ import dev.zsskayr.merlins_inferno.block.EdenweedBushBlock;
 import dev.zsskayr.merlins_inferno.block.GreatDoorBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgeControllerBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgeCoreBlock;
+import dev.zsskayr.merlins_inferno.multiblock.HellForgeStructure.Layout;
 import dev.zsskayr.merlins_inferno.block.HellForgeVaultBlock;
 import dev.zsskayr.merlins_inferno.block.LyriumBlock;
 import dev.zsskayr.merlins_inferno.block.SoulShroomlightBlock;
@@ -528,17 +529,20 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> PURIFIED_OBSIDIAN = BLOCKS.registerBlock("purified_obsidian",
             Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN).requiresCorrectToolForDrops());
 
-    // --- Hell Forge multiblock (3x3x3, see HellForgeStructure): Controller (GUI + inventory, front
-    // face centre), Core (centre, sets the forge tier) and Vault (configurable automation port).
-    // The 20 edge/corner blocks are plain Compressed Netherrack. ---
+    // Hell Forge multiblock parts and interior catalysts.
     public static final DeferredBlock<HellForgeControllerBlock> HELL_FORGE_CONTROLLER = BLOCKS.registerBlock("hell_forge_controller",
             HellForgeControllerBlock::new, hellForgePartProperties().lightLevel(state -> 7)); // faint ambient glow, matches the "forge" theme
 
     public static final DeferredBlock<HellForgeCoreBlock> DEMONIC_CORE = BLOCKS.registerBlock("demonic_core",
-            props -> new HellForgeCoreBlock(props, 1), hellForgePartProperties());
+            props -> new HellForgeCoreBlock(props, 1, Layout.CUBE_9), hellForgePartProperties());
 
     public static final DeferredBlock<HellForgeVaultBlock> HELL_FORGE_VAULT = BLOCKS.registerBlock("hell_forge_vault",
             HellForgeVaultBlock::new, hellForgePartProperties());
+
+    public static final DeferredBlock<Block> HELL_FORGE_SPEED_CATALYST = BLOCKS.registerBlock("hell_forge_speed_catalyst",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.NETHER_BRICKS).lightLevel(state -> 7));
+    public static final DeferredBlock<Block> HELL_FORGE_YIELD_CATALYST = BLOCKS.registerBlock("hell_forge_yield_catalyst",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.NETHER_BRICKS).lightLevel(state -> 7));
 
     /** Shared by every structural Hell Forge block: Obsidian-tier blast resistance, meant to feel like a serious, rare structure. */
     private static BlockBehaviour.Properties hellForgePartProperties() {

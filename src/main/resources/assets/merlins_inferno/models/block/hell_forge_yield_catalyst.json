@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "merlins_inferno:block/hell_forge_yield_catalyst"
+  }
+}

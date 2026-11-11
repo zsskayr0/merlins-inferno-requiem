@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CBC",
+    "IMI",
+    "CBC"
+  ],
+  "key": {
+    "C": {
+      "item": "merlins_inferno:compressed_netherrack"
+    },
+    "B": {
+      "item": "minecraft:blaze_powder"
+    },
+    "I": {
+      "item": "minecraft:copper_ingot"
+    },
+    "M": {
+      "item": "minecraft:magma_block"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:hell_forge_speed_catalyst",
+    "count": 1
+  }
+}

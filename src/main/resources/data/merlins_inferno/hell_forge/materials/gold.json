@@ -1,0 +1,7 @@
+{
+  "type": "material",
+  "tag": "c:raw_materials/gold",
+  "min_temperature": 1337.33,
+  "max_temperature": 1473.15,
+  "heat_capacity": 8
+}

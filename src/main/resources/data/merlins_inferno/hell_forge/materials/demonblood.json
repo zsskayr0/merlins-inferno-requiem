@@ -1,0 +1,9 @@
+{
+  "type": "material",
+  "items": [
+    "merlins_inferno:demonblood_scrap"
+  ],
+  "min_temperature": 1523.15,
+  "max_temperature": 1723.15,
+  "heat_capacity": 10
+}

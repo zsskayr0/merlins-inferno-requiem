@@ -31,11 +31,17 @@ public final class MerlinsEmiPlugin implements EmiPlugin {
 
         registry.addCategory(HELL_FORGE);
         registry.addWorkstation(HELL_FORGE, EmiStack.of(ModBlocks.HELL_FORGE_CONTROLLER.get()));
-        registry.addWorkstation(VanillaEmiRecipeCategories.SMELTING, EmiStack.of(ModBlocks.HELL_FORGE_CONTROLLER.get()));
         registry.addWorkstation(VanillaEmiRecipeCategories.BLASTING, EmiStack.of(ModBlocks.HELL_FORGE_CONTROLLER.get()));
-        for (RecipeHolder<dev.zsskayr.merlins_inferno.recipe.HellForgeRecipe> holder :
-                registry.getRecipeManager().getAllRecipesFor(ModRecipeTypes.HELL_FORGE_SMELTING.get())) {
+        for (var holder : dev.zsskayr.merlins_inferno.forge.ForgeThermalData.allRecipes(net.minecraft.client.Minecraft.getInstance().level)) {
             registry.addRecipe(new HellForgeEmiRecipe(holder));
+        }
+        // Where the Lyrium with no recipe of its own comes from (cluster drops, loot).
+        for (String name : new String[] {"lyrium_raw", "lyrium_refined", "red_lyrium_raw", "red_lyrium_refined"}) {
+            var item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(id(name));
+            registry.addRecipe(new dev.emi.emi.api.recipe.EmiInfoRecipe(
+                    java.util.List.of(EmiStack.of(item)),
+                    java.util.List.of(net.minecraft.network.chat.Component.translatable("jei.merlins_inferno.info." + name)),
+                    id("/info/" + name)));
         }
         registry.removeEmiStacks(EmiStack.of(ModItems.EXCALIBUR_AWAKENING.get()));
         registry.removeEmiStacks(EmiStack.of(ModItems.EXCALIBUR_SLOT.get()));

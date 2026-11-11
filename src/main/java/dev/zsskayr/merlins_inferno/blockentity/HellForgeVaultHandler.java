@@ -16,12 +16,12 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import dev.zsskayr.merlins_inferno.block.HellForgeControllerBlock;
-import dev.zsskayr.merlins_inferno.block.HellForgeCoreBlock;
 import dev.zsskayr.merlins_inferno.block.HellForgeVaultBlock;
+import dev.zsskayr.merlins_inferno.multiblock.HellForgeStructure;
 
 /**
- * What a hopper or pipe sees when it touches a {@link HellForgeVaultBlock}: a single slot that
- * maps onto one slot of the forge's Controller, picked by the vault's mode - input and fuel only
+ * What a hopper or pipe sees when it touches a {@link HellForgeVaultBlock}: independent channels
+ * mapped onto the forge's Controller, filtered by its channel mask and mode - input and fuel only
  * accept, output only gives out (a fuel vault also gives back the empty bucket). Does nothing
  * while the structure is not formed.
  * <p>
@@ -56,21 +56,22 @@ public final class HellForgeVaultHandler implements IItemHandler {
 
     /** The formed Controller the vault at {@code vaultPos} currently belongs to, or {@code null}. */
     @Nullable
-    static HellForgeBlockEntity findForge(Level level, BlockPos vaultPos) {
+    public static HellForgeBlockEntity findForge(Level level, BlockPos vaultPos) {
         for (Direction toCore : Direction.values()) {
-            BlockPos corePos = vaultPos.relative(toCore);
-            if (!(level.getBlockState(corePos).getBlock() instanceof HellForgeCoreBlock)) {
+            HellForgeStructure.Core core = HellForgeStructure.findCore(level, vaultPos, toCore.getOpposite());
+            if (core == null) {
                 continue;
             }
-            // A vault is a face centre, so the core is always the one neighbour towards the middle;
-            // the Controller then sits on the core's far side facing outwards.
             for (Direction toController : Direction.Plane.HORIZONTAL) {
-                BlockPos controllerPos = corePos.relative(toController);
+                BlockPos controllerPos = core.layout().controllerPos(core.pos(), toController);
+                if (!level.hasChunkAt(controllerPos)) {
+                    continue;
+                }
                 BlockState controller = level.getBlockState(controllerPos);
                 if (controller.getBlock() instanceof HellForgeControllerBlock
                         && controller.getValue(HellForgeControllerBlock.FACING) == toController
                         && level.getBlockEntity(controllerPos) instanceof HellForgeBlockEntity forge
-                        && forge.isFormed()) {
+                        && forge.isFormedAround(core)) {
                     return forge;
                 }
             }
@@ -84,12 +85,15 @@ public final class HellForgeVaultHandler implements IItemHandler {
         return state.getBlock() instanceof HellForgeVaultBlock ? state.getValue(HellForgeVaultBlock.MODE) : null;
     }
 
-    private static int slotFor(HellForgeVaultBlock.Mode mode) {
-        return switch (mode) {
-            case INPUT -> HellForgeBlockEntity.INPUT_SLOT;
-            case FUEL -> HellForgeBlockEntity.FUEL_SLOT;
-            case OUTPUT -> HellForgeBlockEntity.RESULT_SLOT;
-        };
+    private int slotFor(HellForgeBlockEntity forge, HellForgeVaultBlock.Mode mode, int index) {
+        if (index < 0) return -1;
+        if (mode == HellForgeVaultBlock.Mode.FUEL)
+            return index == 0 ? HellForgeBlockEntity.FUEL_SLOT : index == 1 ? HellForgeBlockEntity.BUCKET_SLOT : -1;
+        if (mode == HellForgeVaultBlock.Mode.OUTPUT && index >= 9)
+            return index == 9 ? HellForgeBlockEntity.DROSS_SLOT : index == 10 ? HellForgeBlockEntity.SCRAP_SLOT : -1;
+        if (index >= 9 || (forge.vaultMask(vaultPos) & (1 << index)) == 0) return -1;
+        if (mode == HellForgeVaultBlock.Mode.INPUT && index >= forge.getProcessingSlots()) return -1;
+        return mode == HellForgeVaultBlock.Mode.INPUT ? HellForgeBlockEntity.inputSlot(index) : HellForgeBlockEntity.outputSlot(index);
     }
 
     /**
@@ -131,30 +135,54 @@ public final class HellForgeVaultHandler implements IItemHandler {
             if (offered.isEmpty()) {
                 continue;
             }
-            ItemStack leftover = ItemHandlerHelper.insertItem(to, offered, true);
+            ItemStack leftover = insertDistributed(to, offered, true);
             int moved = offered.getCount() - leftover.getCount();
             if (moved <= 0) {
                 continue;
             }
             ItemStack taken = from.extractItem(slot, moved, false);
             if (!taken.isEmpty()) {
-                ItemHandlerHelper.insertItem(to, taken, false);
+                insertDistributed(to, taken, false);
                 return true;
             }
         }
         return false;
     }
 
+    private static ItemStack insertDistributed(IItemHandler to, ItemStack offered, boolean simulate) {
+        if (!(to instanceof HellForgeVaultHandler vault) || vault.mode() != HellForgeVaultBlock.Mode.INPUT
+                || vault.forge() == null || !vault.forge().autoSortEnabled())
+            return ItemHandlerHelper.insertItem(to, offered, simulate);
+        int[] counts = new int[9];
+        for (int lane = 0; lane < 9; lane++) counts[lane] = to.getStackInSlot(lane).getCount();
+        ItemStack remaining = offered.copy();
+        while (!remaining.isEmpty()) {
+            int selected = -1;
+            ItemStack one = remaining.copyWithCount(1);
+            for (int lane = 0; lane < 9; lane++) {
+                if (counts[lane] < one.getMaxStackSize() && (selected < 0 || counts[lane] < counts[selected])
+                        && to.insertItem(lane, one, true).isEmpty()) selected = lane;
+            }
+            if (selected < 0) break;
+            if (!simulate && !to.insertItem(selected, one, false).isEmpty()) break;
+            counts[selected]++;
+            remaining.shrink(1);
+        }
+        return remaining;
+    }
+
     @Override
     public int getSlots() {
-        return 1;
+        return 11;
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
         HellForgeBlockEntity forge = this.forge();
         HellForgeVaultBlock.Mode mode = this.mode();
-        return forge == null || mode == null ? ItemStack.EMPTY : forge.getItem(slotFor(mode));
+        if (forge == null || mode == null) return ItemStack.EMPTY;
+        int slot = slotFor(forge, mode, index);
+        return slot < 0 ? ItemStack.EMPTY : forge.getItem(slot);
     }
 
     @Override
@@ -164,8 +192,8 @@ public final class HellForgeVaultHandler implements IItemHandler {
         if (forge == null || mode == null || mode == HellForgeVaultBlock.Mode.OUTPUT || stack.isEmpty()) {
             return stack;
         }
-        int slot = slotFor(mode);
-        if (!forge.canPlaceItem(slot, stack)) {
+        int slot = slotFor(forge, mode, index);
+        if (slot < 0 || !forge.canPlaceItem(slot, stack)) {
             return stack;
         }
         ItemStack existing = forge.getItem(slot);
@@ -198,7 +226,8 @@ public final class HellForgeVaultHandler implements IItemHandler {
         if (forge == null || mode == null || mode == HellForgeVaultBlock.Mode.INPUT || amount <= 0) {
             return ItemStack.EMPTY;
         }
-        int slot = slotFor(mode);
+        int slot = slotFor(forge, mode, index);
+        if (slot < 0) return ItemStack.EMPTY;
         ItemStack existing = forge.getItem(slot);
         // Output vaults give out the result; fuel vaults only give back the empty bucket a lava bucket leaves.
         if (existing.isEmpty() || (mode == HellForgeVaultBlock.Mode.FUEL && !existing.is(Items.BUCKET))) {
@@ -221,6 +250,8 @@ public final class HellForgeVaultHandler implements IItemHandler {
     public boolean isItemValid(int index, ItemStack stack) {
         HellForgeBlockEntity forge = this.forge();
         HellForgeVaultBlock.Mode mode = this.mode();
-        return forge != null && mode != null && mode != HellForgeVaultBlock.Mode.OUTPUT && forge.canPlaceItem(slotFor(mode), stack);
+        if (forge == null || mode == null || mode == HellForgeVaultBlock.Mode.OUTPUT) return false;
+        int slot = slotFor(forge, mode, index);
+        return slot >= 0 && forge.canPlaceItem(slot, stack);
     }
 }

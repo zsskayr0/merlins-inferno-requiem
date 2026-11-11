@@ -1,0 +1,9 @@
+{
+  "type": "material",
+  "items": [
+    "merlins_inferno:ebony_scrap"
+  ],
+  "min_temperature": 1973.15,
+  "max_temperature": 2113.15,
+  "heat_capacity": 16
+}

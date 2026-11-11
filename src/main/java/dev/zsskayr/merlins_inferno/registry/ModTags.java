@@ -102,6 +102,11 @@ public final class ModTags {
         public static final TagKey<Block> SIGHT_REVEALED = TagKey.create(Registries.BLOCK,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "sight_revealed"));
 
+        public static final TagKey<Block> HELL_FORGE_SPEED_CATALYSTS = TagKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "hell_forge_speed_catalysts"));
+        public static final TagKey<Block> HELL_FORGE_YIELD_CATALYSTS = TagKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "hell_forge_yield_catalysts"));
+
         private Blocks() {
         }
     }

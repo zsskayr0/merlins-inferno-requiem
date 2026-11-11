@@ -30,6 +30,22 @@
     {
       "type": "patchouli:text",
       "text": "patchouli.merlins_inferno.entry.hell_forge.page3"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.hell_forge.expansion"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.hell_forge.catalysts"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.hell_forge.heat"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "patchouli.merlins_inferno.entry.hell_forge.residue"
     }
   ]
 }

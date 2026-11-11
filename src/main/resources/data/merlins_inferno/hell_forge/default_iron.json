@@ -1,0 +1,11 @@
+{
+  "type": "default_material",
+  "min_temperature": 1811.15,
+  "max_temperature": 1973.15,
+  "heat_capacity": 0.3,
+  "overheat_grace_ticks": 100,
+  "overheat_progress_decay": 0.5,
+  "critical_temperature": 2123.15,
+  "critical_exposure_ticks": 400,
+  "dross_chance": 0.1
+}

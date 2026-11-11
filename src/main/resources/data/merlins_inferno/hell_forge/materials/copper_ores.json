@@ -1,0 +1,7 @@
+{
+  "type": "material",
+  "tag": "c:ores/copper",
+  "min_temperature": 1357.77,
+  "max_temperature": 1493.15,
+  "heat_capacity": 9
+}

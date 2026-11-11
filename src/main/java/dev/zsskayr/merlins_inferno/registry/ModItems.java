@@ -537,6 +537,10 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> HELL_FORGE_CONTROLLER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_CONTROLLER);
     public static final DeferredItem<BlockItem> DEMONIC_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DEMONIC_CORE);
     public static final DeferredItem<BlockItem> HELL_FORGE_VAULT_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_VAULT);
+    public static final DeferredItem<BlockItem> HELL_FORGE_SPEED_CATALYST_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_SPEED_CATALYST);
+    public static final DeferredItem<BlockItem> HELL_FORGE_YIELD_CATALYST_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_YIELD_CATALYST);
+    public static final DeferredItem<Item> DUSK_DROSS = ITEMS.registerSimpleItem("dusk_dross");
+    public static final DeferredItem<Item> FORGED_SCRAP = ITEMS.registerSimpleItem("forged_scrap");
     /** Right-click a Hell Forge Vault to cycle its mode: input, output, fuel. */
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ForgeWrenchItem> FORGE_WRENCH = ITEMS.registerItem("forge_wrench",
             dev.zsskayr.merlins_inferno.item.ForgeWrenchItem::new, new Item.Properties().stacksTo(1));

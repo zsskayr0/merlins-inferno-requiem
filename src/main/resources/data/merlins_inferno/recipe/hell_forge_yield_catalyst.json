@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CBC",
+    "IMI",
+    "CBC"
+  ],
+  "key": {
+    "C": {
+      "item": "merlins_inferno:compressed_netherrack"
+    },
+    "B": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "I": {
+      "item": "minecraft:quartz"
+    },
+    "M": {
+      "item": "minecraft:crying_obsidian"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:hell_forge_yield_catalyst",
+    "count": 1
+  }
+}

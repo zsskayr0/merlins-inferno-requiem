@@ -1,0 +1,11 @@
+{
+  "type": "material",
+  "items": [
+    "merlins_inferno:porcelain_dust",
+    "merlins_inferno:polished_porcelain_dust",
+    "merlins_inferno:tiled_porcelain_dust"
+  ],
+  "min_temperature": 1123.15,
+  "max_temperature": 1373.15,
+  "heat_capacity": 6
+}

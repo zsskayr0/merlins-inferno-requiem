@@ -34,9 +34,16 @@ public class MerlinsJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         registration.addRecipes(PandoraJeiCategory.TYPE, recipes());
+        // Where the Lyrium with no recipe of its own comes from (cluster drops, loot).
+        for (String id : new String[] {"lyrium_raw", "lyrium_refined", "red_lyrium_raw", "red_lyrium_refined"}) {
+            var item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+                    ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, id));
+            registration.addIngredientInfo(new ItemStack(item), mezz.jei.api.constants.VanillaTypes.ITEM_STACK,
+                    net.minecraft.network.chat.Component.translatable("jei.merlins_inferno.info." + id));
+        }
         if (Minecraft.getInstance().level != null) {
-            registration.addRecipes(HellForgeJeiCategory.TYPE, Minecraft.getInstance().level.getRecipeManager()
-                    .getAllRecipesFor(ModRecipeTypes.HELL_FORGE_SMELTING.get()).stream().map(RecipeHolder::value).toList());
+            registration.addRecipes(HellForgeJeiCategory.TYPE, dev.zsskayr.merlins_inferno.forge.ForgeThermalData.allRecipes(Minecraft.getInstance().level).stream()
+                    .map(dev.zsskayr.merlins_inferno.forge.HellForgeDisplayRecipe::new).toList());
         }
     }
 
@@ -44,7 +51,7 @@ public class MerlinsJeiPlugin implements IModPlugin {
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(new ItemStack(ModItems.PANDORA_BOX.get()), PandoraJeiCategory.TYPE);
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.HELL_FORGE_CONTROLLER.get()), HellForgeJeiCategory.TYPE);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.HELL_FORGE_CONTROLLER.get()), RecipeTypes.SMELTING, RecipeTypes.BLASTING);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.HELL_FORGE_CONTROLLER.get()), RecipeTypes.BLASTING);
     }
 
     /** Display-only items stay out of JEI's list. */

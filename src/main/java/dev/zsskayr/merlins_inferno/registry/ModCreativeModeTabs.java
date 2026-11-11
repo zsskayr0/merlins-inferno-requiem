@@ -280,6 +280,10 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.HELL_FORGE_CONTROLLER_ITEM.get());
                         output.accept(ModItems.DEMONIC_CORE_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_VAULT_ITEM.get());
+                        output.accept(ModItems.HELL_FORGE_SPEED_CATALYST_ITEM.get());
+                        output.accept(ModItems.HELL_FORGE_YIELD_CATALYST_ITEM.get());
+                        output.accept(ModItems.DUSK_DROSS.get());
+                        output.accept(ModItems.FORGED_SCRAP.get());
                         output.accept(ModItems.FORGE_WRENCH.get());
                         output.accept(ModItems.LYRIUM_BLOCK_ITEM.get());
                         output.accept(ModItems.LYRIUM_CLUSTER_ITEM.get());

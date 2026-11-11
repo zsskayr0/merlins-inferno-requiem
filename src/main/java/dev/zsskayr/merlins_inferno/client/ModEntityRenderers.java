@@ -63,6 +63,7 @@ public final class ModEntityRenderers {
         event.registerEntityRenderer(ModEntityTypes.ZAELDRIS_SPEAR.get(), ZaeldrisSpearRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.EXCALIBUR_AWAKENING.get(), ExcaliburAwakeningRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.DRYING_RACK.get(), DryingRackRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.HELL_FORGE.get(), context -> new HellForgeFuelRenderer());
         event.registerBlockEntityRenderer(ModBlockEntityTypes.PANDORA_BOX.get(), context -> new PandoraBoxRenderer());
         event.registerBlockEntityRenderer(ModBlockEntityTypes.SACRED_ALTAR.get(), context -> new CelestialAltarRenderer());
         event.registerBlockEntityRenderer(ModBlockEntityTypes.GREAT_DOOR.get(), context -> new GreatDoorRenderer());

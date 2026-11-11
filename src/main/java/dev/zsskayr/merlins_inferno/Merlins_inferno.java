@@ -70,6 +70,7 @@ public class Merlins_inferno {
         dev.zsskayr.merlins_inferno.registry.ModDataComponents.register(modEventBus);
         ModAttachments.register(modEventBus);
         dev.zsskayr.merlins_inferno.registry.ModLootModifiers.register(modEventBus);
+        dev.zsskayr.merlins_inferno.registry.ModLootConditions.register(modEventBus);
         ModRecipeTypes.register(modEventBus);
         ModRecipeSerializers.register(modEventBus);
         ModItems.register(modEventBus);
@@ -125,6 +126,7 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EdenweedHandler());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, dev.zsskayr.merlins_inferno.forge.ForgeClientConfig.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

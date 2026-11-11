@@ -13,6 +13,16 @@ public final class ModNetwork {
     private static final String PROTOCOL = "1";
     private ModNetwork() {}
     @SubscribeEvent static void register(RegisterPayloadHandlersEvent event) {
+        event.registrar(PROTOCOL).playToServer(ForgeActionPayload.TYPE, ForgeActionPayload.CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    var player = context.player();
+                    if (player.containerMenu instanceof dev.zsskayr.merlins_inferno.menu.HellForgeMenu menu
+                            && menu.containerId == payload.container() && menu.stillValid(player))
+                        menu.clickMenuButton(player, payload.action());
+                }));
+        event.registrar(PROTOCOL).playToClient(ForgeThermalPayload.TYPE, ForgeThermalPayload.CODEC,
+                (payload, context) -> context.enqueueWork(() ->
+                        dev.zsskayr.merlins_inferno.forge.ForgeThermalData.receive(payload.json())));
         event.registrar(PROTOCOL).playToServer(WingsBoostPayload.TYPE, WingsBoostPayload.CODEC,
                 (payload, context) -> WingsItem.tryBoost(context.player()));
         event.registrar(PROTOCOL).playToServer(ZaeldrisBarragePayload.TYPE, ZaeldrisBarragePayload.CODEC,

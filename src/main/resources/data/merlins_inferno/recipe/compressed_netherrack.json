@@ -3,15 +3,16 @@
   "category": "misc",
   "key": {
     "N": { "item": "minecraft:netherrack" },
-    "B": { "item": "minecraft:bone_block" }
+    "W": { "item": "merlins_inferno:withered_bone" },
+    "E": { "item": "merlins_inferno:infernal_essence" }
   },
   "pattern": [
-    "NNN",
-    "NBN",
-    "NNN"
+    "NWN",
+    "WEW",
+    "NWN"
   ],
   "result": {
-    "count": 1,
+    "count": 6,
     "id": "merlins_inferno:compressed_netherrack"
   }
 }

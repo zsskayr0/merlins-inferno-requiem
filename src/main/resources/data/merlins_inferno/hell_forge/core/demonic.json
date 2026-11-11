@@ -1,0 +1,16 @@
+{
+  "type": "core",
+  "rest_temperature": 473.15,
+  "min_temperature": 873.15,
+  "max_temperature": 2173.15,
+  "efficient_temperature": 1373.15,
+  "heat_capacity": 240,
+  "stability": 5,
+  "cooling_rate": 0.002,
+  "block": "merlins_inferno:demonic_core",
+  "operation": "heating",
+  "allowed_fuels": [
+    "minecraft:coal",
+    "minecraft:lava_bucket"
+  ]
+}

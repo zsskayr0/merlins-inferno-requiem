@@ -27,16 +27,15 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 import dev.zsskayr.merlins_inferno.blockentity.HellForgeBlockEntity;
-import dev.zsskayr.merlins_inferno.multiblock.HellForgeStructure;
 import dev.zsskayr.merlins_inferno.registry.ModBlockEntityTypes;
 
 /**
- * The Hell Forge's Controller: the one block of the 3x3x3 structure (see
+ * The Hell Forge's Controller: the one block of the structure (see
  * {@link dev.zsskayr.merlins_inferno.multiblock.HellForgeStructure}) that opens the GUI and holds
- * the inventory. It goes at the centre of the structure's front face, {@link #FACING} outwards
- * like a furnace. The GUI opens only when the structure is formed; otherwise the player gets an
+ * the inventory. It faces outwards, centred on the front of a 3x3x3 forge or beneath the
+ * front window of a larger forge. The GUI opens only when the structure is formed; otherwise the player gets an
  * action-bar message saying which block is wrong. Its only visual state is {@link #ACTIVE}, which
- * animates the front face while the forge cooks; the rest of the structure shows nothing.
+ * animates the front face while the forge cooks.
  */
 public class HellForgeControllerBlock extends HorizontalDirectionalBlock implements EntityBlock {
     public static final MapCodec<HellForgeControllerBlock> CODEC = simpleCodec(HellForgeControllerBlock::new);
@@ -97,15 +96,6 @@ public class HellForgeControllerBlock extends HorizontalDirectionalBlock impleme
         return InteractionResult.CONSUME;
     }
 
-    /** Sets the Core in the structure's centre active/inactive (no-op if it is not there or already so). */
-    public static void setCoreActive(Level level, BlockPos controllerPos, BlockState controllerState, boolean active) {
-        BlockPos corePos = HellForgeStructure.corePos(controllerPos, controllerState.getValue(FACING));
-        BlockState core = level.getBlockState(corePos);
-        if (core.getBlock() instanceof HellForgeCoreBlock && core.getValue(HellForgeCoreBlock.ACTIVE) != active) {
-            level.setBlock(corePos, core.setValue(HellForgeCoreBlock.ACTIVE, active), 3);
-        }
-    }
-
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (state.getBlock() != newState.getBlock() && level instanceof ServerLevel
@@ -113,10 +103,7 @@ public class HellForgeControllerBlock extends HorizontalDirectionalBlock impleme
             // Must happen before super.onRemove() - that call is what actually discards the block
             // entity, so the input/fuel/result slots would otherwise vanish with it.
             Containers.dropContents(level, pos, hellForge);
-        }
-        if (state.getBlock() != newState.getBlock() && !level.isClientSide) {
-            // Without its Controller the Core would be left animating forever.
-            setCoreActive(level, pos, state, false);
+            hellForge.clearCoreAnimation(state);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }

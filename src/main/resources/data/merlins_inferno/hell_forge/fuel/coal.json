@@ -1,0 +1,10 @@
+{
+  "type": "fuel",
+  "item": "minecraft:coal",
+  "fuel_value": 1600,
+  "min_temperature": 873.15,
+  "max_temperature": 1923.15,
+  "response_ticks": 110,
+  "heat_capacity": 6,
+  "flicker": 18
+}

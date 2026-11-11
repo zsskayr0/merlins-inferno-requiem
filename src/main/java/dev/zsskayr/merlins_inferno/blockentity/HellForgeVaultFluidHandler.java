@@ -18,8 +18,6 @@ import dev.zsskayr.merlins_inferno.block.HellForgeVaultBlock;
  * bucket). Like {@link HellForgeVaultHandler}, it re-resolves the forge and the mode on every call.
  */
 public final class HellForgeVaultFluidHandler implements IFluidHandler {
-    private static final int CAPACITY_MB = HellForgeBlockEntity.FUEL_CAPACITY / HellForgeBlockEntity.FUEL_PER_MB;
-
     private final Level level;
     private final BlockPos vaultPos;
 
@@ -49,12 +47,13 @@ public final class HellForgeVaultFluidHandler implements IFluidHandler {
     @Override
     public FluidStack getFluidInTank(int tank) {
         HellForgeBlockEntity forge = this.forge();
-        return forge == null ? FluidStack.EMPTY : new FluidStack(Fluids.LAVA, forge.storedFuel / HellForgeBlockEntity.FUEL_PER_MB);
+        return forge == null ? FluidStack.EMPTY : new FluidStack(Fluids.LAVA, forge.lavaAmount());
     }
 
     @Override
     public int getTankCapacity(int tank) {
-        return CAPACITY_MB;
+        HellForgeBlockEntity forge = this.forge();
+        return (forge == null ? HellForgeBlockEntity.FUEL_CAPACITY : forge.fuelCapacity()) / HellForgeBlockEntity.FUEL_PER_MB;
     }
 
     @Override
@@ -68,12 +67,7 @@ public final class HellForgeVaultFluidHandler implements IFluidHandler {
         if (forge == null || resource.isEmpty() || !this.isFluidValid(0, resource)) {
             return 0;
         }
-        int accepted = Math.min(resource.getAmount(), (HellForgeBlockEntity.FUEL_CAPACITY - forge.storedFuel) / HellForgeBlockEntity.FUEL_PER_MB);
-        if (accepted > 0 && action.execute()) {
-            forge.storedFuel += accepted * HellForgeBlockEntity.FUEL_PER_MB;
-            forge.setChanged();
-        }
-        return Math.max(accepted, 0);
+        return forge.fillLava(resource.getAmount(), action.execute());
     }
 
     /** The tank only fills: lava is burned, not stored to be taken back out. */
