@@ -37,7 +37,8 @@ import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
 import dev.zsskayr.merlins_inferno.registry.ModItems;
 
 /**
- * Excalibur's awakening, the moment a carried Excalibur turns into the true one when the world reaches Circle 3. An
+ * The awakening of a mythic: a carried Excalibur turns into the true one when the world reaches Circle 3, and a carried
+ * Gehenna into the sinned one in Circle 2 (red rays and hellfire instead of gold). An
  * earthquake built like the Ender Dragon's death, seen by everyone around:
  * <ol>
  *   <li><b>The call</b> (0 to {@value #RAYS_AT} ticks): the worn sword leaves its bearer's hand and comes to stand,
@@ -69,6 +70,8 @@ public class ExcaliburAwakening extends Entity {
     private static final int OUT_TICKS = 18;
     private static final int RETURN_AT = CLIMAX_AT + 4;
 
+    /** Whether the sword rising is Gehenna (red rays, hellfire) rather than Excalibur. Synced for the renderer. */
+    private static final EntityDataAccessor<Boolean> GEHENNA = SynchedEntityData.defineId(ExcaliburAwakening.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> OWNER = SynchedEntityData.defineId(ExcaliburAwakening.class, EntityDataSerializers.INT);
     /** Bearers whose ritual is running, so one sword does not start a second one. Server side. */
     private static final Map<UUID, ExcaliburAwakening> RUNNING = new HashMap<>();
@@ -93,6 +96,7 @@ public class ExcaliburAwakening extends Entity {
         }
         ExcaliburAwakening ritual = new ExcaliburAwakening(ModEntityTypes.EXCALIBUR_AWAKENING.get(), player.level());
         ritual.entityData.set(OWNER, player.getId());
+        ritual.entityData.set(GEHENNA, player.getData(ModAttachments.EXCALIBUR_HELD).is(ModItems.GEHENNA.get()));
         Vec3 look = player.getLookAngle().multiply(1.0, 0.0, 1.0);
         look = look.lengthSqr() < 1.0E-4 ? Vec3.directionFromRotation(0.0F, player.getYRot()) : look.normalize();
         ritual.anchor = new Vec3(player.getX() + look.x * AHEAD, player.getY() + STAND_HEIGHT, player.getZ() + look.z * AHEAD);
@@ -110,7 +114,7 @@ public class ExcaliburAwakening extends Entity {
         for (NonNullList<ItemStack> compartment : compartments(player)) {
             for (int i = 0; i < compartment.size(); i++) {
                 ItemStack stack = compartment.get(i);
-                if (stack.is(ModItems.EXCALIBUR.get())) {
+                if (ripe(player, stack)) {
                     player.setData(ModAttachments.EXCALIBUR_HELD, stack.copy());
                     compartment.set(i, new ItemStack(ModItems.EXCALIBUR_SLOT.get()));
                     return true;
@@ -118,6 +122,13 @@ public class ExcaliburAwakening extends Entity {
             }
         }
         return false;
+    }
+
+    /** A worn sword whose Circle has come: Gehenna in Circle 2, Excalibur in Circle 3. */
+    private static boolean ripe(ServerPlayer player, ItemStack stack) {
+        ServerLevel level = player.serverLevel();
+        return stack.is(ModItems.GEHENNA.get()) && ProgressionHelper.hasReached(level, ProgressionHelper.SECOND_CIRCLE)
+                || stack.is(ModItems.EXCALIBUR.get()) && ProgressionHelper.hasReached(level, ProgressionHelper.THIRD_CIRCLE);
     }
 
     /**
@@ -164,8 +175,9 @@ public class ExcaliburAwakening extends Entity {
     /** The kept worn sword becomes the true one, keeping all its data. */
     private static void awaken(ServerPlayer player) {
         ItemStack held = player.getData(ModAttachments.EXCALIBUR_HELD);
-        if (held.is(ModItems.EXCALIBUR.get()) && ProgressionHelper.hasReached(player.serverLevel(), ProgressionHelper.THIRD_CIRCLE)) {
-            player.setData(ModAttachments.EXCALIBUR_HELD, held.transmuteCopy(ModItems.EXCALIBUR_TRUE.get(), held.getCount()));
+        if (ripe(player, held)) {
+            var next = held.is(ModItems.GEHENNA.get()) ? ModItems.GEHENNA_SINNED : ModItems.EXCALIBUR_TRUE;
+            player.setData(ModAttachments.EXCALIBUR_HELD, held.transmuteCopy(next.get(), held.getCount()));
         }
     }
 
@@ -200,6 +212,11 @@ public class ExcaliburAwakening extends Entity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(OWNER, -1);
+        builder.define(GEHENNA, false);
+    }
+
+    public boolean isGehenna() {
+        return this.entityData.get(GEHENNA);
     }
 
     public Player owner() {
@@ -272,7 +289,7 @@ public class ExcaliburAwakening extends Entity {
             playAt(level, owner.position(), SoundEvents.WARDEN_DIG, 1.2F + strength * 1.5F, 0.5F);
         }
         // the worn sword shedding its moss and leaves
-        level.sendParticles(ParticleTypes.FALLING_SPORE_BLOSSOM, this.getX(), this.getY() + 0.4, this.getZ(), 2, 0.25, 0.4, 0.25, 0.0);
+        level.sendParticles(this.isGehenna() ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FALLING_SPORE_BLOSSOM, this.getX(), this.getY() + 0.4, this.getZ(), 2, 0.25, 0.4, 0.25, 0.0);
     }
 
     /** The peak: lightning that burns nothing, the flash and boom, mobs thrown back, and the sword changed. */
@@ -287,7 +304,7 @@ public class ExcaliburAwakening extends Entity {
         playAt(level, this.position(), SoundEvents.BELL_BLOCK, 2.0F, 0.5F);
         playAt(level, this.position(), SoundEvents.TOTEM_USE, 1.2F, 1.2F);
         level.sendParticles(ParticleTypes.FLASH, this.getX(), this.getY(), this.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
-        level.sendParticles(ParticleTypes.END_ROD, this.getX(), this.getY(), this.getZ(), 80, 0.2, 0.2, 0.2, 0.45);
+        level.sendParticles(this.isGehenna() ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.END_ROD, this.getX(), this.getY(), this.getZ(), 80, 0.2, 0.2, 0.2, 0.45);
         for (LivingEntity mob : level.getEntitiesOfClass(LivingEntity.class, owner.getBoundingBox().inflate(SHOCKWAVE_RADIUS),
                 e -> e != owner && !(e instanceof Player) && e.isAlive())) {
             Vec3 away = mob.position().subtract(owner.position());

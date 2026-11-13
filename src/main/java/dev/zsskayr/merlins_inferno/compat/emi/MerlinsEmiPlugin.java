@@ -45,5 +45,6 @@ public final class MerlinsEmiPlugin implements EmiPlugin {
         }
         registry.removeEmiStacks(EmiStack.of(ModItems.EXCALIBUR_AWAKENING.get()));
         registry.removeEmiStacks(EmiStack.of(ModItems.EXCALIBUR_SLOT.get()));
+        registry.removeEmiStacks(EmiStack.of(ModItems.GEHENNA_AWAKENING.get()));
     }
 }

@@ -498,6 +498,8 @@
   "entity.merlins_inferno.excalibur_awakening": "Excalibur",
   "item.merlins_inferno.zaeldris.tooltip.barrage": "Hold %s to loose spears of light at your foes.",
   "item.merlins_inferno.zaeldris.tooltip.lodge": "Up to 7 lodge in one foe, each striking every second for about a fifth of your attack.",
+  "item.merlins_inferno.gehenna_sinned": "Gehenna",
+  "item.merlins_inferno.gehenna_awakening": "Gehenna",
   "item.merlins_inferno.zaeldris.tooltip.burst": "When they fade or strike a block they burst, hitting foes nearby for a quarter of your attack.",
   "item.merlins_inferno.zaeldris.tooltip.god_touch": "God Touch: 25 damage a second and no healing, for 5 seconds.",
   "item.merlins_inferno.zaeldris.tooltip.light": "Its spears light up the dark around them.",

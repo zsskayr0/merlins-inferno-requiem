@@ -58,7 +58,8 @@ public class MerlinsJeiPlugin implements IModPlugin {
     @Override
     public void onRuntimeAvailable(mezz.jei.api.runtime.IJeiRuntime runtime) {
         runtime.getIngredientManager().removeIngredientsAtRuntime(mezz.jei.api.constants.VanillaTypes.ITEM_STACK,
-                List.of(new ItemStack(ModItems.EXCALIBUR_AWAKENING.get()), new ItemStack(ModItems.EXCALIBUR_SLOT.get())));
+                List.of(new ItemStack(ModItems.EXCALIBUR_AWAKENING.get()), new ItemStack(ModItems.EXCALIBUR_SLOT.get()),
+                        new ItemStack(ModItems.GEHENNA_AWAKENING.get())));
     }
 
     private static List<PandoraJeiRecipe> recipes() {

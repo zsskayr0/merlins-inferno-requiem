@@ -31,11 +31,13 @@ public class ExcaliburAwakeningRenderer extends EntityRenderer<ExcaliburAwakenin
     private static final float HALF_SQRT_3 = (float) (Math.sqrt(3.0) / 2.0);
     /** Rays: a warm white core fading to transparent gold at the tips. */
     private static final int RAY_EDGE = 0x00FF9A10;
+    private static final int RAY_EDGE_RED = 0x00B01008;
     private static final float RAY_SCALE = 0.2F;
     private static final int FULL_BRIGHT = 0xF000F0;
 
     private final ItemRenderer itemRenderer;
     private final ItemStack sword = new ItemStack(ModItems.EXCALIBUR_AWAKENING.get());
+    private final ItemStack hammer = new ItemStack(ModItems.GEHENNA_AWAKENING.get());
 
     public ExcaliburAwakeningRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -56,8 +58,8 @@ public class ExcaliburAwakeningRenderer extends EntityRenderer<ExcaliburAwakenin
             float completion = Mth.clamp((age - ExcaliburAwakening.RAYS_AT) / (ExcaliburAwakening.CLIMAX_AT + 10 - ExcaliburAwakening.RAYS_AT), 0.0F, 1.0F);
             poseStack.pushPose();
             poseStack.scale(RAY_SCALE, RAY_SCALE, RAY_SCALE);
-            renderRays(poseStack, completion, buffer.getBuffer(RenderType.dragonRays()));
-            renderRays(poseStack, completion, buffer.getBuffer(RenderType.dragonRaysDepth()));
+            renderRays(poseStack, completion, buffer.getBuffer(RenderType.dragonRays()), entity.isGehenna());
+            renderRays(poseStack, completion, buffer.getBuffer(RenderType.dragonRaysDepth()), entity.isGehenna());
             poseStack.popPose();
         }
 
@@ -72,7 +74,7 @@ public class ExcaliburAwakeningRenderer extends EntityRenderer<ExcaliburAwakenin
                 ? 1.0F + 0.25F * Mth.sin((age - ExcaliburAwakening.CLIMAX_AT) / 6.0F * Mth.PI) : 1.0F;
         poseStack.scale(1.8F * pulse, 1.8F * pulse, 1.8F * pulse);
         ExcaliburAwakeningClient.setMorph(Mth.clamp((age - ExcaliburAwakening.RAYS_AT) / (ExcaliburAwakening.CLIMAX_AT - ExcaliburAwakening.RAYS_AT), 0.0F, 1.0F));
-        this.itemRenderer.renderStatic(this.sword, ItemDisplayContext.FIXED, FULL_BRIGHT, OverlayTexture.NO_OVERLAY, poseStack, buffer,
+        this.itemRenderer.renderStatic(entity.isGehenna() ? this.hammer : this.sword, ItemDisplayContext.FIXED, FULL_BRIGHT, OverlayTexture.NO_OVERLAY, poseStack, buffer,
                 entity.level(), entity.getId());
         ExcaliburAwakeningClient.clearMorph();
         poseStack.popPose();
@@ -80,10 +82,11 @@ public class ExcaliburAwakeningRenderer extends EntityRenderer<ExcaliburAwakenin
     }
 
     /** EnderDragonRenderer#renderRays, in gold. */
-    private static void renderRays(PoseStack poseStack, float completion, VertexConsumer consumer) {
+    private static void renderRays(PoseStack poseStack, float completion, VertexConsumer consumer, boolean red) {
+        int edge = red ? RAY_EDGE_RED : RAY_EDGE;
         poseStack.pushPose();
         float fade = Math.min(completion > 0.8F ? (completion - 0.8F) / 0.2F : 0.0F, 1.0F);
-        int core = FastColor.ARGB32.colorFromFloat(1.0F - fade, 1.0F, 0.82F, 0.38F);
+        int core = FastColor.ARGB32.colorFromFloat(1.0F - fade, 1.0F, red ? 0.35F : 0.82F, red ? 0.25F : 0.38F);
         RandomSource random = RandomSource.create(432L);
         Vector3f center = new Vector3f();
         Vector3f a = new Vector3f();
@@ -103,14 +106,14 @@ public class ExcaliburAwakeningRenderer extends EntityRenderer<ExcaliburAwakenin
             c.set(0.0F, length, width);
             PoseStack.Pose pose = poseStack.last();
             consumer.addVertex(pose, center).setColor(core);
-            consumer.addVertex(pose, a).setColor(RAY_EDGE);
-            consumer.addVertex(pose, b).setColor(RAY_EDGE);
+            consumer.addVertex(pose, a).setColor(edge);
+            consumer.addVertex(pose, b).setColor(edge);
             consumer.addVertex(pose, center).setColor(core);
-            consumer.addVertex(pose, b).setColor(RAY_EDGE);
-            consumer.addVertex(pose, c).setColor(RAY_EDGE);
+            consumer.addVertex(pose, b).setColor(edge);
+            consumer.addVertex(pose, c).setColor(edge);
             consumer.addVertex(pose, center).setColor(core);
-            consumer.addVertex(pose, c).setColor(RAY_EDGE);
-            consumer.addVertex(pose, a).setColor(RAY_EDGE);
+            consumer.addVertex(pose, c).setColor(edge);
+            consumer.addVertex(pose, a).setColor(edge);
         }
         poseStack.popPose();
     }

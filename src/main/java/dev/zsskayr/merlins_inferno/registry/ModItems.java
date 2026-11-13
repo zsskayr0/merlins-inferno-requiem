@@ -804,6 +804,11 @@ public final class ModItems {
     /** Display only: the sword floating in the awakening ritual, turning from worn to true (entity.ExcaliburAwakening). */
     public static final DeferredItem<Item> EXCALIBUR_AWAKENING = ITEMS.registerSimpleItem("excalibur_awakening",
             new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
+    /** Gehenna's one upgrade, in Circle 2 (item.GehennaItem starts the ritual): 55 = 1 + 22 + the MYTHIC tier's 32, still a slow hammer. Same Unique. */
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.GehennaItem> GEHENNA_SINNED = ITEMS.registerItem("gehenna_sinned",
+            props -> new dev.zsskayr.merlins_inferno.item.GehennaItem(ModTiers.MYTHIC, props.rarity(Rarity.EPIC).fireResistant()
+                    .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 22, -3.1F))));
+
     /** The outline holding Excalibur's slot while it is out of the inventory for its awakening (item.ExcaliburSlotItem). */
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ExcaliburSlotItem> EXCALIBUR_SLOT = ITEMS.registerItem("excalibur_slot",
             props -> new dev.zsskayr.merlins_inferno.item.ExcaliburSlotItem(props.stacksTo(1).rarity(Rarity.EPIC)));
@@ -817,6 +822,9 @@ public final class ModItems {
     // into a Minor Sight Potion, giving the Druidic Trance. ---
     public static final DeferredItem<Item> RAW_EDENWEED = ITEMS.registerSimpleItem("raw_edenweed",
             new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.1F).alwaysEdible()
+    /** Display only: Gehenna floating in its awakening ritual (entity.ExcaliburAwakening). */
+    public static final DeferredItem<Item> GEHENNA_AWAKENING = ITEMS.registerSimpleItem("gehenna_awakening",
+            new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
                     .effect(() -> new MobEffectInstance(ModEffects.DRUIDIC_TRANCE, 400, 0), 1.0F)
                     .effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 160, 0), 1.0F)
                     .build()));

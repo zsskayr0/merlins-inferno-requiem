@@ -4,12 +4,19 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 
+import dev.zsskayr.merlins_inferno.attachment.ProgressionHelper;
+import dev.zsskayr.merlins_inferno.entity.ExcaliburAwakening;
 import dev.zsskayr.merlins_inferno.event.GehennaHandler;
+import dev.zsskayr.merlins_inferno.registry.ModItems;
 
 /**
  * Gehenna, the demonic route's mythic of Circle 1: a warhammer that held a demon's latent power through the ages,
@@ -22,11 +29,21 @@ import dev.zsskayr.merlins_inferno.event.GehennaHandler;
  *   <li>a frenzy that ends without a kill takes its due: the bearer suffers {@value GehennaHandler#RECOIL_PERCENT}% of
  *   the last damage they dealt.</li>
  * </ul>
- * One upgrade only, when the world reaches Circle 2 (still to be built).
+ * One upgrade only: when the world reaches Circle 2 a carried Gehenna becomes {@code gehenna_sinned}, keeping everything on
+ * the stack through the same awakening ritual as Excalibur's (entity.ExcaliburAwakening), in red.
  */
 public class GehennaItem extends SwordItem {
     public GehennaItem(Tier tier, Properties properties) {
         super(tier, properties);
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+        if (level instanceof ServerLevel server && entity instanceof ServerPlayer player && stack.is(ModItems.GEHENNA.get())
+                && ProgressionHelper.hasReached(server, ProgressionHelper.SECOND_CIRCLE)) {
+            ExcaliburAwakening.start(player);
+        }
     }
 
     @Override
