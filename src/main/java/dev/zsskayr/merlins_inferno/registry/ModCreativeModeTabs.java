@@ -96,6 +96,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.ROWANWOOD_PICKAXE.get());
                         output.accept(ModItems.ROWANWOOD_SHOVEL.get());
                         output.accept(ModItems.ROWANWOOD_HOE.get());
+                        output.accept(ModItems.ROWANWOOD_BOW.get());
                         output.accept(ModItems.ROWANWOOD_HELMET.get());
                         output.accept(ModItems.ROWANWOOD_CHESTPLATE.get());
                         output.accept(ModItems.ROWANWOOD_LEGGINGS.get());
@@ -112,6 +113,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DEMONBLOOD_PICKAXE.get());
                         output.accept(ModItems.DEMONBLOOD_SHOVEL.get());
                         output.accept(ModItems.DEMONBLOOD_HOE.get());
+                        output.accept(ModItems.DEMONBLOOD_BOW.get());
                         output.accept(ModItems.DEMONBLOOD_HELMET.get());
                         output.accept(ModItems.DEMONBLOOD_CHESTPLATE.get());
                         output.accept(ModItems.DEMONBLOOD_LEGGINGS.get());
@@ -309,6 +311,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.SERAPHIUM_PICKAXE.get());
                         output.accept(ModItems.SERAPHIUM_SHOVEL.get());
                         output.accept(ModItems.SERAPHIUM_HOE.get());
+                        output.accept(ModItems.SERAPHIUM_BOW.get());
                         output.accept(ModItems.SERAPHIUM_HELMET.get());
                         output.accept(ModItems.SERAPHIUM_CHESTPLATE.get());
                         output.accept(ModItems.SERAPHIUM_LEGGINGS.get());
@@ -332,6 +335,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.LUMINITE_SHOVEL.get());
                         output.accept(ModItems.LUMINITE_PICKAXE.get());
                         output.accept(ModItems.LUMINITE_HOE.get());
+                        output.accept(ModItems.LUMINITE_BOW.get());
                         output.accept(ModItems.LUMINITE_HELMET.get());
                         output.accept(ModItems.LUMINITE_CHESTPLATE.get());
                         output.accept(ModItems.LUMINITE_LEGGINGS.get());
@@ -347,6 +351,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.EBONY_SHOVEL.get());
                         output.accept(ModItems.EBONY_PICKAXE.get());
                         output.accept(ModItems.EBONY_HOE.get());
+                        output.accept(ModItems.EBONY_BOW.get());
                         output.accept(ModItems.EBONY_HELMET.get());
                         output.accept(ModItems.EBONY_CHESTPLATE.get());
                         output.accept(ModItems.EBONY_LEGGINGS.get());

@@ -132,6 +132,8 @@ public final class ModItems {
             props -> new PickaxeItem(ModTiers.ROWANWOOD, props.attributes(PickaxeItem.createAttributes(ModTiers.ROWANWOOD, 1.0F, -2.8F))));
     public static final DeferredItem<HoeItem> ROWANWOOD_HOE = ITEMS.registerItem("rowanwood_hoe",
             props -> new HoeItem(ModTiers.ROWANWOOD, props.attributes(HoeItem.createAttributes(ModTiers.ROWANWOOD, -2.0F, -1.0F))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MaterialBowItem> ROWANWOOD_BOW = ITEMS.registerItem("rowanwood_bow",
+            props -> new dev.zsskayr.merlins_inferno.item.MaterialBowItem(props.durability(520), 0.5D, ROWANWOOD_BAR));
 
     public static final DeferredItem<ArmorItem> ROWANWOOD_HELMET = ITEMS.registerItem("rowanwood_helmet",
             props -> new ArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(40))));
@@ -202,6 +204,8 @@ public final class ModItems {
                     appendHumanDamageTooltip(tooltip);
                 }
             });
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MaterialBowItem> DEMONBLOOD_BOW = ITEMS.registerItem("demonblood_bow",
+            props -> new dev.zsskayr.merlins_inferno.item.MaterialBowItem(props.durability(1400).fireResistant(), 1.5D, DEMONBLOOD_BAR));
 
     public static final DeferredItem<ArmorItem> DEMONBLOOD_HELMET = ITEMS.registerItem("demonblood_helmet",
             props -> new ArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(37)).fireResistant()) {
@@ -332,6 +336,8 @@ public final class ModItems {
                     appendSeraphiumTooltip(tooltip);
                 }
             });
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MaterialBowItem> SERAPHIUM_BOW = ITEMS.registerItem("seraphium_bow",
+            props -> new dev.zsskayr.merlins_inferno.item.MaterialBowItem(props.durability(1400), 1.5D, SERAPHIUM_BAR));
 
     /**
      * Shared tooltip line for every Seraphium tool - Deuteronomy 13:5 (Vulgate), the refrain used
@@ -711,6 +717,8 @@ public final class ModItems {
             props -> new PickaxeItem(ModTiers.LUMINITE, props.attributes(PickaxeItem.createAttributes(ModTiers.LUMINITE, 1.0F, -2.8F))));
     public static final DeferredItem<HoeItem> LUMINITE_HOE = ITEMS.registerItem("luminite_hoe",
             props -> new HoeItem(ModTiers.LUMINITE, props.attributes(HoeItem.createAttributes(ModTiers.LUMINITE, -4.5F, 0.0F))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MaterialBowItem> LUMINITE_BOW = ITEMS.registerItem("luminite_bow",
+            props -> new dev.zsskayr.merlins_inferno.item.MaterialBowItem(props.durability(2200), 2.5D, LUMINITE_GEM));
 
     public static final DeferredItem<ArmorItem> LUMINITE_HELMET = ITEMS.registerItem("luminite_helmet",
             props -> new ArmorItem(ModArmorMaterials.LUMINITE, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(160))));
@@ -752,6 +760,8 @@ public final class ModItems {
             props -> new PickaxeItem(ModTiers.EBONY, props.fireResistant().attributes(PickaxeItem.createAttributes(ModTiers.EBONY, 1.0F, -2.8F))));
     public static final DeferredItem<HoeItem> EBONY_HOE = ITEMS.registerItem("ebony_hoe",
             props -> new HoeItem(ModTiers.EBONY, props.fireResistant().attributes(HoeItem.createAttributes(ModTiers.EBONY, -4.0F, 0.0F))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MaterialBowItem> EBONY_BOW = ITEMS.registerItem("ebony_bow",
+            props -> new dev.zsskayr.merlins_inferno.item.MaterialBowItem(props.durability(2400).fireResistant(), 3.0D, EBONY_BAR));
 
     public static final DeferredItem<ArmorItem> EBONY_HELMET = ITEMS.registerItem("ebony_helmet",
             props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.HELMET, props.fireResistant().durability(ArmorItem.Type.HELMET.getDurability(180))));

@@ -43,7 +43,7 @@ public final class SeraphiumCombatHandler {
             return;
         }
 
-        ItemStack weapon = attacker.getMainHandItem();
+        ItemStack weapon = CombatWeapon.of(event.getSource());
         if (!weapon.is(ModTags.Items.SERAPHIUM_TOOLS)) {
             return;
         }

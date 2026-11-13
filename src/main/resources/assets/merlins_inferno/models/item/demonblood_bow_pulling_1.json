@@ -1,0 +1,6 @@
+{
+  "parent": "merlins_inferno:item/demonblood_bow",
+  "textures": {
+    "layer0": "merlins_inferno:item/demonblood_bow_pulling_1"
+  }
+}

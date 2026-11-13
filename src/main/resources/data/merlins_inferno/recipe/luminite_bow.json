@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "X": {
+      "item": "merlins_inferno:luminite_gem"
+    },
+    "S": {
+      "item": "minecraft:string"
+    }
+  },
+  "pattern": [
+    " XS",
+    "X S",
+    " XS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "merlins_inferno:luminite_bow"
+  }
+}

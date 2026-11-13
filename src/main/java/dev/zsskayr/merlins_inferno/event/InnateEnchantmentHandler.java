@@ -18,10 +18,10 @@ public final class InnateEnchantmentHandler {
     @SubscribeEvent
     public void onIncomingDamage(LivingIncomingDamageEvent event) {
         Entity source = event.getSource().getEntity();
-        if (!(source instanceof LivingEntity attacker) || event.getSource().getDirectEntity() != attacker) {
+        if (!(source instanceof LivingEntity attacker)) {
             return;
         }
-        ItemStack weapon = attacker.getMainHandItem();
+        ItemStack weapon = CombatWeapon.of(event.getSource());
         if (weapon.isEmpty()) {
             return;
         }

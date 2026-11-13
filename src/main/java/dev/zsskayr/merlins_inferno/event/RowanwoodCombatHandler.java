@@ -27,7 +27,7 @@ public final class RowanwoodCombatHandler {
             return;
         }
 
-        ItemStack weapon = attacker.getMainHandItem();
+        ItemStack weapon = CombatWeapon.of(event.getSource());
         if (!weapon.is(ModTags.Items.ROWANWOOD_TOOLS)) {
             return;
         }

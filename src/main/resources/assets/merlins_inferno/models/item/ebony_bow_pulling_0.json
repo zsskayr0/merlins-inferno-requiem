@@ -1,0 +1,6 @@
+{
+  "parent": "merlins_inferno:item/ebony_bow",
+  "textures": {
+    "layer0": "merlins_inferno:item/ebony_bow_pulling_0"
+  }
+}

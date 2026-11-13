@@ -29,8 +29,8 @@ public final class LuminiteCombatHandler {
     @SubscribeEvent
     public void onHit(LivingDamageEvent.Post event) {
         DamageSource source = event.getSource();
-        if (!(source.getEntity() instanceof LivingEntity attacker) || source.getDirectEntity() != attacker
-                || !attacker.getMainHandItem().is(ModTags.Items.LUMINITE_TOOLS)) {
+        if (!(source.getEntity() instanceof LivingEntity attacker)
+                || !CombatWeapon.of(source).is(ModTags.Items.LUMINITE_TOOLS)) {
             return;
         }
         LivingEntity victim = event.getEntity();

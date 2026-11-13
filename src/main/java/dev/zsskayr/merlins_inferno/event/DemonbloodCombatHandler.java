@@ -41,7 +41,7 @@ public final class DemonbloodCombatHandler {
             return;
         }
 
-        ItemStack weapon = livingAttacker.getMainHandItem();
+        ItemStack weapon = CombatWeapon.of(event.getSource());
         if (weapon.is(ModTags.Items.DEMONBLOOD_TOOLS)) {
             event.setAmount(event.getAmount() * HUMAN_DAMAGE_MULTIPLIER);
         }

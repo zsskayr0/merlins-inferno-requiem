@@ -26,18 +26,19 @@ public final class EbonyCombatHandler {
     @SubscribeEvent
     public void onHit(LivingDamageEvent.Post event) {
         DamageSource source = event.getSource();
-        if (!(source.getEntity() instanceof LivingEntity attacker) || source.getDirectEntity() != attacker) {
+        if (!(source.getEntity() instanceof LivingEntity attacker)) {
             return;
         }
+        boolean melee = source.getDirectEntity() == attacker;
         LivingEntity victim = event.getEntity();
         if (victim.level().isClientSide()) {
             return;
         }
-        if (attacker.getMainHandItem().is(ModTags.Items.EBONY_TOOLS)) {
+        if (CombatWeapon.of(source).is(ModTags.Items.EBONY_TOOLS)) {
             victim.addEffect(new MobEffectInstance(MobEffects.WITHER, WITHER_TICKS, 0), attacker);
             attacker.heal(Math.min(event.getNewDamage() * LIFESTEAL, LIFESTEAL_CAP));
         }
-        if (EbonyArmorHandler.wearsFullSet(victim)) {
+        if (melee && EbonyArmorHandler.wearsFullSet(victim)) {
             attacker.addEffect(new MobEffectInstance(MobEffects.WITHER, WITHER_TICKS, 0), victim);
         }
     }

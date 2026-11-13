@@ -1,0 +1,6 @@
+{
+  "parent": "merlins_inferno:item/luminite_bow",
+  "textures": {
+    "layer0": "merlins_inferno:item/luminite_bow_pulling_0"
+  }
+}
