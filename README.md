@@ -2,7 +2,7 @@
 
 > Survive the inferno. Conquer the unknown.
 
-A Minecraft mod for **NeoForge 1.21.1** built around three lineages of equipment, each with its own origin, creatures and playstyle. Currently in early alpha (`0.0.12-alpha`), so expect rough edges.
+A Minecraft mod for **NeoForge 1.21.1** built around three lineages of equipment, each with its own origin, creatures and playstyle. Currently in early alpha (`0.0.21-alpha`), so expect rough edges.
 
 ## The Three Roads
 
@@ -32,17 +32,29 @@ Look for a **Druid's Sanctuary** - a clearing ringed by wooden pillars, with a h
 - **Grymns** - the Nether's Circle 1 miniboss: a low-flying phantom that lurks and goes for the throat.
 - **Andras, the Forgotten Demon** - the Infernal Circle 1 boss, guarding the Ancient Battlefield. He calls Imps and brands you with the *Mark of Debt*.
 - **The Starved** - a relentless, ever-hungrier beast. Appears only from Circle 2.
-- **The Hell Forge** - a large multiblock forge that burns Lava Buckets or Blaze Powder, cooks faster than a furnace, and is the only place Demonblood Scrap becomes a bar.
+- **The Hell Forge** - a 3x3x3 multiblock built from Compressed Netherrack around a Demonic Core, operated through its Controller. It burns Lava Buckets or Blaze Powder, cooks faster than a furnace, and is the only place Demonblood Scrap becomes a bar. Vaults on the faces feed items, fuel and fluids in and out, and the Forge Wrench switches each Vault's mode.
+- **The Carnal Heap** - a Nether biome of living flesh. Grave Sand from the Ashen Fields smelts into Crypt Glass, which becomes tough Hellglass; with a Weeping Eye (fed to a Mouth Block) it makes **Hell Sight**, a lens that lets you see through lava.
 - **Enchantments** - *Bane of Humanity* and *Evil*.
 
 ### The Sacred Church & Lyrium
 - **Lyrium geodes** hide in the mountains, blazing with light. Undead and demons nearby are set ablaze with the Sanctified curse. Lyrium also appears as scattered ore.
 - Lyrium is refined in stages (Raw -> Impure -> Refined...). Refined Lyrium can be traded from master-level Clerics or the Sacred Priest, or found in pillager loot.
+- **Red Lyrium** - Lyrium's corrupted sibling, refined in its own stages. Its touch inflicts **Demonified**, which burns humans especially fiercely and spreads through melee attacks; **Warding** makes you immune to it.
 - **Sanctified** - the touch of Raw Lyrium. It burns like poison and **can kill you**, but bearers hit undead harder and spread the effect to what they strike.
 - **The Sacred Church** - a ruined chapel with a congregation of neutral cultists, guarded by the **Sacred Priest**. Once he falls, a diamond on the **Celestial Altar** wakes **Elias**, the Angelical Circle 1 boss, whose Great Bell tolls to strengthen him until it shatters in fury. Elias drops *Celestial Essence*, the catalyst for Seraphium.
 
 ### The Legendary Swords
-Any boss or miniboss may, very rarely, drop a **Hollow Relic** - a Diamond-strong sword with one use, the core of the legendary swords. Put it in the centre of the crafting grid with four materials: **Eden's Thorn** (Druidic, a poisoning dagger), **Debt Collector** (Infernal, an axe that sets targets ablaze, with Evil I built in and bonus damage to anything weaker than you) and **Vigil's Sorrow** (Angelical, Sanctified II on every hit, Holy I built in, 1.5x damage to anything stronger than you). The **Hell Seal** needed for the Debt Collector drops from Grymns and Andras, or comes nine at a time from a Book of Contracts. Mythic weapons will follow in the Second Circle.
+Any boss or miniboss may, very rarely, drop a **Hollow Relic** - a Diamond-strong sword with one use, the core of the legendary swords. Put it in the centre of the crafting grid with four materials: **Eden's Thorn** (Druidic, a poisoning dagger), **Debt Collector** (Infernal, an axe that sets targets ablaze, with Evil I built in and bonus damage to anything weaker than you) and **Vigil's Sorrow** (Angelical, Sanctified II on every hit, Holy I built in, 1.5x damage to anything stronger than you). The **Hell Seal** needed for the Debt Collector drops from Grymns and Andras, or comes nine at a time from a Book of Contracts.
+
+### The Mythic Weapons
+Mythics cannot be crafted. Each one is the apex of its road and grows when the world reaches the next Circle: the sword you carry becomes its next form on its own, keeping its enchantments and name.
+
+- **Gehenna** (Infernal, Circle 1) - a warhammer that held a demon's power. Its Unique, *Bloody*, rewards clean kills with harder blows and wakes a frenzy on the rest, at a cost in blood if the frenzy ends without a kill.
+- **Excalibur** (Druidic, Circle 2) - a fae-forged sword worn by time. When the world reaches the Third Circle the earth shakes around its bearer and it awakens as the true Excalibur, with its own look and more damage.
+- **Zaeldris** (Angelical, Circle 3) - the angelic lance and the strongest weapon in the mod. Hold its barrage key to loose spears of light that lodge in your foes and burst; its *God Touch* burns what they strike.
+
+### The Mark of Cain
+A Curios *mark* slot holds a soulbound Mark. **Cain** drops the **Mark of Cain** (6%): it grants strength and fast regeneration at the price of hunger and frailty, and holy weapons hurt its bearer more. A **Scroll of Splitter** frees its reader of a Mark, once.
 
 ### Ebony and the Dark Coven (Circle 2)
 **Ebony Debris** hides in Oblivion (and, very rarely, in Ancient Debris); its scrap, as well as the drops of Oblivion's bosses, is smelted into **Ebony Bars** in the Hell Forge. Ebony tools and armor sit above Seraphium, and the full armor set grants Fire Resistance IV.
@@ -52,6 +64,7 @@ Any boss or miniboss may, very rarely, drop a **Hollow Relic** - a Diamond-stron
 - **The Dark Coven** - a legendary sword in seven stages. Right-click to invoke the coven (Strength, Speed and Night Vision, paid for with the Wither); each stage is a smithing step with a Withered Bone and an Ebony Bar, and the last one asks for a Nether Star and seals the Demonic Pact. The blade lights up with more runes at every stage.
 
 ### Other
+- **Wings** - three elytra-like wings boosted with a keybind (default V) instead of fireworks: **Tattered Wings** (Druidic, rare in the Druid's Sanctuary), and the **Seraph Wings** (Angelical) and **Fallen Wings** (Infernal) they become at Pandora's Box. Each has its own cooldown and durability, and wears differently depending on the dimension.
 - **The Champion Seeker** - a compass that points at the nearest boss or miniboss.
 - **Benches**, **Ornated Carpets**, Flesh blocks and more decoration.
 - Optional compat: bosses leave a [Lootr](https://modrinth.com/mod/lootr) chest with per-player loot when it is installed.

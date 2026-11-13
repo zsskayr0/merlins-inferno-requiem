@@ -50,3 +50,8 @@ __pycache__/
 
 # Compile-only copies of third-party mod jars (not redistributed)
 /libs/
+
+# JVM crash dumps and stray files
+hs_err_pid*.log
+replay_pid*.log
+*.whl
