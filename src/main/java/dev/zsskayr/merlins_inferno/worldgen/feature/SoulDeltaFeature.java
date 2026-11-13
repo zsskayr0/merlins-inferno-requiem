@@ -3,9 +3,7 @@ package dev.zsskayr.merlins_inferno.worldgen.feature;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -27,6 +25,13 @@ public class SoulDeltaFeature extends Feature<NoneFeatureConfiguration> {
         super(codec);
     }
 
+    /** Blended share of soul biome a column needs to turn. */
+    private static final float SHARE = 0.3F;
+
+    private static boolean soulBiome(net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome> key) {
+        return key == Biomes.BASALT_DELTAS || key == Biomes.SOUL_SAND_VALLEY;
+    }
+
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel level = context.level();
@@ -37,19 +42,34 @@ public class SoulDeltaFeature extends Feature<NoneFeatureConfiguration> {
         BlockState soulMagma = ModBlocks.SOUL_MAGMA.get().defaultBlockState();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         boolean changed = false;
-        // Biomes are stored per 4x4x4 cell, so the lookup is done once per cell.
-        for (int cx = 0; cx < 16; cx += 4) for (int cz = 0; cz < 16; cz += 4) for (int cy = minY; cy < maxY; cy += 4) {
-            Holder<Biome> biome = level.getBiome(pos.set(x0 + cx + 2, cy + 2, z0 + cz + 2));
-            if (!biome.is(Biomes.BASALT_DELTAS)) continue;
-            for (int dx = 0; dx < 4; dx++) for (int dz = 0; dz < 4; dz++) for (int dy = 0; dy < 4 && cy + dy < maxY; dy++) {
-                pos.set(x0 + cx + dx, cy + dy, z0 + cz + dz);
+        // The Oblivion's biomes are 3D and come in 4x4 cells, so a per-cell choice stripes the cliffs and cuts lakes in
+        // stair steps. Each 4x4 column gets the share of its height that is a soul biome, those shares are blended
+        // between neighbouring columns (into the next chunks too, so edges meet), and a block column turns to Soul Lava
+        // when the blend reaches a half. That gives soft, curved shores that line up across chunks.
+        int qx0 = (x0 >> 2) - 1, qz0 = (z0 >> 2) - 1;
+        float[][] share = new float[6][6];
+        for (int i = 0; i < 6; i++) for (int j = 0; j < 6; j++) {
+            int cells = 0, soul = 0;
+            for (int y = minY + 2; y < maxY; y += 8) {
+                cells++;
+                if (level.getBiome(pos.set(((qx0 + i) << 2) + 2, y, ((qz0 + j) << 2) + 2)).is(SoulDeltaFeature::soulBiome)) soul++;
+            }
+            share[i][j] = cells == 0 ? 0 : (float) soul / cells;
+        }
+        for (int bx = 0; bx < 16; bx++) for (int bz = 0; bz < 16; bz++) {
+            // Quart centres sit at q*4+2; find the four around this block column and blend.
+            float fx = (x0 + bx - 2) / 4F - qx0, fz = (z0 + bz - 2) / 4F - qz0;
+            int i = (int) Math.floor(fx), j = (int) Math.floor(fz);
+            float tx = fx - i, tz = fz - j;
+            float v = (share[i][j] * (1 - tx) + share[i + 1][j] * tx) * (1 - tz) + (share[i][j + 1] * (1 - tx) + share[i + 1][j + 1] * tx) * tz;
+            if (v < SHARE) continue;
+            for (int y = minY; y < maxY; y++) {
+                pos.set(x0 + bx, y, z0 + bz);
                 BlockState state = level.getBlockState(pos);
                 if (state.is(Blocks.LAVA)) {
                     BlockState next = soulLava.setValue(LiquidBlock.LEVEL, state.getValue(LiquidBlock.LEVEL));
                     level.setBlock(pos, next, 2);
-                    if (!next.getFluidState().isSource()) {
-                        level.scheduleTick(pos, next.getFluidState().getType(), 1);
-                    }
+                    if (!next.getFluidState().isSource()) level.scheduleTick(pos, next.getFluidState().getType(), 1);
                     changed = true;
                 } else if (state.is(Blocks.MAGMA_BLOCK)) {
                     level.setBlock(pos, soulMagma, 2);

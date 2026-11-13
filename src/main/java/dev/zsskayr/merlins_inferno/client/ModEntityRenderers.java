@@ -100,10 +100,13 @@ public final class ModEntityRenderers {
             @Override public net.minecraft.resources.ResourceLocation getFlowingTexture() { return flowing; }
             @Override public org.joml.Vector3f modifyFogColor(net.minecraft.client.Camera camera, float partialTick,
                     net.minecraft.client.multiplayer.ClientLevel level, int renderDistance, float darkenWorldAmount, org.joml.Vector3f fluidFogColor) {
-                return new org.joml.Vector3f(0.1F, 0.55F, 0.6F);
+                // Hell Sight clears Soul Lava like lava: keep the plain world fog.
+                if (LavaSight.lensActive()) return fluidFogColor;
+                return new org.joml.Vector3f(0.02F, 0.22F, 0.3F);
             }
             @Override public void modifyFogRender(net.minecraft.client.Camera camera, net.minecraft.client.renderer.FogRenderer.FogMode mode,
                     float renderDistance, float partialTick, float nearDistance, float farDistance, com.mojang.blaze3d.shaders.FogShape shape) {
+                if (LavaSight.lensActive()) return;
                 com.mojang.blaze3d.systems.RenderSystem.setShaderFogStart(0.25F);
                 com.mojang.blaze3d.systems.RenderSystem.setShaderFogEnd(1.0F);
             }

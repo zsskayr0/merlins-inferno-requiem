@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "TFT",
+    "FEF",
+    "TFT"
+  ],
+  "key": {
+    "T": {
+      "item": "merlins_inferno:cinder_tooth"
+    },
+    "F": {
+      "item": "merlins_inferno:devil_flesh"
+    },
+    "E": {
+      "item": "merlins_inferno:primordial_ember"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:salamander_bracelet",
+    "count": 1
+  }
+}

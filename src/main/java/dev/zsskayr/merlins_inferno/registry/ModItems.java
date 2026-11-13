@@ -611,6 +611,12 @@ public final class ModItems {
     public static final DeferredItem<AntidoteItem> ANTIDOTE = ITEMS.registerItem("antidote",
             props -> new AntidoteItem(props.stacksTo(16).rarity(Rarity.UNCOMMON)));
     // Wards against Red Lyrium's Demonified (mark.DemonifiedWard): the amulet anywhere in the inventory or a Curios slot, the elixir for five minutes.
+    // Salamander Bracelet: Cinder teeth wrapped in Devil Flesh, bound with the Primordial Ember (drop of the first Circle 2 boss, no source yet).
+    public static final DeferredItem<Item> CINDER_TOOTH = ITEMS.registerSimpleItem("cinder_tooth", new Item.Properties().fireResistant());
+    public static final DeferredItem<Item> PRIMORDIAL_EMBER = ITEMS.registerSimpleItem("primordial_ember",
+            new Item.Properties().fireResistant().rarity(Rarity.EPIC));
+    public static final DeferredItem<Item> SALAMANDER_BRACELET = ITEMS.registerSimpleItem("salamander_bracelet",
+            new Item.Properties().stacksTo(1).fireResistant().rarity(Rarity.RARE));
     public static final DeferredItem<Item> WARDING_AMULET = ITEMS.registerSimpleItem("warding_amulet",
             new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.WardingElixirItem> WARDING_ELIXIR = ITEMS.registerItem("warding_elixir",

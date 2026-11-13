@@ -1,6 +1,6 @@
 {
   "type": "neoforge:add_features",
-  "biomes": "minecraft:basalt_deltas",
+  "biomes": ["minecraft:basalt_deltas", "minecraft:soul_sand_valley", "minecraft:nether_wastes", "merlins_inferno:ashen_fields", "merlins_inferno:carnal_heap", "merlins_inferno:oblivion_forest", "merlins_inferno:withered_hills"],
   "features": "merlins_inferno:soul_delta",
   "step": "top_layer_modification"
 }

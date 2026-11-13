@@ -46,6 +46,7 @@ public class HauntedBoat extends net.minecraft.world.entity.vehicle.Boat {
 
     @Override
     public boolean canBoatInFluid(FluidType type) {
-        return type == Fluids.WATER.getFluidType() || type == Fluids.LAVA.getFluidType();
+        return type == Fluids.WATER.getFluidType() || type == Fluids.LAVA.getFluidType()
+                || type == dev.zsskayr.merlins_inferno.registry.ModFluids.SOUL_LAVA_TYPE.get();
     }
 }

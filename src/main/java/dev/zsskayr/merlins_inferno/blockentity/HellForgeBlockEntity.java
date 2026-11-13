@@ -739,8 +739,10 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
             }
             boolean tooHot = heat > material.max();
             if (progress[lane] < duration[lane]) {
+                // The fuel can be gone (emptied or data reloaded) while the forge still holds heat.
+                if (fuel == null) { status[lane] = 7; continue; }
                 double processingCost = ForgeMath.processingCost(duration[lane], laneFuel) * fuel.burnRate();
-                if (fuelAmount < processingCost || fuel == null) { status[lane] = 7; continue; }
+                if (fuelAmount < processingCost) { status[lane] = 7; continue; }
                 progress[lane] = Math.min(duration[lane], progress[lane] + laneSpeed);
                 fuelAmount = Math.max(0, fuelAmount - processingCost);
             }

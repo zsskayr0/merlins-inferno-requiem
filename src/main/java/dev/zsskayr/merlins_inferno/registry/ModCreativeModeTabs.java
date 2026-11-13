@@ -91,6 +91,9 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.ANTIDOTE.get());
                         output.accept(ModItems.WARDING_ELIXIR.get());
                         output.accept(ModItems.WARDING_AMULET.get());
+                        output.accept(ModItems.CINDER_TOOTH.get());
+                        output.accept(ModItems.PRIMORDIAL_EMBER.get());
+                        output.accept(ModItems.SALAMANDER_BRACELET.get());
                         output.accept(ModItems.ROWANWOOD_SWORD.get());
                         output.accept(ModItems.ROWANWOOD_AXE.get());
                         output.accept(ModItems.ROWANWOOD_PICKAXE.get());

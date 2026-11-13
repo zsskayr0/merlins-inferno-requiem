@@ -832,5 +832,8 @@
   "gui.merlins_inferno.forge.vault_face.up": "Vault: Top",
   "gui.merlins_inferno.forge.vault_face.down": "Vault: Bottom",
   "message.merlins_inferno.hell_forge.vault_push.on": "Auto Push: ON",
-  "message.merlins_inferno.hell_forge.vault_push.off": "Auto Push: OFF"
+  "message.merlins_inferno.hell_forge.vault_push.off": "Auto Push: OFF",
+  "item.merlins_inferno.cinder_tooth": "Cinder Tooth",
+  "item.merlins_inferno.primordial_ember": "Primordial Ember",
+  "item.merlins_inferno.salamander_bracelet": "Salamander Bracelet"
 }

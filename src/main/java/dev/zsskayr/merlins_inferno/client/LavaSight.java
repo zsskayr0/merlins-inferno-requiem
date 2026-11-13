@@ -39,7 +39,12 @@ public final class LavaSight {
     /** Read by CameraMixin: the camera stops reporting lava so shader packs draw no lava fog either. */
     public static boolean hellSightClearsLava() {
         var mc=Minecraft.getInstance();
-        return hasLens() && mc.player.isEyeInFluid(net.minecraft.tags.FluidTags.LAVA);
+        return hasLens() && (mc.player.isEyeInFluid(net.minecraft.tags.FluidTags.LAVA)
+                || mc.player.getEyeInFluidType() == dev.zsskayr.merlins_inferno.registry.ModFluids.SOUL_LAVA_TYPE.get());
+    }
+    /** The Soul Lava fog is only applied with the camera inside Soul Lava, so the lens alone decides it. */
+    public static boolean lensActive() {
+        return hasLens();
     }
     private static boolean active() {
         return hellSightClearsLava();
@@ -67,30 +72,35 @@ public final class LavaSight {
         }
     }
     @SubscribeEvent public static void overlay(RenderBlockScreenEffectEvent event) {
-        if (event.getOverlayType()!=RenderBlockScreenEffectEvent.OverlayType.FIRE || !hasLens()) return;
+        if (event.getOverlayType()!=RenderBlockScreenEffectEvent.OverlayType.FIRE) return;
+        var mc=Minecraft.getInstance();
+        boolean soul=SoulFire.burning(mc.player);
+        if (!hasLens() && !soul) return;
         event.setCanceled(true);
-        renderFire(Minecraft.getInstance(), event.getPoseStack());
+        // The lens pushes the flames down and fades them; Soul Lava burns blue.
+        TextureAtlasSprite sprite=soul ? SoulFire.sprite(1) : ModelBakery.FIRE_1.sprite();
+        if (hasLens()) renderFire(event.getPoseStack(), sprite, FIRE_DROP, FIRE_ALPHA);
+        else renderFire(event.getPoseStack(), sprite, 0F, .9F);
     }
 
-    /** Vanilla's burning overlay, pushed down the screen and drawn translucent. */
-    private static void renderFire(Minecraft mc, PoseStack poseStack) {
+    /** Vanilla's burning overlay with the given sprite, pushed down by {@code drop}. */
+    private static void renderFire(PoseStack poseStack, TextureAtlasSprite sprite, float drop, float alpha) {
         RenderSystem.depthFunc(519);
         RenderSystem.depthMask(false);
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.enableBlend();
-        TextureAtlasSprite sprite=ModelBakery.FIRE_1.sprite();
         RenderSystem.setShaderTexture(0, sprite.atlasLocation());
         float u0=sprite.getU0(), u1=sprite.getU1(), v0=sprite.getV0(), v1=sprite.getV1();
         var buffer=Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         for (int i=0;i<2;i++) {
             poseStack.pushPose();
-            poseStack.translate(-(i*2-1)*.24F, -.3F-FIRE_DROP, 0);
+            poseStack.translate(-(i*2-1)*.24F, -.3F-drop, 0);
             poseStack.mulPose(Axis.YP.rotationDegrees((i*2-1)*10F));
             Matrix4f m=poseStack.last().pose();
-            buffer.addVertex(m,-.5F,-.5F,-.5F).setUv(u1,v1).setColor(1F,1F,1F,FIRE_ALPHA);
-            buffer.addVertex(m,.5F,-.5F,-.5F).setUv(u0,v1).setColor(1F,1F,1F,FIRE_ALPHA);
-            buffer.addVertex(m,.5F,.5F,-.5F).setUv(u0,v0).setColor(1F,1F,1F,FIRE_ALPHA);
-            buffer.addVertex(m,-.5F,.5F,-.5F).setUv(u1,v0).setColor(1F,1F,1F,FIRE_ALPHA);
+            buffer.addVertex(m,-.5F,-.5F,-.5F).setUv(u1,v1).setColor(1F,1F,1F,alpha);
+            buffer.addVertex(m,.5F,-.5F,-.5F).setUv(u0,v1).setColor(1F,1F,1F,alpha);
+            buffer.addVertex(m,.5F,.5F,-.5F).setUv(u0,v0).setColor(1F,1F,1F,alpha);
+            buffer.addVertex(m,-.5F,.5F,-.5F).setUv(u1,v0).setColor(1F,1F,1F,alpha);
             poseStack.popPose();
         }
         BufferUploader.drawWithShader(buffer.buildOrThrow());

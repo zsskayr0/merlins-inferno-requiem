@@ -39,7 +39,15 @@ public final class ModFluids {
                     .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL_LAVA)
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY_LAVA)
                     .lightLevel(15).density(3000).viscosity(6000).temperature(1300)
-                    .motionScale(0.0023333333333333335D)));
+                    .motionScale(0.0023333333333333335D)) {
+        /** Like lava, but fire-proof items (Netherite, the Haunted Boat) bob up to the surface instead of drifting. */
+        @Override
+        public void setItemMovement(net.minecraft.world.entity.item.ItemEntity entity) {
+            var motion = entity.getDeltaMovement();
+            double lift = entity.fireImmune() ? Math.min(motion.y + 0.01, 0.06) : motion.y + (motion.y < 0.06 ? 5.0E-4 : 0.0);
+            entity.setDeltaMovement(motion.x * 0.95, lift, motion.z * 0.95);
+        }
+    });
 
     public static final DeferredHolder<Fluid, FlowingFluid> SOUL_LAVA = FLUIDS.register("soul_lava",
             () -> new BaseFlowingFluid.Source(properties()));

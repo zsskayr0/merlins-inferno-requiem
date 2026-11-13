@@ -10,6 +10,7 @@
   ],
   "client": [
     "MinecraftMixin",
+    "EntityRenderDispatcherMixin",
     "CameraMixin",
     "ItemRendererMixin",
     "EntityMixin",
