@@ -29,6 +29,8 @@ public class MeteorData extends SavedData {
         /** The game time its crater was built, and whether Templars were left to guard it. */
         public long builtAt;
         public boolean guarded;
+        /** 1 bare (just mine it), 2 Templars on guard, 3 a Sacred Priest with his Templars; rolled when it falls. */
+        public int tier = 1;
 
         public Meteor(int x, int z, long fell, int y, boolean built) {
             this.x = x;
@@ -55,6 +57,7 @@ public class MeteorData extends SavedData {
             Meteor loaded = data.meteors.get(data.meteors.size() - 1);
             loaded.builtAt = meteor.getLong("built_at");
             loaded.guarded = meteor.getBoolean("guarded");
+            loaded.tier = meteor.contains("tier") ? meteor.getInt("tier") : (loaded.guarded ? 2 : 1);
         }
         return data;
     }
@@ -72,6 +75,7 @@ public class MeteorData extends SavedData {
             entry.putBoolean("built", meteor.built);
             entry.putLong("built_at", meteor.builtAt);
             entry.putBoolean("guarded", meteor.guarded);
+            entry.putInt("tier", meteor.tier);
             list.add(entry);
         }
         tag.put("meteors", list);

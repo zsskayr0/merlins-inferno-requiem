@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "active=false,facing=north,soul=false": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller"
+    },
+    "active=false,facing=north,soul=true": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller"
+    },
+    "active=true,facing=north,soul=false": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller_active"
+    },
+    "active=true,facing=north,soul=true": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller_active_soul"
+    },
+    "active=false,facing=east,soul=false": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller",
+      "y": 90
+    },
+    "active=false,facing=east,soul=true": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller",
+      "y": 90
+    },
+    "active=true,facing=east,soul=false": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller_active",
+      "y": 90
+    },
+    "active=true,facing=east,soul=true": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller_active_soul",
+      "y": 90
+    },
+    "active=false,facing=south,soul=false": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller",
+      "y": 180
+    },
+    "active=false,facing=south,soul=true": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller",
+      "y": 180
+    },
+    "active=true,facing=south,soul=false": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller_active",
+      "y": 180
+    },
+    "active=true,facing=south,soul=true": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller_active_soul",
+      "y": 180
+    },
+    "active=false,facing=west,soul=false": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller",
+      "y": 270
+    },
+    "active=false,facing=west,soul=true": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller",
+      "y": 270
+    },
+    "active=true,facing=west,soul=false": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller_active",
+      "y": 270
+    },
+    "active=true,facing=west,soul=true": {
+      "model": "merlins_inferno:block/blighted_hellforge_controller_active_soul",
+      "y": 270
+    }
+  }
+}

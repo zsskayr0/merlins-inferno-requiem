@@ -25,4 +25,9 @@ public final class ForgeClientConfig {
         Unit unit = Unit.values()[(int) ((milliseconds / 2000) % 3)];
         return unit.format(material.min()) + " – " + unit.format(material.max());
     }
+
+    /** One temperature, shown in Celsius, Fahrenheit and Kelvin in turn (two seconds each), for recipe viewers. */
+    public static String cyclingTemperature(double kelvin, long milliseconds) {
+        return Unit.values()[(int) ((milliseconds / 2000) % 3)].format(kelvin);
+    }
 }

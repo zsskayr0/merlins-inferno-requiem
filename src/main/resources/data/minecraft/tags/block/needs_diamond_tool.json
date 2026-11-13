@@ -11,6 +11,13 @@
     "merlins_inferno:arganite",
     "merlins_inferno:arganite_stairs",
     "merlins_inferno:arganite_slab",
-    "merlins_inferno:arganite_wall"
+    "merlins_inferno:arganite_wall",
+    "merlins_inferno:blighted_core",
+    "merlins_inferno:blightsteel_casing",
+    "merlins_inferno:blighted_stabilizer",
+    "merlins_inferno:blighted_bellows",
+    "merlins_inferno:blighted_economizer",
+    "merlins_inferno:blighted_ward",
+    "merlins_inferno:blighted_hellforge_controller"
   ]
 }

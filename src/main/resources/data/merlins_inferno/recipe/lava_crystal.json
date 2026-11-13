@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "minecraft:lava_bucket" },
+    { "item": "minecraft:magma_block" },
+    { "item": "minecraft:magma_block" },
+    { "item": "merlins_inferno:infernal_essence" }
+  ],
+  "result": { "count": 1, "id": "merlins_inferno:lava_crystal" }
+}

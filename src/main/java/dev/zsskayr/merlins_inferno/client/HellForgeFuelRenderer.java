@@ -26,6 +26,7 @@ public class HellForgeFuelRenderer implements BlockEntityRenderer<HellForgeBlock
     @Override
     public void render(HellForgeBlockEntity forge, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
             int packedLight, int packedOverlay) {
+        var shape = forge.renderShape();
         int r = forge.renderRadius();
         if (r < 2 || forge.getLevel() == null) return;
         float fill = forge.animatedFill(forge.renderFill() / 128.0F);
@@ -35,27 +36,38 @@ public class HellForgeFuelRenderer implements BlockEntityRenderer<HellForgeBlock
         int span = r - 1;
         float cx = -facing.getStepX() * r, cz = -facing.getStepZ() * r;
         float time = forge.getLevel().getGameTime() + partialTick;
+        // The pool fills the hollow above the floor: up to the roof, or to the rim of an open top.
+        int depth = shape.height() - (shape.roof() ? 2 : 1);
+        // Ripples are fine up close and coarse far away: quarter-block cells within 24 blocks, half-block to 48, whole blocks past it.
+        var camera = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        double distance = camera.distanceTo(net.minecraft.world.phys.Vec3.atCenterOf(forge.getBlockPos()));
+        int cells = distance < 24 ? 4 : distance < 48 ? 2 : 1;
         draw(bufferSource, poseStack.last(), cx - span, cx + span + 1, 1, cz - span, cz + span + 1,
-                fill, time, forge.renderKind());
+                depth, fill, time, forge.renderFuel(), cells);
     }
 
-    /** Draws the pool inside the box [x0,x1] x [y0,y0+depth] x [z0,z1]; kind 2 is the darker ember tint. */
+    /** Draws the pool inside the box [x0,x1] x [y0,y0+depth] x [z0,z1], in the fuel's liquid texture and tint. */
     public static void draw(MultiBufferSource bufferSource, PoseStack.Pose pose, float x0, float x1, float y0,
-            float z0, float z1, float fill, float time, int kind) {
+            float z0, float z1, float depth, float fill, float time, @javax.annotation.Nullable dev.zsskayr.merlins_inferno.forge.ForgeThermalData.Fuel fuel) {
+        draw(bufferSource, pose, x0, x1, y0, z0, z1, depth, fill, time, fuel, 4);
+    }
+
+    /** As above, with the surface cut into {@code cells} ripple cells per block (4, 2 or 1). */
+    public static void draw(MultiBufferSource bufferSource, PoseStack.Pose pose, float x0, float x1, float y0,
+            float z0, float z1, float depth, float fill, float time, @javax.annotation.Nullable dev.zsskayr.merlins_inferno.forge.ForgeThermalData.Fuel fuel, int cells) {
         // The side walls sit on the shell's inner plane (slightly past it), so they stay in front of the
         // catalyst blocks in the end layers and the pool covers them instead of hiding behind them.
         float minX = x0 - 0.01F, maxX = x1 + 0.01F, minZ = z0 - 0.01F, maxZ = z1 + 0.01F;
         float minY = y0 + INSET;
-        float depth = x1 - x0;
         float topY = minY + (depth - 2 * INSET) * fill;
         TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-                .apply(ResourceLocation.withDefaultNamespace("block/lava_still"));
+                .apply(ResourceLocation.parse(fuel == null ? "minecraft:block/lava_still" : fuel.liquidTexture()));
         VertexConsumer buf = bufferSource.getBuffer(Sheets.translucentCullBlockSheet());
-        float red = 1, green = 1, blue = 1;
-        if (kind == 2) { red = 0.85F; green = 0.45F; blue = 0.3F; }
+        int tint = fuel == null ? 0xFFFFFF : fuel.tint();
+        float red = (tint >> 16 & 255) / 255F, green = (tint >> 8 & 255) / 255F, blue = (tint & 255) / 255F;
         float u0 = sprite.getU0(), u1 = sprite.getU1(), v0 = sprite.getV0(), v1 = sprite.getV1();
         float vTop = v0 + (v1 - v0) * Math.min(1, (topY - minY) / depth);
-        surface(buf, pose, minX, maxX, minZ, maxZ, topY, time, u0, u1, v0, v1, red, green, blue);
+        surface(buf, pose, minX, maxX, minZ, maxZ, topY, time, u0, u1, v0, v1, red, green, blue, cells);
         wall(buf, pose, maxX, minZ, minX, minZ, minY, topY, 0, 0, -1, u0, u1, v0, v1, red, green, blue);
         wall(buf, pose, minX, maxZ, maxX, maxZ, minY, topY, 0, 0, 1, u0, u1, v0, v1, red, green, blue);
         wall(buf, pose, minX, minZ, minX, maxZ, minY, topY, -1, 0, 0, u0, u1, v0, v1, red, green, blue);
@@ -74,21 +86,23 @@ public class HellForgeFuelRenderer implements BlockEntityRenderer<HellForgeBlock
                 float y2 = Math.min(topY, y + 1);
                 float vt = v1 - (v1 - v0) * (y2 - y);
                 quad(b, pose, ax, y, az, bx, y, bz, bx, y2, bz, ax, y2, az, nx, ny, nz, u0, u1, vt, v1, r, g, bl);
+                // and its back, so a player swimming inside still sees the walls of liquid around them
+                quad(b, pose, bx, y, bz, ax, y, az, ax, y2, az, bx, y2, bz, -nx, -ny, -nz, u0, u1, vt, v1, r * 0.45F, g * 0.45F, bl * 0.45F);
             }
         }
     }
 
     /** A rippled top made of quarter-block cells; ripples fade out at the walls so the edges stay sealed. */
     private static void surface(VertexConsumer b, PoseStack.Pose pose, float minX, float maxX, float minZ, float maxZ,
-            float topY, float time, float u0, float u1, float v0, float v1, float r, float g, float bl) {
-        int nx = Math.max(1, Math.round((maxX - minX) * 4)), nz = Math.max(1, Math.round((maxZ - minZ) * 4));
+            float topY, float time, float u0, float u1, float v0, float v1, float r, float g, float bl, int cells) {
+        int nx = Math.max(1, Math.round((maxX - minX) * cells)), nz = Math.max(1, Math.round((maxZ - minZ) * cells));
         for (int i = 0; i < nx; i++) for (int j = 0; j < nz; j++) {
             float xa = minX + (maxX - minX) * i / nx, xb = minX + (maxX - minX) * (i + 1) / nx;
             float za = minZ + (maxZ - minZ) * j / nz, zb = minZ + (maxZ - minZ) * (j + 1) / nz;
             float ya = ripple(xa, za, minX, maxX, minZ, maxZ, time) + topY, yb = ripple(xb, za, minX, maxX, minZ, maxZ, time) + topY;
             float yc = ripple(xb, zb, minX, maxX, minZ, maxZ, time) + topY, yd = ripple(xa, zb, minX, maxX, minZ, maxZ, time) + topY;
-            float ua = u0 + (u1 - u0) * (i % 4) / 4F, ub = u0 + (u1 - u0) * (i % 4 + 1) / 4F;
-            float va = v0 + (v1 - v0) * (j % 4) / 4F, vb = v0 + (v1 - v0) * (j % 4 + 1) / 4F;
+            float ua = u0 + (u1 - u0) * (i % cells) / (float) cells, ub = u0 + (u1 - u0) * (i % cells + 1) / (float) cells;
+            float va = v0 + (v1 - v0) * (j % cells) / (float) cells, vb = v0 + (v1 - v0) * (j % cells + 1) / (float) cells;
             vertex(b, pose, xa, ya, za, ua, va, 0, 1, 0, r, g, bl);
             vertex(b, pose, xa, yd, zb, ua, vb, 0, 1, 0, r, g, bl);
             vertex(b, pose, xb, yc, zb, ub, vb, 0, 1, 0, r, g, bl);
@@ -129,7 +143,7 @@ public class HellForgeFuelRenderer implements BlockEntityRenderer<HellForgeBlock
 
     @Override
     public AABB getRenderBoundingBox(HellForgeBlockEntity forge) {
-        return new AABB(forge.getBlockPos()).inflate(10);
+        return new AABB(forge.getBlockPos()).inflate(10, 12, 10).move(0, 6, 0);
     }
 
     @Override

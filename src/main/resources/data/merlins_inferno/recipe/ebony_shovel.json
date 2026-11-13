@@ -9,7 +9,7 @@
       "item": "merlins_inferno:infernal_sinew"
     },
     "S": {
-      "item": "merlins_inferno:withered_bone"
+      "tag": "merlins_inferno:withered_bones"
     }
   },
   "pattern": [

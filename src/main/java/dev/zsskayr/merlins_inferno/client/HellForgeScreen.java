@@ -36,7 +36,7 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
     private float pitch=25F,panX,panY,zoom=1F;
     private boolean oriented;
     private net.minecraft.core.BlockPos previewCentre;
-    private final float[][] portPositions = new float[294][3];
+    private final float[][] portPositions = new float[dev.zsskayr.merlins_inferno.blockentity.HellForgeBlockEntity.MAX_PORTS][3];
     public HellForgeScreen(HellForgeMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title); imageWidth = 352; imageHeight = 308;
     }
@@ -45,6 +45,8 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
     @Override protected void containerTick() { super.containerTick(); menu.scrollLanes(menu.firstLane()); }
     private static final net.minecraft.resources.ResourceLocation UI = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(
             dev.zsskayr.merlins_inferno.Merlins_inferno.MODID, "textures/gui/hellforge/hell_forge_ui.png");
+    private static final net.minecraft.resources.ResourceLocation TITLES = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(
+            dev.zsskayr.merlins_inferno.Merlins_inferno.MODID, "textures/gui/hellforge/titles.png");
     private static final int TEXT = 0xFFD6C5B0, TEXT_DIM = 0xFF9C8D80, TEXT_SHADOW = 0xFF0E0A0A, HOT = 0xFFFFB45A, HOT_SHADOW = 0xFF3A1D08;
 
     private void blit(GuiGraphics g,int u,int v,int w,int h,int x,int y){g.blit(UI,leftPos+x,topPos+y,u,v,w,h,256,256);}
@@ -81,6 +83,69 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
     }
     /** Heated-metal bar: sunken trough with an ember gradient fill and a white-hot leading edge. */
     private void bar(GuiGraphics g,int x,int y,int w,int h,double value){bar(g,x,y,w,h,value,false);}
+    /** The current fuel's colour (from its data), or a dim grey when the forge holds no fuel. */
+    private int fuelColor(){
+        int index=menu.value(7);
+        var fuels=minecraft==null||minecraft.level==null?java.util.List.<ForgeThermalData.Fuel>of():ForgeThermalData.fuels(minecraft.level);
+        if(menu.getStoredFuel()<=0||index<0||index>=fuels.size())return 0xFF6E6862;
+        return 0xFF000000|fuels.get(index).uiColor();
+    }
+    /**
+     * The gauge holds the fuel itself: its own animated liquid texture, tiled at full size, with a gently rolling surface.
+     * Each one-pixel column is clipped to its own height so the top waves.
+     */
+    /** The fuel being drawn: the current one, or the last one while its liquid drains away after a dump. */
+    private ForgeThermalData.Fuel shownFuel(){
+        if(minecraft==null||minecraft.level==null)return null;
+        int index=menu.value(7);
+        var fuels=ForgeThermalData.fuels(minecraft.level);
+        if(index>=0&&index<fuels.size())lastFuel=fuels.get(index);
+        return lastFuel;
+    }
+    private ForgeThermalData.Fuel lastFuel;
+    private void drawFuelLiquid(GuiGraphics g,int fill){
+        if(fill<=0||minecraft==null||minecraft.level==null)return;
+        var fuel=shownFuel();
+        var sprite=minecraft.getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS)
+                .apply(net.minecraft.resources.ResourceLocation.parse(fuel==null?"minecraft:block/lava_still":fuel.liquidTexture()));
+        int tint=fuel==null?0xFFFFFF:fuel.tint();
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor((tint>>16&255)/255F,(tint>>8&255)/255F,(tint&255)/255F,1F);
+        float time=minecraft.level.getGameTime()+minecraft.getTimer().getGameTimeDeltaPartialTick(false);
+        int left=leftPos+323,bottom=topPos+237;
+        for(int col=0;col<10;col++){
+            int wave=fill>=196?0:(int)Math.round(1.3*Math.sin(time*0.12+col*0.75)+0.6*Math.sin(time*0.07-col*1.3));
+            int top=Math.max(topPos+40,bottom-Math.min(196,fill+wave));
+            g.enableScissor(left+col,top,left+col+1,bottom);
+            for(int ty=bottom-16;ty>top-16;ty-=16)g.blit(left,ty,0,16,16,sprite);
+            g.disableScissor();
+        }
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1F,1F,1F,1F);
+        // a thin glint along the surface and the gauge's own side shading on top of the liquid
+        for(int col=0;col<10;col++){
+            int wave=fill>=196?0:(int)Math.round(1.3*Math.sin(time*0.12+col*0.75)+0.6*Math.sin(time*0.07-col*1.3));
+            int top=Math.max(topPos+40,bottom-Math.min(196,fill+wave));
+            g.fill(left+col,top,left+col+1,top+1,0x60FFFFFF);
+        }
+        g.fill(left,bottom-fill,left+1,bottom,0x30FFFFFF);g.fill(left+9,bottom-fill,left+10,bottom,0x40000000);
+    }
+    /**
+     * The fuel's own three-stop ramp, built like the lava one: a paler tint turned a little up the hue wheel, the colour
+     * itself, and a deeper shade turned a little down it (yellow, orange, red for lava), so every fuel glows in its own hue.
+     */
+    private static int fuelRamp(int color,double t,int shade){
+        float[] hsv=java.awt.Color.RGBtoHSB(color>>16&255,color>>8&255,color&255,null);
+        int light=net.minecraft.util.Mth.hsvToRgb((hsv[0]+0.055F)%1F,hsv[1]*0.62F,1F);
+        int deep=net.minecraft.util.Mth.hsvToRgb((hsv[0]+0.945F)%1F,Math.min(1F,hsv[1]*1.1F),hsv[2]*0.82F);
+        int[][] stops={{light>>16&255,light>>8&255,light&255},{color>>16&255,color>>8&255,color&255},{deep>>16&255,deep>>8&255,deep&255}};
+        double f=Math.clamp(t,0,1)*2;int i=Math.min(1,(int)f);double k=f-i;
+        int rr=(int)(stops[i][0]+(stops[i+1][0]-stops[i][0])*k),gg=(int)(stops[i][1]+(stops[i+1][1]-stops[i][1])*k),bb=(int)(stops[i][2]+(stops[i+1][2]-stops[i][2])*k);
+        return 0xFF000000|Math.clamp(rr+shade,0,255)<<16|Math.clamp(gg+shade,0,255)<<8|Math.clamp(bb+shade,0,255);
+    }
+    /** The colour scaled by brightness, with a small per-row shade for texture. */
+    private static int shade(int color,double brightness,int shade){
+        int r=(int)((color>>16&255)*brightness)+shade,gr=(int)((color>>8&255)*brightness)+shade,b=(int)((color&255)*brightness)+shade;
+        return 0xFF000000|Math.clamp(r,0,255)<<16|Math.clamp(gr,0,255)<<8|Math.clamp(b,0,255);
+    }
     private static int heat(double t,int shade){
         int[][] stops={{255,226,96},{244,140,36},{206,44,24}};
         double f=Math.clamp(t,0,1)*2;int i=Math.min(1,(int)f);double k=f-i;
@@ -125,13 +190,19 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
     }
     @Override protected void renderBg(GuiGraphics g,float pt,int mx,int my){
         frame(g,24,8,328,300);
-        // Title plate with angled shoulders; the lettering is a baked sprite.
-        panel(g,111,0,154,26,0);
+        // Title plate with angled shoulders around the baked lettering (tools/gen_forge_titles.py), tinted with the fuel's colour.
+        boolean blighted = (menu.value(19) & 15) >= 2;
+        int titleW = blighted ? 182 : 97;
+        int plateW = Math.max(154, titleW + 22), plateX = 188 - plateW / 2;
+        panel(g,plateX,0,plateW,26,0);
         for(int i=0;i<6;i++){
-            g.fill(leftPos+105+i,topPos+10+i,leftPos+111,topPos+11+i,0xFF0E0A0A);
-            g.fill(leftPos+271-i,topPos+10+i,leftPos+265,topPos+11+i,0xFF0E0A0A);
+            g.fill(leftPos+plateX-6+i,topPos+10+i,leftPos+plateX,topPos+11+i,0xFF0E0A0A);
+            g.fill(leftPos+plateX+plateW+6-i,topPos+10+i,leftPos+plateX+plateW,topPos+11+i,0xFF0E0A0A);
         }
-        blit(g,0,212,100,15,138,6);
+        int titleColor = fuelColor();
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor((titleColor >> 16 & 255) / 255F, (titleColor >> 8 & 255) / 255F, (titleColor & 255) / 255F, 1F);
+        g.blit(TITLES, leftPos + 188 - titleW / 2, topPos + 6, 0, blighted ? 16 : 0, titleW, 15, 256, 32);
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
         int unit=ForgeClientConfig.UNIT.get()==ForgeClientConfig.Unit.KELVIN?7:ForgeClientConfig.UNIT.get()==ForgeClientConfig.Unit.CELSIUS?5:6;
         tab(g,1,57,0,menu.value(12)==1);
@@ -166,8 +237,16 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         vline(g,190,34,292);
         hline(g,36,184,211);
 
+        // A Magmatic forge: just the stone going in, the melt bar and the bucket being filled.
+        if(menu.magmatic()){
+            int y=38;
+            slot(g,207,y+1);slot(g,289,y+1);
+            bar(g,228,y+6,44,8,menu.progress(0));
+            g.fill(leftPos+275,topPos+y+9,leftPos+280,topPos+y+11,0xFF7A6A5E);
+            for(int k=0;k<4;k++)g.fill(leftPos+280+k,topPos+y+6+k,leftPos+281+k,topPos+y+14-k,0xFF7A6A5E);
+        }
         // Smelting lanes: all nine fit, so there is nothing to scroll.
-        for(int row=0;row<MENU_LANES;row++){
+        for(int row=0;row<MENU_LANES&&!menu.magmatic();row++){
             int lane=menu.firstLane()+row,y=38+row*22;
             boolean open=lane<menu.getProcessingSlots();
             boolean stocked=menu.getSlot(HellForgeBlockEntity.inputSlot(lane)).hasItem()||menu.getSlot(HellForgeBlockEntity.outputSlot(lane)).hasItem();
@@ -184,20 +263,23 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         }
         vline(g,310,34,292);
 
-        // Dross and scrap tray, centred under the lanes.
-        well(g,213,252,78,40,0);
-        slot(g,229,264);slot(g,259,264);
-        ghost(g,1,229,264,HellForgeBlockEntity.DROSS_SLOT);ghost(g,2,259,264,HellForgeBlockEntity.SCRAP_SLOT);
+        // Dross and scrap tray, centred under the lanes (a Magmatic forge leaves none).
+        if(!menu.magmatic()){
+            well(g,213,252,78,40,0);
+            slot(g,229,264);slot(g,259,264);
+            ghost(g,1,229,264,HellForgeBlockEntity.DROSS_SLOT);ghost(g,2,259,264,HellForgeBlockEntity.SCRAP_SLOT);
+        }
 
         // Fuel column: tall reserve gauge, the fuel slot beneath it and the dump button last.
         well(g,321,38,14,200,0);
-        int fuelFill=(int)(196*Math.clamp((double)menu.getStoredFuel()/Math.max(1,menu.getFuelCapacity()),0,1));
-        for(int i=0;i<fuelFill;i++){
-            int yy=topPos+236-i;
-            g.fill(leftPos+323,yy,leftPos+333,yy+1,heat(0.35+0.4*(i/196.0),((i*5)%5)-2));
-            g.fill(leftPos+323,yy,leftPos+324,yy+1,0x40FFFFFF);g.fill(leftPos+332,yy,leftPos+333,yy+1,0x50000000);
-        }
+        // The gauge eases towards the real level like the pool does, so fuel pours in and drains out instead of jumping.
+        int fuelFill=Math.round(196*Math.clamp(guiFill,0F,1F));
+        drawFuelLiquid(g,fuelFill);
         for(int i=20;i<196;i+=20)g.fill(leftPos+323,topPos+236-i,leftPos+333,topPos+237-i,0x55000000);
+        int capY=topPos+236-Math.round(196*menu.fillLimit());
+        g.fill(leftPos+320,capY,leftPos+336,capY+1,0xFFFFE2B0);
+        g.fill(leftPos+319,capY-1,leftPos+321,capY+2,0xFFFFE2B0);g.fill(leftPos+335,capY-1,leftPos+337,capY+2,0xFFFFE2B0);
+        if(menu.redstoneLevel()>=0){int redY=topPos+236-Math.round(196*menu.effectiveFillLimit());g.fill(leftPos+322,redY,leftPos+334,redY+1,0xFFE04040);}
         slot(g,320,246);ghost(g,0,320,246,HellForgeBlockEntity.FUEL_SLOT);
         nine(g,0,64,16,3,317,273,22,18);
         blit(g,48,192,18,18,319,273);
@@ -227,7 +309,7 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         }
     }
     private void nextPort(int step){
-        for(int n=1;n<=294;n++){int i=Math.floorMod(selectedFace+step*n,294);if(menu.value(65+i*3)>=0){selectedFace=i;return;}}
+        for(int n=1;n<=dev.zsskayr.merlins_inferno.blockentity.HellForgeBlockEntity.MAX_PORTS;n++){int i=Math.floorMod(selectedFace+step*n,dev.zsskayr.merlins_inferno.blockentity.HellForgeBlockEntity.MAX_PORTS);if(menu.value(65+i*3)>=0){selectedFace=i;return;}}
         selectedFace=-1;
     }
     private void renderPorts(GuiGraphics g, int cx, int cy) {
@@ -235,21 +317,25 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         var pose = g.pose();
         pose.pushPose();
         pose.translate(cx + panX, cy + panY, 150);
-        float scale = 64F * zoom / (menu.value(10) * 2 + 1);
+        var shape = dev.zsskayr.merlins_inferno.multiblock.HellForgeStructure.Shape.unpack(menu.value(10));
+        float scale = 64F * zoom / Math.max(shape.radius() * 2 + 1, shape.height());
         pose.scale(scale, -scale, scale);
         pose.mulPose(Axis.XP.rotationDegrees(pitch));
         pose.mulPose(Axis.YP.rotationDegrees(rotation));
+        pose.translate(0, -shape.centreY(), 0); // a tower turns around its middle, not its floor
         drawBlock(g, ModBlocks.DEMONIC_CORE.get().defaultBlockState(), 0, 0, 0);
         net.minecraft.core.BlockPos centre = new net.minecraft.core.BlockPos(
                 (menu.value(13) & 65535) | (menu.value(14) << 16),
                 (menu.value(15) & 65535) | (menu.value(16) << 16),
                 (menu.value(17) & 65535) | (menu.value(18) << 16));
         previewCentre = centre;
-        int r = menu.value(10);
+        int r = shape.radius();
         int face = 0;
-        for (int px = -r; px <= r; px++) for (int py = -r; py <= r; py++) for (int pz = -r; pz <= r; pz++) {
-            int axes = (Math.abs(px) == r ? 1 : 0) + (Math.abs(py) == r ? 1 : 0) + (Math.abs(pz) == r ? 1 : 0);
-            if (axes == 0) continue;
+        for (int px = -r; px <= r; px++) for (int py = shape.yMin(); py <= shape.yMax(); py++) for (int pz = -r; pz <= r; pz++) {
+            int axes = shape.axes(px, py, pz);
+            if (axes == 0 || (px == 0 && py == 0 && pz == 0)) continue;
+            boolean open = !shape.roof() && py == shape.yMax() && axes == 1;
+            if (open) continue;
             BlockState block = ModBlocks.COMPRESSED_NETHERRACK.get().defaultBlockState();
             if (axes == 1) {
                 int mode = menu.value(65 + face * 3);
@@ -274,8 +360,10 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         if (r >= 2 && guiFill > 0.004F) {
             // Interior of the shell: blocks are centred on integer coordinates, so it spans +-(r - 0.5) minus one layer.
             float fill = guiFill;
-            HellForgeFuelRenderer.draw(g.bufferSource(), pose.last(), -(r - 1) - 0.5F, (r - 1) + 0.5F, -(r - 1) - 0.5F,
-                    -(r - 1) - 0.5F, (r - 1) + 0.5F, fill, minecraft.level == null ? 0 : minecraft.level.getGameTime(), 1);
+            int depth = shape.height() - (shape.roof() ? 2 : 1);
+            HellForgeFuelRenderer.draw(g.bufferSource(), pose.last(), -(r - 1) - 0.5F, (r - 1) + 0.5F, shape.yMin() + 0.5F,
+                    -(r - 1) - 0.5F, (r - 1) + 0.5F, depth, fill, minecraft.level == null ? 0 : minecraft.level.getGameTime(),
+                    shownFuel());
         }
         g.flush();
         pose.popPose();
@@ -307,10 +395,24 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         return lines;
     }
     @Override protected void renderLabels(GuiGraphics g,int mouseX,int mouseY) {}
+    /** Every material the forge knows, with its range and whether this forge, as it is now, can work it. */
+    private List<Component> materialLines(){
+        List<Component> lines=new ArrayList<>();
+        lines.add(text("materials").copy().withStyle(net.minecraft.ChatFormatting.GOLD));
+        int tier=menu.value(19)&15;double low=menu.value(8),high=menu.value(9);
+        for(var entry:ForgeThermalData.materialTable(minecraft.level)){
+            var m=entry.material();
+            boolean ok=m.minCoreTier()<=tier&&m.min()<=high&&m.max()>=low;
+            lines.add(Component.literal(ok?"\u2714 ":"\u2718 ").withStyle(ok?net.minecraft.ChatFormatting.GREEN:net.minecraft.ChatFormatting.RED)
+                    .append(entry.items().getFirst().getHoverName().copy().withStyle(net.minecraft.ChatFormatting.WHITE))
+                    .append(Component.literal("  "+ForgeClientConfig.temperature(m.min())+" - "+ForgeClientConfig.temperature(m.max())).withStyle(net.minecraft.ChatFormatting.GRAY)));
+        }
+        return lines;
+    }
     private int hoveredPort(double x,double y) {
         if(!isHovering(60,36,122,148,x,y))return -1;
         int best=-1;
-        for(int i=0;i<294;i++) if(menu.value(65+i*3)>=0 && Math.abs(x-portPositions[i][0])<7 && Math.abs(y-portPositions[i][1])<7 && (best<0||portPositions[i][2]>portPositions[best][2]))best=i;
+        for(int i=0;i<dev.zsskayr.merlins_inferno.blockentity.HellForgeBlockEntity.MAX_PORTS;i++) if(menu.value(65+i*3)>=0 && Math.abs(x-portPositions[i][0])<7 && Math.abs(y-portPositions[i][1])<7 && (best<0||portPositions[i][2]>portPositions[best][2]))best=i;
         return best;
     }
     @Override public boolean mouseClicked(double x,double y,int b){
@@ -321,9 +423,9 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
                 if(isHovering(d+11,56,26,16,x,y)){nextPort(-1);return true;}
                 if(isHovering(d+111,56,26,16,x,y)){nextPort(1);return true;}
                 if(selectedFace>=0){
-                    for(int m=0;m<3;m++)if(isHovering(d+11,78+m*18,126,16,x,y)){action(4000+selectedFace*3+m);return true;}
-                    if(isHovering(d+11,136,126,16,x,y)){action(400+selectedFace);return true;}
-                    for(int i=0;i<9;i++)if(i<menu.getProcessingSlots()&&isHovering(d+11+i*14,168,13,16,x,y)){action(1000+selectedFace*9+i);return true;}
+                    for(int m=0;m<3;m++)if(isHovering(d+11,78+m*18,126,16,x,y)){action(dev.zsskayr.merlins_inferno.menu.HellForgeMenu.SET_MODE+selectedFace*3+m);return true;}
+                    if(isHovering(d+11,136,126,16,x,y)){action(dev.zsskayr.merlins_inferno.menu.HellForgeMenu.AUTO+selectedFace);return true;}
+                    for(int i=0;i<9;i++)if(i<menu.getProcessingSlots()&&isHovering(d+11+i*14,168,13,16,x,y)){action(dev.zsskayr.merlins_inferno.menu.HellForgeMenu.MASK+selectedFace*9+i);return true;}
                 }
                 return true;
             }
@@ -332,10 +434,17 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
             if(isHovering(1,109,22,22,x,y)){ForgeClientConfig.cycle();return true;}
             if(isHovering(1,57,22,22,x,y)){action(1);return true;}
             if(isHovering(317,273,22,18,x,y)){action(0);return true;}
+            if(isHovering(321,38,14,200,x,y)){setFillLimit(y);return true;}
         }
         return super.mouseClicked(x,y,b);
     }
+    /** Clicking or dragging on the fuel gauge sets the fuel cap, and so how hot the fire may burn. */
+    private void setFillLimit(double mouseY){
+        double fraction=Math.clamp((topPos+236-mouseY)/196.0,0,1);
+        action(dev.zsskayr.merlins_inferno.menu.HellForgeMenu.FILL_LIMIT+(int)Math.round(fraction*1000));
+    }
     @Override public boolean mouseDragged(double x,double y,int b,double dx,double dy) {
+        if(b==0&&isHovering(321,38,14,200,x,y)){setFillLimit(y);return true;}
         if(isHovering(60,36,122,148,x,y)){
             if(b==0){rotation+=(float)dx*2;pitch=Math.clamp(pitch+(float)dy*1.5F,-89F,89F);tipHidden=true;return true;}
             if(b==1){panX=Math.clamp(panX+(float)dx,-70F,70F);panY=Math.clamp(panY+(float)dy,-70F,70F);tipHidden=true;return true;}
@@ -353,7 +462,14 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         if(isHovering(1,57,22,22,x,y))g.renderTooltip(font,Component.literal("Auto Sort: "+(menu.value(12)==1?"ON":"OFF")),x,y);
         if(isHovering(1,83,22,22,x,y))g.renderTooltip(font,Component.literal("Vault Settings"),x,y);
         if(isHovering(1,109,22,22,x,y))g.renderTooltip(font,Component.literal("Temperature Unit"),x,y);
-        if(isHovering(321,38,14,200,x,y))g.renderTooltip(font,Component.literal("Fuel: "+menu.getStoredFuel()+" / "+menu.getFuelCapacity()),x,y);
+        if(isHovering(321,38,14,200,x,y)){
+            List<Component> fuelLines=new ArrayList<>();
+            fuelLines.add(Component.literal("Fuel: "+menu.getStoredFuel()+" / "+menu.getFuelCapacity()));
+            fuelLines.add(text(menu.magmatic()?"reserve":"fill_limit",Math.round(menu.fillLimit()*100)).copy().withStyle(net.minecraft.ChatFormatting.GOLD));
+            if(menu.redstoneLevel()>=0)fuelLines.add(text("fill_redstone",menu.redstoneLevel(),Math.round(menu.effectiveFillLimit()*100)).copy().withStyle(net.minecraft.ChatFormatting.RED));
+            g.renderComponentTooltip(font,fuelLines,x,y);
+        }
+        if(isHovering(40,36,20,168,x,y)&&minecraft.level!=null)g.renderComponentTooltip(font,materialLines(),x,y);
         if(isHovering(317,273,22,18,x,y))g.renderTooltip(font,Component.literal("Dump Fuel"),x,y);
         if(!isHovering(60,36,122,148,x,y))tipHidden=false;
         if(!tipHidden&&isHovering(60,36,122,148,x,y)&&!vaultPanelCovers(x,y))g.renderTooltip(font,text("ports_help"),x,y);

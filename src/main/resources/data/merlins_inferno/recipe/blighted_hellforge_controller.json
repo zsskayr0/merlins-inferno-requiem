@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CTC",
+    "CEC",
+    "CBC"
+  ],
+  "key": {
+    "C": {
+      "item": "merlins_inferno:blightsteel_casing"
+    },
+    "T": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "E": {
+      "item": "merlins_inferno:infernal_essence"
+    },
+    "B": {
+      "item": "merlins_inferno:blightstone"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:blighted_hellforge_controller",
+    "count": 1
+  }
+}

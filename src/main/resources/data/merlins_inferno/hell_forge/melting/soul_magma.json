@@ -1,0 +1,9 @@
+{
+  "type": "melting",
+  "item": "merlins_inferno:soul_magma",
+  "fluid": "merlins_inferno:soul_lava",
+  "amount": 100,
+  "time": 60,
+  "min_temperature": 1673.15,
+  "min_core_tier": 2
+}

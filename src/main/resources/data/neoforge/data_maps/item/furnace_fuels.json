@@ -1,0 +1,19 @@
+{
+  "values": {
+    "merlins_inferno:lava_crystal": {
+      "burn_time": 20000
+    },
+    "merlins_inferno:soul_lava_crystal": {
+      "burn_time": 40000
+    },
+    "merlins_inferno:soul_lava_bucket": {
+      "burn_time": 40000
+    },
+    "merlins_inferno:lava_shard": {
+      "burn_time": 2500
+    },
+    "merlins_inferno:soul_lava_shard": {
+      "burn_time": 5000
+    }
+  }
+}

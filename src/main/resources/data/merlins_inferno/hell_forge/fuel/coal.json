@@ -1,10 +1,22 @@
 {
   "type": "fuel",
-  "item": "minecraft:coal",
   "fuel_value": 1600,
   "min_temperature": 873.15,
   "max_temperature": 1923.15,
   "response_ticks": 110,
   "heat_capacity": 6,
-  "flicker": 18
+  "flicker": 18,
+  "liquid_texture": "merlins_inferno:block/forge_coal_still",
+  "tint": "FFFFFF",
+  "particle": "minecraft:flame",
+  "ui_color": "E0703A",
+  "items": [
+    "minecraft:coal",
+    "minecraft:charcoal"
+  ],
+  "item_values": {
+    "minecraft:coal_block": 14400
+  },
+  "burn_rate": 1.0,
+  "sinkable": false
 }

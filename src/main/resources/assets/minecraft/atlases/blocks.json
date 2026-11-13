@@ -163,6 +163,22 @@
     {
       "type": "minecraft:single",
       "resource": "merlins_inferno:block/faeric_gate_frame_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/blightsteel_casing_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/netherrack_compressed_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/forge_lava_still"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "merlins_inferno:block/forge_coal_still"
     }
   ]
 }

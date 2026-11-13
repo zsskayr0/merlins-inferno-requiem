@@ -1,0 +1,13 @@
+{
+  "type": "melting",
+  "items": [
+    "minecraft:stone",
+    "minecraft:cobblestone",
+    "minecraft:blackstone"
+  ],
+  "fluid": "minecraft:lava",
+  "amount": 55,
+  "time": 100,
+  "min_temperature": 1373.15,
+  "min_core_tier": 1
+}

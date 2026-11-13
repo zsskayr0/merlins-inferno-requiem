@@ -1,0 +1,12 @@
+{
+  "type": "merlins_inferno:hell_forge_smelting",
+  "category": "blocks",
+  "cookingtime": 400,
+  "experience": 1.0,
+  "ingredient": {
+    "item": "merlins_inferno:raw_blightsteel"
+  },
+  "result": {
+    "id": "merlins_inferno:blightsteel_casing"
+  }
+}

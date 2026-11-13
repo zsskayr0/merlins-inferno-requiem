@@ -41,11 +41,11 @@ import dev.zsskayr.merlins_inferno.registry.ModEntityTypes;
  * dug into.
  */
 public final class MeteorSite {
-    public static final ResourceKey<LootTable> LOOT = ResourceKey.create(Registries.LOOT_TABLE,
-            ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/meteor"));
-    /** Once the Third Circle has opened the stars carry more: a bigger haul and one more guard. */
-    public static final ResourceKey<LootTable> LOOT_DEEP = ResourceKey.create(Registries.LOOT_TABLE,
-            ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/meteor_deep"));
+    /** The chest of a tier-n star ("chests/meteor_n"); once the Third Circle has opened, "chests/meteor_deep_n" with a bigger haul. */
+    public static ResourceKey<LootTable> loot(int tier, boolean deep) {
+        return ResourceKey.create(Registries.LOOT_TABLE,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "chests/meteor_" + (deep ? "deep_" : "") + tier));
+    }
     /** The chunks within this many blocks of the centre must be loaded before the site is built. */
     public static final int LOAD_RADIUS = 48;
     /** A star that would land in water is moved at most this far to dry land. */
@@ -62,11 +62,8 @@ public final class MeteorSite {
     private static final int CUT_REACH = 26;
 
     /** A built site: where it ended up, the height of the geode's centre, and whether Templars were left to guard it. */
-    public record Built(int x, int y, int z, boolean guarded) {
+    public record Built(int x, int y, int z, boolean guarded, int tier) {
     }
-
-    /** The chance a fallen star has the Cult of El at its crater. */
-    public static final double GUARD_CHANCE = 0.5;
 
     /** The kinds of crater; the biome picks one, and a star in the water has none. */
     private enum Crater {
@@ -83,7 +80,7 @@ public final class MeteorSite {
     }
 
     /** Builds the site around (x, z), or on dry land close to it. */
-    public static Built build(ServerLevel level, int x, int z, RandomSource random) {
+    public static Built build(ServerLevel level, int x, int z, RandomSource random, int tier) {
         int[] dry = dryNear(level, x, z);
         x = dry[0];
         z = dry[1];
@@ -100,7 +97,11 @@ public final class MeteorSite {
         if (crater != Crater.NONE) {
             carveBowl(level, centre, baseY, radius, phase, crater, random, fires);
         }
-        BlockPos chest = placeGeode(level, centre, random);
+        // A star in the water has no crater for the cult to stand in: it is always a bare one.
+        if (crater == Crater.NONE) {
+            tier = 1;
+        }
+        BlockPos chest = placeGeode(level, centre, random, tier);
         if (crater != Crater.NONE) {
             scatterDebris(level, centre, radius, phase, random, fires);
             light(level, fires, random);
@@ -113,11 +114,19 @@ public final class MeteorSite {
             chestState = chestState.setValue(ChestBlock.FACING, Direction.Plane.HORIZONTAL.getRandomDirection(random));
         }
         level.setBlock(chest, chestState, 2);
-        RandomizableContainer.setBlockEntityLootTable(level, random, chest, deep ? LOOT_DEEP : LOOT);
+        RandomizableContainer.setBlockEntityLootTable(level, random, chest, loot(tier, deep));
 
-        boolean guarded = crater != Crater.NONE && random.nextDouble() < GUARD_CHANCE;
+        boolean guarded = tier >= 2;
+        if (tier == 3) {
+            BlockPos at = new BlockPos(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x + 3, z), z).east(3);
+            dev.zsskayr.merlins_inferno.entity.SacredPriestEntity priest = ModEntityTypes.SACRED_PRIEST.get().spawn(level, at, MobSpawnType.EVENT);
+            if (priest != null) {
+                priest.setPersistenceRequired();
+                priest.setStarGuardian(true);
+            }
+        }
         if (guarded) {
-            for (int i = 0; i < (deep ? 3 : 2); i++) {
+            for (int i = 0; i < (deep ? 3 : 2) + (tier == 3 ? 1 : 0); i++) {
                 double angle = random.nextDouble() * Math.PI * 2.0;
                 double distance = radius * (0.6 + random.nextDouble() * 0.5);
                 int gx = x + (int) (Math.cos(angle) * distance);
@@ -129,7 +138,7 @@ public final class MeteorSite {
                 }
             }
         }
-        return new Built(x, centreY, z, guarded);
+        return new Built(x, centreY, z, guarded, tier);
     }
 
     /** The top of the solid ground in a column, under water, snow cover, leaves and trunks. */
@@ -344,7 +353,11 @@ public final class MeteorSite {
     }
 
     /** Places the round, sealed geode and returns the spot inside it for the chest. */
-    private static BlockPos placeGeode(ServerLevel level, BlockPos centre, RandomSource random) {
+    private static BlockPos placeGeode(ServerLevel level, BlockPos centre, RandomSource random, int tier) {
+        // How often a spot in the hollow grows a crystal: a bare star is poor, a guarded one rich.
+        int clusterOdds = tier == 1 ? 8 : tier == 2 ? 5 : 4;
+        // and how many of those crystals are Luminite rather than Lyrium or Amethyst.
+        float luminiteShare = tier == 1 ? 0.15F : tier == 2 ? 0.25F : 0.35F;
         BlockState luminite = ModBlocks.LUMINITE_BLOCK.get().defaultBlockState();
         BlockState lyrium = ModBlocks.LYRIUM_BLOCK.get().defaultBlockState();
         BlockState arganite = ModBlocks.ARGANITE.get().defaultBlockState();
@@ -377,7 +390,7 @@ public final class MeteorSite {
             for (int dy = -3; dy <= 3; dy++) {
                 for (int dz = -3; dz <= 3; dz++) {
                     BlockPos inside = centre.offset(dx, dy, dz);
-                    if (inside.equals(chest) || !level.getBlockState(inside).isAir() || random.nextInt(5) != 0) {
+                    if (inside.equals(chest) || !level.getBlockState(inside).isAir() || random.nextInt(clusterOdds) != 0) {
                         continue;
                     }
                     Direction towards = null;
@@ -391,8 +404,8 @@ public final class MeteorSite {
                     if (towards == null) {
                         continue;
                     }
-                    int pick = random.nextInt(5);
-                    Block crystal = pick < 3 ? ModBlocks.LUMINITE_CLUSTER.get() : pick == 3 ? ModBlocks.LYRIUM_CLUSTER.get() : Blocks.AMETHYST_CLUSTER;
+                    Block crystal = random.nextFloat() < luminiteShare ? ModBlocks.LUMINITE_CLUSTER.get()
+                            : random.nextBoolean() ? ModBlocks.LYRIUM_CLUSTER.get() : Blocks.AMETHYST_CLUSTER;
                     level.setBlock(inside, crystal.defaultBlockState().setValue(AmethystClusterBlock.FACING, towards.getOpposite()), 2);
                 }
             }

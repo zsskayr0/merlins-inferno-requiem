@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "N": { "item": "minecraft:netherrack" },
-    "W": { "item": "merlins_inferno:withered_bone" },
+    "W": { "tag": "merlins_inferno:withered_bones" },
     "E": { "item": "merlins_inferno:infernal_essence" }
   },
   "pattern": [

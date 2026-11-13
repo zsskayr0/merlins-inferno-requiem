@@ -18,6 +18,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 public final class MerlinsEmiPlugin implements EmiPlugin {
     public static final EmiRecipeCategory PANDORA = new EmiRecipeCategory(id("pandora_box"), EmiStack.of(ModItems.PANDORA_BOX.get()));
     public static final EmiRecipeCategory HELL_FORGE = new EmiRecipeCategory(id("hell_forge_smelting"), EmiStack.of(ModBlocks.HELL_FORGE_CONTROLLER.get()));
+    public static final EmiRecipeCategory MAGMATIC_MELTING = new EmiRecipeCategory(id("magmatic_melting"), EmiStack.of(ModBlocks.MAGMATIC_CORE.get()));
+    public static final EmiRecipeCategory HELL_FORGE_MATERIALS = new EmiRecipeCategory(id("hell_forge_materials"), EmiStack.of(ModBlocks.DEMONIC_CORE.get()));
 
     static ResourceLocation id(String path) { return ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, path); }
 
@@ -31,9 +33,23 @@ public final class MerlinsEmiPlugin implements EmiPlugin {
 
         registry.addCategory(HELL_FORGE);
         registry.addWorkstation(HELL_FORGE, EmiStack.of(ModBlocks.HELL_FORGE_CONTROLLER.get()));
+        registry.addWorkstation(HELL_FORGE, EmiStack.of(ModBlocks.BLIGHTED_HELLFORGE_CONTROLLER.get()));
         registry.addWorkstation(VanillaEmiRecipeCategories.BLASTING, EmiStack.of(ModBlocks.HELL_FORGE_CONTROLLER.get()));
         for (var holder : dev.zsskayr.merlins_inferno.forge.ForgeThermalData.allRecipes(net.minecraft.client.Minecraft.getInstance().level)) {
             registry.addRecipe(new HellForgeEmiRecipe(holder));
+        }
+        registry.addCategory(MAGMATIC_MELTING);
+        registry.addWorkstation(MAGMATIC_MELTING, EmiStack.of(ModBlocks.MAGMATIC_CORE.get()));
+        var meltings = dev.zsskayr.merlins_inferno.forge.ForgeThermalData.meltings(net.minecraft.client.Minecraft.getInstance().level);
+        for (int i = 0; i < meltings.size(); i++) {
+            registry.addRecipe(new MagmaticMeltingEmiRecipe(meltings.get(i), i));
+        }
+        registry.addCategory(HELL_FORGE_MATERIALS);
+        registry.addWorkstation(HELL_FORGE_MATERIALS, EmiStack.of(ModBlocks.HELL_FORGE_CONTROLLER.get()));
+        registry.addWorkstation(HELL_FORGE_MATERIALS, EmiStack.of(ModBlocks.BLIGHTED_HELLFORGE_CONTROLLER.get()));
+        var table = dev.zsskayr.merlins_inferno.forge.ForgeThermalData.materialTable(net.minecraft.client.Minecraft.getInstance().level);
+        for (int i = 0; i < table.size(); i++) {
+            registry.addRecipe(new HellForgeMaterialEmiRecipe(table.get(i), i));
         }
         // Where the Lyrium with no recipe of its own comes from (cluster drops, loot).
         for (String name : new String[] {"lyrium_raw", "lyrium_refined", "red_lyrium_raw", "red_lyrium_refined"}) {

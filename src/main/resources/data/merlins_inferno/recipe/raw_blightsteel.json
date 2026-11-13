@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "BSB",
+    "SES",
+    "BSB"
+  ],
+  "key": {
+    "B": {
+      "item": "merlins_inferno:blightstone"
+    },
+    "S": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "E": {
+      "item": "merlins_inferno:infernal_essence"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:raw_blightsteel",
+    "count": 6
+  }
+}

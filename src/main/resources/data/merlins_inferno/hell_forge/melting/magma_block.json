@@ -1,0 +1,9 @@
+{
+  "type": "melting",
+  "item": "minecraft:magma_block",
+  "fluid": "minecraft:lava",
+  "amount": 100,
+  "time": 60,
+  "min_temperature": 1073.15,
+  "min_core_tier": 1
+}

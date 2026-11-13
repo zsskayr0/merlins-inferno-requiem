@@ -106,6 +106,12 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DEVIL_FLESH.get());
                         output.accept(ModItems.MONSTER_LEATHER.get());
                         output.accept(ModItems.WITHERED_BONE.get());
+                        output.accept(ModItems.LAVA_CRYSTAL.get());
+                        output.accept(ModItems.SOUL_LAVA_CRYSTAL.get());
+                        output.accept(ModItems.LAVA_SHARD.get());
+                        output.accept(ModItems.SOUL_LAVA_SHARD.get());
+                        output.accept(ModItems.SOUL_MAGMA_ITEM.get());
+                        output.accept(dev.zsskayr.merlins_inferno.registry.ModFluids.SOUL_LAVA_BUCKET.get());
                         output.accept(ModItems.DEMONBLOOD_SCRAP.get());
                         output.accept(ModItems.DEMONBLOOD_BAR.get());
                         output.accept(ModItems.DEMONBLOOD_SWORD.get());
@@ -281,9 +287,18 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.LUST_FLOWER_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_CONTROLLER_ITEM.get());
                         output.accept(ModItems.DEMONIC_CORE_ITEM.get());
+                        output.accept(ModItems.MAGMATIC_CORE_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_VAULT_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_SPEED_CATALYST_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_YIELD_CATALYST_ITEM.get());
+                        output.accept(ModItems.BLIGHTED_HELLFORGE_CONTROLLER_ITEM.get());
+                        output.accept(ModItems.BLIGHTED_CORE_ITEM.get());
+                        output.accept(ModItems.RAW_BLIGHTSTEEL_ITEM.get());
+                        output.accept(ModItems.BLIGHTSTEEL_CASING_ITEM.get());
+                        output.accept(ModItems.BLIGHTED_STABILIZER_ITEM.get());
+                        output.accept(ModItems.BLIGHTED_BELLOWS_ITEM.get());
+                        output.accept(ModItems.BLIGHTED_ECONOMIZER_ITEM.get());
+                        output.accept(ModItems.BLIGHTED_WARD_ITEM.get());
                         output.accept(ModItems.DUSK_DROSS.get());
                         output.accept(ModItems.FORGED_SCRAP.get());
                         output.accept(ModItems.FORGE_WRENCH.get());
@@ -365,6 +380,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DARK_COVEN_VII.get());
                         output.accept(ModItems.ZAELDRIS.get());
                         output.accept(ModItems.GEHENNA.get());
+                        output.accept(ModItems.GEHENNA_SINNED.get());
                         output.accept(ModItems.EXCALIBUR.get());
                         output.accept(ModItems.EXCALIBUR_TRUE.get());
                         output.accept(ModItems.CAIN_SPAWN_EGG.get());
@@ -374,7 +390,6 @@ public final class ModCreativeModeTabs {
                         // otherwise is the enchanting table/anvil RNG, or an /enchant command.
                         HolderLookup.RegistryLookup<Enchantment> enchantments = parameters.holders().lookupOrThrow(Registries.ENCHANTMENT);
                         acceptEnchantedBook(output, enchantments, ModEnchantments.BANE_OF_HUMANITY, 5);
-                        output.accept(ModItems.GEHENNA_SINNED.get());
                         acceptEnchantedBook(output, enchantments, ModEnchantments.EVIL, 5);
                         acceptEnchantedBook(output, enchantments, ModEnchantments.REAPING, 3);
                         acceptEnchantedBook(output, enchantments, ModEnchantments.HOLY, 3);

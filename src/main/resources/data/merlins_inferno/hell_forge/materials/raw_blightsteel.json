@@ -1,0 +1,9 @@
+{
+  "type": "material",
+  "items": [
+    "merlins_inferno:raw_blightsteel"
+  ],
+  "min_temperature": 2073.15,
+  "max_temperature": 2163.15,
+  "heat_capacity": 24
+}

@@ -33,6 +33,8 @@ public class MeteorHandler {
     public static final int MAX_ACTIVE = 3;
     public static final int LIFETIME_DAYS = 7;
     public static final double NIGHTLY_CHANCE = 0.3;
+    /** Under a full moon stars fall more often, and more of them come guarded. */
+    public static final double FULL_MOON_CHANCE = 0.5;
     /** How far the announced spot is from the real one, at most. */
     public static final int ANNOUNCE_ERROR = 300;
     /** A meteor is claimed when a player stands this close to its centre. */
@@ -58,7 +60,7 @@ public class MeteorHandler {
         long day = level.getDayTime() / 24000L;
         if (level.getDayTime() % 24000L >= NIGHT_START && data.lastNight() != day) {
             data.rolledNight(day);
-            if (level.random.nextDouble() < NIGHTLY_CHANCE) {
+            if (level.random.nextDouble() < (fullMoon(level) ? FULL_MOON_CHANCE : NIGHTLY_CHANCE)) {
                 fall(level, data, level.random);
             }
         }
@@ -116,6 +118,7 @@ public class MeteorHandler {
                 continue;
             }
             Meteor meteor = data.add(x, z, level.getGameTime(), level.getSeaLevel());
+            meteor.tier = rollTier(level, random);
             if (!force) {
                 announce(level, meteor, random);
             }
@@ -136,6 +139,19 @@ public class MeteorHandler {
         }
     }
 
+    private static boolean fullMoon(ServerLevel level) {
+        return level.getMoonPhase() == 0;
+    }
+
+    /** Tier odds: 50/35/15 on an ordinary night, 20/45/35 under a full moon. */
+    private static int rollTier(ServerLevel level, RandomSource random) {
+        double roll = random.nextDouble();
+        if (fullMoon(level)) {
+            return roll < 0.20 ? 1 : roll < 0.65 ? 2 : 3;
+        }
+        return roll < 0.50 ? 1 : roll < 0.85 ? 2 : 3;
+    }
+
     private static int roundTo100(int value) {
         return Math.round(value / 100.0F) * 100;
     }
@@ -148,11 +164,12 @@ public class MeteorHandler {
                 gone.add(meteor);
             } else if (!meteor.built) {
                 if (MeteorSite.canBuild(level, meteor.x, meteor.z)) {
-                    MeteorSite.Built built = MeteorSite.build(level, meteor.x, meteor.z, level.random);
+                    MeteorSite.Built built = MeteorSite.build(level, meteor.x, meteor.z, level.random, meteor.tier);
                     meteor.x = built.x();
                     meteor.z = built.z();
                     meteor.y = built.y();
                     meteor.guarded = built.guarded();
+                    meteor.tier = built.tier();
                     meteor.builtAt = level.getGameTime();
                     meteor.built = true;
                     data.touch();

@@ -1,0 +1,12 @@
+{
+  "type": "melting",
+  "items": [
+    "minecraft:soul_sand",
+    "minecraft:soul_soil"
+  ],
+  "fluid": "merlins_inferno:soul_lava",
+  "amount": 60,
+  "time": 100,
+  "min_temperature": 1773.15,
+  "min_core_tier": 2
+}

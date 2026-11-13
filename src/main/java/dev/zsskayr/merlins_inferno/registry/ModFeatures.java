@@ -27,6 +27,11 @@ public final class ModFeatures {
             FEATURES.register("giant_red_lyrium_geode", () -> new dev.zsskayr.merlins_inferno.worldgen.feature.GiantRedLyriumGeodeFeature(
                     net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration.CODEC));
 
+    // Turns lava and magma in the Oblivion's basalt deltas into their soul versions.
+    public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.SoulDeltaFeature> SOUL_DELTA =
+            FEATURES.register("soul_delta", () -> new dev.zsskayr.merlins_inferno.worldgen.feature.SoulDeltaFeature(
+                    net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration.CODEC));
+
     // A taller, wider huge fungus for the Oblivion Forest (stem/hat/decor and height range are data).
     public static final DeferredHolder<Feature<?>, dev.zsskayr.merlins_inferno.worldgen.feature.TallFungusFeature> TALL_FUNGUS =
             FEATURES.register("tall_fungus", () -> new dev.zsskayr.merlins_inferno.worldgen.feature.TallFungusFeature(

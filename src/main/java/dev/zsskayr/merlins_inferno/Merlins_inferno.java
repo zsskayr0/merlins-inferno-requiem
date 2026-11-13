@@ -75,6 +75,7 @@ public class Merlins_inferno {
         ModRecipeSerializers.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+        dev.zsskayr.merlins_inferno.registry.ModFluids.register(modEventBus);
         ModBlockEntityTypes.register(modEventBus);
         ModMenuTypes.register(modEventBus);
         ModStructureProcessorTypes.register(modEventBus);
@@ -132,6 +133,7 @@ public class Merlins_inferno {
     private void commonSetup(final FMLCommonSetupEvent event) {
         LOGGER.info("Merlin's Inferno common setup");
         event.enqueueWork(Merlins_inferno::registerFlammability);
+        event.enqueueWork(dev.zsskayr.merlins_inferno.registry.ModFluids::registerInteractions);
     }
 
     /**

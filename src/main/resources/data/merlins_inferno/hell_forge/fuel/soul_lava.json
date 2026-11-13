@@ -1,0 +1,23 @@
+{
+  "type": "fuel",
+  "items": [
+    "merlins_inferno:soul_lava_bucket",
+    "merlins_inferno:soul_lava_crystal"
+  ],
+  "fluid": "merlins_inferno:soul_lava",
+  "fuel_value": 20000,
+  "min_temperature": 1073.15,
+  "max_temperature": 2873.15,
+  "response_ticks": 160,
+  "heat_capacity": 140,
+  "flicker": 1,
+  "liquid_texture": "merlins_inferno:block/soul_lava_still",
+  "tint": "FFFFFF",
+  "particle": "minecraft:soul_fire_flame",
+  "glow": "soul",
+  "ui_color": "3CCFEA",
+  "item_values": {
+    "merlins_inferno:soul_lava_shard": 2500
+  },
+  "burn_rate": 0.5
+}

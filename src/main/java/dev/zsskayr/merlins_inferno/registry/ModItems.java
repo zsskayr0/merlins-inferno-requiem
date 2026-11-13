@@ -158,6 +158,12 @@ public final class ModItems {
     public static final DeferredItem<Item> INFERNAL_SINEW = ITEMS.registerSimpleItem("infernal_sinew", new Item.Properties().fireResistant());
     public static final DeferredItem<Item> MONSTER_LEATHER = ITEMS.registerSimpleItem("monster_leather", new Item.Properties());
     public static final DeferredItem<Item> DEVIL_FLESH = ITEMS.registerSimpleItem("devil_flesh", new Item.Properties().fireResistant());
+    public static final DeferredItem<Item> SOUL_LAVA_CRYSTAL = ITEMS.registerSimpleItem("soul_lava_crystal", new Item.Properties().fireResistant().stacksTo(16));
+    public static final DeferredItem<BlockItem> SOUL_MAGMA_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SOUL_MAGMA);
+    // An eighth of a crystal (125 mB): fine control of a Hellforge's fuel level, and so its heat.
+    public static final DeferredItem<Item> LAVA_SHARD = ITEMS.registerSimpleItem("lava_shard", new Item.Properties().fireResistant());
+    public static final DeferredItem<Item> SOUL_LAVA_SHARD = ITEMS.registerSimpleItem("soul_lava_shard", new Item.Properties().fireResistant());
+    public static final DeferredItem<Item> LAVA_CRYSTAL = ITEMS.registerSimpleItem("lava_crystal", new Item.Properties().fireResistant().stacksTo(16));
     public static final DeferredItem<Item> WITHERED_BONE = ITEMS.registerSimpleItem("withered_bone", new Item.Properties().fireResistant());
     public static final DeferredItem<Item> DEMONBLOOD_SCRAP = ITEMS.registerSimpleItem("demonblood_scrap", new Item.Properties().fireResistant());
 
@@ -542,9 +548,18 @@ public final class ModItems {
             props -> new DoubleHighBlockItem(ModBlocks.TALL_BLACK_GRASS.get(), props));
     public static final DeferredItem<BlockItem> HELL_FORGE_CONTROLLER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_CONTROLLER);
     public static final DeferredItem<BlockItem> DEMONIC_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DEMONIC_CORE);
+    public static final DeferredItem<BlockItem> MAGMATIC_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.MAGMATIC_CORE);
     public static final DeferredItem<BlockItem> HELL_FORGE_VAULT_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_VAULT);
     public static final DeferredItem<BlockItem> HELL_FORGE_SPEED_CATALYST_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_SPEED_CATALYST);
     public static final DeferredItem<BlockItem> HELL_FORGE_YIELD_CATALYST_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_YIELD_CATALYST);
+    public static final DeferredItem<BlockItem> BLIGHTED_HELLFORGE_CONTROLLER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTED_HELLFORGE_CONTROLLER);
+    public static final DeferredItem<BlockItem> BLIGHTED_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTED_CORE);
+    public static final DeferredItem<BlockItem> RAW_BLIGHTSTEEL_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.RAW_BLIGHTSTEEL);
+    public static final DeferredItem<BlockItem> BLIGHTSTEEL_CASING_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTSTEEL_CASING);
+    public static final DeferredItem<BlockItem> BLIGHTED_STABILIZER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTED_STABILIZER);
+    public static final DeferredItem<BlockItem> BLIGHTED_BELLOWS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTED_BELLOWS);
+    public static final DeferredItem<BlockItem> BLIGHTED_ECONOMIZER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTED_ECONOMIZER);
+    public static final DeferredItem<BlockItem> BLIGHTED_WARD_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTED_WARD);
     public static final DeferredItem<Item> DUSK_DROSS = ITEMS.registerSimpleItem("dusk_dross");
     public static final DeferredItem<Item> FORGED_SCRAP = ITEMS.registerSimpleItem("forged_scrap");
     /** Right-click a Hell Forge Vault to cycle its mode: input, output, fuel. */
@@ -801,6 +816,11 @@ public final class ModItems {
             props -> new dev.zsskayr.merlins_inferno.item.GehennaItem(ModTiers.MYTHIC, props.rarity(Rarity.EPIC).fireResistant()
                     .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, -13, -3.1F))));
 
+    /** Gehenna's one upgrade, in Circle 2 (item.GehennaItem starts the ritual): 55 = 1 + 22 + the MYTHIC tier's 32, still a slow hammer. Same Unique. */
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.GehennaItem> GEHENNA_SINNED = ITEMS.registerItem("gehenna_sinned",
+            props -> new dev.zsskayr.merlins_inferno.item.GehennaItem(ModTiers.MYTHIC, props.rarity(Rarity.EPIC).fireResistant()
+                    .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 22, -3.1F))));
+
     // --- Circle 2, Mundane route: Excalibur, the fae-forged sword of the dragon's mouth. Creative-only until the mundane
     // route's dimension exists. Hits for 64 in Circle 2: 1 (hand) + 31 + the MYTHIC tier's 32 - above the Dark Coven VII
     // (48; ~82 with its Strength and a Mark of Cain, vs ~83 for this with the same Mark). In Circle 3 it becomes
@@ -814,11 +834,9 @@ public final class ModItems {
     /** Display only: the sword floating in the awakening ritual, turning from worn to true (entity.ExcaliburAwakening). */
     public static final DeferredItem<Item> EXCALIBUR_AWAKENING = ITEMS.registerSimpleItem("excalibur_awakening",
             new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
-    /** Gehenna's one upgrade, in Circle 2 (item.GehennaItem starts the ritual): 55 = 1 + 22 + the MYTHIC tier's 32, still a slow hammer. Same Unique. */
-    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.GehennaItem> GEHENNA_SINNED = ITEMS.registerItem("gehenna_sinned",
-            props -> new dev.zsskayr.merlins_inferno.item.GehennaItem(ModTiers.MYTHIC, props.rarity(Rarity.EPIC).fireResistant()
-                    .attributes(SwordItem.createAttributes(ModTiers.MYTHIC, 22, -3.1F))));
-
+    /** Display only: Gehenna floating in its awakening ritual (entity.ExcaliburAwakening). */
+    public static final DeferredItem<Item> GEHENNA_AWAKENING = ITEMS.registerSimpleItem("gehenna_awakening",
+            new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
     /** The outline holding Excalibur's slot while it is out of the inventory for its awakening (item.ExcaliburSlotItem). */
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ExcaliburSlotItem> EXCALIBUR_SLOT = ITEMS.registerItem("excalibur_slot",
             props -> new dev.zsskayr.merlins_inferno.item.ExcaliburSlotItem(props.stacksTo(1).rarity(Rarity.EPIC)));
@@ -832,9 +850,6 @@ public final class ModItems {
     // into a Minor Sight Potion, giving the Druidic Trance. ---
     public static final DeferredItem<Item> RAW_EDENWEED = ITEMS.registerSimpleItem("raw_edenweed",
             new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.1F).alwaysEdible()
-    /** Display only: Gehenna floating in its awakening ritual (entity.ExcaliburAwakening). */
-    public static final DeferredItem<Item> GEHENNA_AWAKENING = ITEMS.registerSimpleItem("gehenna_awakening",
-            new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
                     .effect(() -> new MobEffectInstance(ModEffects.DRUIDIC_TRANCE, 400, 0), 1.0F)
                     .effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 160, 0), 1.0F)
                     .build()));

@@ -157,6 +157,11 @@ dependencies {
     // same version at runtime, so nothing extra is bundled.
     compileOnly "io.github.llamalad7:mixinextras-common:0.5.3"
 
+    // Plain JUnit for the Hell Forge scenario report (src/test): it only touches ForgeMath and the data JSONs, no game.
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "com.google.code.gson:gson:2.11.0"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
@@ -208,4 +213,14 @@ idea {
         downloadSources = true
         downloadJavadoc = true
     }
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+    testLogging { events "failed"; exceptionFormat "full" }
+}
+
+// Sources are UTF-8 (en dashes, check marks, arrows in on-screen text); without this javac on Windows reads them as cp1252.
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }

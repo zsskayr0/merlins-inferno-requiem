@@ -536,6 +536,42 @@ public final class ModBlocks {
     public static final DeferredBlock<HellForgeCoreBlock> DEMONIC_CORE = BLOCKS.registerBlock("demonic_core",
             props -> new HellForgeCoreBlock(props, 1, Layout.CUBE_9), hellForgePartProperties());
 
+    /** Heavy metal: Blightsteel lands with the deep thud of the Heavy Core, pitched down. */
+    public static final SoundType BLIGHTSTEEL_SOUND = new SoundType(1.0F, 0.7F, net.minecraft.sounds.SoundEvents.HEAVY_CORE_BREAK,
+            net.minecraft.sounds.SoundEvents.NETHERITE_BLOCK_STEP, net.minecraft.sounds.SoundEvents.HEAVY_CORE_PLACE,
+            net.minecraft.sounds.SoundEvents.HEAVY_CORE_HIT, net.minecraft.sounds.SoundEvents.HEAVY_CORE_FALL);
+    public static final SoundType RAW_BLIGHTSTEEL_SOUND = new SoundType(1.0F, 0.7F, net.minecraft.sounds.SoundEvents.ANCIENT_DEBRIS_BREAK,
+            net.minecraft.sounds.SoundEvents.ANCIENT_DEBRIS_STEP, net.minecraft.sounds.SoundEvents.ANCIENT_DEBRIS_PLACE,
+            net.minecraft.sounds.SoundEvents.ANCIENT_DEBRIS_HIT, net.minecraft.sounds.SoundEvents.ANCIENT_DEBRIS_FALL);
+
+    // The Blighted Core forge: a second core, its Blightsteel shell and its own catalysts.
+    public static final DeferredBlock<HellForgeCoreBlock> BLIGHTED_CORE = BLOCKS.registerBlock("blighted_core",
+            props -> new HellForgeCoreBlock(props, 2, Layout.CUBE_9), hellForgePartProperties().sound(BLIGHTSTEEL_SOUND));
+    public static final DeferredBlock<HellForgeControllerBlock> BLIGHTED_HELLFORGE_CONTROLLER = BLOCKS.registerBlock("blighted_hellforge_controller",
+            HellForgeControllerBlock::new, hellForgePartProperties().lightLevel(state -> 7).sound(BLIGHTSTEEL_SOUND));
+    public static final DeferredBlock<Block> RAW_BLIGHTSTEEL = BLOCKS.registerBlock("raw_blightsteel", Block::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(6.0F, 12.0F)
+                    .requiresCorrectToolForDrops().sound(RAW_BLIGHTSTEEL_SOUND));
+    public static final DeferredBlock<Block> BLIGHTSTEEL_CASING = BLOCKS.registerBlock("blightsteel_casing", Block::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(80.0F, 1200.0F)
+                    .requiresCorrectToolForDrops().sound(BLIGHTSTEEL_SOUND).pushReaction(PushReaction.BLOCK));
+    public static final DeferredBlock<Block> BLIGHTED_STABILIZER = BLOCKS.registerBlock("blighted_stabilizer", Block::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(50.0F, 1200.0F)
+                    .requiresCorrectToolForDrops().sound(BLIGHTSTEEL_SOUND).lightLevel(state -> 7));
+    public static final DeferredBlock<Block> BLIGHTED_BELLOWS = BLOCKS.registerBlock("blighted_bellows", Block::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(50.0F, 1200.0F)
+                    .requiresCorrectToolForDrops().sound(BLIGHTSTEEL_SOUND).lightLevel(state -> 7));
+    public static final DeferredBlock<Block> BLIGHTED_ECONOMIZER = BLOCKS.registerBlock("blighted_economizer", Block::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(50.0F, 1200.0F)
+                    .requiresCorrectToolForDrops().sound(BLIGHTSTEEL_SOUND).lightLevel(state -> 7));
+    public static final DeferredBlock<Block> BLIGHTED_WARD = BLOCKS.registerBlock("blighted_ward", Block::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(50.0F, 1200.0F)
+                    .requiresCorrectToolForDrops().sound(BLIGHTSTEEL_SOUND).lightLevel(state -> 7));
+
+    // A Hellforge core that melts stone into lava (and, in a Blightsteel shell, Soul Lava) instead of smelting.
+    public static final DeferredBlock<dev.zsskayr.merlins_inferno.block.MagmaticCoreBlock> MAGMATIC_CORE = BLOCKS.registerBlock("magmatic_core",
+            dev.zsskayr.merlins_inferno.block.MagmaticCoreBlock::new, hellForgePartProperties().lightLevel(state -> 9));
+
     public static final DeferredBlock<HellForgeVaultBlock> HELL_FORGE_VAULT = BLOCKS.registerBlock("hell_forge_vault",
             HellForgeVaultBlock::new, hellForgePartProperties());
 
@@ -858,6 +894,11 @@ public final class ModBlocks {
 
     private ModBlocks() {
     }
+
+    /** Magma from the Oblivion's soul deltas; burns like magma. */
+    public static final DeferredBlock<net.minecraft.world.level.block.MagmaBlock> SOUL_MAGMA = BLOCKS.registerBlock("soul_magma",
+            net.minecraft.world.level.block.MagmaBlock::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.MAGMA_BLOCK).mapColor(MapColor.COLOR_CYAN));
 
     public static void register(IEventBus modEventBus) {
         BLOCKS.register(modEventBus);

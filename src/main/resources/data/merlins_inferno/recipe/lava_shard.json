@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "merlins_inferno:lava_crystal"
+    }
+  ],
+  "result": {
+    "id": "merlins_inferno:lava_shard",
+    "count": 8
+  }
+}

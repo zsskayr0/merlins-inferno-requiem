@@ -15,7 +15,7 @@
       "item": "merlins_inferno:hell_seal"
     },
     "W": {
-      "item": "merlins_inferno:withered_bone"
+      "tag": "merlins_inferno:withered_bones"
     }
   },
   "pattern": [

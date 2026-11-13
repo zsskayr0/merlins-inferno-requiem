@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CXC",
+    "XDX",
+    "CXC"
+  ],
+  "key": {
+    "C": {
+      "item": "merlins_inferno:blightsteel_casing"
+    },
+    "X": {
+      "item": "merlins_inferno:ebony_scrap"
+    },
+    "D": {
+      "item": "merlins_inferno:demonic_core"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:blighted_core",
+    "count": 1
+  }
+}

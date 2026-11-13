@@ -1,10 +1,16 @@
 {
   "variants": {
-    "active=false": {
+    "active=false,soul=false": {
       "model": "merlins_inferno:block/demonic_core"
     },
-    "active=true": {
+    "active=false,soul=true": {
+      "model": "merlins_inferno:block/demonic_core"
+    },
+    "active=true,soul=false": {
       "model": "merlins_inferno:block/demonic_core_active"
+    },
+    "active=true,soul=true": {
+      "model": "merlins_inferno:block/demonic_core_active_soul"
     }
   }
 }

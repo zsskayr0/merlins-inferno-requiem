@@ -34,6 +34,8 @@ public final class ConnectedTextures {
         wrap(event, ModBlocks.TILED_PORCELAIN.get(), "block/tiled_porcelain_connected", true);
         wrap(event, ModBlocks.CRYPT_GLASS.get(), "block/crypt_glass_connected");
         wrap(event, ModBlocks.HELLGLASS.get(), "block/hellglass_connected");
+        wrap(event, ModBlocks.BLIGHTSTEEL_CASING.get(), "block/blightsteel_casing_connected");
+        wrap(event, ModBlocks.COMPRESSED_NETHERRACK.get(), "block/netherrack_compressed_connected");
         wrapPane(event, ModBlocks.CRYPT_GLASS_PANE.get(), "block/crypt_glass_pane_connected", "block/crypt_glass_pane");
         wrapPane(event, ModBlocks.HELLGLASS_PANE.get(), "block/hellglass_connected", "block/hellglass");
         wrapGate(event, ModBlocks.RUNIC_GATE.get());

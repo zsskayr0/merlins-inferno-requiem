@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CLC",
+    "XKX",
+    "CLC"
+  ],
+  "key": {
+    "C": {
+      "item": "merlins_inferno:blightsteel_casing"
+    },
+    "L": {
+      "item": "merlins_inferno:red_lyrium_pure"
+    },
+    "X": {
+      "item": "merlins_inferno:ebony_scrap"
+    },
+    "K": {
+      "item": "minecraft:crying_obsidian"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:blighted_stabilizer",
+    "count": 1
+  }
+}

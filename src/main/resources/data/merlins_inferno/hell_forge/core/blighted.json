@@ -1,0 +1,18 @@
+{
+  "type": "core",
+  "block": "merlins_inferno:blighted_core",
+  "rest_temperature": 473.15,
+  "min_temperature": 1073.15,
+  "max_temperature": 3773.15,
+  "efficient_temperature": 2273.15,
+  "heat_capacity": 400,
+  "stability": 3,
+  "cooling_rate": 0.002,
+  "operation": "heating",
+  "allowed_fuels": [
+    "merlins_inferno:soul_lava_bucket"
+  ],
+  "speed_bonus": 0.5,
+  "yield_bonus": 0.15,
+  "dross": "consume"
+}

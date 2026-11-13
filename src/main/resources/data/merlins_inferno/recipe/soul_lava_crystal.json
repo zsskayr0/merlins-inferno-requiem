@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "merlins_inferno:soul_lava_bucket" },
+    { "item": "merlins_inferno:soul_magma" },
+    { "item": "merlins_inferno:soul_magma" },
+    { "item": "merlins_inferno:infernal_essence" }
+  ],
+  "result": { "count": 1, "id": "merlins_inferno:soul_lava_crystal" }
+}

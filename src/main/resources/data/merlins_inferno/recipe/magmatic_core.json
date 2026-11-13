@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "MCM",
+    "LDL",
+    "MCM"
+  ],
+  "key": {
+    "M": {
+      "item": "minecraft:magma_block"
+    },
+    "C": {
+      "item": "merlins_inferno:lava_crystal"
+    },
+    "L": {
+      "item": "merlins_inferno:compressed_netherrack"
+    },
+    "D": {
+      "item": "merlins_inferno:demonic_core"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:magmatic_core",
+    "count": 1
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "melting",
+  "item": "minecraft:netherrack",
+  "fluid": "minecraft:lava",
+  "amount": 60,
+  "time": 80,
+  "min_temperature": 1173.15,
+  "min_core_tier": 1
+}

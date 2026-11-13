@@ -91,6 +91,23 @@ public final class ModEntityRenderers {
             }
         }, ModItems.PANDORA_BOX.get());
         event.registerItem(ZaeldrisPose.INSTANCE, ModItems.ZAELDRIS.get());
+        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            private final net.minecraft.resources.ResourceLocation still =
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "block/soul_lava_still");
+            private final net.minecraft.resources.ResourceLocation flowing =
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "block/soul_lava_flow");
+            @Override public net.minecraft.resources.ResourceLocation getStillTexture() { return still; }
+            @Override public net.minecraft.resources.ResourceLocation getFlowingTexture() { return flowing; }
+            @Override public org.joml.Vector3f modifyFogColor(net.minecraft.client.Camera camera, float partialTick,
+                    net.minecraft.client.multiplayer.ClientLevel level, int renderDistance, float darkenWorldAmount, org.joml.Vector3f fluidFogColor) {
+                return new org.joml.Vector3f(0.1F, 0.55F, 0.6F);
+            }
+            @Override public void modifyFogRender(net.minecraft.client.Camera camera, net.minecraft.client.renderer.FogRenderer.FogMode mode,
+                    float renderDistance, float partialTick, float nearDistance, float farDistance, com.mojang.blaze3d.shaders.FogShape shape) {
+                com.mojang.blaze3d.systems.RenderSystem.setShaderFogStart(0.25F);
+                com.mojang.blaze3d.systems.RenderSystem.setShaderFogEnd(1.0F);
+            }
+        }, dev.zsskayr.merlins_inferno.registry.ModFluids.SOUL_LAVA_TYPE.get());
     }
 
     @SubscribeEvent

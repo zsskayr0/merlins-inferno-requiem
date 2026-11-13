@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    { "item": "minecraft:magma_block" },
+    { "tag": "minecraft:soul_fire_base_blocks" }
+  ],
+  "result": { "count": 1, "id": "merlins_inferno:soul_magma" }
+}

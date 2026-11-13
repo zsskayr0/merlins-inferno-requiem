@@ -40,6 +40,11 @@
       "text": "patchouli.merlins_inferno.entry.hell_forge.catalysts"
     },
     {
+      "type": "patchouli:crafting",
+      "recipe": "merlins_inferno:magmatic_core",
+      "text": "patchouli.merlins_inferno.entry.hell_forge.magmatic"
+    },
+    {
       "type": "patchouli:text",
       "text": "patchouli.merlins_inferno.entry.hell_forge.heat"
     },

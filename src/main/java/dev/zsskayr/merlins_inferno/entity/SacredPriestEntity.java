@@ -114,6 +114,8 @@ public class SacredPriestEntity extends PathfinderMob implements GeoEntity, Chur
     private float serviceYaw;
     /** Struck or warned: he stays out of the service until dawn. */
     private boolean alarmed;
+    /** Set when he is left at a fallen star: he attacks players on sight instead of waiting to be struck. */
+    private boolean starGuardian;
 
     public SacredPriestEntity(EntityType<? extends SacredPriestEntity> type, Level level) {
         super(type, level);
@@ -138,6 +140,10 @@ public class SacredPriestEntity extends PathfinderMob implements GeoEntity, Chur
     }
 
     /** Gives him his place at the altar: where his feet go and the direction he faces while praying. */
+    public void setStarGuardian(boolean guardian) {
+        this.starGuardian = guardian;
+    }
+
     public void setServicePost(Vec3 post, float yaw) {
         this.servicePost = post;
         this.serviceYaw = yaw;
@@ -192,6 +198,8 @@ public class SacredPriestEntity extends PathfinderMob implements GeoEntity, Chur
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         // Retaliation only, like his flock.
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, SacredCultistEntity.class));
+        this.targetSelector.addGoal(2, new net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
+                living -> this.starGuardian));
     }
 
     @Override
@@ -472,6 +480,7 @@ public class SacredPriestEntity extends PathfinderMob implements GeoEntity, Chur
             compound.putFloat("PostYaw", this.serviceYaw);
         }
         compound.putBoolean("Alarmed", this.alarmed);
+        compound.putBoolean("StarGuardian", this.starGuardian);
         compound.putInt("PriestLevel", this.priestLevel);
         compound.putInt("PriestXp", this.priestXp);
         if (this.offers != null) {
@@ -491,6 +500,7 @@ public class SacredPriestEntity extends PathfinderMob implements GeoEntity, Chur
             this.serviceYaw = compound.getFloat("PostYaw");
         }
         this.alarmed = compound.getBoolean("Alarmed");
+        this.starGuardian = compound.getBoolean("StarGuardian");
         if (compound.contains("PriestLevel")) {
             this.priestLevel = Math.max(1, Math.min(LyriumVillagerTrades.PRIEST_MAX_LEVEL, compound.getInt("PriestLevel")));
             this.priestXp = compound.getInt("PriestXp");

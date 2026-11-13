@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "merlins_inferno:soul_lava_crystal"
+    }
+  ],
+  "result": {
+    "id": "merlins_inferno:soul_lava_shard",
+    "count": 8
+  }
+}

@@ -106,12 +106,23 @@ public final class ModTags {
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "hell_forge_speed_catalysts"));
         public static final TagKey<Block> HELL_FORGE_YIELD_CATALYSTS = TagKey.create(Registries.BLOCK,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "hell_forge_yield_catalysts"));
+        public static final TagKey<Block> BLIGHTED_STABILIZERS = TagKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "blighted_stabilizers"));
+        public static final TagKey<Block> BLIGHTED_BELLOWS = TagKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "blighted_bellows"));
+        public static final TagKey<Block> BLIGHTED_ECONOMIZERS = TagKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "blighted_economizers"));
+        public static final TagKey<Block> BLIGHTED_WARDS = TagKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "blighted_wards"));
 
         private Blocks() {
         }
     }
 
     public static final class Items {
+        /** Common wrench tag: ours is in it (other mods read it), and any wrench in it works on the Hell Forge. */
+        public static final TagKey<Item> WRENCHES = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath("c", "tools/wrench"));
         /**
          * The armour each wings route is at home with: wings of that route are slowed by any other armour stronger than iron
          * (see WingsItem). Mundane is the Druidic road, Seraph the Angelical one, Fallen the Infernal one.

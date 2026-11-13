@@ -1,0 +1,7 @@
+{
+  "type": "shell",
+  "block": "merlins_inferno:blightsteel_casing",
+  "max_temperature": 3873.15,
+  "heat_capacity": 6,
+  "stability": 0.5
+}

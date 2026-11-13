@@ -28,7 +28,7 @@ public class MerlinsJeiPlugin implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         var helper = registration.getJeiHelpers().getGuiHelper();
-        registration.addRecipeCategories(new PandoraJeiCategory(helper), new HellForgeJeiCategory(helper));
+        registration.addRecipeCategories(new PandoraJeiCategory(helper), new HellForgeJeiCategory(helper), new HellForgeMaterialsJeiCategory(helper), new MagmaticMeltingJeiCategory(helper));
     }
 
     @Override
@@ -44,6 +44,8 @@ public class MerlinsJeiPlugin implements IModPlugin {
         if (Minecraft.getInstance().level != null) {
             registration.addRecipes(HellForgeJeiCategory.TYPE, dev.zsskayr.merlins_inferno.forge.ForgeThermalData.allRecipes(Minecraft.getInstance().level).stream()
                     .map(dev.zsskayr.merlins_inferno.forge.HellForgeDisplayRecipe::new).toList());
+            registration.addRecipes(MagmaticMeltingJeiCategory.TYPE, dev.zsskayr.merlins_inferno.forge.ForgeThermalData.meltings(Minecraft.getInstance().level));
+            registration.addRecipes(HellForgeMaterialsJeiCategory.TYPE, dev.zsskayr.merlins_inferno.forge.ForgeThermalData.materialTable(Minecraft.getInstance().level));
         }
     }
 
@@ -51,7 +53,11 @@ public class MerlinsJeiPlugin implements IModPlugin {
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(new ItemStack(ModItems.PANDORA_BOX.get()), PandoraJeiCategory.TYPE);
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.HELL_FORGE_CONTROLLER.get()), HellForgeJeiCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.BLIGHTED_HELLFORGE_CONTROLLER.get()), HellForgeJeiCategory.TYPE);
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.HELL_FORGE_CONTROLLER.get()), RecipeTypes.BLASTING);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.HELL_FORGE_CONTROLLER.get()), HellForgeMaterialsJeiCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.MAGMATIC_CORE.get()), MagmaticMeltingJeiCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.BLIGHTED_HELLFORGE_CONTROLLER.get()), HellForgeMaterialsJeiCategory.TYPE);
     }
 
     /** Display-only items stay out of JEI's list. */

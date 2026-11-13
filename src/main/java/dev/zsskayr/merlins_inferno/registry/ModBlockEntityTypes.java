@@ -20,7 +20,7 @@ public final class ModBlockEntityTypes {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Merlins_inferno.MODID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HellForgeBlockEntity>> HELL_FORGE = BLOCK_ENTITY_TYPES.register("hell_forge_controller",
-            () -> BlockEntityType.Builder.of(HellForgeBlockEntity::new, ModBlocks.HELL_FORGE_CONTROLLER.get()).build(null));
+            () -> BlockEntityType.Builder.of(HellForgeBlockEntity::new, ModBlocks.HELL_FORGE_CONTROLLER.get(), ModBlocks.BLIGHTED_HELLFORGE_CONTROLLER.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SacredAltarBlockEntity>> SACRED_ALTAR = BLOCK_ENTITY_TYPES.register("sacred_altar",
             () -> BlockEntityType.Builder.of(SacredAltarBlockEntity::new, ModBlocks.SACRED_ALTAR.get()).build(null));

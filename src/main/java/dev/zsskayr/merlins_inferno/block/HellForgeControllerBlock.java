@@ -41,10 +41,12 @@ public class HellForgeControllerBlock extends HorizontalDirectionalBlock impleme
     public static final MapCodec<HellForgeControllerBlock> CODEC = simpleCodec(HellForgeControllerBlock::new);
     /** True while the forge is cooking: switches the front face to its animated texture. */
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+    /** Burning a soul fuel: the glow turns blue. */
+    public static final BooleanProperty SOUL = BooleanProperty.create("soul");
 
     public HellForgeControllerBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false).setValue(SOUL, false));
     }
 
     @Override
@@ -54,7 +56,7 @@ public class HellForgeControllerBlock extends HorizontalDirectionalBlock impleme
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, ACTIVE);
+        builder.add(FACING, ACTIVE, SOUL);
     }
 
     @Nullable
@@ -82,17 +84,24 @@ public class HellForgeControllerBlock extends HorizontalDirectionalBlock impleme
     /** The only place a Hell Forge GUI is opened - and only once the structure checks out. */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (!(level.getBlockEntity(pos) instanceof HellForgeBlockEntity hellForge)) {
+            return InteractionResult.PASS;
+        }
+        // While the forge is unfinished the Controller is a plain block for whatever is in hand (placing against it);
+        // an empty hand still gets the reason the structure is not formed.
+        boolean emptyHand = player.getMainHandItem().isEmpty();
         if (level.isClientSide) {
-            return InteractionResult.SUCCESS;
+            return hellForge.renderRadius() > 0 || emptyHand ? InteractionResult.SUCCESS : InteractionResult.PASS;
         }
-        if (level.getBlockEntity(pos) instanceof HellForgeBlockEntity hellForge) {
-            hellForge.refreshStructure();
-            if (hellForge.isFormed()) {
-                player.openMenu((MenuProvider) hellForge);
-            } else {
-                player.displayClientMessage(hellForge.getStructureError(), true);
-            }
+        hellForge.refreshStructure();
+        if (hellForge.isFormed()) {
+            player.openMenu((MenuProvider) hellForge);
+            return InteractionResult.CONSUME;
         }
+        if (!emptyHand) {
+            return InteractionResult.PASS;
+        }
+        player.displayClientMessage(hellForge.getStructureError(), true);
         return InteractionResult.CONSUME;
     }
 
@@ -112,8 +121,11 @@ public class HellForgeControllerBlock extends HorizontalDirectionalBlock impleme
     @Override
     @SuppressWarnings("unchecked")
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        if (level.isClientSide || blockEntityType != ModBlockEntityTypes.HELL_FORGE.get()) {
+        if (blockEntityType != ModBlockEntityTypes.HELL_FORGE.get()) {
             return null;
+        }
+        if (level.isClientSide) {
+            return (BlockEntityTicker<T>) (BlockEntityTicker<HellForgeBlockEntity>) HellForgeBlockEntity::clientTick;
         }
         return (BlockEntityTicker<T>) (BlockEntityTicker<HellForgeBlockEntity>) HellForgeBlockEntity::serverTick;
     }

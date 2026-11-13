@@ -6,6 +6,12 @@
     "auto=false,mode=output": {
       "model": "merlins_inferno:block/hell_forge_vault_output"
     },
+    "auto=false,mode=both": {
+      "model": "merlins_inferno:block/hell_forge_vault_both"
+    },
+    "auto=true,mode=both": {
+      "model": "merlins_inferno:block/hell_forge_vault_both"
+    },
     "auto=false,mode=fuel": {
       "model": "merlins_inferno:block/hell_forge_vault_fuel"
     },
@@ -17,6 +23,12 @@
     },
     "auto=true,mode=fuel": {
       "model": "merlins_inferno:block/hell_forge_vault_fuel"
+    },
+    "auto=false,mode=redstone": {
+      "model": "merlins_inferno:block/hell_forge_vault_redstone"
+    },
+    "auto=true,mode=redstone": {
+      "model": "merlins_inferno:block/hell_forge_vault_redstone"
     }
   }
 }

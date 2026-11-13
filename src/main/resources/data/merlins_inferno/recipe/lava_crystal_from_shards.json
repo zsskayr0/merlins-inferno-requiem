@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "S S",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "merlins_inferno:lava_shard"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:lava_crystal",
+    "count": 1
+  }
+}

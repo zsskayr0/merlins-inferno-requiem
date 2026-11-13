@@ -40,7 +40,9 @@ public class ForgeWrenchItem extends Item {
                 if (auto) {
                     level.scheduleTick(pos, state.getBlock(), HellForgeVaultBlock.AUTO_INTERVAL);
                 }
-                message = Component.translatable("message.merlins_inferno.hell_forge.vault_auto." + (auto ? "on" : "off"));
+                message = state.getValue(HellForgeVaultBlock.MODE) == HellForgeVaultBlock.Mode.REDSTONE
+                        ? Component.translatable("message.merlins_inferno.hell_forge.vault_readout." + (auto ? "alarm" : "temperature"))
+                        : Component.translatable("message.merlins_inferno.hell_forge.vault_auto." + (auto ? "on" : "off"));
             } else {
                 HellForgeVaultBlock.Mode next = state.getValue(HellForgeVaultBlock.MODE).next();
                 level.setBlock(pos, state.setValue(HellForgeVaultBlock.MODE, next), 3);

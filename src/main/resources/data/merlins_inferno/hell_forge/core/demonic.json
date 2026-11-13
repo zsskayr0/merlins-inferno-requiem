@@ -11,6 +11,7 @@
   "operation": "heating",
   "allowed_fuels": [
     "minecraft:coal",
-    "minecraft:lava_bucket"
+    "minecraft:lava_bucket",
+    "merlins_inferno:soul_lava_bucket"
   ]
 }

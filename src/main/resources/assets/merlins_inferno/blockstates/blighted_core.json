@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "active=false,soul=false": {
+      "model": "merlins_inferno:block/blighted_core"
+    },
+    "active=false,soul=true": {
+      "model": "merlins_inferno:block/blighted_core"
+    },
+    "active=true,soul=false": {
+      "model": "merlins_inferno:block/blighted_core_active"
+    },
+    "active=true,soul=true": {
+      "model": "merlins_inferno:block/blighted_core_active_soul"
+    }
+  }
+}

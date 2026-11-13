@@ -6,7 +6,7 @@
       "item": "merlins_inferno:ebony_bar"
     },
     "S": {
-      "item": "merlins_inferno:withered_bone"
+      "tag": "merlins_inferno:withered_bones"
     }
   },
   "pattern": [

@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "minecraft:basalt_deltas",
+  "features": "merlins_inferno:soul_delta",
+  "step": "top_layer_modification"
+}

@@ -269,7 +269,7 @@ public final class LuminiteGameTests {
             }
         }
         helper.assertTrue(MeteorSite.canBuild(level, origin.getX(), origin.getZ()), "The test chunks are loaded");
-        int floor = MeteorSite.build(level, origin.getX(), origin.getZ(), level.random).y();
+        int floor = MeteorSite.build(level, origin.getX(), origin.getZ(), level.random, 2).y();
         boolean ore = false;
         boolean chest = false;
         for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-10, -24, -10), origin.offset(10, 12, 10))) {
@@ -292,7 +292,7 @@ public final class LuminiteGameTests {
                 "luminite_leggings", "luminite_chestplate", "luminite_shovel", "luminite_hoe"}) {
             helper.assertTrue(server.getRecipeManager().byKey(id(recipe)).isPresent(), "Recipe " + recipe);
         }
-        for (String table : new String[] {"chests/meteor", "chests/meteor_deep", "blocks/luminite_cluster"}) {
+        for (String table : new String[] {"chests/meteor_1", "chests/meteor_2", "chests/meteor_3", "chests/meteor_deep_1", "chests/meteor_deep_2", "chests/meteor_deep_3", "blocks/luminite_cluster"}) {
             ResourceKey<LootTable> key = ResourceKey.create(Registries.LOOT_TABLE, id(table));
             helper.assertTrue(server.reloadableRegistries().getLootTable(key) != LootTable.EMPTY, "Loot table " + table);
         }

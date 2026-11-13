@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "merlins_inferno:block/blightsteel_casing",
+    "down": "merlins_inferno:block/blightsteel_casing",
+    "up": "merlins_inferno:block/blightsteel_casing",
+    "east": "merlins_inferno:block/blightsteel_casing",
+    "south": "merlins_inferno:block/blightsteel_casing",
+    "west": "merlins_inferno:block/blightsteel_casing",
+    "north": "merlins_inferno:block/blighted_hellforge_load_anim"
+  }
+}

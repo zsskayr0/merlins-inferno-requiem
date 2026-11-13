@@ -39,10 +39,23 @@ public class HellForgeVaultBlock extends Block {
         builder.add(MODE, AUTO);
     }
 
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return state.getValue(MODE) == Mode.REDSTONE;
+    }
+
+    @Override
+    protected int getAnalogOutputSignal(BlockState state, net.minecraft.world.level.Level level, BlockPos pos) {
+        if (state.getValue(MODE) != Mode.REDSTONE) return 0;
+        var forge = HellForgeVaultHandler.findForge(level, pos);
+        if (forge == null) return 0;
+        return state.getValue(AUTO) ? (forge.overheating() ? 15 : 0) : forge.temperatureSignal();
+    }
+
     /** Runs only while {@link #AUTO} is on: one transfer, then re-arms itself. */
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (!state.getValue(AUTO)) {
+        if (!state.getValue(AUTO) || state.getValue(MODE) == Mode.REDSTONE) {
             return;
         }
         HellForgeVaultHandler.autoTransfer(level, pos, state);
@@ -55,7 +68,14 @@ public class HellForgeVaultBlock extends Block {
         /** Gives out the cooked result. */
         OUTPUT("output"),
         /** Accepts fuel for the tank. */
-        FUEL("fuel");
+        FUEL("fuel"),
+        /** Takes input and gives out the result through the same block. */
+        BOTH("both"),
+        /**
+         * Neither items nor fluids: a redstone signal into it scales the forge's fuel cap (and so its heat), and a comparator
+         * reads the chamber's temperature from it, or (with auto on) an alarm while a lane is overheating.
+         */
+        REDSTONE("redstone");
 
         private final String name;
 
