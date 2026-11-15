@@ -19,7 +19,7 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.mark.MarkHelper;
 
 /**
- * A Marked player's hunger bar is drawn with skulls instead of drumsticks, washed out as if the appetite itself were going.
+ * A Marked player's hunger bar is drawn with dark hearts instead of drumsticks, the half one fading away.
  * It sits exactly where the vanilla food layer draws (same spot, same shaking when starving); nothing in the HUD says why.
  */
 @EventBusSubscriber(modid = Merlins_inferno.MODID, value = Dist.CLIENT)
@@ -27,9 +27,9 @@ public final class MarkHungerTint {
     private static final ResourceLocation FULL = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "hud/mark_food_full");
     private static final ResourceLocation HALF = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "hud/mark_food_half");
     private static final ResourceLocation EMPTY = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "hud/mark_food_empty");
-    private static final float RED = 0.8F;
-    private static final float GREEN = 0.74F;
-    private static final float BLUE = 0.8F;
+    private static final float RED = 1.0F;
+    private static final float GREEN = 1.0F;
+    private static final float BLUE = 1.0F;
     private static final float HUNGRY_RED = 0.62F;
     private static final float HUNGRY_GREEN = 0.8F;
     private static final float HUNGRY_BLUE = 0.5F;
@@ -46,9 +46,9 @@ public final class MarkHungerTint {
     }
 
     /**
-     * The vanilla layer is let run - so HUD mods hiding or cancelling the bar still do, and take the skulls with it - but its
+     * The vanilla layer is let run - so HUD mods hiding or cancelling the bar still do, and take the hearts with it - but its
      * drumsticks are drawn fully transparent. Mods that decorate the bar afterwards (AppleSkin's saturation and restore
-     * overlays) see the bar where it always is and draw on top of the skulls.
+     * overlays) see the bar where it always is and draw on top of the hearts.
      */
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void before(RenderGuiLayerEvent.Pre event) {
@@ -58,7 +58,7 @@ public final class MarkHungerTint {
         }
     }
 
-    /** Runs before the other mods' Post handlers, so whatever they draw over the bar lands on the skulls. */
+    /** Runs before the other mods' Post handlers, so whatever they draw over the bar lands on the hearts. */
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void after(RenderGuiLayerEvent.Post event) {
         if (event.getName().equals(VanillaGuiLayers.FOOD_LEVEL)) {
@@ -90,7 +90,7 @@ public final class MarkHungerTint {
             int x = right - i * 8 - 9;
             int y = top + (shake ? random.nextInt(3) - 1 : 0);
             ResourceLocation sprite = i * 2 + 1 < level ? FULL : i * 2 + 1 == level ? HALF : EMPTY;
-            graphics.blitSprite(sprite, x + 1, y, 8, 9);
+            graphics.blitSprite(sprite, x, y, 9, 9);
         }
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
