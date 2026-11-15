@@ -59,6 +59,9 @@ public class Merlins_inferno {
         modEventBus.addListener(dev.zsskayr.merlins_inferno.compat.framedblocks.FramedBlocksCompat::enqueue);
         if (net.neoforged.fml.ModList.get().isLoaded("curios")) {
             modEventBus.addListener(dev.zsskayr.merlins_inferno.compat.curios.CuriosMarks::register);
+            if (net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT) {
+                modEventBus.addListener(dev.zsskayr.merlins_inferno.compat.curios.CuriosBraceletRenderer::onClientSetup);
+            }
         }
 
         // Each registry class owns its DeferredRegister(s) and hooks itself onto the mod event bus.
@@ -67,6 +70,7 @@ public class Merlins_inferno {
         ModParticles.register(modEventBus);
         dev.zsskayr.merlins_inferno.registry.ModPlacementModifiers.register(modEventBus);
         ModEffects.register(modEventBus);
+        dev.zsskayr.merlins_inferno.registry.ModPotions.register(modEventBus);
         dev.zsskayr.merlins_inferno.registry.ModDataComponents.register(modEventBus);
         ModAttachments.register(modEventBus);
         dev.zsskayr.merlins_inferno.registry.ModLootModifiers.register(modEventBus);
@@ -101,6 +105,7 @@ public class Merlins_inferno {
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.SkyboundHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.RouteHome());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.LuminiteCombatHandler());
+        NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.ParagonCombatHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.EbonyCombatHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.InnateEnchantmentHandler());
         NeoForge.EVENT_BUS.register(new dev.zsskayr.merlins_inferno.event.MeteorHandler());
