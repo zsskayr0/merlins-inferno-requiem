@@ -33,11 +33,13 @@ public final class CainHud {
     private static int ticksLeft;
     private static boolean armed;
     private static long receivedAt;
+    private static int reviveLeft;
 
     private CainHud() {
     }
 
-    public static void set(boolean bears, int left, boolean murderArmed) {
+    public static void set(boolean bears, int left, boolean murderArmed, int revive) {
+        reviveLeft = revive;
         bearing = bears;
         ticksLeft = left;
         armed = murderArmed;
@@ -91,6 +93,34 @@ public final class CainHud {
             int alpha = (int) (150 + 105 * beat);
             graphics.fill(x + 11, y + 11, x + 13, y + 13, (alpha << 24) | 0xFF5A4A);
         }
+        drawRevive(graphics, x + SIZE + 1, y, left, minecraft.level.getGameTime() + partial);
         RenderSystem.disableBlend();
+    }
+
+    /**
+     * The Mark's refusal of death, a thin vial right of the dial: it fills blood-red while the cooldown runs and throbs
+     * bright once ready; ash-grey and empty while the obligation is overdue (the Mark will not save the late).
+     */
+    private static void drawRevive(GuiGraphics graphics, int x, int y, float killLeft, float time) {
+        int top = y + 3;
+        int bottom = y + SIZE - 3;
+        graphics.fill(x, top - 1, x + 3, bottom + 1, 0xFF1A0606);
+        if (reviveLeft < 0 || killLeft <= 0) {
+            graphics.fill(x + 1, top, x + 2, bottom, 0xFF3A3434);
+            return;
+        }
+        float elapsed = (float) (Minecraft.getInstance().level.getGameTime() - receivedAt);
+        float remaining = Math.max(0.0F, reviveLeft - elapsed);
+        float filled = 1.0F - remaining / MarkOfCainHandler.REVIVE_COOLDOWN;
+        int height = bottom - top;
+        int fillTop = bottom - Math.round(height * filled);
+        graphics.fill(x + 1, top, x + 2, bottom, 0xFF2A0A0A);
+        if (remaining <= 0.0F) {
+            float beat = 0.5F + 0.5F * Mth.sin(time * 0.2F);
+            int red = (int) (200 + 55 * beat);
+            graphics.fill(x + 1, top, x + 2, bottom, 0xFF000000 | (red << 16) | 0x2A20);
+        } else {
+            graphics.fill(x + 1, fillTop, x + 2, bottom, 0xFF8A1414);
+        }
     }
 }

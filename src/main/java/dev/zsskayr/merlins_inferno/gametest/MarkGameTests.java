@@ -23,11 +23,11 @@ public final class MarkGameTests {
     @GameTest(template = "bench_empty")
     public static void rightClickBindsTheMarkAndConsumesIt(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
-        ItemStack mark = new ItemStack(ModItems.MARK_OF_CAIN.get());
+        ItemStack mark = new ItemStack(ModItems.MARK_OF_THE_DAMNED.get());
         player.setItemInHand(InteractionHand.MAIN_HAND, mark);
         h.assertTrue(!MarkHelper.hasMark(player), "Nobody starts marked");
-        ModItems.MARK_OF_CAIN.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
-        h.assertTrue(MarkHelper.hasMark(player, ModItems.MARK_OF_CAIN.get()), "Right click binds the Mark of Cain");
+        ModItems.MARK_OF_THE_DAMNED.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        h.assertTrue(MarkHelper.hasMark(player, ModItems.MARK_OF_THE_DAMNED.get()), "Right click binds the Mark of the Damned");
         h.assertTrue(mark.isEmpty(), "The item is taken in: the player only feels the effects");
         h.succeed();
     }
@@ -35,19 +35,19 @@ public final class MarkGameTests {
     @GameTest(template = "bench_empty")
     public static void aMarkedPlayerRefusesAnotherMark(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
-        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
-        ItemStack second = new ItemStack(ModItems.MARK_OF_CAIN.get());
+        MarkHelper.equip(player, ModItems.MARK_OF_THE_DAMNED.get());
+        ItemStack second = new ItemStack(ModItems.MARK_OF_THE_DAMNED.get());
         player.setItemInHand(InteractionHand.MAIN_HAND, second);
-        ModItems.MARK_OF_CAIN.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        ModItems.MARK_OF_THE_DAMNED.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
         h.assertTrue(!second.isEmpty(), "A second Mark is not used up");
-        h.assertTrue(!MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get()), "A player bears at most one Mark");
+        h.assertTrue(!MarkHelper.equip(player, ModItems.MARK_OF_THE_DAMNED.get()), "A player bears at most one Mark");
         h.succeed();
     }
 
     @GameTest(template = "bench_empty")
     public static void clearingFreesThePlayer(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
-        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        MarkHelper.equip(player, ModItems.MARK_OF_THE_DAMNED.get());
         MarkHelper.clear(player);
         h.assertTrue(!MarkHelper.hasMark(player), "A cure removes the Mark");
         h.assertTrue(player.getData(ModAttachments.EQUIPPED_MARK).isEmpty(), "and its state");
@@ -61,7 +61,7 @@ public final class MarkGameTests {
         int bound = 0;
         for (int i = 0; i < 200; i++) {
             player.setData(ModAttachments.EQUIPPED_MARK, "");
-            var item = new ItemEntity(h.getLevel(), player.getX(), player.getY(), player.getZ(), new ItemStack(ModItems.MARK_OF_CAIN.get()));
+            var item = new ItemEntity(h.getLevel(), player.getX(), player.getY(), player.getZ(), new ItemStack(ModItems.MARK_OF_THE_DAMNED.get()));
             handler.onPickup(new ItemEntityPickupEvent.Pre(player, item));
             if (MarkHelper.hasMark(player)) {
                 bound++;
@@ -69,9 +69,9 @@ public final class MarkGameTests {
             }
         }
         h.assertTrue(bound > 40 && bound < 120, "About 40% of pickups bind the Mark (" + bound + " of 200)");
-        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        MarkHelper.equip(player, ModItems.MARK_OF_THE_DAMNED.get());
         for (int i = 0; i < 50; i++) {
-            var item = new ItemEntity(h.getLevel(), player.getX(), player.getY(), player.getZ(), new ItemStack(ModItems.MARK_OF_CAIN.get()));
+            var item = new ItemEntity(h.getLevel(), player.getX(), player.getY(), player.getZ(), new ItemStack(ModItems.MARK_OF_THE_DAMNED.get()));
             handler.onPickup(new ItemEntityPickupEvent.Pre(player, item));
             h.assertTrue(!item.getItem().isEmpty(), "A marked player picks it up as an ordinary item");
         }
@@ -91,7 +91,7 @@ public final class MarkGameTests {
     public static void anOverdueMarkTakesHealthAndHungerUntilTheNextKill(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         var handler = new MarkOfCainHandler();
-        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        MarkHelper.equip(player, ModItems.MARK_OF_THE_DAMNED.get());
         handler.tickSecond(player);
         h.assertTrue(player.getData(ModAttachments.CAIN_KILL_DEADLINE) > h.getLevel().getGameTime(), "The first tick starts the 20 minutes");
         h.assertTrue(player.getMaxHealth() == 20.0F, "No penalty while on time");
@@ -117,7 +117,7 @@ public final class MarkGameTests {
         handler.onIncomingDamage(hit);
         h.assertTrue(hit.getAmount() == 10.0F, "Unmarked, a blow is just a blow");
 
-        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        MarkHelper.equip(player, ModItems.MARK_OF_THE_DAMNED.get());
         hit = incoming(player, h.getLevel().damageSources().mobAttack(zombie), 10.0F);
         handler.onIncomingDamage(hit);
         h.assertTrue(Math.abs(hit.getAmount() - 11.5F) < 0.01F, "The bearer takes 15% more");
@@ -140,7 +140,7 @@ public final class MarkGameTests {
     public static void markOfTheMurderReturnsTheBlowSevenfoldOnce(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         var handler = new MarkOfCainHandler();
-        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        MarkHelper.equip(player, ModItems.MARK_OF_THE_DAMNED.get());
         player.setData(ModAttachments.CAIN_MURDER_ARMED, true);
         var zombie = h.spawn(net.minecraft.world.entity.EntityType.ZOMBIE, 1, 2, 1);
         float before = zombie.getHealth();
@@ -160,7 +160,7 @@ public final class MarkGameTests {
         player.setItemInHand(InteractionHand.MAIN_HAND, scroll);
         ModItems.SCROLL_OF_SPLITTER.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
         h.assertTrue(!scroll.isEmpty(), "Without a Mark the scroll is not wasted");
-        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        MarkHelper.equip(player, ModItems.MARK_OF_THE_DAMNED.get());
         ModItems.SCROLL_OF_SPLITTER.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
         h.assertTrue(!MarkHelper.hasMark(player), "Reading it frees the bearer");
         h.assertTrue(scroll.isEmpty(), "and it is used up");
@@ -174,9 +174,9 @@ public final class MarkGameTests {
             return;
         }
         var player = h.makeMockPlayer(GameType.SURVIVAL);
-        h.assertTrue(MarkHelper.bind(player, ModItems.MARK_OF_CAIN.get()), "A free player takes the Mark in");
-        h.assertTrue(MarkHelper.hasMark(player, ModItems.MARK_OF_CAIN.get()), "and bears it");
-        h.assertTrue(dev.zsskayr.merlins_inferno.compat.OptionalCurios.equipped(player).stream().anyMatch(stack -> stack.getItem() == ModItems.MARK_OF_CAIN.get()),
+        h.assertTrue(MarkHelper.bind(player, ModItems.MARK_OF_THE_DAMNED.get()), "A free player takes the Mark in");
+        h.assertTrue(MarkHelper.hasMark(player, ModItems.MARK_OF_THE_DAMNED.get()), "and bears it");
+        h.assertTrue(dev.zsskayr.merlins_inferno.compat.OptionalCurios.equipped(player).stream().anyMatch(stack -> stack.getItem() == ModItems.MARK_OF_THE_DAMNED.get()),
                 "The Mark is visible in the Curios mark slot");
         MarkHelper.clear(player);
         h.assertTrue(dev.zsskayr.merlins_inferno.compat.OptionalCurios.equipped(player).stream().noneMatch(stack -> stack.getItem() instanceof dev.zsskayr.merlins_inferno.item.MarkItem),
@@ -189,7 +189,7 @@ public final class MarkGameTests {
     public static void foodFillsHalfAndKillsFeed(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         var handler = new MarkOfCainHandler();
-        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        MarkHelper.equip(player, ModItems.MARK_OF_THE_DAMNED.get());
         player.getFoodData().setFoodLevel(8);
         handler.tickSecond(player);
         player.getFoodData().setFoodLevel(14);
@@ -214,7 +214,7 @@ public final class MarkGameTests {
         player.setPos(villager.getX(), villager.getY(), villager.getZ());
         handler.tickSecond(player);
         h.assertTrue(villager.getPlayerReputation(player) > -100, "Without the Mark the villager has no opinion");
-        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        MarkHelper.equip(player, ModItems.MARK_OF_THE_DAMNED.get());
         handler.tickSecond(player);
         h.assertTrue(villager.getPlayerReputation(player) <= -100, "Under the Mark it is below what makes Iron Golems strike (got " + villager.getPlayerReputation(player) + ")");
         h.succeed();
@@ -224,7 +224,7 @@ public final class MarkGameTests {
     public static void thePactFeedsOnTheMark(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         var handler = new MarkOfCainHandler();
-        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        MarkHelper.equip(player, ModItems.MARK_OF_THE_DAMNED.get());
         handler.tickSecond(player);
         long before = player.getData(ModAttachments.CAIN_KILL_DEADLINE);
         handler.tickSecond(player);
@@ -243,7 +243,7 @@ public final class MarkGameTests {
     public static void theDarkCovenStaysInvokedUnderTheMark(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         var handler = new MarkOfCainHandler();
-        MarkHelper.equip(player, ModItems.MARK_OF_CAIN.get());
+        MarkHelper.equip(player, ModItems.MARK_OF_THE_DAMNED.get());
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.DARK_COVEN_I.get()));
         ModItems.DARK_COVEN_I.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
         handler.tickSecond(player);

@@ -73,6 +73,13 @@ public class MarkOfCainHandler {
     private static final float KILL_SATURATION_MODIFIER = 0.1F;
     private static final double OMEN_CHANCE = 0.03;
     private static final int OMEN_DURATION = 30 * SECOND;
+    /** The Mark refuses death once per cooldown; reviving again within the streak window stacks the health debt. */
+    public static final long REVIVE_COOLDOWN = 6L * 60 * SECOND;
+    private static final long REVIVE_STREAK_WINDOW = 20L * 60 * SECOND;
+    private static final double REVIVE_DEBT_PER_STACK = 4.0;
+    private static final int REVIVE_PACT_DURATION = 13 * SECOND;
+    private static final double REVIVE_KNOCKBACK_RADIUS = 6.0;
+    private static final double REVIVE_KNOCKBACK_STRENGTH = 1.6;
     private static final ResourceLocation PENALTY_ID = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "cain_penalty");
 
     /** The hunger bar as of the last second, to tell eaten food (halved) from what the Mark itself gave. */
@@ -82,7 +89,7 @@ public class MarkOfCainHandler {
     private final java.util.Set<java.util.UUID> inVillage = new java.util.HashSet<>();
 
     public static boolean bearsCain(LivingEntity entity) {
-        return MarkHelper.hasMark(entity, ModItems.MARK_OF_CAIN.get());
+        return MarkHelper.hasMark(entity, ModItems.MARK_OF_THE_DAMNED.get());
     }
 
     /** How late the bearer is, in penalty tiers: 0 while on time, 1 from the deadline, one more per 5 minutes. */
@@ -160,6 +167,9 @@ public class MarkOfCainHandler {
 
         // The obligation.
         int tier = penaltyTier(now, player.getData(ModAttachments.CAIN_KILL_DEADLINE));
+        if (player.getData(ModAttachments.CAIN_REVIVE_COUNT) > 0 && now - player.getData(ModAttachments.CAIN_REVIVE_AT) >= REVIVE_STREAK_WINDOW) {
+            player.setData(ModAttachments.CAIN_REVIVE_COUNT, 0);
+        }
         applyPenalty(player, tier);
         if (tier > 0) {
             player.getFoodData().setFoodLevel(0);
@@ -188,14 +198,17 @@ public class MarkOfCainHandler {
         // The bearer's clock (client.CainHud): time to the next kill, and the Murder when armed.
         if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
             long left = player.getData(ModAttachments.CAIN_KILL_DEADLINE) - now;
+            long lastRevive = player.getData(ModAttachments.CAIN_REVIVE_AT);
+            int reviveLeft = tier > 0 ? -1 : lastRevive == 0L ? 0 : (int) Math.max(0L, lastRevive + REVIVE_COOLDOWN - now);
             net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(serverPlayer, new dev.zsskayr.merlins_inferno.network.CainStatePayload(
-                    true, (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, left)), player.getData(ModAttachments.CAIN_MURDER_ARMED)));
+                    true, (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, left)), player.getData(ModAttachments.CAIN_MURDER_ARMED), reviveLeft));
         }
     }
 
     /** Forgets everything of the Mark when the player no longer bears it. */
     private void release(Player player) {
         lastFood.remove(player.getUUID());
+        player.setData(ModAttachments.CAIN_REVIVE_COUNT, 0);
         applyPenalty(player, 0);
         if (player.getData(ModAttachments.CAIN_KILL_DEADLINE) != 0L) {
             player.setData(ModAttachments.CAIN_KILL_DEADLINE, 0L);
@@ -203,7 +216,7 @@ public class MarkOfCainHandler {
             player.setData(ModAttachments.CAIN_MURDER_ARMED, false);
             if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
                 net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(serverPlayer,
-                        new dev.zsskayr.merlins_inferno.network.CainStatePayload(false, 0, false));
+                        new dev.zsskayr.merlins_inferno.network.CainStatePayload(false, 0, false, 0));
             }
         }
     }
@@ -213,22 +226,84 @@ public class MarkOfCainHandler {
         if (health == null) {
             return;
         }
-        if (tier == 0) {
+        double debt = reviveDebt(player);
+        if (tier == 0 && debt == 0) {
             if (health.getModifier(PENALTY_ID) != null) {
                 health.removeModifier(PENALTY_ID);
             }
             return;
         }
-        double lost = Math.min(HEALTH_PER_TIER * tier, health.getBaseValue() - MIN_MAX_HEALTH);
+        double lost = Math.min(HEALTH_PER_TIER * tier + debt, health.getBaseValue() - MIN_MAX_HEALTH);
         AttributeModifier current = health.getModifier(PENALTY_ID);
         if (current == null || current.amount() != -lost) {
             health.addOrReplacePermanentModifier(new AttributeModifier(PENALTY_ID, -lost, AttributeModifier.Operation.ADD_VALUE));
         }
     }
 
+    /**
+     * Maximum health the revivals still hold: 4 per revival in the streak. A lone revival pays back when the cooldown
+     * ends; a streak only once 20 minutes pass since the last one.
+     */
+    private static double reviveDebt(Player player) {
+        int count = player.getData(ModAttachments.CAIN_REVIVE_COUNT);
+        if (count <= 0) {
+            return 0;
+        }
+        long since = player.level().getGameTime() - player.getData(ModAttachments.CAIN_REVIVE_AT);
+        return since < (count == 1 ? REVIVE_COOLDOWN : REVIVE_STREAK_WINDOW) ? REVIVE_DEBT_PER_STACK * count : 0;
+    }
+
+    /** Whether the Mark would refuse its bearer's death right now. */
+    public static boolean canRevive(Player player, long now) {
+        long last = player.getData(ModAttachments.CAIN_REVIVE_AT);
+        return (last == 0L || now - last >= REVIVE_COOLDOWN)
+                && penaltyTier(now, player.getData(ModAttachments.CAIN_KILL_DEADLINE)) == 0;
+    }
+
+    /**
+     * The Mark does not let its bearer die: once per cooldown it pulls them back, unleashes the Dark Coven's Pact for a
+     * few seconds and throws back whatever stands near. Not while the obligation is overdue, and never against /kill
+     * or the void. A vanilla totem in hand fires before this event, so it is spent first.
+     */
+    private boolean tryRevive(Player player, LivingDeathEvent event) {
+        if (!(player.level() instanceof ServerLevel level) || !bearsCain(player)
+                || event.getSource().is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return false;
+        }
+        long now = level.getGameTime();
+        if (!canRevive(player, now)) {
+            return false;
+        }
+        long last = player.getData(ModAttachments.CAIN_REVIVE_AT);
+        int count = last != 0L && now - last < REVIVE_STREAK_WINDOW ? player.getData(ModAttachments.CAIN_REVIVE_COUNT) + 1 : 1;
+        player.setData(ModAttachments.CAIN_REVIVE_AT, now);
+        player.setData(ModAttachments.CAIN_REVIVE_COUNT, count);
+        event.setCanceled(true);
+        applyPenalty(player, penaltyTier(now, player.getData(ModAttachments.CAIN_KILL_DEADLINE)));
+        player.setHealth(player.getMaxHealth() * 0.5F);
+        player.addEffect(new MobEffectInstance(dev.zsskayr.merlins_inferno.registry.ModEffects.DEMONIC_PACT, REVIVE_PACT_DURATION, 0));
+        for (LivingEntity near : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(REVIVE_KNOCKBACK_RADIUS),
+                e -> e != player && e.isAlive() && !(e instanceof Player))) {
+            near.knockback(REVIVE_KNOCKBACK_STRENGTH, player.getX() - near.getX(), player.getZ() - near.getZ());
+            near.hurtMarked = true;
+        }
+        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+            // the totem's rising-item animation, with the Mark in its place
+            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(serverPlayer,
+                    new dev.zsskayr.merlins_inferno.network.ItemActivationPayload(new ItemStack(ModItems.MARK_OF_THE_DAMNED.get())));
+        }
+        level.playSound(null, player.blockPosition(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 1.0F, 0.6F);
+        level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 1.0, player.getZ(), 60, 0.6, 1.0, 0.6, 0.15);
+        level.sendParticles(ParticleTypes.CRIMSON_SPORE, player.getX(), player.getY() + 1.0, player.getZ(), 80, 1.5, 1.0, 1.5, 0.05);
+        return true;
+    }
+
     /** A kill of the right kind pays the debt and starts the next 20 minutes. */
     @SubscribeEvent
     public void onDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof Player dying && tryRevive(dying, event)) {
+            return;
+        }
         if (event.getEntity() instanceof Player dead) {
             lastFood.remove(dead.getUUID()); // the respawned bar is full: not food
         }

@@ -145,7 +145,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.OSTARA_SPAWN_EGG.get());
                         output.accept(ModItems.BOOK_OF_CONTRACTS.get());
                         output.accept(ModItems.HOLLOW_RELIC.get());
-                        output.accept(ModItems.MARK_OF_CAIN.get());
+                        output.accept(ModItems.MARK_OF_THE_DAMNED.get());
                         output.accept(ModItems.SCROLL_OF_SPLITTER.get());
                         output.accept(ModItems.RUNE_KAUNAN.get());
                         output.accept(ModItems.RUNE_SOWILO.get());

@@ -639,7 +639,7 @@ public final class ModItems {
 
     // --- Marks (item.MarkItem): cursed, soulbound power that binds to its bearer; the Curios slot is "mark". ---
     /** 6% from Cain. What it does lives in the Mark handlers; it is cured only by a Scroll of Splitter. */
-    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MarkItem> MARK_OF_CAIN = ITEMS.registerItem("mark_of_cain",
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MarkItem> MARK_OF_THE_DAMNED = ITEMS.registerItem("mark_of_the_damned",
             props -> new dev.zsskayr.merlins_inferno.item.MarkItem(props.rarity(Rarity.EPIC)));
     /** The only cure for a Mark: a Cleric's expensive trade, or rarely the Sacred Priest's drop. */
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.ScrollOfSplitterItem> SCROLL_OF_SPLITTER = ITEMS.registerItem("scroll_of_splitter",

@@ -68,13 +68,19 @@ public final class ModAttachments {
 
     /** Mark of Cain: the game time by which the bearer must have killed something (0 = not started; see MarkOfCainHandler). */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> CAIN_KILL_DEADLINE =
-            ATTACHMENT_TYPES.register("cain_kill_deadline", () -> AttachmentType.builder(() -> 0L).serialize(Codec.LONG).build());
+            ATTACHMENT_TYPES.register("cain_kill_deadline", () -> AttachmentType.builder(() -> 0L).serialize(Codec.LONG).copyOnDeath().build());
     /** Mark of Cain: the game time of the next roll for "Mark of the Murder". */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> CAIN_MURDER_AT =
-            ATTACHMENT_TYPES.register("cain_murder_at", () -> AttachmentType.builder(() -> 0L).serialize(Codec.LONG).build());
+            ATTACHMENT_TYPES.register("cain_murder_at", () -> AttachmentType.builder(() -> 0L).serialize(Codec.LONG).copyOnDeath().build());
     /** Mark of Cain: whether "Mark of the Murder" is waiting for the next blow its bearer takes. */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> CAIN_MURDER_ARMED =
-            ATTACHMENT_TYPES.register("cain_murder_armed", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
+            ATTACHMENT_TYPES.register("cain_murder_armed", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).copyOnDeath().build());
+    /** Mark of the Damned: game time of the last time the Mark refused its bearer's death; 0 when never. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> CAIN_REVIVE_AT =
+            ATTACHMENT_TYPES.register("cain_revive_at", () -> AttachmentType.builder(() -> 0L).serialize(Codec.LONG).copyOnDeath().build());
+    /** Mark of the Damned: revivals in a row (each within 20 min of the last); 0 once the streak is over. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> CAIN_REVIVE_COUNT =
+            ATTACHMENT_TYPES.register("cain_revive_count", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).copyOnDeath().build());
 
     /** Dark Coven: game time up to which a held right-click keeps the coven going; -1 when it is not in "hold" mode. Not saved. */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> COVEN_HOLD_UNTIL =

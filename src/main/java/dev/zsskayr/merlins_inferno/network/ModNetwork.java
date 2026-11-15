@@ -34,7 +34,7 @@ public final class ModNetwork {
         event.registrar(PROTOCOL).playToClient(ZaeldrisPosePayload.TYPE, ZaeldrisPosePayload.CODEC,
                 (payload, context) -> context.enqueueWork(() -> dev.zsskayr.merlins_inferno.client.ZaeldrisPose.set(payload.entityId(), payload.barraging())));
         event.registrar(PROTOCOL).playToClient(CainStatePayload.TYPE, CainStatePayload.CODEC,
-                (payload, context) -> context.enqueueWork(() -> dev.zsskayr.merlins_inferno.client.CainHud.set(payload.bearing(), payload.ticksLeft(), payload.armed())));
+                (payload, context) -> context.enqueueWork(() -> dev.zsskayr.merlins_inferno.client.CainHud.set(payload.bearing(), payload.ticksLeft(), payload.armed(), payload.reviveLeft())));
         event.registrar(PROTOCOL).playToClient(GehennaStatePayload.TYPE, GehennaStatePayload.CODEC,
                 (payload, context) -> context.enqueueWork(() -> dev.zsskayr.merlins_inferno.client.GehennaHud.set(payload.fed(), payload.frenzyTicks())));
         event.registrar(PROTOCOL).playToClient(CirclePayload.TYPE, CirclePayload.CODEC,

@@ -53,8 +53,8 @@ Mythics cannot be crafted. Each one is the apex of its road and grows when the w
 - **Excalibur** (Druidic, Circle 2) - a fae-forged sword worn by time. When the world reaches the Third Circle the earth shakes around its bearer and it awakens as the true Excalibur, with its own look and more damage.
 - **Zaeldris** (Angelical, Circle 3) - the angelic lance and the strongest weapon in the mod. Hold its barrage key to loose spears of light that lodge in your foes and burst; its *God Touch* burns what they strike.
 
-### The Mark of Cain
-A Curios *mark* slot holds a soulbound Mark. **Cain** drops the **Mark of Cain** (6%): it grants strength and fast regeneration at the price of hunger and frailty, and holy weapons hurt its bearer more. A **Scroll of Splitter** frees its reader of a Mark, once.
+### The Mark of the Damned
+A Curios *mark* slot holds a soulbound Mark. **Cain** drops the **Mark of the Damned** (6%): it grants strength and fast regeneration at the price of hunger and frailty, and holy weapons hurt its bearer more. A **Scroll of Splitter** frees its reader of a Mark, once.
 
 ### Ebony and the Dark Coven (Circle 2)
 **Ebony Debris** hides in Oblivion (and, very rarely, in Ancient Debris); its scrap, as well as the drops of Oblivion's bosses, is smelted into **Ebony Bars** in the Hell Forge. Ebony tools and armor sit above Seraphium, and the full armor set grants Fire Resistance IV.
