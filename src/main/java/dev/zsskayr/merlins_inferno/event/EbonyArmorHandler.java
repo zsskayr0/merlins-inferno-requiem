@@ -22,7 +22,7 @@ import dev.zsskayr.merlins_inferno.registry.ModItems;
 public class EbonyArmorHandler {
     private static final int CHECK_INTERVAL = 20;
     /** Walking speed lost to the weight of a full set, as a fraction. */
-    public static final double WEIGHT_PENALTY = 0.06;
+    public static final double WEIGHT_PENALTY = 0.03;
     private static final ResourceLocation WEIGHT_ID = ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "ebony_weight");
 
     public static boolean wearsFullSet(LivingEntity entity) {
