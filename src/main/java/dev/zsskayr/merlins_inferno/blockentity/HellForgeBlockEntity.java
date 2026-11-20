@@ -573,9 +573,8 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
      * cools back into range; past its critical temperature it turns to scrap within a few seconds.
      */
     /**
-     * The Magmatic Core: no lanes, one input and one bucket. The pool keeps itself hot with its own fuel (its level sets the
-     * fire, as usual); once the chamber is hot enough, the stone in the input melts into more of that same fuel. Output
-     * only takes what lies above the reserve the bar sets. Soul Lava recipes need a Blightsteel shell.
+     * The Magmatic Core melts each input into the same fuel pool. The pool feeds the fire and the shared
+     * bucket slot, which only draws from above the reserve. Soul Lava recipes need a Blightsteel shell.
      */
     private boolean processMagmatic(ForgeThermalData.Core core) {
         var shell = shellRule();
@@ -599,27 +598,33 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
             temperature += (core.rest() - temperature) * core.cooling() * (shape.roof() ? 1 : 1.5);
             actualTemperature = temperature;
         }
-        for (int lane = 0; lane < LANES; lane++) status[lane] = lane == 0 ? 0 : 6;
-        ItemStack input = items.get(inputSlot(0));
-        var melting = ForgeThermalData.melting(level, input);
-        if (melting == null || fuel == null || !melting.fluid().equals(fuel.fluid()) || melting.minCoreTier() > coreTier) {
-            progress[0] = 0;
-            duration[0] = 0;
-        } else {
-            duration[0] = melting.time();
-            if (actualTemperature < melting.min()) status[0] = 1;
-            else if (fuelAmount + melting.amount() * fuel.perMb() > fuelCapacity()) status[0] = 5;
+        boolean melted = false;
+        for (int lane = 0; lane < LANES; lane++) {
+            status[lane] = lane < processingSlots ? 0 : 6;
+            if (lane >= processingSlots) continue;
+            ItemStack input = items.get(inputSlot(lane));
+            var melting = ForgeThermalData.melting(level, input);
+            if (melting == null || fuel == null || !melting.fluid().equals(fuel.fluid()) || melting.minCoreTier() > coreTier) {
+                progress[lane] = 0;
+                duration[lane] = 0;
+                continue;
+            }
+
+            duration[lane] = melting.time();
+            double produced = melting.amount() * fuel.perMb();
+            if (actualTemperature < melting.min()) status[lane] = 1;
+            else if (fuelAmount + produced > fuelCapacity()) status[lane] = 5;
             else {
-                status[0] = 2;
-                progress[0] += 1;
-                if (progress[0] >= melting.time()) {
-                    progress[0] = 0;
-                    input.shrink(1);
-                    fuelAmount += melting.amount() * fuel.perMb();
-                    level.playSound(null, worldPosition, SoundEvents.LAVA_POP, SoundSource.BLOCKS, 0.6F, 0.9F);
-                }
+                status[lane] = 2;
+                progress[lane] += 1;
+                if (progress[lane] < melting.time()) continue;
+                progress[lane] = 0;
+                input.shrink(1);
+                fuelAmount += produced;
+                melted = true;
             }
         }
+        if (melted) level.playSound(null, worldPosition, SoundEvents.LAVA_POP, SoundSource.BLOCKS, 0.6F, 0.9F);
         // An empty bucket in the output is filled from what lies above the reserve.
         ItemStack out = items.get(outputSlot(0));
         if (out.is(Items.BUCKET) && out.getCount() == 1 && fuel != null && !fuel.fluid().isEmpty() && extractableFuel() >= 1000 * fuel.perMb()) {
@@ -984,10 +989,10 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
         if (level == null) return false;
         if (slot == FUEL_SLOT) return thermalCore().accepts(ForgeThermalData.fuel(level, stack)) || ForgeThermalData.chill(level, stack) > 0;
         if (slot == DROSS_SLOT) return !magmatic && thermalCore().consumesDross() && stack.is(ModItems.DUSK_DROSS.get());
-        if (magmatic && slot == inputSlot(0)) return ForgeThermalData.melting(level, stack) != null;
         if (magmatic && slot == outputSlot(0)) return stack.is(Items.BUCKET);
         for (int lane = 0; lane < processingSlots; lane++)
-            if (slot == inputSlot(lane)) return ForgeThermalData.recipe(level, stack).isPresent() || ForgeThermalData.chill(level, stack) > 0;
+            if (slot == inputSlot(lane)) return magmatic ? ForgeThermalData.melting(level, stack) != null
+                    : ForgeThermalData.recipe(level, stack).isPresent() || ForgeThermalData.chill(level, stack) > 0;
         return false;
     }
     @Override public int[] getSlotsForFace(Direction side) { return NO_SLOTS; }

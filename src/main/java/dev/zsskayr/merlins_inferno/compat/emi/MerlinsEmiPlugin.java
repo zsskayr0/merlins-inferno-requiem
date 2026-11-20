@@ -25,6 +25,11 @@ public final class MerlinsEmiPlugin implements EmiPlugin {
 
     @Override
     public void register(EmiRegistry registry) {
+        // The vault drawer sticks out of the forge GUI; EMI keeps its panels from taking clicks under it.
+        registry.addExclusionArea(dev.zsskayr.merlins_inferno.client.HellForgeScreen.class, (screen, out) -> {
+            var area = screen.vaultPanelArea();
+            if (area != null) out.accept(new dev.emi.emi.api.widget.Bounds(area.getX(), area.getY(), area.getWidth(), area.getHeight()));
+        });
         registry.addCategory(PANDORA);
         registry.addWorkstation(PANDORA, EmiStack.of(ModItems.PANDORA_BOX.get()));
         for (PandoraDisplayRecipes.Entry entry : PandoraDisplayRecipes.ALL) {

@@ -18,6 +18,9 @@
     "merlins_inferno:blighted_bellows",
     "merlins_inferno:blighted_economizer",
     "merlins_inferno:blighted_ward",
-    "merlins_inferno:blighted_hellforge_controller"
+    "merlins_inferno:blighted_hellforge_controller",
+    "merlins_inferno:paragonium_ore",
+    "merlins_inferno:paragonium_block",
+    "merlins_inferno:raw_paragonium_block"
   ]
 }

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CXC",
+    "XVX",
+    "CXC"
+  ],
+  "key": {
+    "C": {
+      "item": "merlins_inferno:blightsteel_casing"
+    },
+    "X": {
+      "item": "merlins_inferno:ebony_scrap"
+    },
+    "V": {
+      "item": "merlins_inferno:hell_forge_vault"
+    }
+  },
+  "result": {
+    "id": "merlins_inferno:blighted_hell_forge_vault",
+    "count": 1
+  }
+}

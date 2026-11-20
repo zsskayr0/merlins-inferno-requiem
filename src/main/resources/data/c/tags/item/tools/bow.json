@@ -1,1 +1,10 @@
-{ "values": [ "merlins_inferno:rowanwood_bow", "merlins_inferno:demonblood_bow", "merlins_inferno:seraphium_bow", "merlins_inferno:luminite_bow", "merlins_inferno:ebony_bow" ] }
+{
+  "values": [
+    "merlins_inferno:rowanwood_bow",
+    "merlins_inferno:demonblood_bow",
+    "merlins_inferno:seraphium_bow",
+    "merlins_inferno:luminite_bow",
+    "merlins_inferno:ebony_bow",
+    "merlins_inferno:paragon_bow"
+  ]
+}

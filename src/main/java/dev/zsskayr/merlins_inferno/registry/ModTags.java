@@ -85,6 +85,10 @@ public final class ModTags {
         public static final TagKey<EntityType<?>> SANCTIFIED_CARRIERS = TagKey.create(Registries.ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "sanctified_carriers"));
 
+        /** Anything supernatural - demons, angels, the undead, the End, magic beasts: Paragon's Hunter hits them harder (event.ParagonCombatHandler). */
+        public static final TagKey<EntityType<?>> SUPERNATURAL = TagKey.create(Registries.ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "supernatural"));
+
         private EntityTypes() {
         }
     }
@@ -157,6 +161,10 @@ public final class ModTags {
         /** Every Luminite tool/weapon - Holy II built in, and the star-struck touch of LuminiteCombatHandler. */
         public static final TagKey<Item> LUMINITE_TOOLS = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "luminite_tools"));
+
+        /** Every Paragon tool/weapon (Circle 2, Mundane route). Nothing reads it yet besides route_mundane. */
+        public static final TagKey<Item> PARAGON_TOOLS = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "paragon_tools"));
 
         /** Anything celestial a player can carry - the mirror of {@link #DEMONIC_ITEMS}; nothing reads it yet. */
         public static final TagKey<Item> CELESTIAL_ITEMS = TagKey.create(Registries.ITEM,

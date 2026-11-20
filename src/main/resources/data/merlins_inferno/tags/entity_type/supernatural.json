@@ -1,0 +1,24 @@
+{
+  "values": [
+    "#merlins_inferno:demon",
+    "#merlins_inferno:fairies",
+    "#minecraft:undead",
+    "minecraft:phantom",
+    "minecraft:blaze",
+    "minecraft:shulker",
+    "minecraft:guardian",
+    "minecraft:elder_guardian",
+    "minecraft:enderman",
+    "minecraft:endermite",
+    "minecraft:vex",
+    "minecraft:allay",
+    "minecraft:breeze",
+    "minecraft:ender_dragon",
+    "minecraft:ghast",
+    "minecraft:magma_cube",
+    "minecraft:warden",
+    "merlins_inferno:dullahan",
+    "merlins_inferno:cain",
+    "merlins_inferno:flesh_golem"
+  ]
+}

@@ -20,9 +20,9 @@ public final class HellForgeCapabilities {
     static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlock(Capabilities.ItemHandler.BLOCK,
                 (level, pos, state, blockEntity, side) -> HellForgeVaultHandler.of(level, pos),
-                ModBlocks.HELL_FORGE_VAULT.get());
+                ModBlocks.HELL_FORGE_VAULT.get(), ModBlocks.BLIGHTED_HELL_FORGE_VAULT.get());
         event.registerBlock(Capabilities.FluidHandler.BLOCK,
                 (level, pos, state, blockEntity, side) -> HellForgeVaultFluidHandler.of(level, pos),
-                ModBlocks.HELL_FORGE_VAULT.get());
+                ModBlocks.HELL_FORGE_VAULT.get(), ModBlocks.BLIGHTED_HELL_FORGE_VAULT.get());
     }
 }

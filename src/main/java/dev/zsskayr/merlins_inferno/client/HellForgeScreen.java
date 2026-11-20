@@ -237,27 +237,26 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         vline(g,190,34,292);
         hline(g,36,184,211);
 
-        // A Magmatic forge: just the stone going in, the melt bar and the bucket being filled.
-        if(menu.magmatic()){
-            int y=38;
-            slot(g,207,y+1);slot(g,289,y+1);
-            bar(g,228,y+6,44,8,menu.progress(0));
-            g.fill(leftPos+275,topPos+y+9,leftPos+280,topPos+y+11,0xFF7A6A5E);
-            for(int k=0;k<4;k++)g.fill(leftPos+280+k,topPos+y+6+k,leftPos+281+k,topPos+y+14-k,0xFF7A6A5E);
-        }
-        // Smelting lanes: all nine fit, so there is nothing to scroll.
-        for(int row=0;row<MENU_LANES&&!menu.magmatic();row++){
+        // Magmatic lanes share the bucket slot in the first row.
+        boolean magmatic=menu.magmatic();
+        for(int row=0;row<MENU_LANES;row++){
             int lane=menu.firstLane()+row,y=38+row*22;
             boolean open=lane<menu.getProcessingSlots();
-            boolean stocked=menu.getSlot(HellForgeBlockEntity.inputSlot(lane)).hasItem()||menu.getSlot(HellForgeBlockEntity.outputSlot(lane)).hasItem();
+            boolean outputStocked=menu.getSlot(HellForgeBlockEntity.outputSlot(lane)).hasItem();
+            boolean stocked=menu.getSlot(HellForgeBlockEntity.inputSlot(lane)).hasItem()||outputStocked;
+            if(magmatic&&!open&&!stocked)continue;
             boolean running=open&&menu.progress(lane)>0;
             String n=Integer.toString(lane+1);
             shadowLabel(g,n,201-font.width(n)/2,y+6,running?HOT:open?TEXT_DIM:0xFF5C4F46,running?HOT_SHADOW:TEXT_SHADOW);
-            if(open||stocked){slot(g,207,y+1);slot(g,289,y+1);}
+            if(open||stocked)slot(g,207,y+1);
+            boolean showOutput=magmatic?outputStocked||(open&&lane==0):open||stocked;
+            if(showOutput)slot(g,289,y+1);
             if(open){
                 bar(g,228,y+6,44,8,menu.progress(lane));
-                g.fill(leftPos+275,topPos+y+9,leftPos+280,topPos+y+11,0xFF7A6A5E);
-                for(int k=0;k<4;k++)g.fill(leftPos+280+k,topPos+y+6+k,leftPos+281+k,topPos+y+14-k,0xFF7A6A5E);
+                if(!magmatic||lane==0){
+                    g.fill(leftPos+275,topPos+y+9,leftPos+280,topPos+y+11,0xFF7A6A5E);
+                    for(int k=0;k<4;k++)g.fill(leftPos+280+k,topPos+y+6+k,leftPos+281+k,topPos+y+14-k,0xFF7A6A5E);
+                }
             }
             if(row<MENU_LANES-1)hline(g,196,306,y+19);
         }
@@ -288,6 +287,8 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         for(int col=0;col<9;col++)slot(g,39+col*16,274);
     }
     private static final int MENU_LANES=HellForgeMenu.LANE_ROWS;
+    /** Screen rect of the open vault drawer (x, y, w, h), or null: JEI/EMI keep their item lists out of it. */
+    public net.minecraft.client.renderer.Rect2i vaultPanelArea(){return vaultPanel?new net.minecraft.client.renderer.Rect2i(leftPos+drawerX(),topPos+28,DRAWER_W,DRAWER_H):null;}
     private boolean vaultPanelCovers(int x,int y){return vaultPanel&&isHovering(drawerX(),28,DRAWER_W,DRAWER_H,x,y);}
     private void renderDrawer(GuiGraphics g){
         int x=drawerX();

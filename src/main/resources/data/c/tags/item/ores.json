@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
-    {"id": "#c:ores/lyrium", "required": false}
+    {
+      "id": "#c:ores/lyrium",
+      "required": false
+    },
+    "merlins_inferno:paragonium_ore"
   ]
 }

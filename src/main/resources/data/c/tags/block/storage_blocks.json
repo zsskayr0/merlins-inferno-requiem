@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "#c:storage_blocks/lyrium"
+    "#c:storage_blocks/lyrium",
+    "merlins_inferno:paragonium_block",
+    "merlins_inferno:raw_paragonium_block"
   ]
 }

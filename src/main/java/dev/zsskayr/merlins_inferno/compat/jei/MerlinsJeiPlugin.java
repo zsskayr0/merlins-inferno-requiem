@@ -25,6 +25,19 @@ public class MerlinsJeiPlugin implements IModPlugin {
         return ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "jei");
     }
 
+    /** The vault drawer sticks out of the forge GUI; JEI moves its item list out from under it. */
+    @Override
+    public void registerGuiHandlers(mezz.jei.api.registration.IGuiHandlerRegistration registration) {
+        registration.addGuiContainerHandler(dev.zsskayr.merlins_inferno.client.HellForgeScreen.class,
+                new mezz.jei.api.gui.handlers.IGuiContainerHandler<>() {
+                    @Override
+                    public java.util.List<net.minecraft.client.renderer.Rect2i> getGuiExtraAreas(dev.zsskayr.merlins_inferno.client.HellForgeScreen screen) {
+                        var area = screen.vaultPanelArea();
+                        return area == null ? java.util.List.of() : java.util.List.of(area);
+                    }
+                });
+    }
+
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         var helper = registration.getJeiHelpers().getGuiHelper();

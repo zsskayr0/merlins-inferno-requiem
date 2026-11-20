@@ -326,6 +326,10 @@ public final class HellForgeStructure {
                 }
             }
         }
-        return new Result(core, shape, core.block().magmatic() ? 1 : shape.lanes(layout), catalysts, null, tier, shellBlock);
+        int lanes = shape.lanes(layout);
+        if (core.block().magmatic()) {
+            lanes = lanes >= 8 ? 5 : lanes >= 5 ? 3 : 1;
+        }
+        return new Result(core, shape, lanes, catalysts, null, tier, shellBlock);
     }
 }

@@ -574,6 +574,9 @@ public final class ModBlocks {
 
     public static final DeferredBlock<HellForgeVaultBlock> HELL_FORGE_VAULT = BLOCKS.registerBlock("hell_forge_vault",
             HellForgeVaultBlock::new, hellForgePartProperties());
+    // Circle 2 vault: Blightsteel-built, moves four times as much per automatic transfer.
+    public static final DeferredBlock<HellForgeVaultBlock> BLIGHTED_HELL_FORGE_VAULT = BLOCKS.registerBlock("blighted_hell_forge_vault",
+            props -> new HellForgeVaultBlock(props, 4), hellForgePartProperties().sound(BLIGHTSTEEL_SOUND));
 
     public static final DeferredBlock<Block> HELL_FORGE_SPEED_CATALYST = BLOCKS.registerBlock("hell_forge_speed_catalyst",
             Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.NETHER_BRICKS).lightLevel(state -> 7));
@@ -605,6 +608,16 @@ public final class ModBlocks {
     // Block of Luminite: the lining of Luminite geodes in El'ysium, a recolor of the Lyrium Block without its radiance or crystal growth.
     public static final DeferredBlock<Block> LUMINITE_BLOCK = BLOCKS.registerBlock("luminite_block",
             Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK).lightLevel(state -> 12).pushReaction(PushReaction.BLOCK));
+
+    // --- Paragonium: Circle 2's Mundane route metal. Its ore belongs to the Mundane dimension (not built yet), so it does not generate;
+    // the ingot is not craftable either (it will come from trades, like Seraphium). Ore and raw block take a diamond pickaxe. ---
+    public static final DeferredBlock<DropExperienceBlock> PARAGONIUM_ORE = BLOCKS.registerBlock("paragonium_ore",
+            props -> new DropExperienceBlock(UniformInt.of(3, 7), props),
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DIAMOND_ORE).strength(5.0F, 9.0F));
+    public static final DeferredBlock<Block> RAW_PARAGONIUM_BLOCK = BLOCKS.registerBlock("raw_paragonium_block", Block::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.METAL).strength(6.0F, 9.0F));
+    public static final DeferredBlock<Block> PARAGONIUM_BLOCK = BLOCKS.registerBlock("paragonium_block", Block::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERITE_BLOCK).mapColor(MapColor.METAL));
 
     // --- Meteorite: the black, star-flecked rock of fallen meteors. Raw Meteorite is nearly as hard as obsidian (a diamond pickaxe
     // or better), so breaking a meteor is felt; Smooth Meteorite (smelted) and its bricks are for building and take an iron pickaxe. ---

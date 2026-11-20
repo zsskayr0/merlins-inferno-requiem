@@ -74,13 +74,18 @@ public class HellForgeMenu extends AbstractContainerMenu {
         int y = 39 + (lane - firstLane) * 22;
         Slot laneSlot = new Slot(container, index, x, y) {
             @Override public boolean mayPlace(ItemStack stack) {
-                if (magmatic() && lane == 0)
-                    return output ? stack.is(net.minecraft.world.item.Items.BUCKET) : ForgeThermalData.melting(level, stack) != null;
+                if (magmatic()) {
+                    if (output) return lane == 0 && stack.is(net.minecraft.world.item.Items.BUCKET);
+                    return lane < getProcessingSlots() && ForgeThermalData.melting(level, stack) != null;
+                }
                 return !output && lane < getProcessingSlots()
                         && (ForgeThermalData.recipe(level, stack).isPresent() || ForgeThermalData.chill(level, stack) > 0);
             }
             @Override public int getMaxStackSize() { return magmatic() && output && lane == 0 ? 1 : super.getMaxStackSize(); }
-            @Override public boolean isActive() { return lane >= firstLane && lane < firstLane + LANE_ROWS && (lane < getProcessingSlots() || hasItem()); }
+            @Override public boolean isActive() {
+                boolean enabled = lane < getProcessingSlots() && (!magmatic() || !output || lane == 0);
+                return lane >= firstLane && lane < firstLane + LANE_ROWS && (enabled || hasItem());
+            }
         };
         if (slots.size() > index) { laneSlot.index = index; slots.set(index, laneSlot); }
         else addSlot(laneSlot);
@@ -137,7 +142,7 @@ public class HellForgeMenu extends AbstractContainerMenu {
     @Override public void removed(Player player) { super.removed(player); container.stopOpen(player); }
     /** A Blighted forge (core tier 2 and up) burns the dross in its slot instead of producing it. */
     public boolean eatsDross() { return (data.get(19) & 15) >= 2 && !magmatic(); }
-    /** A Magmatic forge: one melting input, one bucket, no lanes or residues. */
+    /** A Magmatic forge melts its inputs into a shared fuel pool. */
     public boolean magmatic() { return (data.get(19) >> 4 & 1) == 1; }
     @Override public ItemStack quickMoveStack(Player player, int index) {
         if (index < 0 || index >= slots.size()) return ItemStack.EMPTY;
@@ -156,13 +161,11 @@ public class HellForgeMenu extends AbstractContainerMenu {
                     moved = moveItemStackTo(stack, input, input + 1, false);
             }
         }
-        else if (magmatic() && ForgeThermalData.melting(level, stack) != null)
-            moved = moveItemStackTo(stack, HellForgeBlockEntity.inputSlot(0), HellForgeBlockEntity.inputSlot(0) + 1, false);
         else if (magmatic() && stack.is(net.minecraft.world.item.Items.BUCKET))
             moved = moveItemStackTo(stack, HellForgeBlockEntity.outputSlot(0), HellForgeBlockEntity.outputSlot(0) + 1, false);
         else if (eatsDross() && stack.is(dev.zsskayr.merlins_inferno.registry.ModItems.DUSK_DROSS.get()))
             moved = moveItemStackTo(stack, HellForgeBlockEntity.DROSS_SLOT, HellForgeBlockEntity.DROSS_SLOT + 1, false);
-        else if (ForgeThermalData.recipe(level, stack).isPresent()) {
+        else if (magmatic() ? ForgeThermalData.melting(level, stack) != null : ForgeThermalData.recipe(level, stack).isPresent()) {
             for (int lane = 0; lane < getProcessingSlots() && !stack.isEmpty(); lane++) {
                 int input = HellForgeBlockEntity.inputSlot(lane);
                 moved |= moveItemStackTo(stack, input, input + 1, false);

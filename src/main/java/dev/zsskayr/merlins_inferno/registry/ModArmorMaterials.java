@@ -134,6 +134,26 @@ public final class ModArmorMaterials {
             0.1F
     ));
 
+    /**
+     * Paragonium, Circle 2's Mundane route armor: Luminite's defense (the attribute cap makes more useless), knockback resistance and durability
+     * (multiplier 170, in {@link ModItems}) between Luminite and Ebony. No set bonus yet. Worn-armor textures: {@code textures/models/armor/paragon_layer_*.png}.
+     */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> PARAGON = ARMOR_MATERIALS.register("paragon", () -> new ArmorMaterial(
+            Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                map.put(ArmorItem.Type.BOOTS, 6);
+                map.put(ArmorItem.Type.LEGGINGS, 9);
+                map.put(ArmorItem.Type.CHESTPLATE, 12);
+                map.put(ArmorItem.Type.HELMET, 7);
+                map.put(ArmorItem.Type.BODY, 10);
+            }),
+            25,
+            SoundEvents.ARMOR_EQUIP_NETHERITE,
+            () -> Ingredient.of(ModItems.PARAGONIUM_INGOT.get()),
+            List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "paragon"))),
+            6.0F,
+            0.15F
+    ));
+
     private ModArmorMaterials() {
     }
 

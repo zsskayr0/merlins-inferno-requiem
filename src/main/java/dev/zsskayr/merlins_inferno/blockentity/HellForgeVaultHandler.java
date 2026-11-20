@@ -115,6 +115,8 @@ public final class HellForgeVaultHandler implements IItemHandler {
      */
     public static void autoTransfer(ServerLevel level, BlockPos vaultPos, BlockState vaultState) {
         IItemHandler own = of(level, vaultPos);
+        int scale = vaultState.getBlock() instanceof HellForgeVaultBlock vault ? vault.transferScale() : 1;
+        int amount = AUTO_AMOUNT * scale;
         HellForgeVaultBlock.Mode mode = vaultState.getValue(HellForgeVaultBlock.MODE);
         boolean both = mode == HellForgeVaultBlock.Mode.BOTH;
         for (Direction dir : Direction.values()) {
@@ -125,26 +127,26 @@ public final class HellForgeVaultHandler implements IItemHandler {
             IItemHandler neighbor = level.getCapability(Capabilities.ItemHandler.BLOCK, neighborPos, dir.getOpposite());
             if (neighbor != null) {
                 // A fuel vault first hands the empty bucket back out, then takes the next fuel in.
-                boolean moved = both ? (move(own, neighbor) || move(neighbor, own))
-                        : mode == HellForgeVaultBlock.Mode.OUTPUT ? move(own, neighbor)
-                        : (mode == HellForgeVaultBlock.Mode.FUEL && move(own, neighbor)) || move(neighbor, own);
+                boolean moved = both ? (move(own, neighbor, amount) || move(neighbor, own, amount))
+                        : mode == HellForgeVaultBlock.Mode.OUTPUT ? move(own, neighbor, amount)
+                        : (mode == HellForgeVaultBlock.Mode.FUEL && move(own, neighbor, amount)) || move(neighbor, own, amount);
                 if (moved) {
                     return;
                 }
             }
             if (mode == HellForgeVaultBlock.Mode.FUEL) {
                 IFluidHandler tank = level.getCapability(Capabilities.FluidHandler.BLOCK, neighborPos, dir.getOpposite());
-                if (tank != null && FluidUtil.tryFluidTransfer(HellForgeVaultFluidHandler.of(level, vaultPos), tank, AUTO_FLUID_MB, true).getAmount() > 0) {
+                if (tank != null && FluidUtil.tryFluidTransfer(HellForgeVaultFluidHandler.of(level, vaultPos), tank, AUTO_FLUID_MB * scale, true).getAmount() > 0) {
                     return;
                 }
             }
         }
     }
 
-    /** Moves up to {@link #AUTO_AMOUNT} items from the first slot of {@code from} that {@code to} accepts. */
-    private static boolean move(IItemHandler from, IItemHandler to) {
+    /** Moves up to {@code amount} items from the first slot of {@code from} that {@code to} accepts. */
+    private static boolean move(IItemHandler from, IItemHandler to, int amount) {
         for (int slot = 0; slot < from.getSlots(); slot++) {
-            ItemStack offered = from.extractItem(slot, AUTO_AMOUNT, true);
+            ItemStack offered = from.extractItem(slot, amount, true);
             if (offered.isEmpty()) {
                 continue;
             }

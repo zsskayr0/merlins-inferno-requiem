@@ -145,7 +145,7 @@ public final class ModEntityRenderers {
         event.enqueueWork(() -> {
             Sheets.addWoodType(ModWoodTypes.ASHWOOD);
             Sheets.addWoodType(ModWoodTypes.HAUNTED);
-            for (var bow : java.util.List.of(ModItems.ROWANWOOD_BOW, ModItems.DEMONBLOOD_BOW, ModItems.SERAPHIUM_BOW, ModItems.LUMINITE_BOW, ModItems.EBONY_BOW)) {
+            for (var bow : java.util.List.of(ModItems.ROWANWOOD_BOW, ModItems.DEMONBLOOD_BOW, ModItems.SERAPHIUM_BOW, ModItems.LUMINITE_BOW, ModItems.PARAGON_BOW, ModItems.EBONY_BOW)) {
                 ItemProperties.register(bow.get(), ResourceLocation.withDefaultNamespace("pull"), (stack, level, entity, seed) ->
                         entity == null || entity.getUseItem() != stack ? 0.0F : (stack.getUseDuration(entity) - entity.getUseItemRemainingTicks()) / 20.0F);
                 ItemProperties.register(bow.get(), ResourceLocation.withDefaultNamespace("pulling"), (stack, level, entity, seed) ->

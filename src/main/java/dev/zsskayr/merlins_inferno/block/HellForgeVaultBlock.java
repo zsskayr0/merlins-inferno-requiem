@@ -26,17 +26,43 @@ public class HellForgeVaultBlock extends Block {
     /** When on, the vault itself moves items between the forge and an adjacent inventory (no hopper needed). */
     public static final BooleanProperty AUTO = BooleanProperty.create("auto");
 
+    /** Takes the Blighted look while it sits in a Blightsteel shell, like the Magmatic Core. */
+    public static final BooleanProperty BLIGHTED = MagmaticCoreBlock.BLIGHTED;
+
     /** Ticks between automatic transfers while {@link #AUTO} is on - same pace as a hopper. */
     public static final int AUTO_INTERVAL = 8;
 
+    /** How many times a standard vault's automatic transfer this vault moves at once. */
+    private final int transferScale;
+
     public HellForgeVaultBlock(Properties properties) {
+        this(properties, 1);
+    }
+
+    public HellForgeVaultBlock(Properties properties, int transferScale) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(MODE, Mode.INPUT).setValue(AUTO, false));
+        this.transferScale = transferScale;
+        this.registerDefaultState(this.stateDefinition.any().setValue(MODE, Mode.INPUT).setValue(AUTO, false).setValue(BLIGHTED, false));
+    }
+
+    public int transferScale() {
+        return transferScale;
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(MODE, AUTO);
+        builder.add(MODE, AUTO, BLIGHTED);
+    }
+
+    @Override
+    public BlockState getStateForPlacement(net.minecraft.world.item.context.BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(BLIGHTED, MagmaticCoreBlock.blightedAround(context.getLevel(), context.getClickedPos()));
+    }
+
+    @Override
+    protected BlockState updateShape(BlockState state, net.minecraft.core.Direction direction, BlockState neighborState,
+            net.minecraft.world.level.LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        return state.setValue(BLIGHTED, MagmaticCoreBlock.blightedAround(level, pos));
     }
 
     @Override

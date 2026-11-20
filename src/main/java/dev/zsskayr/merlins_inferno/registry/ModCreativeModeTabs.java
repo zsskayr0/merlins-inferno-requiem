@@ -292,6 +292,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DEMONIC_CORE_ITEM.get());
                         output.accept(ModItems.MAGMATIC_CORE_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_VAULT_ITEM.get());
+                        output.accept(ModItems.BLIGHTED_HELL_FORGE_VAULT_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_SPEED_CATALYST_ITEM.get());
                         output.accept(ModItems.HELL_FORGE_YIELD_CATALYST_ITEM.get());
                         output.accept(ModItems.BLIGHTED_HELLFORGE_CONTROLLER_ITEM.get());
@@ -359,6 +360,23 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.LUMINITE_LEGGINGS.get());
                         output.accept(ModItems.LUMINITE_BOOTS.get());
                         output.accept(ModItems.STAR_SEEKER.get());
+
+                        // Circle 2: Paragonium
+                        output.accept(ModItems.PARAGONIUM_ORE_ITEM.get());
+                        output.accept(ModItems.RAW_PARAGONIUM_BLOCK_ITEM.get());
+                        output.accept(ModItems.PARAGONIUM_BLOCK_ITEM.get());
+                        output.accept(ModItems.RAW_PARAGONIUM.get());
+                        output.accept(ModItems.PARAGONIUM_INGOT.get());
+                        output.accept(ModItems.PARAGON_SWORD.get());
+                        output.accept(ModItems.PARAGON_AXE.get());
+                        output.accept(ModItems.PARAGON_SHOVEL.get());
+                        output.accept(ModItems.PARAGON_PICKAXE.get());
+                        output.accept(ModItems.PARAGON_HOE.get());
+                        output.accept(ModItems.PARAGON_BOW.get());
+                        output.accept(ModItems.PARAGON_HELMET.get());
+                        output.accept(ModItems.PARAGON_CHESTPLATE.get());
+                        output.accept(ModItems.PARAGON_LEGGINGS.get());
+                        output.accept(ModItems.PARAGON_BOOTS.get());
 
                         // Circle 2: Ebony and the Dark Coven
                         output.accept(ModItems.EBONY_DEBRIS_ITEM.get());

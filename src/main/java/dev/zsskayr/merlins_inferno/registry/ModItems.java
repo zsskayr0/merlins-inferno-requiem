@@ -550,6 +550,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> DEMONIC_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DEMONIC_CORE);
     public static final DeferredItem<BlockItem> MAGMATIC_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.MAGMATIC_CORE);
     public static final DeferredItem<BlockItem> HELL_FORGE_VAULT_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_VAULT);
+    public static final DeferredItem<BlockItem> BLIGHTED_HELL_FORGE_VAULT_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTED_HELL_FORGE_VAULT);
     public static final DeferredItem<BlockItem> HELL_FORGE_SPEED_CATALYST_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_SPEED_CATALYST);
     public static final DeferredItem<BlockItem> HELL_FORGE_YIELD_CATALYST_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.HELL_FORGE_YIELD_CATALYST);
     public static final DeferredItem<BlockItem> BLIGHTED_HELLFORGE_CONTROLLER_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLIGHTED_HELLFORGE_CONTROLLER);
@@ -792,6 +793,37 @@ public final class ModItems {
             props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.LEGGINGS, props.fireResistant().durability(ArmorItem.Type.LEGGINGS.getDurability(180))));
     public static final DeferredItem<ArmorItem> EBONY_BOOTS = ITEMS.registerItem("ebony_boots",
             props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.BOOTS, props.fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(180))));
+
+    // --- Circle 2: Paragonium, the Mundane route's metal (see ModBlocks.PARAGONIUM_ORE). The material is "Paragonium", the gear "Paragon".
+    // No recipe makes the ingot: it will come from trades, so for now none of this is reachable in survival. Tools only, no armor yet.
+    // Between Luminite and Ebony on every stat: see ModTiers.PARAGON. ---
+    public static final DeferredItem<BlockItem> PARAGONIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PARAGONIUM_ORE);
+    public static final DeferredItem<BlockItem> RAW_PARAGONIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.RAW_PARAGONIUM_BLOCK);
+    public static final DeferredItem<BlockItem> PARAGONIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PARAGONIUM_BLOCK);
+    public static final DeferredItem<Item> RAW_PARAGONIUM = ITEMS.registerSimpleItem("raw_paragonium", new Item.Properties());
+    public static final DeferredItem<Item> PARAGONIUM_INGOT = ITEMS.registerSimpleItem("paragonium_ingot", new Item.Properties());
+
+    public static final DeferredItem<SwordItem> PARAGON_SWORD = ITEMS.registerItem("paragon_sword",
+            props -> new SwordItem(ModTiers.PARAGON, props.attributes(SwordItem.createAttributes(ModTiers.PARAGON, 3, -2.4F))));
+    public static final DeferredItem<AxeItem> PARAGON_AXE = ITEMS.registerItem("paragon_axe",
+            props -> new AxeItem(ModTiers.PARAGON, props.attributes(AxeItem.createAttributes(ModTiers.PARAGON, 5.0F, -3.1F))));
+    public static final DeferredItem<ShovelItem> PARAGON_SHOVEL = ITEMS.registerItem("paragon_shovel",
+            props -> new ShovelItem(ModTiers.PARAGON, props.attributes(ShovelItem.createAttributes(ModTiers.PARAGON, 1.5F, -3.0F))));
+    public static final DeferredItem<PickaxeItem> PARAGON_PICKAXE = ITEMS.registerItem("paragon_pickaxe",
+            props -> new PickaxeItem(ModTiers.PARAGON, props.attributes(PickaxeItem.createAttributes(ModTiers.PARAGON, 1.0F, -2.8F))));
+    public static final DeferredItem<HoeItem> PARAGON_HOE = ITEMS.registerItem("paragon_hoe",
+            props -> new HoeItem(ModTiers.PARAGON, props.attributes(HoeItem.createAttributes(ModTiers.PARAGON, -4.0F, 0.0F))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MaterialBowItem> PARAGON_BOW = ITEMS.registerItem("paragon_bow",
+            props -> new dev.zsskayr.merlins_inferno.item.MaterialBowItem(props.durability(2300), 2.75D, PARAGONIUM_INGOT));
+
+    public static final DeferredItem<ArmorItem> PARAGON_HELMET = ITEMS.registerItem("paragon_helmet",
+            props -> new ArmorItem(ModArmorMaterials.PARAGON, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(170))));
+    public static final DeferredItem<ArmorItem> PARAGON_CHESTPLATE = ITEMS.registerItem("paragon_chestplate",
+            props -> new ArmorItem(ModArmorMaterials.PARAGON, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(170))));
+    public static final DeferredItem<ArmorItem> PARAGON_LEGGINGS = ITEMS.registerItem("paragon_leggings",
+            props -> new ArmorItem(ModArmorMaterials.PARAGON, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(170))));
+    public static final DeferredItem<ArmorItem> PARAGON_BOOTS = ITEMS.registerItem("paragon_boots",
+            props -> new ArmorItem(ModArmorMaterials.PARAGON, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(170))));
 
     // The Dark Coven, stages I to VII: see item.DarkCovenItem. The LEGENDARY sword of Circle 2, Infernal route (craftable; later stages by smithing),
     // separate from the ordinary Ebony Sword; the stages are raised at a smithing table.

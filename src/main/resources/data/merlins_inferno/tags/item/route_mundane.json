@@ -8,6 +8,11 @@
     "merlins_inferno:tattered_wings",
     "merlins_inferno:excalibur",
     "merlins_inferno:excalibur_true",
-    "merlins_inferno:rowanwood_bow"
+    "merlins_inferno:rowanwood_bow",
+    "#merlins_inferno:paragon_tools",
+    "merlins_inferno:paragon_helmet",
+    "merlins_inferno:paragon_chestplate",
+    "merlins_inferno:paragon_leggings",
+    "merlins_inferno:paragon_boots"
   ]
 }

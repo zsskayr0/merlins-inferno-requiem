@@ -67,6 +67,8 @@ public final class ForgeThermalEvents {
         var level = event.getLevel();
         var pos = event.getPos();
         if (player.isShiftKeyDown() || event.getHand() != net.minecraft.world.InteractionHand.MAIN_HAND) return;
+        // A wrench always does its own job (vault mode, rotating, other mods' tools) instead of opening the GUI.
+        if (player.getMainHandItem().is(dev.zsskayr.merlins_inferno.registry.ModTags.Items.WRENCHES)) return;
         var state = level.getBlockState(pos);
         if (state.getBlock() instanceof dev.zsskayr.merlins_inferno.block.HellForgeControllerBlock) return;
         boolean part = state.is(dev.zsskayr.merlins_inferno.registry.ModBlocks.COMPRESSED_NETHERRACK.get())

@@ -39,7 +39,7 @@ public class MagmaticCoreBlock extends HellForgeCoreBlock {
         return true;
     }
 
-    private static boolean blightedAround(BlockGetter level, BlockPos pos) {
+    public static boolean blightedAround(BlockGetter level, BlockPos pos) {
         int blight = 0, nether = 0;
         for (Direction dir : Direction.values()) {
             BlockState around = level.getBlockState(pos.relative(dir));

@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "auto=false,blighted=false,mode=input": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_input"
+    },
+    "auto=false,blighted=true,mode=input": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_input"
+    },
+    "auto=true,blighted=false,mode=input": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_input"
+    },
+    "auto=true,blighted=true,mode=input": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_input"
+    },
+    "auto=false,blighted=false,mode=output": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_output"
+    },
+    "auto=false,blighted=true,mode=output": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_output"
+    },
+    "auto=true,blighted=false,mode=output": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_output"
+    },
+    "auto=true,blighted=true,mode=output": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_output"
+    },
+    "auto=false,blighted=false,mode=both": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_both"
+    },
+    "auto=false,blighted=true,mode=both": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_both"
+    },
+    "auto=true,blighted=false,mode=both": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_both"
+    },
+    "auto=true,blighted=true,mode=both": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_both"
+    },
+    "auto=false,blighted=false,mode=fuel": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_fuel"
+    },
+    "auto=false,blighted=true,mode=fuel": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_fuel"
+    },
+    "auto=true,blighted=false,mode=fuel": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_fuel"
+    },
+    "auto=true,blighted=true,mode=fuel": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_fuel"
+    },
+    "auto=false,blighted=false,mode=redstone": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_redstone"
+    },
+    "auto=false,blighted=true,mode=redstone": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_redstone"
+    },
+    "auto=true,blighted=false,mode=redstone": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_redstone"
+    },
+    "auto=true,blighted=true,mode=redstone": {
+      "model": "merlins_inferno:block/blighted_hell_forge_vault_redstone"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#c:raw_materials/lyrium"
+    "#c:raw_materials/lyrium",
+    "merlins_inferno:raw_paragonium"
   ]
 }
