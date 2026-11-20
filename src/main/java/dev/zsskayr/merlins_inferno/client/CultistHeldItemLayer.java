@@ -7,6 +7,7 @@ import com.mojang.math.Axis;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -19,8 +20,9 @@ import dev.zsskayr.merlins_inferno.entity.SacredCultistEntity;
  * Shows the sword some cultists spawn with (30% iron, 8% Seraphium; see {@code SacredCultistEntity#finalizeSpawn}) in
  * its right hand, held exactly like a player holds one.
  * <p>
- * GeckoLib draws the item at the bone's pivot with no rotation, while the item's hand display transform expects vanilla's
- * arm frame: y pointing down the arm (the renderer scales by -1,-1,1) and the {@code ItemInHandLayer} adjustments applied
+ * GeckoLib draws the item at the bone's pivot with no rotation and, unless told otherwise, with no display transform at all
+ * ({@code ItemDisplayContext.NONE}: the raw flat sprite). This layer asks for the third-person right-hand transform, which
+ * expects vanilla's arm frame: y pointing down the arm (the renderer scales by -1,-1,1) and the {@code ItemInHandLayer} adjustments applied
  * on top. This layer rebuilds that chain: back up from the elbow bone to the shoulder, turn into vanilla's frame
  * ({@code Rz 180}), then the same {@code Rx -90}, {@code Ry 180} and {@code (1/16, 1/8, -5/8)} translation vanilla uses.
  */
@@ -44,6 +46,11 @@ public class CultistHeldItemLayer extends BlockAndItemGeoLayer<SacredCultistEnti
         poseStack.translate(1.0 / 16.0, 0.125, -0.625);
         super.renderStackForBone(poseStack, bone, stack, cultist, bufferSource, partialTick, packedLight, packedOverlay);
         poseStack.popPose();
+    }
+
+    @Override
+    protected ItemDisplayContext getTransformTypeForStack(GeoBone bone, ItemStack stack, SacredCultistEntity cultist) {
+        return ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
     }
 
     @Nullable

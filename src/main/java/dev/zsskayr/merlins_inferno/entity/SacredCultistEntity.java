@@ -285,23 +285,7 @@ public class SacredCultistEntity extends PathfinderMob implements GeoEntity, Chu
                 return state.setAndContinue(this.isAggressive() ? RUN_ANIMATION : WALK_ANIMATION);
             }
             return state.setAndContinue(IDLE_ANIMATION);
-        }).setAnimationSpeedHandler(SacredCultistEntity::gaitSpeed).triggerableAnim("attack", ATTACK_ANIMATION));
-    }
-
-    /** Ground speed (blocks per second) the authored walk and run strides cover; the legs are sped up to match the real pace. */
-    private static final double WALK_CLIP_SPEED = 0.75;
-    private static final double RUN_CLIP_SPEED = 2.1;
-
-    /** Plays the walk and run clips at the pace the cultist really moves, so the feet do not skate or crawl. */
-    private static double gaitSpeed(SacredCultistEntity cultist) {
-        float swing = cultist.walkAnimation.speed();
-        if (cultist.isDeadOrDying() || cultist.getPose() == Pose.CROUCHING || swing <= MOVING_LIMB_SWING) {
-            return 1.0;
-        }
-        double blocksPerSecond = swing * 5.0; // limb swing is blocks per tick * 4, capped at 1
-        return cultist.isAggressive()
-                ? Math.clamp(blocksPerSecond / RUN_CLIP_SPEED, 0.6, 2.2)
-                : Math.clamp(blocksPerSecond / WALK_CLIP_SPEED, 0.6, 2.5);
+        }).triggerableAnim("attack", ATTACK_ANIMATION));
     }
 
     @Override
