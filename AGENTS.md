@@ -1,3 +1,6 @@
 # User preference for this workspace
 
+- Requests to create tasks in Ecos mean creating Markdown (.md) files in the appropriate Ecos folder, not operating its UI. For this mod, use the Ecos folder `Dev/Merlin's Inferno: Requiem`. Resolve its actual filesystem mapping and existing task format before writing; do not interpret the colon in the display name as a Windows path separator or alternate data stream.
+- Ecos data lives at `D:/WorkspaceLocal/Selfhosted Apps/Ecos - Tasks and Notes/Ecos - Notes/Zsskayr0`. The mod directory under `Dev` is `Merlin's Inferno\uF03A Requiem` (the colon is the actual U+F03A filesystem character). Soul lava/Oblivion tasks belong under `Rotas/RI - Rota Infernal/Oblivion`. Follow the existing `task-*.md` YAML front matter.
+- Only use the computer-use skill or any browser/desktop UI automation when the user explicitly requests that method. A request to work in an app (including Ecos) does not authorize controlling the user's computer. Prefer APIs, connectors, or repository tools; if unavailable, explain the limitation without opening or controlling apps.
 - Never start a Minecraft instance (client, server, or GameTest server) without the user's explicit permission. This includes `runClient`, `runServer`, and `runGameTestServer`.
