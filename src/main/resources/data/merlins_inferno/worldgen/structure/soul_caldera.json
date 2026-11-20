@@ -1,0 +1,7 @@
+{
+  "type": "merlins_inferno:soul_caldera",
+  "biomes": ["minecraft:basalt_deltas", "minecraft:soul_sand_valley", "minecraft:nether_wastes", "merlins_inferno:ashen_fields", "merlins_inferno:carnal_heap", "merlins_inferno:oblivion_forest", "merlins_inferno:withered_hills"],
+  "spawn_overrides": {},
+  "step": "top_layer_modification",
+  "terrain_adaptation": "none"
+}

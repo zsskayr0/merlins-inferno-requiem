@@ -1,0 +1,9 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 162736491,
+    "spacing": 20,
+    "separation": 12
+  },
+  "structures": [{"structure": "merlins_inferno:soul_caldera", "weight": 1}]
+}

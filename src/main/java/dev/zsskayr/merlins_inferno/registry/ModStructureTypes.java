@@ -46,6 +46,9 @@ public final class ModStructureTypes {
     private ModStructureTypes() {
     }
 
+    public static final DeferredHolder<StructureType<?>, StructureType<dev.zsskayr.merlins_inferno.worldgen.structure.SoulCalderaStructure>> SOUL_CALDERA =
+            STRUCTURE_TYPES.register("soul_caldera", () -> () -> dev.zsskayr.merlins_inferno.worldgen.structure.SoulCalderaStructure.CODEC);
+
     public static void register(IEventBus modEventBus) {
         STRUCTURE_TYPES.register(modEventBus);
     }
