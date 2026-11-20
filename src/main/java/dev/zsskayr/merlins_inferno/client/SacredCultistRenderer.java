@@ -11,6 +11,8 @@ public class SacredCultistRenderer extends GeoEntityRenderer<SacredCultistEntity
     public SacredCultistRenderer(EntityRendererProvider.Context context) {
         super(context, new CultistModel());
         this.shadowRadius = 0.5F;
+        // The model is player-sized (32 px); the cultist stands a touch shorter, matching its 1.95-block hitbox.
+        this.withScale(0.95F);
         this.addRenderLayer(new CultistHeldItemLayer(this));
     }
 
