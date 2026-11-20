@@ -18,7 +18,8 @@
     "LevelRendererMixin",
     "Ae2FacadeAccessMixin",
     "Ae2FacadeBuilderMixin",
-    "IrisGrassAliasesMixin"
+    "IrisGrassAliasesMixin",
+    "IrisDimensionAliasesMixin"
   ],
   "injectors": {
     "defaultRequire": 1
