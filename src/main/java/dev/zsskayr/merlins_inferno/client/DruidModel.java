@@ -12,12 +12,16 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 
 /**
- * The Druid's GeckoLib model: {@code geo/druid_skin.geo.json} (a vanilla player-layout body, so any 64x64 Minecraft skin
- * fits {@code textures/entity/druid/druid_skin_N.png}) and {@code animations/druid.animation.json}. The clothing is a second
+ * The Druid's GeckoLib model: {@code geo/druid_skin.geo.json} (a vanilla player-layout body cut at the elbows and knees, so any
+ * 64x64 Minecraft skin fits {@code textures/entity/druid/druid_skin_N.png}) and {@code animations/druid.animation.json} (Epic Fight
+ * clips retargeted by {@code src/Models/druid/druid_port.py}, including the melee swing). The clothing is a second
  * model ({@code druid_armour}) drawn by {@link DruidClothesLayer}. Sources and build scripts: {@code src/Models/druid}.
  */
 public class DruidModel extends GeoModel<DruidEntity> {
+    /** Rigid armour geometry, used by the player-worn Rowanwood armour ({@link DruidArmorRenderer}). */
     public static final ResourceLocation ARMOUR_MODEL = id("geo/druid_armour.geo.json");
+    /** The same clothes cut at the elbows and knees, so they bend with the druid ({@link DruidClothesLayer}). */
+    public static final ResourceLocation CLOTHES_MODEL = id("geo/druid_clothes.geo.json");
     public static final ResourceLocation ARMOUR_TEXTURE = id("textures/entity/druid/druid_armour.png");
     private static final ResourceLocation MODEL = id("geo/druid_skin.geo.json");
     private static final ResourceLocation ANIMATION = id("animations/druid.animation.json");
@@ -58,23 +62,5 @@ public class DruidModel extends GeoModel<DruidEntity> {
             head.setRotX(head.getRotX() + Mth.clamp(data.headPitch(), -35.0F, 35.0F) * Mth.DEG_TO_RAD);
             head.setRotY(head.getRotY() + Mth.clamp(data.netHeadYaw(), -50.0F, 50.0F) * Mth.DEG_TO_RAD);
         });
-        if (druid.isDeadOrDying() || druid.isTradingSynced() || druid.getMainHandItem().isEmpty()) return;
-        var manager = druid.getAnimatableInstanceCache().getManagerForId(instanceId);
-        var gesture = manager.getAnimationControllers().get("gesture");
-        if (gesture != null && gesture.getAnimationState() != software.bernie.geckolib.animation.AnimationController.State.STOPPED) return;
-        float attack = druid.getAttackAnim(state.getPartialTick());
-        float yaw = Mth.sin(Mth.sqrt(attack) * Mth.TWO_PI) * .2F;
-        float pitch = data.headPitch() * Mth.DEG_TO_RAD;
-        float eased = 1 - (float)Math.pow(1 - attack, 4);
-        float swing = Mth.sin(eased * Mth.PI) * 1.2F + Mth.sin(attack * Mth.PI) * -(pitch - .7F) * .75F;
-        // Unlike the Templar, these arms inherit torso yaw and shoulder motion.
-        getBone("torso").ifPresent(b -> b.setRotY(b.getRotY() - yaw));
-        getBone("head").ifPresent(b -> b.setRotY(b.getRotY() + yaw));
-        getBone("right_arm").ifPresent(b -> {
-            b.setRotX(b.getRotX() * .5F + Mth.PI / 10 + swing);
-            b.setRotY(-yaw);
-            b.setRotZ(b.getRotZ() - Mth.sin(attack * Mth.PI) * .4F);
-        });
-        getBone("left_arm").ifPresent(b -> b.setRotX(b.getRotX() - yaw));
     }
 }

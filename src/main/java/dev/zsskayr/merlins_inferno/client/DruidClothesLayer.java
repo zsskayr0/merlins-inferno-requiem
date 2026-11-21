@@ -17,19 +17,23 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 
 /**
- * Draws the druids' own clothes ({@code druid_armour}: a different geometry on a different 128x128 texture than the 64x64
- * skin) over the body. GeckoLib animates only the skin model, so each armour bone copies the pose of the skin bone it
- * dresses - both skeletons share the same hierarchy and pivots (see {@code src/Models/druid/build_druid.py}), which makes
- * the copy exact. Native leather/Rowanwood equipment keeps these clothes; other armour replaces the occupied slot.
+ * Draws the druids' own clothes ({@code druid_clothes}: the {@code druid_armour} geometry cut at the elbows and knees, on a
+ * different 128x128 texture than the 64x64 skin) over the body. GeckoLib animates only the skin model, so each clothes bone
+ * copies the pose of the skin bone it dresses - both skeletons share the same hierarchy and pivots (see
+ * {@code src/Models/druid/druid_port.py}), which makes the copy exact. The boots hang from a bone that follows the thigh,
+ * so they can follow the shin without being hidden along with the leggings. Native leather/Rowanwood equipment keeps these clothes; other armour replaces the occupied slot.
  */
 public class DruidClothesLayer extends GeoRenderLayer<DruidEntity> {
     /** Armour bone -> the skin bone whose pose it copies (armour bones not listed inherit from their parent). */
     private static final Map<String, String> FOLLOWS = Map.ofEntries(
             Map.entry("root", "root"), Map.entry("hips", "hips"), Map.entry("torso", "torso"),
             Map.entry("armorHead", "head"), Map.entry("armorBody", "body"),
-            Map.entry("armorRightArm", "right_arm"), Map.entry("armorLeftArm", "left_arm"),
-            Map.entry("armorRightLeg", "right_leg"), Map.entry("armorRightBoot", "right_leg"),
-            Map.entry("armorLeftLeg", "left_leg"), Map.entry("armorLeftBoot", "left_leg"));
+            Map.entry("armorRightArm", "right_arm"), Map.entry("armorRightForearm", "right_forearm"),
+            Map.entry("armorLeftArm", "left_arm"), Map.entry("armorLeftForearm", "left_forearm"),
+            Map.entry("armorRightLeg", "right_leg"), Map.entry("armorRightLegLower", "right_shin"),
+            Map.entry("armorRightBootRoot", "right_leg"), Map.entry("armorRightBoot", "right_shin"),
+            Map.entry("armorLeftLeg", "left_leg"), Map.entry("armorLeftLegLower", "left_shin"),
+            Map.entry("armorLeftBootRoot", "left_leg"), Map.entry("armorLeftBoot", "left_shin"));
 
     public DruidClothesLayer(GeoRenderer<DruidEntity> renderer) {
         super(renderer);
@@ -41,7 +45,7 @@ public class DruidClothesLayer extends GeoRenderLayer<DruidEntity> {
         if (buffer == null || druid.isInvisible()) {
             return;
         }
-        BakedGeoModel clothes = getGeoModel().getBakedModel(DruidModel.ARMOUR_MODEL);
+        BakedGeoModel clothes = getGeoModel().getBakedModel(DruidModel.CLOTHES_MODEL);
         FOLLOWS.forEach((clothesBone, skinBone) -> {
             GeoBone from = skin.getBone(skinBone).orElse(null);
             GeoBone to = clothes.getBone(clothesBone).orElse(null);

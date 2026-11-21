@@ -17,6 +17,8 @@ import dev.zsskayr.merlins_inferno.entity.DruidEntity;
 
 /** The druid's main-hand weapon in the right fist, held like a player holds one (same adjustment as {@link CultistHeldItemLayer}). */
 public class DruidHeldItemLayer extends BlockAndItemGeoLayer<DruidEntity> {
+    private static final double ELBOW_TO_SHOULDER = 4.0;
+
     public DruidHeldItemLayer(GeoRenderer<DruidEntity> renderer) {
         super(renderer);
     }
@@ -25,10 +27,9 @@ public class DruidHeldItemLayer extends BlockAndItemGeoLayer<DruidEntity> {
     protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, DruidEntity druid, MultiBufferSource bufferSource,
             float partialTick, int packedLight, int packedOverlay) {
         poseStack.pushPose();
-        // This skin's shoulder is at 22 px, with a full 12 px arm, like the
-        // vanilla player. Preserve its parent torso transform, then use the
-        // vanilla grip with a 1.5 px downward correction for the glove.
-        poseStack.translate(0, -1.5 / 16.0, 0);
+        // The bone is the forearm, pivoting at the elbow (y 18 px), 4 px below the shoulder that vanilla's grip offsets
+        // start from. Climb back up to the shoulder, then use the vanilla grip with a 1.5 px downward correction for the glove.
+        poseStack.translate(0, (ELBOW_TO_SHOULDER - 1.5) / 16.0, 0);
         poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
         poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
@@ -44,6 +45,6 @@ public class DruidHeldItemLayer extends BlockAndItemGeoLayer<DruidEntity> {
     @Nullable
     @Override
     protected ItemStack getStackForBone(GeoBone bone, DruidEntity druid) {
-        return "right_arm".equals(bone.getName()) ? druid.getMainHandItem() : null;
+        return "right_forearm".equals(bone.getName()) ? druid.getMainHandItem() : null;
     }
 }
