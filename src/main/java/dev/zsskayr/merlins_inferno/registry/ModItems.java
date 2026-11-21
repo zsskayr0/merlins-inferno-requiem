@@ -135,14 +135,14 @@ public final class ModItems {
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MaterialBowItem> ROWANWOOD_BOW = ITEMS.registerItem("rowanwood_bow",
             props -> new dev.zsskayr.merlins_inferno.item.MaterialBowItem(props.durability(520), 0.5D, ROWANWOOD_BAR));
 
-    public static final DeferredItem<ArmorItem> ROWANWOOD_HELMET = ITEMS.registerItem("rowanwood_helmet",
-            props -> new ArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(40))));
-    public static final DeferredItem<ArmorItem> ROWANWOOD_CHESTPLATE = ITEMS.registerItem("rowanwood_chestplate",
-            props -> new ArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(40))));
-    public static final DeferredItem<ArmorItem> ROWANWOOD_LEGGINGS = ITEMS.registerItem("rowanwood_leggings",
-            props -> new ArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(40))));
-    public static final DeferredItem<ArmorItem> ROWANWOOD_BOOTS = ITEMS.registerItem("rowanwood_boots",
-            props -> new ArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(40))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.DruidArmorItem> ROWANWOOD_HELMET = ITEMS.registerItem("rowanwood_helmet",
+            props -> new dev.zsskayr.merlins_inferno.item.DruidArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(40))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.DruidArmorItem> ROWANWOOD_CHESTPLATE = ITEMS.registerItem("rowanwood_chestplate",
+            props -> new dev.zsskayr.merlins_inferno.item.DruidArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(40))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.DruidArmorItem> ROWANWOOD_LEGGINGS = ITEMS.registerItem("rowanwood_leggings",
+            props -> new dev.zsskayr.merlins_inferno.item.DruidArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(40))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.DruidArmorItem> ROWANWOOD_BOOTS = ITEMS.registerItem("rowanwood_boots",
+            props -> new dev.zsskayr.merlins_inferno.item.DruidArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(40))));
 
     // --- Demonblood material set: see ModTiers.DEMONBLOOD for the balance rationale (Netherite's
     // stats, higher enchantability, +10% damage vs "humans" via DemonbloodCombatHandler - called
