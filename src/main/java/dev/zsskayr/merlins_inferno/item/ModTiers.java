@@ -11,13 +11,13 @@ import dev.zsskayr.merlins_inferno.registry.ModItems;
 /**
  * Custom tool tiers, shaped the same way as vanilla {@link net.minecraft.world.item.Tiers}.
  * <p>
- * Design (per project decision): {@code ROWANWOOD} mines at Diamond's level (same
+ * Design (per project decision): {@code ELDREN} mines at Diamond's level (same
  * {@code BlockTags.INCORRECT_FOR_*} tag, so it can harvest obsidian/ancient debris) and matches
  * Diamond's mining speed, but its attack damage bonus matches Iron - the trade-off for sitting
  * "between" the two is a durability pool well past Diamond's.
  */
 public final class ModTiers {
-    public static final Tier ROWANWOOD = new Tier() {
+    public static final Tier ELDREN = new Tier() {
         @Override
         public int getUses() {
             return 1751; // longer-lasting than Diamond's 1561
@@ -45,7 +45,7 @@ public final class ModTiers {
 
         @Override
         public Ingredient getRepairIngredient() {
-            return Ingredient.of(ModItems.ROWANWOOD_BAR.get());
+            return Ingredient.of(ModItems.ELDREN_INGOT.get());
         }
     };
 

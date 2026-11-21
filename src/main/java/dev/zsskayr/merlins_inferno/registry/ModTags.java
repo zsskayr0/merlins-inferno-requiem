@@ -61,7 +61,7 @@ public final class ModTags {
 
         /**
          * Mundane, entirely non-magical fauna (cows, sheep, wolves, ordinary Overworld critters) -
-         * Rowanwood's intrinsic weak side, see {@code event.RowanwoodCombatHandler}. Deliberately
+         * Rowanwood's intrinsic weak side, see {@code event.EldrenCombatHandler}. Deliberately
          * excludes anything with a magical/supernatural nature even if it looks "ordinary" at a
          * glance - Piglins (Nether-born), Iron/Snow Golems (magic constructs), the Warden, Endermen,
          * skeleton horses, and Striders are all left out for that reason. Disjoint from
@@ -178,9 +178,9 @@ public final class ModTags {
         public static final TagKey<Item> ROUTE_ANGELICAL = TagKey.create(Registries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "route_angelical"));
 
-        /** Every Rowanwood tool/weapon - see RowanwoodCombatHandler for what this grants. */
-        public static final TagKey<Item> ROWANWOOD_TOOLS = TagKey.create(Registries.ITEM,
-                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rowanwood_tools"));
+        /** Every Rowanwood tool/weapon - see EldrenCombatHandler for what this grants. */
+        public static final TagKey<Item> ELDREN_TOOLS = TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "eldren_tools"));
 
         /** Gold materials an Imp will steal from the ground or from a player's hand - see {@code entity.ai.ImpStealGoal}. */
         public static final TagKey<Item> IMP_STEALABLE = TagKey.create(Registries.ITEM,

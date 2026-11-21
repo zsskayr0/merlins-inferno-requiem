@@ -31,8 +31,8 @@ public final class ModAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> AWARD_PRIMARY_CIRCLE_RUNE =
             ATTACHMENT_TYPES.register("award_primary_circle_rune", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).copyOnDeath().build());
 
-    /** Set once the player has ever held a Rowanwood Scrap: it opens the Druid's tool and enchantment trades. */
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> ROWANWOOD_UNLOCKED =
+    /** Set once the player has ever held a Eldren Scrap: it opens the Druid's tool and enchantment trades. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> ELDREN_UNLOCKED =
             ATTACHMENT_TYPES.register("rowanwood_unlocked", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).copyOnDeath().build());
 
     /** Where a player stood when they last entered Oblivion; the arrival portal brings them back there. */

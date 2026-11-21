@@ -18,7 +18,7 @@ public final class DruidClothingGameTests {
         h.assertTrue(druid.usesNativeClothing(EquipmentSlot.CHEST),"Empty slot shows authored clothing");
         druid.setItemSlot(EquipmentSlot.CHEST,new ItemStack(Items.LEATHER_CHESTPLATE));
         h.assertTrue(druid.usesNativeClothing(EquipmentSlot.CHEST),"Existing leather-equipped druids show custom clothing");
-        druid.setItemSlot(EquipmentSlot.CHEST,new ItemStack(ModItems.ROWANWOOD_CHESTPLATE.get()));
+        druid.setItemSlot(EquipmentSlot.CHEST,new ItemStack(ModItems.ELDREN_CHESTPLATE.get()));
         h.assertTrue(druid.usesNativeClothing(EquipmentSlot.CHEST),"Rowanwood uses authored druid armor");
         druid.setItemSlot(EquipmentSlot.CHEST,new ItemStack(Items.DIAMOND_CHESTPLATE));
         h.assertTrue(!druid.usesNativeClothing(EquipmentSlot.CHEST),"Other equipped armor may still render normally");h.succeed();

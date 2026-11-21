@@ -99,20 +99,20 @@ public final class ModItems {
     // absent doesn't break this item.
     public static final DeferredItem<GrimmoriumItem> GRIMMORIUM = ITEMS.registerItem("grimmorium", GrimmoriumItem::new);
 
-    // --- Rowanwood material set: see ModTiers.ROWANWOOD / ModArmorMaterials.ROWANWOOD for the
+    // --- Rowanwood material set: see ModTiers.ELDREN / ModArmorMaterials.ELDREN for the
     // balance rationale (mines like Diamond, hits/blocks like Iron, outlasts both). ---
 
-    public static final DeferredItem<Item> ROWANWOOD_BAR = ITEMS.registerSimpleItem("rowanwood_bar", new Item.Properties());
+    public static final DeferredItem<Item> ELDREN_INGOT = ITEMS.registerSimpleItem("eldren_ingot", new Item.Properties());
 
-    // How Rowanwood Bar is actually obtained: either essence, surrounded by log/leaves/iron in the
-    // same shape (see data/merlins_inferno/recipe/rowanwood_scrap_from_*.json), crafts into a
-    // Rowanwood Scrap - which then smelts (or blasts) into the bar itself. Plain items, no
+    // How Eldren Ingot is actually obtained: either essence, surrounded by log/leaves/iron in the
+    // same shape (see data/merlins_inferno/recipe/eldren_scrap_from_*.json), crafts into a
+    // Eldren Scrap - which then smelts (or blasts) into the bar itself. Plain items, no
     // in-world behavior of their own.
     // The Rowanwood essences:
     //  - Mundane Essence: early game, obtained from the Druids (DruidEntity#updateTrades - it's
     //    what they hand over, not a currency the player pays them with).
     //  - Fae Essence: dropped by the Dullahan.
-    //  - Mundane and Fae both craft the Rowanwood Scrap (data/.../recipe/rowanwood_scrap_from_*.json).
+    //  - Mundane and Fae both craft the Eldren Scrap (data/.../recipe/eldren_scrap_from_*.json).
     public static final DeferredItem<Item> MUNDANE_ESSENCE = ITEMS.registerSimpleItem("mundane_essence", new Item.Properties());
     // Dropped by third-party "fairy" mobs at 10% - see ModTags.EntityTypes.FAIRIES and
     // data/merlins_inferno/loot_modifiers/fae_essence_from_fairies.json (empty tag by default,
@@ -120,29 +120,29 @@ public final class ModItems {
     public static final DeferredItem<Item> FAE_ESSENCE = ITEMS.registerSimpleItem("fae_essence", new Item.Properties());
     // The rune of the Gates (Runic, Mundane, Devil, Angel and Faeric): the key of their Fae-and-stone craft.
     public static final DeferredItem<Item> TRANSMOG_RUNE = ITEMS.registerSimpleItem("transmog_rune", new Item.Properties());
-    public static final DeferredItem<Item> ROWANWOOD_SCRAP = ITEMS.registerSimpleItem("rowanwood_scrap", new Item.Properties());
+    public static final DeferredItem<Item> ELDREN_SCRAP = ITEMS.registerSimpleItem("eldren_scrap", new Item.Properties());
 
-    public static final DeferredItem<SwordItem> ROWANWOOD_SWORD = ITEMS.registerItem("rowanwood_sword",
-            props -> new SwordItem(ModTiers.ROWANWOOD, props.attributes(SwordItem.createAttributes(ModTiers.ROWANWOOD, 3, -2.4F))));
-    public static final DeferredItem<AxeItem> ROWANWOOD_AXE = ITEMS.registerItem("rowanwood_axe",
-            props -> new AxeItem(ModTiers.ROWANWOOD, props.attributes(AxeItem.createAttributes(ModTiers.ROWANWOOD, 6.0F, -3.1F))));
-    public static final DeferredItem<ShovelItem> ROWANWOOD_SHOVEL = ITEMS.registerItem("rowanwood_shovel",
-            props -> new ShovelItem(ModTiers.ROWANWOOD, props.attributes(ShovelItem.createAttributes(ModTiers.ROWANWOOD, 1.5F, -3.0F))));
-    public static final DeferredItem<PickaxeItem> ROWANWOOD_PICKAXE = ITEMS.registerItem("rowanwood_pickaxe",
-            props -> new PickaxeItem(ModTiers.ROWANWOOD, props.attributes(PickaxeItem.createAttributes(ModTiers.ROWANWOOD, 1.0F, -2.8F))));
-    public static final DeferredItem<HoeItem> ROWANWOOD_HOE = ITEMS.registerItem("rowanwood_hoe",
-            props -> new HoeItem(ModTiers.ROWANWOOD, props.attributes(HoeItem.createAttributes(ModTiers.ROWANWOOD, -2.0F, -1.0F))));
-    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MaterialBowItem> ROWANWOOD_BOW = ITEMS.registerItem("rowanwood_bow",
-            props -> new dev.zsskayr.merlins_inferno.item.MaterialBowItem(props.durability(520), 0.5D, ROWANWOOD_BAR));
+    public static final DeferredItem<SwordItem> ELDREN_SWORD = ITEMS.registerItem("eldren_sword",
+            props -> new SwordItem(ModTiers.ELDREN, props.attributes(SwordItem.createAttributes(ModTiers.ELDREN, 3, -2.4F))));
+    public static final DeferredItem<AxeItem> ELDREN_AXE = ITEMS.registerItem("eldren_axe",
+            props -> new AxeItem(ModTiers.ELDREN, props.attributes(AxeItem.createAttributes(ModTiers.ELDREN, 6.0F, -3.1F))));
+    public static final DeferredItem<ShovelItem> ELDREN_SHOVEL = ITEMS.registerItem("eldren_shovel",
+            props -> new ShovelItem(ModTiers.ELDREN, props.attributes(ShovelItem.createAttributes(ModTiers.ELDREN, 1.5F, -3.0F))));
+    public static final DeferredItem<PickaxeItem> ELDREN_PICKAXE = ITEMS.registerItem("eldren_pickaxe",
+            props -> new PickaxeItem(ModTiers.ELDREN, props.attributes(PickaxeItem.createAttributes(ModTiers.ELDREN, 1.0F, -2.8F))));
+    public static final DeferredItem<HoeItem> ELDREN_HOE = ITEMS.registerItem("eldren_hoe",
+            props -> new HoeItem(ModTiers.ELDREN, props.attributes(HoeItem.createAttributes(ModTiers.ELDREN, -2.0F, -1.0F))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MaterialBowItem> ELDREN_BOW = ITEMS.registerItem("eldren_bow",
+            props -> new dev.zsskayr.merlins_inferno.item.MaterialBowItem(props.durability(520), 0.5D, ELDREN_INGOT));
 
-    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.DruidArmorItem> ROWANWOOD_HELMET = ITEMS.registerItem("rowanwood_helmet",
-            props -> new dev.zsskayr.merlins_inferno.item.DruidArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(40))));
-    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.DruidArmorItem> ROWANWOOD_CHESTPLATE = ITEMS.registerItem("rowanwood_chestplate",
-            props -> new dev.zsskayr.merlins_inferno.item.DruidArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(40))));
-    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.DruidArmorItem> ROWANWOOD_LEGGINGS = ITEMS.registerItem("rowanwood_leggings",
-            props -> new dev.zsskayr.merlins_inferno.item.DruidArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(40))));
-    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.DruidArmorItem> ROWANWOOD_BOOTS = ITEMS.registerItem("rowanwood_boots",
-            props -> new dev.zsskayr.merlins_inferno.item.DruidArmorItem(ModArmorMaterials.ROWANWOOD, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(40))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.DruidArmorItem> ELDREN_HELMET = ITEMS.registerItem("eldren_helmet",
+            props -> new dev.zsskayr.merlins_inferno.item.DruidArmorItem(ModArmorMaterials.ELDREN, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(40))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.DruidArmorItem> ELDREN_CHESTPLATE = ITEMS.registerItem("eldren_chestplate",
+            props -> new dev.zsskayr.merlins_inferno.item.DruidArmorItem(ModArmorMaterials.ELDREN, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(40))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.DruidArmorItem> ELDREN_LEGGINGS = ITEMS.registerItem("eldren_leggings",
+            props -> new dev.zsskayr.merlins_inferno.item.DruidArmorItem(ModArmorMaterials.ELDREN, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(40))));
+    public static final DeferredItem<dev.zsskayr.merlins_inferno.item.DruidArmorItem> ELDREN_BOOTS = ITEMS.registerItem("eldren_boots",
+            props -> new dev.zsskayr.merlins_inferno.item.DruidArmorItem(ModArmorMaterials.ELDREN, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(40))));
 
     // --- Demonblood material set: see ModTiers.DEMONBLOOD for the balance rationale (Netherite's
     // stats, higher enchantability, +10% damage vs "humans" via DemonbloodCombatHandler - called
@@ -919,6 +919,12 @@ public final class ModItems {
     public static void register(IEventBus modEventBus) {
         // The Star Seeker was the Skyfall Compass up to v0.0.16-alpha: keep the ones already in players' worlds.
         ITEMS.addAlias(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "skyfall_compass"), STAR_SEEKER.getId());
+        // The Eldren gear was named Rowanwood up to v0.0.26-alpha (the tree itself keeps that name).
+        ITEMS.addAlias(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rowanwood_bar"), ELDREN_INGOT.getId());
+        for (String part : new String[]{"scrap", "sword", "axe", "shovel", "pickaxe", "hoe", "bow", "helmet", "chestplate", "leggings", "boots"}) {
+            ITEMS.addAlias(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rowanwood_" + part),
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "eldren_" + part));
+        }
         ITEMS.register(modEventBus);
     }
 }

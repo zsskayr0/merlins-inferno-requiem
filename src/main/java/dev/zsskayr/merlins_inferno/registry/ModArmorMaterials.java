@@ -21,17 +21,17 @@ import dev.zsskayr.merlins_inferno.Merlins_inferno;
  * ({@code Registries.ARMOR_MATERIAL}), so it gets a {@link DeferredRegister} of its own just like
  * items/blocks/entity types do, rather than being a plain constant.
  * <p>
- * Design (per project decision): {@code ROWANWOOD}'s defense and toughness match Iron exactly;
+ * Design (per project decision): {@code ELDREN}'s defense and toughness match Iron exactly;
  * the higher-than-Diamond durability lives on the per-piece multiplier passed in
  * {@link ModItems} (see {@code ArmorItem.Type#getDurability(int)}), not here.
  * <p>
- * Worn-armor textures live at {@code textures/models/armor/rowanwood_layer_1.png} (and
+ * Worn-armor textures live at {@code textures/models/armor/eldren_layer_1.png} (and
  * {@code _layer_2.png} for leggings).
  */
 public final class ModArmorMaterials {
     public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, Merlins_inferno.MODID);
 
-    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> ROWANWOOD = ARMOR_MATERIALS.register("rowanwood", () -> new ArmorMaterial(
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> ELDREN = ARMOR_MATERIALS.register("eldren", () -> new ArmorMaterial(
             Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
                 map.put(ArmorItem.Type.BOOTS, 2);
                 map.put(ArmorItem.Type.LEGGINGS, 5);
@@ -41,8 +41,8 @@ public final class ModArmorMaterials {
             }),
             25, // enchantment value, matches Gold's armor enchantability (design doc: Gold-level enchantability)
             SoundEvents.ARMOR_EQUIP_IRON,
-            () -> Ingredient.of(ModItems.ROWANWOOD_BAR.get()),
-            List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rowanwood"))),
+            () -> Ingredient.of(ModItems.ELDREN_INGOT.get()),
+            List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "eldren"))),
             0.0F, // toughness, matches Iron
             0.0F  // knockback resistance, matches Iron
     ));
@@ -158,6 +158,7 @@ public final class ModArmorMaterials {
     }
 
     public static void register(IEventBus modEventBus) {
+        ARMOR_MATERIALS.addAlias(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rowanwood"), ELDREN.getId());
         ARMOR_MATERIALS.register(modEventBus);
     }
 }

@@ -87,7 +87,7 @@ import dev.zsskayr.merlins_inferno.registry.ModItems;
  * drags in the profession/reputation/leveling system this doesn't need) for a single fixed trade -
  * emeralds for Mundane Essence, see the trade list - closing the loop the design doc
  * describes: without this trade, raw
- * Rowanwood collected from the tree has no way to become the finished Rowanwood Bar. Only spawns
+ * Rowanwood collected from the tree has no way to become the finished Eldren Ingot. Only spawns
  * in the Hallowed Grove (see {@code ModBiomeProvider}'s mob spawn list - it's simply never added
  * to any other biome); a dedicated grove/sanctuary landmark structure to guarantee a spawn is
  * recommended but out of scope for now (design doc 4.3).
@@ -270,20 +270,20 @@ public class DruidEntity extends PathfinderMob implements Merchant, GeoEntity {
     protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
         // Deliberately NOT calling super here: Mob's own default rolls the vanilla leather/chain/
         // iron/diamond/netherite ladder, which isn't what's wanted - every piece here is either
-        // plain leather or Rowanwood ("Druid" armor - see the lang file, rowanwood_helmet etc. are
-        // displayed as "Druid Helmet"), independently per slot, so a Druid can end up in a mismatched
+        // plain leather or Rowanwood ("Druid" armor - see the lang file, eldren_helmet etc. are
+        // displayed as "Eldren Helmet"), independently per slot, so a Druid can end up in a mismatched
         // leather-and-Rowanwood mix, which reads fine for a forest spirit's gear.
         if (random.nextFloat() < ARMOR_PIECE_CHANCE) {
-            equip(EquipmentSlot.HEAD, random, Items.LEATHER_HELMET, ModItems.ROWANWOOD_HELMET.get());
+            equip(EquipmentSlot.HEAD, random, Items.LEATHER_HELMET, ModItems.ELDREN_HELMET.get());
         }
         if (random.nextFloat() < ARMOR_PIECE_CHANCE) {
-            equip(EquipmentSlot.CHEST, random, Items.LEATHER_CHESTPLATE, ModItems.ROWANWOOD_CHESTPLATE.get());
+            equip(EquipmentSlot.CHEST, random, Items.LEATHER_CHESTPLATE, ModItems.ELDREN_CHESTPLATE.get());
         }
         if (random.nextFloat() < ARMOR_PIECE_CHANCE) {
-            equip(EquipmentSlot.LEGS, random, Items.LEATHER_LEGGINGS, ModItems.ROWANWOOD_LEGGINGS.get());
+            equip(EquipmentSlot.LEGS, random, Items.LEATHER_LEGGINGS, ModItems.ELDREN_LEGGINGS.get());
         }
         if (random.nextFloat() < ARMOR_PIECE_CHANCE) {
-            equip(EquipmentSlot.FEET, random, Items.LEATHER_BOOTS, ModItems.ROWANWOOD_BOOTS.get());
+            equip(EquipmentSlot.FEET, random, Items.LEATHER_BOOTS, ModItems.ELDREN_BOOTS.get());
         }
 
         // Weapon: iron or Rowanwood, sword or axe - 4 equally likely outcomes.
@@ -291,8 +291,8 @@ public class DruidEntity extends PathfinderMob implements Merchant, GeoEntity {
             boolean sword = random.nextBoolean();
             boolean rowanwood = random.nextBoolean();
             Item weapon = sword
-                    ? (rowanwood ? ModItems.ROWANWOOD_SWORD.get() : Items.IRON_SWORD)
-                    : (rowanwood ? ModItems.ROWANWOOD_AXE.get() : Items.IRON_AXE);
+                    ? (rowanwood ? ModItems.ELDREN_SWORD.get() : Items.IRON_SWORD)
+                    : (rowanwood ? ModItems.ELDREN_AXE.get() : Items.IRON_AXE);
             equip(EquipmentSlot.MAINHAND, weapon, rowanwood);
         }
     }
@@ -302,10 +302,10 @@ public class DruidEntity extends PathfinderMob implements Merchant, GeoEntity {
         ItemStack stack = getItemBySlot(slot);
         if (stack.isEmpty()) return true;
         return switch (slot) {
-            case HEAD -> stack.is(Items.LEATHER_HELMET) || stack.is(ModItems.ROWANWOOD_HELMET.get());
-            case CHEST -> stack.is(Items.LEATHER_CHESTPLATE) || stack.is(ModItems.ROWANWOOD_CHESTPLATE.get());
-            case LEGS -> stack.is(Items.LEATHER_LEGGINGS) || stack.is(ModItems.ROWANWOOD_LEGGINGS.get());
-            case FEET -> stack.is(Items.LEATHER_BOOTS) || stack.is(ModItems.ROWANWOOD_BOOTS.get());
+            case HEAD -> stack.is(Items.LEATHER_HELMET) || stack.is(ModItems.ELDREN_HELMET.get());
+            case CHEST -> stack.is(Items.LEATHER_CHESTPLATE) || stack.is(ModItems.ELDREN_CHESTPLATE.get());
+            case LEGS -> stack.is(Items.LEATHER_LEGGINGS) || stack.is(ModItems.ELDREN_LEGGINGS.get());
+            case FEET -> stack.is(Items.LEATHER_BOOTS) || stack.is(ModItems.ELDREN_BOOTS.get());
             default -> false;
         };
     }
@@ -440,7 +440,7 @@ public class DruidEntity extends PathfinderMob implements Merchant, GeoEntity {
     }
 
     // --- Merchant: trades are gated by the Druid's level (it rises with the trades it makes) and, for the tool
-    // and enchantment trades, by the customer having found a Rowanwood Scrap. All entries live in one list whose
+    // and enchantment trades, by the customer having found a Eldren Scrap. All entries live in one list whose
     // MerchantOffer instances keep their use counts; each customer is shown a filtered view of it. No
     // profession/reputation system - see class javadoc. ---
 
@@ -551,14 +551,14 @@ public class DruidEntity extends PathfinderMob implements Merchant, GeoEntity {
         addGear(list, 3, 28, Items.DIAMOND_LEGGINGS, e(Enchantments.PROTECTION, 3), e(Enchantments.UNBREAKING, 3));
         addGear(list, 3, 22, Items.DIAMOND_BOOTS, e(Enchantments.PROTECTION, 3), e(Enchantments.UNBREAKING, 3), e(Enchantments.FEATHER_FALLING, 3));
         addGear(list, 3, 24, Items.BOW, e(Enchantments.POWER, 4), e(Enchantments.UNBREAKING, 3), e(Enchantments.FLAME, 1));
-        // Level 4: Mundane Essence, the road to the Rowanwood Bar.
+        // Level 4: Mundane Essence, the road to the Eldren Ingot.
         add(list, 4, false, new ItemCost(Items.EMERALD, 20), new ItemStack(ModItems.MUNDANE_ESSENCE.get()), 4);
-        // After the customer's first Rowanwood Scrap: the Druid's tools (craft-only otherwise)...
-        add(list, 1, true, new ItemCost(Items.EMERALD, 20), new ItemStack(ModItems.ROWANWOOD_SHOVEL.get()), 2);
-        add(list, 1, true, new ItemCost(Items.EMERALD, 20), new ItemStack(ModItems.ROWANWOOD_HOE.get()), 2);
-        add(list, 1, true, new ItemCost(Items.EMERALD, 32), new ItemStack(ModItems.ROWANWOOD_SWORD.get()), 2);
-        add(list, 1, true, new ItemCost(Items.EMERALD, 32), new ItemStack(ModItems.ROWANWOOD_AXE.get()), 2);
-        add(list, 1, true, new ItemCost(Items.EMERALD, 36), new ItemStack(ModItems.ROWANWOOD_PICKAXE.get()), 2);
+        // After the customer's first Eldren Scrap: the Druid's tools (craft-only otherwise)...
+        add(list, 1, true, new ItemCost(Items.EMERALD, 20), new ItemStack(ModItems.ELDREN_SHOVEL.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 20), new ItemStack(ModItems.ELDREN_HOE.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 32), new ItemStack(ModItems.ELDREN_SWORD.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 32), new ItemStack(ModItems.ELDREN_AXE.get()), 2);
+        add(list, 1, true, new ItemCost(Items.EMERALD, 36), new ItemStack(ModItems.ELDREN_PICKAXE.get()), 2);
         // ...and enchanted books at bargain prices: the Druid is the best enchantment merchant around.
         addBook(list, ModEnchantments.DRUIDS_TOUCH, 1, 4);
         addBook(list, Enchantments.SILK_TOUCH, 1, 5);
@@ -597,13 +597,13 @@ public class DruidEntity extends PathfinderMob implements Merchant, GeoEntity {
         return this.entries;
     }
 
-    /** True once the player has ever held a Rowanwood Scrap (also catches scrap that came from a chest or a trade). */
-    private static boolean hasRowanwoodUnlocked(Player player) {
-        if (player.getData(ModAttachments.ROWANWOOD_UNLOCKED)) {
+    /** True once the player has ever held a Eldren Scrap (also catches scrap that came from a chest or a trade). */
+    private static boolean hasEldrenUnlocked(Player player) {
+        if (player.getData(ModAttachments.ELDREN_UNLOCKED)) {
             return true;
         }
-        if (player.getInventory().contains(new ItemStack(ModItems.ROWANWOOD_SCRAP.get()))) {
-            player.setData(ModAttachments.ROWANWOOD_UNLOCKED, true);
+        if (player.getInventory().contains(new ItemStack(ModItems.ELDREN_SCRAP.get()))) {
+            player.setData(ModAttachments.ELDREN_UNLOCKED, true);
             return true;
         }
         return false;
@@ -646,7 +646,7 @@ public class DruidEntity extends PathfinderMob implements Merchant, GeoEntity {
             throw new IllegalStateException("Cannot load Druid offers on the client");
         }
         int level = this.getDruidLevel();
-        boolean rowanwood = this.tradingPlayer != null && hasRowanwoodUnlocked(this.tradingPlayer);
+        boolean rowanwood = this.tradingPlayer != null && hasEldrenUnlocked(this.tradingPlayer);
         MerchantOffers view = new MerchantOffers();
         for (TradeEntry entry : this.entries()) {
             if (entry.minLevel() <= level && (!entry.rowanwood() || rowanwood)) {

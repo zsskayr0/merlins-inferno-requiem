@@ -137,7 +137,7 @@ public final class LuminiteGameTests {
 
     @GameTest(template = "bench_empty")
     public static void routeGearIsAtHomeOnlyInItsRoutesDimensions(GameTestHelper helper) {
-        var rowanwood = new ItemStack(ModItems.ROWANWOOD_SWORD.get());
+        var rowanwood = new ItemStack(ModItems.ELDREN_SWORD.get());
         var ebony = new ItemStack(ModItems.EBONY_CHESTPLATE.get());
         var luminite = new ItemStack(ModItems.LUMINITE_PICKAXE.get());
         var nether = net.minecraft.world.level.Level.NETHER;

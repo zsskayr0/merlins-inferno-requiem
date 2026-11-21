@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "group": "eldren_ingot",
+  "ingredient": {
+    "item": "merlins_inferno:eldren_scrap"
+  },
+  "result": {
+    "id": "merlins_inferno:eldren_ingot"
+  }
+}

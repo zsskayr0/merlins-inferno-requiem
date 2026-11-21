@@ -8,7 +8,7 @@ A Minecraft mod for **NeoForge 1.21.1** built around three lineages of equipment
 
 | Road | Origin | Gear | In a nutshell |
 |------|--------|------|---------------|
-| **Druidic** | Overworld – the Hallowed Grove | Rowanwood | Sturdy and wise. Mines like Diamond, hits like Iron, with more durability than Diamond. +30% damage to magical creatures, −30% to plain animals. |
+| **Druidic** | Overworld – the Hallowed Grove | Eldren | Sturdy and wise. Mines like Diamond, hits like Iron, with more durability than Diamond. +30% damage to magical creatures, −30% to plain animals. |
 | **Infernal** | The Nether | Demonblood | On par with Netherite, with better enchantability. Hits humans (villagers, illagers, witches) for 10% more. The armor's *Demon's Fury* halves fire damage and cuts hostile mobs' damage by a quarter, but neutral mobs hurt 25% more. |
 | **Angelical** | Lyrium geodes in the mountains | Seraphium | The strongest of the three, and the hardest to earn. Every blow Sanctifies its target and is meant for evil: extra damage to demons and hostiles, much less to neutral and peaceful mobs. |
 
@@ -21,7 +21,7 @@ You start in the **First Circle**. Each road has a Circle 1 boss who drops a key
 A new temperate forest biome with two trees: **Ashwood**, a common building wood (full set: planks, stairs, slabs, doors, signs and more), and the rare, towering **Rowanwood**.
 Look for a **Druid's Sanctuary** - a clearing ringed by wooden pillars, with a hearth, a chest and a Druid on watch.
 
-- **The Druid** - a peaceful guardian. He hunts the undead and flees from the Dullahan. Trade 20 emeralds for a *Mundane Essence*, the catalyst for Rowanwood gear.
+- **The Druid** - a peaceful guardian. He hunts the undead and flees from the Dullahan. Trade 20 emeralds for a *Mundane Essence*, the catalyst for Eldren gear.
 - **The Dullahan** - a headless knight, one with his black steed, who stalks the Grove at night. Tough and dangerous; gold paralyzes him for a moment. He drops *Fae Essence*.
 - **Ostara, the Spring Deity** - the Druidic Circle 1 boss. She descends on a Rowanwood at dawn every third day and fades at dusk, flinging petals and healing the monsters around her.
 - **Druid's Touch** - a rare enchantment. Without it, Rowanwood logs give plain Ashwood.

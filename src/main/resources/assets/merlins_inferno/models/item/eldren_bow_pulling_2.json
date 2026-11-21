@@ -1,0 +1,6 @@
+{
+  "parent": "merlins_inferno:item/eldren_bow",
+  "textures": {
+    "layer0": "merlins_inferno:item/eldren_bow_pulling_2"
+  }
+}
