@@ -9,6 +9,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 import dev.zsskayr.merlins_inferno.registry.ModEnchantments;
+import dev.zsskayr.merlins_inferno.registry.ModTags;
 
 /**
  * Applies the Evil / Holy levels of {@link InnateEnchantments} to a melee hit and names them in the tooltip. If the stack also carries the real
@@ -31,21 +32,25 @@ public final class InnateEnchantmentHandler {
             return;
         }
         LivingEntity victim = event.getEntity();
-        float extra = 0.0F;
+        // Bonuses are fractions of the blow. The real enchantment (an anvil book) is already in the amount as the same kind of factor, so only
+        // the ratio between the innate bonus and it is applied.
+        float factor = 1.0F;
         if (evil > 0) {
             int real = ModEnchantments.getEvilLevel(attacker.level(), weapon);
-            if (evil > real) {
-                extra += InnateEnchantments.evilBonus(victim, evil) - InnateEnchantments.evilBonus(victim, real);
+            float innate = weapon.is(ModTags.Items.EBONY_TOOLS) ? InnateEnchantments.ebonyBonus(victim) : InnateEnchantments.evilBonus(victim, evil);
+            float present = InnateEnchantments.evilBonus(victim, real);
+            if (innate > present) {
+                factor *= (1.0F + innate) / (1.0F + present);
             }
         }
         if (holy > 0) {
             int real = ModEnchantments.getHolyLevel(attacker.level(), weapon);
             if (holy > real) {
-                extra += InnateEnchantments.holyBonus(victim, holy) - InnateEnchantments.holyBonus(victim, real);
+                factor *= (1.0F + InnateEnchantments.holyBonus(victim, holy)) / (1.0F + InnateEnchantments.holyBonus(victim, real));
             }
         }
-        if (extra != 0.0F) {
-            event.setAmount(Math.max(0.0F, event.getAmount() + extra));
+        if (factor != 1.0F) {
+            event.setAmount(event.getAmount() * factor);
         }
     }
 

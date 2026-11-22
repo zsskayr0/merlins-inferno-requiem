@@ -1,0 +1,592 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.seraphium_armour",
+        "texture_width": 128,
+        "texture_height": 128,
+        "visible_bounds_width": 1,
+        "visible_bounds_height": 1,
+        "visible_bounds_offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "armorHead",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                24,
+                -4
+              ],
+              "size": [
+                8,
+                8,
+                8
+              ],
+              "inflate": 0.75,
+              "uv": [
+                0,
+                16
+              ]
+            },
+            {
+              "origin": [
+                -4,
+                24,
+                -4
+              ],
+              "size": [
+                8,
+                8,
+                8
+              ],
+              "inflate": 1.2,
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "armorBody",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                12,
+                -2
+              ],
+              "size": [
+                8,
+                12,
+                4
+              ],
+              "inflate": 0.69,
+              "uv": [
+                28,
+                28
+              ]
+            }
+          ]
+        },
+        {
+          "name": "seraphium_tabard",
+          "parent": "armorBody",
+          "pivot": [
+            0,
+            23,
+            3.5
+          ],
+          "rotation": [
+            7.5,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -6,
+                1,
+                3
+              ],
+              "size": [
+                12,
+                24,
+                1
+              ],
+              "uv": [
+                88,
+                23
+              ]
+            }
+          ]
+        },
+        {
+          "name": "seraphium_pendant",
+          "parent": "armorBody",
+          "pivot": [
+            0,
+            13.5,
+            -2.5
+          ],
+          "rotation": [
+            -8,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                4.5,
+                -3.6
+              ],
+              "size": [
+                4,
+                9,
+                1
+              ],
+              "uv": [
+                114,
+                15
+              ]
+            }
+          ]
+        },
+        {
+          "name": "armorLeftArm",
+          "pivot": [
+            5,
+            22,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                4,
+                12,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "inflate": 0.75,
+              "uv": [
+                32,
+                0
+              ],
+              "mirror": true
+            },
+            {
+              "origin": [
+                4,
+                12,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "inflate": 1,
+              "uv": [
+                52,
+                32
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "seraphium_left_shoulder",
+          "parent": "armorLeftArm",
+          "pivot": [
+            7,
+            18,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -5.0019
+          ],
+          "cubes": [
+            {
+              "origin": [
+                5,
+                12,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "inflate": 1,
+              "uv": [
+                72,
+                16
+              ],
+              "mirror": true
+            },
+            {
+              "origin": [
+                5,
+                12,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "inflate": 0.75,
+              "uv": [
+                56,
+                16
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "armorRightArm",
+          "pivot": [
+            -5,
+            22,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -8,
+                12,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "inflate": 0.75,
+              "uv": [
+                32,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -8,
+                12,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "inflate": 1,
+              "uv": [
+                52,
+                32
+              ]
+            }
+          ]
+        },
+        {
+          "name": "seraphium_right_shoulder",
+          "parent": "armorRightArm",
+          "pivot": [
+            -7,
+            18,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            5.0019
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -9,
+                12,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "inflate": 1,
+              "uv": [
+                72,
+                16
+              ]
+            },
+            {
+              "origin": [
+                -9,
+                12,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "inflate": 0.75,
+              "uv": [
+                56,
+                16
+              ]
+            }
+          ]
+        },
+        {
+          "name": "armorLeftLeg",
+          "pivot": [
+            1.9,
+            12,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.1,
+                0,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "inflate": 0.5,
+              "uv": [
+                0,
+                32
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "seraphium_left_plate",
+          "parent": "armorLeftLeg",
+          "pivot": [
+            2.6,
+            13,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -11
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0.6,
+                4,
+                -2
+              ],
+              "size": [
+                4.0,
+                9,
+                4
+              ],
+              "inflate": 0.9,
+              "uv": [
+                48,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "seraphium_left_skirt",
+          "parent": "armorLeftLeg",
+          "pivot": [
+            4,
+            13,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -9.9981
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0.3,
+                1,
+                -2
+              ],
+              "size": [
+                4,
+                11,
+                4
+              ],
+              "inflate": 0.8,
+              "uv": [
+                107,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "armorRightLeg",
+          "pivot": [
+            -1.9,
+            12,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3.9,
+                0,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "inflate": 0.5,
+              "uv": [
+                0,
+                32
+              ]
+            }
+          ]
+        },
+        {
+          "name": "seraphium_right_plate",
+          "parent": "armorRightLeg",
+          "pivot": [
+            -2.6,
+            13,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            11
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4.6,
+                4,
+                -2
+              ],
+              "size": [
+                4.0,
+                9,
+                4
+              ],
+              "inflate": 0.9,
+              "uv": [
+                48,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "seraphium_right_skirt",
+          "parent": "armorRightLeg",
+          "pivot": [
+            -4,
+            13,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            9.9981
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4.3,
+                1,
+                -2
+              ],
+              "size": [
+                4,
+                11,
+                4
+              ],
+              "inflate": 0.8,
+              "uv": [
+                107,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "armorLeftBoot",
+          "pivot": [
+            1.9,
+            12,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.1,
+                0,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "inflate": 0.75,
+              "uv": [
+                16,
+                56
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "armorRightBoot",
+          "pivot": [
+            -1.9,
+            12,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3.9,
+                0,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "inflate": 0.75,
+              "uv": [
+                16,
+                56
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

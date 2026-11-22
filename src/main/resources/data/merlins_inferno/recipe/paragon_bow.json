@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "X": {
-      "item": "merlins_inferno:paragonium_ingot"
+      "item": "merlins_inferno:paragon_ingot"
     },
     "T": {
       "item": "minecraft:string"

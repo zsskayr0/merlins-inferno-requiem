@@ -255,23 +255,24 @@ public final class ModTiers {
     };
 
     /**
-     * Circle 2's Paragonium, the Mundane route's metal: the balanced middle of the Circle, between the light Luminite and the heavy Ebony
-     * on every stat. The sword hits for 30 (Luminite 28, Ebony 31). No combat effect or innate enchantment yet.
+     * Circle 2's Paragon, the Mundane route's metal: the strongest ordinary set of the Circle (Celestial < Infernal < Mundana), above Ebony
+     * and Luminite. The sword hits for 32 (Luminite 28, Ebony 31, Dark Coven from 36). Its edge over Ebony is raw durability and damage;
+     * the combat abilities live in {@code event.ParagonCombatHandler}.
      */
     public static final Tier PARAGON = new Tier() {
         @Override
         public int getUses() {
-            return 9000; // between Luminite's 8000 and Ebony's 10000
+            return 11000; // above Ebony's 10000
         }
 
         @Override
         public float getSpeed() {
-            return 11.5F; // between Ebony's 11 and Luminite's 12
+            return 11.5F; // balanced: between Ebony's 11 and Luminite's 12
         }
 
         @Override
         public float getAttackDamageBonus() {
-            return 26.0F; // the sword hits for 30
+            return 28.0F; // the sword hits for 32
         }
 
         @Override
@@ -286,7 +287,7 @@ public final class ModTiers {
 
         @Override
         public Ingredient getRepairIngredient() {
-            return Ingredient.of(ModItems.PARAGONIUM_INGOT.get());
+            return Ingredient.of(ModItems.PARAGON_INGOT.get());
         }
     };
 

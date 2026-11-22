@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "merlins_inferno:ebony_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "merlins_inferno:ebony_bar"
+  }
+}

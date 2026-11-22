@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "merlins_inferno:raw_paragon_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "merlins_inferno:raw_paragon"
+  }
+}

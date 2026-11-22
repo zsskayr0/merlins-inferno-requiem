@@ -625,6 +625,24 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
             }
         }
         if (melted) level.playSound(null, worldPosition, SoundEvents.LAVA_POP, SoundSource.BLOCKS, 0.6F, 0.9F);
+        // Encapsulate one bucket at a time, using the same ingredients as the crafting recipes.
+        if (fuel != null && level.getGameTime() % 20 == 0
+                && items.get(DROSS_SLOT).is(ModItems.BINDING_CRYSTAL.get())
+                && extractableFuel() >= 1000 * fuel.perMb()) {
+            ItemStack essence = items.get(SCRAP_SLOT);
+            ItemStack crystal = ItemStack.EMPTY;
+            if (fuel.fluid().equals("minecraft:lava") && essence.is(ModItems.MUNDANE_ESSENCE.get()))
+                crystal = new ItemStack(ModItems.LAVA_CRYSTAL.get());
+            else if (fuel.fluid().equals("merlins_inferno:soul_lava") && essence.is(ModItems.INFERNAL_ESSENCE.get()))
+                crystal = new ItemStack(ModItems.SOUL_LAVA_CRYSTAL.get());
+            if (!crystal.isEmpty() && fits(outputSlot(0), crystal)) {
+                fuelAmount -= 1000 * fuel.perMb();
+                items.get(DROSS_SLOT).shrink(1);
+                essence.shrink(1);
+                addResult(outputSlot(0), crystal);
+                setChanged();
+            }
+        }
         // An empty bucket in the output is filled from what lies above the reserve.
         ItemStack out = items.get(outputSlot(0));
         if (out.is(Items.BUCKET) && out.getCount() == 1 && fuel != null && !fuel.fluid().isEmpty() && extractableFuel() >= 1000 * fuel.perMb()) {
@@ -844,8 +862,12 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
      * a blockstate when it actually flips.
      */
     private static void setActive(Level level, BlockPos pos, BlockState state, @Nullable HellForgeStructure.Core core, boolean active, boolean soul) {
-        if (state.getValue(HellForgeControllerBlock.ACTIVE) != active || state.getValue(HellForgeControllerBlock.SOUL) != soul) {
-            level.setBlock(pos, state.setValue(HellForgeControllerBlock.ACTIVE, active).setValue(HellForgeControllerBlock.SOUL, soul), 3);
+        boolean ymir = active && level.getBlockEntity(pos) instanceof HellForgeBlockEntity forge
+                && forge.fuel() != null && forge.fuel().fluid().equals("merlins_inferno:ymirs_blood");
+        if (state.getValue(HellForgeControllerBlock.ACTIVE) != active || state.getValue(HellForgeControllerBlock.SOUL) != soul
+                || state.getValue(HellForgeControllerBlock.YMIR) != ymir) {
+            level.setBlock(pos, state.setValue(HellForgeControllerBlock.ACTIVE, active)
+                    .setValue(HellForgeControllerBlock.SOUL, soul).setValue(HellForgeControllerBlock.YMIR, ymir), 3);
         }
         setCoreActive(level, core, active, soul);
     }
@@ -988,7 +1010,12 @@ public class HellForgeBlockEntity extends BaseContainerBlockEntity implements Wo
     @Override public boolean canPlaceItem(int slot, ItemStack stack) {
         if (level == null) return false;
         if (slot == FUEL_SLOT) return thermalCore().accepts(ForgeThermalData.fuel(level, stack)) || ForgeThermalData.chill(level, stack) > 0;
-        if (slot == DROSS_SLOT) return !magmatic && thermalCore().consumesDross() && stack.is(ModItems.DUSK_DROSS.get());
+        if (slot == DROSS_SLOT) return magmatic ? stack.is(ModItems.BINDING_CRYSTAL.get())
+                : thermalCore().consumesDross() && stack.is(ModItems.DUSK_DROSS.get());
+        if (slot == SCRAP_SLOT) {
+            ItemStack required = fuelAmount > 0 ? ForgeThermalData.crystalEssence(fuel()) : ItemStack.EMPTY;
+            return magmatic && !required.isEmpty() && stack.is(required.getItem());
+        }
         if (magmatic && slot == outputSlot(0)) return stack.is(Items.BUCKET);
         for (int lane = 0; lane < processingSlots; lane++)
             if (slot == inputSlot(lane)) return magmatic ? ForgeThermalData.melting(level, stack) != null

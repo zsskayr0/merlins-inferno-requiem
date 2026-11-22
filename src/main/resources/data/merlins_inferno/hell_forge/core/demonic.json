@@ -12,6 +12,7 @@
   "allowed_fuels": [
     "minecraft:coal",
     "minecraft:lava_bucket",
-    "merlins_inferno:soul_lava_bucket"
+    "merlins_inferno:soul_lava_bucket",
+    "merlins_inferno:ymirs_blood_bucket"
   ]
 }

@@ -609,14 +609,17 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> LUMINITE_BLOCK = BLOCKS.registerBlock("luminite_block",
             Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK).lightLevel(state -> 12).pushReaction(PushReaction.BLOCK));
 
-    // --- Paragonium: Circle 2's Mundane route metal. Its ore belongs to the Mundane dimension (not built yet), so it does not generate;
+    // --- Paragon: Circle 2's Mundane route metal. Its ore belongs to the Mundane dimension (not built yet), so it does not generate;
     // the ingot is not craftable either (it will come from trades, like Seraphium). Ore and raw block take a diamond pickaxe. ---
-    public static final DeferredBlock<DropExperienceBlock> PARAGONIUM_ORE = BLOCKS.registerBlock("paragonium_ore",
+    public static final DeferredBlock<DropExperienceBlock> PARAGON_ORE = BLOCKS.registerBlock("paragon_ore",
             props -> new DropExperienceBlock(UniformInt.of(3, 7), props),
             BlockBehaviour.Properties.ofFullCopy(Blocks.DIAMOND_ORE).strength(5.0F, 9.0F));
-    public static final DeferredBlock<Block> RAW_PARAGONIUM_BLOCK = BLOCKS.registerBlock("raw_paragonium_block", Block::new,
+    public static final DeferredBlock<DropExperienceBlock> DEEPSLATE_PARAGON_ORE = BLOCKS.registerBlock("deepslate_paragon_ore",
+            props -> new DropExperienceBlock(UniformInt.of(3, 7), props),
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_DIAMOND_ORE).strength(6.0F, 9.0F));
+    public static final DeferredBlock<Block> RAW_PARAGON_BLOCK = BLOCKS.registerBlock("raw_paragon_block", Block::new,
             BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.METAL).strength(6.0F, 9.0F));
-    public static final DeferredBlock<Block> PARAGONIUM_BLOCK = BLOCKS.registerBlock("paragonium_block", Block::new,
+    public static final DeferredBlock<Block> PARAGON_BLOCK = BLOCKS.registerBlock("paragon_block", Block::new,
             BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERITE_BLOCK).mapColor(MapColor.METAL));
 
     // --- Meteorite: the black, star-flecked rock of fallen meteors. Raw Meteorite is nearly as hard as obsidian (a diamond pickaxe
@@ -639,6 +642,19 @@ public final class ModBlocks {
             SlabBlock::new, meteoriteProperties().strength(3.5F, 12.0F));
     public static final DeferredBlock<WallBlock> METEORITE_BRICKS_WALL = BLOCKS.registerBlock("meteorite_bricks_wall",
             WallBlock::new, meteoriteProperties().strength(3.5F, 12.0F).forceSolidOn());
+
+    // Block of Ebony: nine Ebony Bars. Fireproof like the bar, as hard as a Netherite block.
+    public static final DeferredBlock<Block> EBONY_BLOCK = BLOCKS.registerBlock("ebony_block",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERITE_BLOCK));
+
+    public static final DeferredBlock<Block> DEMONBLOOD_BLOCK = BLOCKS.registerBlock("demonblood_block",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERITE_BLOCK));
+
+    public static final DeferredBlock<Block> SERAPHIUM_BLOCK = BLOCKS.registerBlock("seraphium_block",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DIAMOND_BLOCK));
+
+    public static final DeferredBlock<Block> ELDREN_BLOCK = BLOCKS.registerBlock("eldren_block",
+            Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
 
     // --- Ebony Debris: Circle 2's answer to Ancient Debris, found in Oblivion. Drops Ebony Scrap (Silk Touch keeps the block). ---
     public static final DeferredBlock<Block> EBONY_DEBRIS = BLOCKS.registerBlock("ebony_debris",
@@ -914,6 +930,12 @@ public final class ModBlocks {
             BlockBehaviour.Properties.ofFullCopy(Blocks.MAGMA_BLOCK).mapColor(MapColor.COLOR_CYAN));
 
     public static void register(IEventBus modEventBus) {
+        // The Paragon material was named Paragonium until v0.0.26-alpha: keep the blocks already placed in players' worlds.
+        for (String id : new String[]{"ore", "block"}) {
+            BLOCKS.addAlias(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "paragonium_" + id),
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "paragon_" + id));
+        }
+        BLOCKS.addAlias(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "raw_paragonium_block"), RAW_PARAGON_BLOCK.getId());
         BLOCKS.register(modEventBus);
     }
 }

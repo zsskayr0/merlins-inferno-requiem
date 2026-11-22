@@ -27,8 +27,9 @@ import dev.zsskayr.merlins_inferno.registry.ModTags;
  * double-count a demon or an undead that also happens to be a {@link Monster}).
  */
 public final class HolyCombatHandler {
-    private static final float BASE_BONUS = 1.0F;
-    private static final float BONUS_PER_LEVEL_ABOVE_FIRST = 0.5F;
+    /** Fractions of the blow: +5%, and +2.5% per level above the first. */
+    private static final float BASE_BONUS = 0.05F;
+    private static final float BONUS_PER_LEVEL_ABOVE_FIRST = 0.025F;
 
     @SubscribeEvent
     public void onIncomingDamage(LivingIncomingDamageEvent event) {
@@ -47,7 +48,7 @@ public final class HolyCombatHandler {
         ItemStack weapon = attacker.getMainHandItem();
         int level = ModEnchantments.getHolyLevel(attacker.level(), weapon);
         if (level > 0) {
-            event.setAmount(event.getAmount() + BASE_BONUS + BONUS_PER_LEVEL_ABOVE_FIRST * (level - 1));
+            event.setAmount(event.getAmount() * (1.0F + BASE_BONUS + BONUS_PER_LEVEL_ABOVE_FIRST * (level - 1)));
         }
     }
 }

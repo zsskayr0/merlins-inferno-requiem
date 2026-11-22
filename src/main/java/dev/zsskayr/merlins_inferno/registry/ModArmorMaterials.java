@@ -110,7 +110,7 @@ public final class ModArmorMaterials {
             () -> Ingredient.of(ModItems.EBONY_BAR.get()),
             List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "ebony"))),
             6.0F, // toughness, Luminite's: both sit at the 20 the attribute allows over four pieces
-            0.2F  // knockback resistance, double Luminite's: heavy and rooted
+            0.25F // knockback resistance, 1.0 over the four pieces (full immunity): heavy and rooted
     ));
 
     /**
@@ -135,23 +135,24 @@ public final class ModArmorMaterials {
     ));
 
     /**
-     * Paragonium, Circle 2's Mundane route armor: Luminite's defense (the attribute cap makes more useless), knockback resistance and durability
-     * (multiplier 170, in {@link ModItems}) between Luminite and Ebony. No set bonus yet. Worn-armor textures: {@code textures/models/armor/paragon_layer_*.png}.
+     * Paragon, Circle 2's Mundane route armor, the strongest of the Circle: Ebony's defense (the attribute cap makes more useless), less knockback
+     * resistance (0.8 over the set, Ebony has the full 1.0) and more durability (multiplier 190, in {@link ModItems}) than Ebony. Set bonus in {@code event.ParagonCombatHandler}.
+     * Worn-armor textures: {@code textures/models/armor/paragon_layer_*.png}.
      */
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> PARAGON = ARMOR_MATERIALS.register("paragon", () -> new ArmorMaterial(
             Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-                map.put(ArmorItem.Type.BOOTS, 6);
-                map.put(ArmorItem.Type.LEGGINGS, 9);
-                map.put(ArmorItem.Type.CHESTPLATE, 12);
-                map.put(ArmorItem.Type.HELMET, 7);
-                map.put(ArmorItem.Type.BODY, 10);
+                map.put(ArmorItem.Type.BOOTS, 7);
+                map.put(ArmorItem.Type.LEGGINGS, 10);
+                map.put(ArmorItem.Type.CHESTPLATE, 13);
+                map.put(ArmorItem.Type.HELMET, 8);
+                map.put(ArmorItem.Type.BODY, 11);
             }),
             25,
             SoundEvents.ARMOR_EQUIP_NETHERITE,
-            () -> Ingredient.of(ModItems.PARAGONIUM_INGOT.get()),
+            () -> Ingredient.of(ModItems.PARAGON_INGOT.get()),
             List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "paragon"))),
             6.0F,
-            0.15F
+            0.2F
     ));
 
     private ModArmorMaterials() {

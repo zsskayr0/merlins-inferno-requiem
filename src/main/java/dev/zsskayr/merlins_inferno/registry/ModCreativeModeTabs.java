@@ -82,11 +82,15 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.ROWANWOOD_LOG_ITEM.get());
                         output.accept(ModItems.ROWANWOOD_LEAVES_ITEM.get());
                         output.accept(ModItems.ELDREN_INGOT.get());
+                        output.accept(ModItems.ELDREN_BLOCK_ITEM.get());
                         output.accept(ModItems.ELDREN_SCRAP.get());
                         output.accept(ModItems.MUNDANE_ESSENCE.get());
                         output.accept(ModItems.FAE_ESSENCE.get());
                         output.accept(ModItems.DAEDRIC_ESSENCE.get());
                         output.accept(ModItems.CELESTIAL_ESSENCE.get());
+                        output.accept(ModItems.SOUL_OF_DISSENT.get());
+                        output.accept(ModItems.SOUL_OF_RADIANCE.get());
+                        output.accept(ModItems.SOUL_OF_BECOMING.get());
                         output.accept(ModItems.TRANSMOG_RUNE.get());
                         output.accept(ModItems.ANTIDOTE.get());
                         output.accept(ModItems.WARDING_ELIXIR.get());
@@ -109,6 +113,9 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.DEVIL_FLESH.get());
                         output.accept(ModItems.MONSTER_LEATHER.get());
                         output.accept(ModItems.WITHERED_BONE.get());
+                        output.accept(ModItems.YMIRS_BLOOD_CRYSTAL.get());
+                        output.accept(ModFluids.YMIRS_BLOOD_BUCKET.get());
+                        output.accept(ModItems.BINDING_CRYSTAL.get());
                         output.accept(ModItems.LAVA_CRYSTAL.get());
                         output.accept(ModItems.SOUL_LAVA_CRYSTAL.get());
                         output.accept(ModItems.LAVA_SHARD.get());
@@ -117,6 +124,7 @@ public final class ModCreativeModeTabs {
                         output.accept(dev.zsskayr.merlins_inferno.registry.ModFluids.SOUL_LAVA_BUCKET.get());
                         output.accept(ModItems.DEMONBLOOD_SCRAP.get());
                         output.accept(ModItems.DEMONBLOOD_BAR.get());
+                        output.accept(ModItems.DEMONBLOOD_BLOCK_ITEM.get());
                         output.accept(ModItems.DEMONBLOOD_SWORD.get());
                         output.accept(ModItems.DEMONBLOOD_AXE.get());
                         output.accept(ModItems.DEMONBLOOD_PICKAXE.get());
@@ -325,6 +333,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.ANGELIC_ESSENCE.get());
                         output.accept(ModItems.SERAPHIUM_SCRAP.get());
                         output.accept(ModItems.SERAPHIUM_BAR.get());
+                        output.accept(ModItems.SERAPHIUM_BLOCK_ITEM.get());
                         output.accept(ModItems.SERAPHIUM_SWORD.get());
                         output.accept(ModItems.SERAPHIUM_AXE.get());
                         output.accept(ModItems.SERAPHIUM_PICKAXE.get());
@@ -361,12 +370,15 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.LUMINITE_BOOTS.get());
                         output.accept(ModItems.STAR_SEEKER.get());
 
-                        // Circle 2: Paragonium
-                        output.accept(ModItems.PARAGONIUM_ORE_ITEM.get());
-                        output.accept(ModItems.RAW_PARAGONIUM_BLOCK_ITEM.get());
-                        output.accept(ModItems.PARAGONIUM_BLOCK_ITEM.get());
-                        output.accept(ModItems.RAW_PARAGONIUM.get());
-                        output.accept(ModItems.PARAGONIUM_INGOT.get());
+                        // Circle 2: Paragon
+                        output.accept(ModItems.PARAGON_ORE_ITEM.get());
+                        output.accept(ModItems.DEEPSLATE_PARAGON_ORE_ITEM.get());
+                        output.accept(ModItems.RAW_PARAGON_BLOCK_ITEM.get());
+                        output.accept(ModItems.PARAGON_BLOCK_ITEM.get());
+                        output.accept(ModItems.RAW_PARAGON.get());
+                        output.accept(ModItems.PARAGON_SCRAP.get());
+                        output.accept(ModItems.PARAGON_NUGGET.get());
+                        output.accept(ModItems.PARAGON_INGOT.get());
                         output.accept(ModItems.PARAGON_SWORD.get());
                         output.accept(ModItems.PARAGON_AXE.get());
                         output.accept(ModItems.PARAGON_SHOVEL.get());
@@ -382,6 +394,7 @@ public final class ModCreativeModeTabs {
                         output.accept(ModItems.EBONY_DEBRIS_ITEM.get());
                         output.accept(ModItems.EBONY_SCRAP.get());
                         output.accept(ModItems.EBONY_BAR.get());
+                        output.accept(ModItems.EBONY_BLOCK_ITEM.get());
                         output.accept(ModItems.EBONY_SWORD.get());
                         output.accept(ModItems.EBONY_AXE.get());
                         output.accept(ModItems.EBONY_SHOVEL.get());

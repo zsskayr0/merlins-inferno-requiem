@@ -59,6 +59,26 @@ public final class ModFluids {
     public static final DeferredItem<BucketItem> SOUL_LAVA_BUCKET = ModItems.ITEMS.register("soul_lava_bucket",
             () -> new BucketItem(SOUL_LAVA.get(), new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
 
+    public static final DeferredHolder<FluidType, FluidType> YMIRS_BLOOD_TYPE = FLUID_TYPES.register("ymirs_blood", () -> new FluidType(
+            FluidType.Properties.create().descriptionId("block.merlins_inferno.ymirs_blood")
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
+                    .density(1800).viscosity(5000).temperature(300)));
+    public static final DeferredHolder<Fluid, FlowingFluid> YMIRS_BLOOD = FLUIDS.register("ymirs_blood",
+            () -> new BaseFlowingFluid.Source(ymirProperties()));
+    public static final DeferredHolder<Fluid, FlowingFluid> FLOWING_YMIRS_BLOOD = FLUIDS.register("flowing_ymirs_blood",
+            () -> new BaseFlowingFluid.Flowing(ymirProperties()));
+    public static final DeferredBlock<LiquidBlock> YMIRS_BLOOD_BLOCK = ModBlocks.BLOCKS.register("ymirs_blood",
+            () -> new LiquidBlock(YMIRS_BLOOD.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER)));
+    public static final DeferredItem<BucketItem> YMIRS_BLOOD_BUCKET = ModItems.ITEMS.register("ymirs_blood_bucket",
+            () -> new BucketItem(YMIRS_BLOOD.get(), new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
+
+    private static BaseFlowingFluid.Properties ymirProperties() {
+        return new BaseFlowingFluid.Properties(YMIRS_BLOOD_TYPE, YMIRS_BLOOD, FLOWING_YMIRS_BLOOD)
+                .block(YMIRS_BLOOD_BLOCK).bucket(YMIRS_BLOOD_BUCKET)
+                .slopeFindDistance(2).levelDecreasePerBlock(2).tickRate(25).explosionResistance(100F);
+    }
+
     private static BaseFlowingFluid.Properties properties() {
         return new BaseFlowingFluid.Properties(SOUL_LAVA_TYPE, SOUL_LAVA, FLOWING_SOUL_LAVA)
                 .block(SOUL_LAVA_BLOCK).bucket(SOUL_LAVA_BUCKET)

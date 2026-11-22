@@ -185,6 +185,15 @@ public final class ForgeThermalData extends SimpleJsonResourceReloadListener {
     public static Shell shell(Level level, net.minecraft.world.level.block.Block block) {
         return rules(level).shells.getOrDefault(BuiltInRegistries.BLOCK.getKey(block).toString(), shell(level));
     }
+    /** The essence required to encapsulate the active fluid; empty for an empty or unsupported pool. */
+    public static ItemStack crystalEssence(Fuel fuel) {
+        if (fuel == null) return ItemStack.EMPTY;
+        return switch (fuel.fluid()) {
+            case "minecraft:lava" -> new ItemStack(dev.zsskayr.merlins_inferno.registry.ModItems.MUNDANE_ESSENCE.get());
+            case "merlins_inferno:soul_lava" -> new ItemStack(dev.zsskayr.merlins_inferno.registry.ModItems.INFERNAL_ESSENCE.get());
+            default -> ItemStack.EMPTY;
+        };
+    }
     public static List<Fuel> fuels(Level level) { return rules(level).fuels; }
     public static Fuel fuelById(Level level, String id) {
         return fuels(level).stream().filter(f -> f.id.equals(id)).findFirst().orElse(null);

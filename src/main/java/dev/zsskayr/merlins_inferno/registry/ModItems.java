@@ -102,6 +102,7 @@ public final class ModItems {
     // --- Rowanwood material set: see ModTiers.ELDREN / ModArmorMaterials.ELDREN for the
     // balance rationale (mines like Diamond, hits/blocks like Iron, outlasts both). ---
 
+    public static final DeferredItem<BlockItem> ELDREN_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.ELDREN_BLOCK, new Item.Properties());
     public static final DeferredItem<Item> ELDREN_INGOT = ITEMS.registerSimpleItem("eldren_ingot", new Item.Properties());
 
     // How Eldren Ingot is actually obtained: either essence, surrounded by log/leaves/iron in the
@@ -163,11 +164,14 @@ public final class ModItems {
     // An eighth of a crystal (125 mB): fine control of a Hellforge's fuel level, and so its heat.
     public static final DeferredItem<Item> LAVA_SHARD = ITEMS.registerSimpleItem("lava_shard", new Item.Properties().fireResistant());
     public static final DeferredItem<Item> SOUL_LAVA_SHARD = ITEMS.registerSimpleItem("soul_lava_shard", new Item.Properties().fireResistant());
+    public static final DeferredItem<Item> YMIRS_BLOOD_CRYSTAL = ITEMS.registerSimpleItem("ymirs_blood_crystal", new Item.Properties().fireResistant().stacksTo(64));
+    public static final DeferredItem<Item> BINDING_CRYSTAL = ITEMS.registerSimpleItem("binding_crystal", new Item.Properties().stacksTo(64));
     public static final DeferredItem<Item> LAVA_CRYSTAL = ITEMS.registerSimpleItem("lava_crystal", new Item.Properties().fireResistant().stacksTo(16));
     public static final DeferredItem<Item> WITHERED_BONE = ITEMS.registerSimpleItem("withered_bone", new Item.Properties().fireResistant());
     public static final DeferredItem<Item> DEMONBLOOD_SCRAP = ITEMS.registerSimpleItem("demonblood_scrap", new Item.Properties().fireResistant());
 
     // Plain crafting material - no in-world use yet beyond crafting the tools below.
+    public static final DeferredItem<BlockItem> DEMONBLOOD_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DEMONBLOOD_BLOCK, new Item.Properties().fireResistant());
     public static final DeferredItem<Item> DEMONBLOOD_BAR = ITEMS.registerSimpleItem("demonblood_bar", new Item.Properties().fireResistant());
 
     public static final DeferredItem<SwordItem> DEMONBLOOD_SWORD = ITEMS.registerItem("demonblood_sword",
@@ -214,7 +218,7 @@ public final class ModItems {
             props -> new dev.zsskayr.merlins_inferno.item.MaterialBowItem(props.durability(1400).fireResistant(), 1.5D, DEMONBLOOD_BAR));
 
     public static final DeferredItem<ArmorItem> DEMONBLOOD_HELMET = ITEMS.registerItem("demonblood_helmet",
-            props -> new ArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(37)).fireResistant()) {
+            props -> new dev.zsskayr.merlins_inferno.item.DemonbloodArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(37)).fireResistant()) {
                 @Override
                 public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
                     super.appendHoverText(stack, context, tooltip, flag);
@@ -222,7 +226,7 @@ public final class ModItems {
                 }
             });
     public static final DeferredItem<ArmorItem> DEMONBLOOD_CHESTPLATE = ITEMS.registerItem("demonblood_chestplate",
-            props -> new ArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(37)).fireResistant()) {
+            props -> new dev.zsskayr.merlins_inferno.item.DemonbloodArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(37)).fireResistant()) {
                 @Override
                 public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
                     super.appendHoverText(stack, context, tooltip, flag);
@@ -230,7 +234,7 @@ public final class ModItems {
                 }
             });
     public static final DeferredItem<ArmorItem> DEMONBLOOD_LEGGINGS = ITEMS.registerItem("demonblood_leggings",
-            props -> new ArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(37)).fireResistant()) {
+            props -> new dev.zsskayr.merlins_inferno.item.DemonbloodArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(37)).fireResistant()) {
                 @Override
                 public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
                     super.appendHoverText(stack, context, tooltip, flag);
@@ -238,7 +242,7 @@ public final class ModItems {
                 }
             });
     public static final DeferredItem<ArmorItem> DEMONBLOOD_BOOTS = ITEMS.registerItem("demonblood_boots",
-            props -> new ArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(37)).fireResistant()) {
+            props -> new dev.zsskayr.merlins_inferno.item.DemonbloodArmorItem(ModArmorMaterials.DEMONBLOOD, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(37)).fireResistant()) {
                 @Override
                 public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
                     super.appendHoverText(stack, context, tooltip, flag);
@@ -296,10 +300,16 @@ public final class ModItems {
     public static final DeferredItem<Item> CELESTIAL_ESSENCE = ITEMS.registerSimpleItem("celestial_essence", new Item.Properties());
     public static final DeferredItem<Item> DAEDRIC_ESSENCE = ITEMS.registerSimpleItem("daedric_essence", new Item.Properties());
 
+    // Souls are reserved for future progression; no survival sources or uses yet.
+    public static final DeferredItem<Item> SOUL_OF_DISSENT = ITEMS.registerSimpleItem("soul_of_dissent", new Item.Properties());
+    public static final DeferredItem<Item> SOUL_OF_RADIANCE = ITEMS.registerSimpleItem("soul_of_radiance", new Item.Properties());
+    public static final DeferredItem<Item> SOUL_OF_BECOMING = ITEMS.registerSimpleItem("soul_of_becoming", new Item.Properties());
+
     // Mirrors Rowanwood's own 2-stage chain: refined Lyrium + Diamond + Angelic Essence crafts
     // into this Scrap, which then smelts into the actual Bar (see
     // data/merlins_inferno/recipe/seraphium_scrap.json / seraphium_bar_from_smelting.json).
     public static final DeferredItem<Item> SERAPHIUM_SCRAP = ITEMS.registerSimpleItem("seraphium_scrap", new Item.Properties());
+    public static final DeferredItem<BlockItem> SERAPHIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SERAPHIUM_BLOCK, new Item.Properties());
     public static final DeferredItem<Item> SERAPHIUM_BAR = ITEMS.registerSimpleItem("seraphium_bar", new Item.Properties());
 
     public static final DeferredItem<SwordItem> SERAPHIUM_SWORD = ITEMS.registerItem("seraphium_sword",
@@ -356,13 +366,13 @@ public final class ModItems {
     }
 
     public static final DeferredItem<ArmorItem> SERAPHIUM_HELMET = ITEMS.registerItem("seraphium_helmet",
-            props -> new ArmorItem(ModArmorMaterials.SERAPHIUM, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(45))));
+            props -> new dev.zsskayr.merlins_inferno.item.SeraphiumArmorItem(ModArmorMaterials.SERAPHIUM, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(45))));
     public static final DeferredItem<ArmorItem> SERAPHIUM_CHESTPLATE = ITEMS.registerItem("seraphium_chestplate",
-            props -> new ArmorItem(ModArmorMaterials.SERAPHIUM, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(45))));
+            props -> new dev.zsskayr.merlins_inferno.item.SeraphiumArmorItem(ModArmorMaterials.SERAPHIUM, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(45))));
     public static final DeferredItem<ArmorItem> SERAPHIUM_LEGGINGS = ITEMS.registerItem("seraphium_leggings",
-            props -> new ArmorItem(ModArmorMaterials.SERAPHIUM, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(45))));
+            props -> new dev.zsskayr.merlins_inferno.item.SeraphiumArmorItem(ModArmorMaterials.SERAPHIUM, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(45))));
     public static final DeferredItem<ArmorItem> SERAPHIUM_BOOTS = ITEMS.registerItem("seraphium_boots",
-            props -> new ArmorItem(ModArmorMaterials.SERAPHIUM, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(45))));
+            props -> new dev.zsskayr.merlins_inferno.item.SeraphiumArmorItem(ModArmorMaterials.SERAPHIUM, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(45))));
 
     // --- BlockItems for the Hallowed Grove's two trees (see ModBlocks). ---
 
@@ -759,6 +769,7 @@ public final class ModItems {
     // Ebony Debris, rarely from Ancient Debris, and from Oblivion's bosses; the Hell Forge turns it into the bar (one to one).
     // Tools use Withered Bone as the handle, like the other sets; see ModTiers.EBONY / ModArmorMaterials.EBONY. ---
     public static final DeferredItem<Item> EBONY_SCRAP = ITEMS.registerSimpleItem("ebony_scrap", new Item.Properties().fireResistant());
+    public static final DeferredItem<BlockItem> EBONY_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.EBONY_BLOCK, new Item.Properties().fireResistant());
     public static final DeferredItem<Item> EBONY_BAR = ITEMS.registerSimpleItem("ebony_bar", new Item.Properties().fireResistant());
     public static final DeferredItem<BlockItem> BLACK_STEM_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_STEM);
     public static final DeferredItem<BlockItem> BLACK_WART_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_WART_BLOCK);
@@ -794,14 +805,17 @@ public final class ModItems {
     public static final DeferredItem<ArmorItem> EBONY_BOOTS = ITEMS.registerItem("ebony_boots",
             props -> new ArmorItem(ModArmorMaterials.EBONY, ArmorItem.Type.BOOTS, props.fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(180))));
 
-    // --- Circle 2: Paragonium, the Mundane route's metal (see ModBlocks.PARAGONIUM_ORE). The material is "Paragonium", the gear "Paragon".
+    // --- Circle 2: Paragon, the Mundane route's metal (see ModBlocks.PARAGON_ORE). Material and gear share one name: Paragon (the ids were "paragonium_*" up to v0.0.26-alpha).
     // No recipe makes the ingot: it will come from trades, so for now none of this is reachable in survival. Tools only, no armor yet.
-    // Between Luminite and Ebony on every stat: see ModTiers.PARAGON. ---
-    public static final DeferredItem<BlockItem> PARAGONIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PARAGONIUM_ORE);
-    public static final DeferredItem<BlockItem> RAW_PARAGONIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.RAW_PARAGONIUM_BLOCK);
-    public static final DeferredItem<BlockItem> PARAGONIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PARAGONIUM_BLOCK);
-    public static final DeferredItem<Item> RAW_PARAGONIUM = ITEMS.registerSimpleItem("raw_paragonium", new Item.Properties());
-    public static final DeferredItem<Item> PARAGONIUM_INGOT = ITEMS.registerSimpleItem("paragonium_ingot", new Item.Properties());
+    // The strongest ordinary set of the Circle, above Ebony: see ModTiers.PARAGON. ---
+    public static final DeferredItem<BlockItem> PARAGON_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PARAGON_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_PARAGON_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.DEEPSLATE_PARAGON_ORE);
+    public static final DeferredItem<BlockItem> RAW_PARAGON_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.RAW_PARAGON_BLOCK);
+    public static final DeferredItem<BlockItem> PARAGON_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PARAGON_BLOCK);
+    public static final DeferredItem<Item> RAW_PARAGON = ITEMS.registerSimpleItem("raw_paragon", new Item.Properties());
+    public static final DeferredItem<Item> PARAGON_SCRAP = ITEMS.registerSimpleItem("paragon_scrap", new Item.Properties());
+    public static final DeferredItem<Item> PARAGON_NUGGET = ITEMS.registerSimpleItem("paragon_nugget", new Item.Properties());
+    public static final DeferredItem<Item> PARAGON_INGOT = ITEMS.registerSimpleItem("paragon_ingot", new Item.Properties());
 
     public static final DeferredItem<SwordItem> PARAGON_SWORD = ITEMS.registerItem("paragon_sword",
             props -> new SwordItem(ModTiers.PARAGON, props.attributes(SwordItem.createAttributes(ModTiers.PARAGON, 3, -2.4F))));
@@ -814,16 +828,16 @@ public final class ModItems {
     public static final DeferredItem<HoeItem> PARAGON_HOE = ITEMS.registerItem("paragon_hoe",
             props -> new HoeItem(ModTiers.PARAGON, props.attributes(HoeItem.createAttributes(ModTiers.PARAGON, -4.0F, 0.0F))));
     public static final DeferredItem<dev.zsskayr.merlins_inferno.item.MaterialBowItem> PARAGON_BOW = ITEMS.registerItem("paragon_bow",
-            props -> new dev.zsskayr.merlins_inferno.item.MaterialBowItem(props.durability(2300), 2.75D, PARAGONIUM_INGOT));
+            props -> new dev.zsskayr.merlins_inferno.item.MaterialBowItem(props.durability(2600), 3.25D, PARAGON_INGOT));
 
     public static final DeferredItem<ArmorItem> PARAGON_HELMET = ITEMS.registerItem("paragon_helmet",
-            props -> new ArmorItem(ModArmorMaterials.PARAGON, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(170))));
+            props -> new ArmorItem(ModArmorMaterials.PARAGON, ArmorItem.Type.HELMET, props.durability(ArmorItem.Type.HELMET.getDurability(190))));
     public static final DeferredItem<ArmorItem> PARAGON_CHESTPLATE = ITEMS.registerItem("paragon_chestplate",
-            props -> new ArmorItem(ModArmorMaterials.PARAGON, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(170))));
+            props -> new ArmorItem(ModArmorMaterials.PARAGON, ArmorItem.Type.CHESTPLATE, props.durability(ArmorItem.Type.CHESTPLATE.getDurability(190))));
     public static final DeferredItem<ArmorItem> PARAGON_LEGGINGS = ITEMS.registerItem("paragon_leggings",
-            props -> new ArmorItem(ModArmorMaterials.PARAGON, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(170))));
+            props -> new ArmorItem(ModArmorMaterials.PARAGON, ArmorItem.Type.LEGGINGS, props.durability(ArmorItem.Type.LEGGINGS.getDurability(190))));
     public static final DeferredItem<ArmorItem> PARAGON_BOOTS = ITEMS.registerItem("paragon_boots",
-            props -> new ArmorItem(ModArmorMaterials.PARAGON, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(170))));
+            props -> new ArmorItem(ModArmorMaterials.PARAGON, ArmorItem.Type.BOOTS, props.durability(ArmorItem.Type.BOOTS.getDurability(190))));
 
     // The Dark Coven, stages I to VII: see item.DarkCovenItem. The LEGENDARY sword of Circle 2, Infernal route (craftable; later stages by smithing),
     // separate from the ordinary Ebony Sword; the stages are raised at a smithing table.
@@ -925,6 +939,13 @@ public final class ModItems {
             ITEMS.addAlias(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "rowanwood_" + part),
                     net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "eldren_" + part));
         }
+        // The Paragon material was named Paragonium until then: keep the ones already in players' worlds.
+        for (String id : new String[]{"ore", "block", "ingot"}) {
+            ITEMS.addAlias(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "paragonium_" + id),
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "paragon_" + id));
+        }
+        ITEMS.addAlias(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "raw_paragonium"), RAW_PARAGON.getId());
+        ITEMS.addAlias(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "raw_paragonium_block"), RAW_PARAGON_BLOCK_ITEM.getId());
         ITEMS.register(modEventBus);
     }
 }

@@ -5,6 +5,7 @@
       "id": "#c:ores/lyrium",
       "required": false
     },
-    "merlins_inferno:paragonium_ore"
+    "merlins_inferno:paragon_ore",
+    "merlins_inferno:deepslate_paragon_ore"
   ]
 }

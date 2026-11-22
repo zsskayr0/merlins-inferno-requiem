@@ -16,7 +16,7 @@ import dev.zsskayr.merlins_inferno.registry.ModItems;
 import dev.zsskayr.merlins_inferno.registry.ModTags;
 
 /**
- * Paragonium, Circle 2's Mundane route - the plain metal that answers neither magic nor corruption.
+ * Paragon, Circle 2's Mundane route - the plain metal that answers neither magic nor corruption.
  * <ul>
  * <li><b>Hunter</b> (every {@link ModTags.Items#PARAGON_TOOLS} weapon, bow included): {@link #HUNTER_BONUS} more damage against anything
  * supernatural ({@link ModTags.EntityTypes#SUPERNATURAL}), and the touchstone - each consecutive hit on the same target ignores another

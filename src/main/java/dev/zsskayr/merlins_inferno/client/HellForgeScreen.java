@@ -103,6 +103,8 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         return lastFuel;
     }
     private ForgeThermalData.Fuel lastFuel;
+    private int fuelGaugeTop(){return menu.magmatic()?62:38;}
+    private int fuelGaugeHeight(){return menu.magmatic()?172:196;}
     private void drawFuelLiquid(GuiGraphics g,int fill){
         if(fill<=0||minecraft==null||minecraft.level==null)return;
         var fuel=shownFuel();
@@ -113,8 +115,8 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         float time=minecraft.level.getGameTime()+minecraft.getTimer().getGameTimeDeltaPartialTick(false);
         int left=leftPos+323,bottom=topPos+237;
         for(int col=0;col<10;col++){
-            int wave=fill>=196?0:(int)Math.round(1.3*Math.sin(time*0.12+col*0.75)+0.6*Math.sin(time*0.07-col*1.3));
-            int top=Math.max(topPos+40,bottom-Math.min(196,fill+wave));
+            int wave=fill>=fuelGaugeHeight()?0:(int)Math.round(1.3*Math.sin(time*0.12+col*0.75)+0.6*Math.sin(time*0.07-col*1.3));
+            int top=Math.max(topPos+fuelGaugeTop()+2,bottom-Math.min(fuelGaugeHeight(),fill+wave));
             g.enableScissor(left+col,top,left+col+1,bottom);
             for(int ty=bottom-16;ty>top-16;ty-=16)g.blit(left,ty,0,16,16,sprite);
             g.disableScissor();
@@ -122,8 +124,8 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1F,1F,1F,1F);
         // a thin glint along the surface and the gauge's own side shading on top of the liquid
         for(int col=0;col<10;col++){
-            int wave=fill>=196?0:(int)Math.round(1.3*Math.sin(time*0.12+col*0.75)+0.6*Math.sin(time*0.07-col*1.3));
-            int top=Math.max(topPos+40,bottom-Math.min(196,fill+wave));
+            int wave=fill>=fuelGaugeHeight()?0:(int)Math.round(1.3*Math.sin(time*0.12+col*0.75)+0.6*Math.sin(time*0.07-col*1.3));
+            int top=Math.max(topPos+fuelGaugeTop()+2,bottom-Math.min(fuelGaugeHeight(),fill+wave));
             g.fill(left+col,top,left+col+1,top+1,0x60FFFFFF);
         }
         g.fill(left,bottom-fill,left+1,bottom,0x30FFFFFF);g.fill(left+9,bottom-fill,left+10,bottom,0x40000000);
@@ -225,9 +227,11 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         }
         label(g,ForgeClientConfig.temperature(menu.value(9)),63,38,TEXT_DIM);
         label(g,ForgeClientConfig.temperature(menu.value(8)),63,191,TEXT_DIM);
-        String speed=Integer.toString(menu.value(5)),yield=Integer.toString(menu.value(6));
-        label(g,"Speed",136,40,TEXT_DIM);label(g,speed,180-font.width(speed),40,TEXT);
-        label(g,"Yield",136,52,TEXT_DIM);label(g,yield,180-font.width(yield),52,TEXT);
+        if(!menu.magmatic()){
+            String speed=Integer.toString(menu.value(5)),yield=Integer.toString(menu.value(6));
+            label(g,"Speed",136,40,TEXT_DIM);label(g,speed,180-font.width(speed),40,TEXT);
+            label(g,"Yield",136,52,TEXT_DIM);label(g,yield,180-font.width(yield),52,TEXT);
+        }
         well(g,104,186,76,14,0);
         String current=ForgeClientConfig.temperature(menu.value(2));
         shadowLabel(g,current,142-font.width(current)/2,189,HOT,HOT_SHADOW);
@@ -237,7 +241,7 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         vline(g,190,34,292);
         hline(g,36,184,211);
 
-        // Magmatic lanes share the bucket slot in the first row.
+        // Magmatic output sits above the fluid gauge.
         boolean magmatic=menu.magmatic();
         for(int row=0;row<MENU_LANES;row++){
             int lane=menu.firstLane()+row,y=38+row*22;
@@ -249,11 +253,11 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
             String n=Integer.toString(lane+1);
             shadowLabel(g,n,201-font.width(n)/2,y+6,running?HOT:open?TEXT_DIM:0xFF5C4F46,running?HOT_SHADOW:TEXT_SHADOW);
             if(open||stocked)slot(g,207,y+1);
-            boolean showOutput=magmatic?outputStocked||(open&&lane==0):open||stocked;
+            boolean showOutput=!magmatic&&(open||stocked);
             if(showOutput)slot(g,289,y+1);
             if(open){
-                bar(g,228,y+6,44,8,menu.progress(lane));
-                if(!magmatic||lane==0){
+                bar(g,228,y+6,magmatic?78:44,8,menu.progress(lane));
+                if(!magmatic){
                     g.fill(leftPos+275,topPos+y+9,leftPos+280,topPos+y+11,0xFF7A6A5E);
                     for(int k=0;k<4;k++)g.fill(leftPos+280+k,topPos+y+6+k,leftPos+281+k,topPos+y+14-k,0xFF7A6A5E);
                 }
@@ -262,23 +266,31 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         }
         vline(g,310,34,292);
 
-        // Dross and scrap tray, centred under the lanes (a Magmatic forge leaves none).
-        if(!menu.magmatic()){
+        // Magmatic reuses the tray for binding crystals and mundane essence.
+        {
             well(g,213,252,78,40,0);
             slot(g,229,264);slot(g,259,264);
+            if(menu.magmatic()){
+                if(!menu.getSlot(HellForgeBlockEntity.DROSS_SLOT).hasItem())
+                    g.blit(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("merlins_inferno", "textures/gui/hellforge/binding_crystal_hint.png"),leftPos+229,topPos+264,0,0,16,16,16,16);
+                if(!menu.getSlot(HellForgeBlockEntity.SCRAP_SLOT).hasItem())
+                    g.blit(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("merlins_inferno", menu.crystalEssence().is(dev.zsskayr.merlins_inferno.registry.ModItems.INFERNAL_ESSENCE.get()) ? "textures/gui/hellforge/infernal_essence_hint.png" : "textures/gui/hellforge/mundane_essence_hint.png"),leftPos+259,topPos+264,0,0,16,16,16,16);
+            }else{
             ghost(g,1,229,264,HellForgeBlockEntity.DROSS_SLOT);ghost(g,2,259,264,HellForgeBlockEntity.SCRAP_SLOT);
+            }
         }
 
         // Fuel column: tall reserve gauge, the fuel slot beneath it and the dump button last.
-        well(g,321,38,14,200,0);
+        if(magmatic)slot(g,320,39);
+        well(g,321,fuelGaugeTop(),14,fuelGaugeHeight()+4,0);
         // The gauge eases towards the real level like the pool does, so fuel pours in and drains out instead of jumping.
-        int fuelFill=Math.round(196*Math.clamp(guiFill,0F,1F));
+        int fuelFill=Math.round(fuelGaugeHeight()*Math.clamp(guiFill,0F,1F));
         drawFuelLiquid(g,fuelFill);
-        for(int i=20;i<196;i+=20)g.fill(leftPos+323,topPos+236-i,leftPos+333,topPos+237-i,0x55000000);
-        int capY=topPos+236-Math.round(196*menu.fillLimit());
+        for(int i=20;i<fuelGaugeHeight();i+=20)g.fill(leftPos+323,topPos+236-i,leftPos+333,topPos+237-i,0x55000000);
+        int capY=topPos+236-Math.round(fuelGaugeHeight()*menu.fillLimit());
         g.fill(leftPos+320,capY,leftPos+336,capY+1,0xFFFFE2B0);
         g.fill(leftPos+319,capY-1,leftPos+321,capY+2,0xFFFFE2B0);g.fill(leftPos+335,capY-1,leftPos+337,capY+2,0xFFFFE2B0);
-        if(menu.redstoneLevel()>=0){int redY=topPos+236-Math.round(196*menu.effectiveFillLimit());g.fill(leftPos+322,redY,leftPos+334,redY+1,0xFFE04040);}
+        if(menu.redstoneLevel()>=0){int redY=topPos+236-Math.round(fuelGaugeHeight()*menu.effectiveFillLimit());g.fill(leftPos+322,redY,leftPos+334,redY+1,0xFFE04040);}
         slot(g,320,246);ghost(g,0,320,246,HellForgeBlockEntity.FUEL_SLOT);
         nine(g,0,64,16,3,317,273,22,18);
         blit(g,48,192,18,18,319,273);
@@ -435,17 +447,17 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
             if(isHovering(1,109,22,22,x,y)){ForgeClientConfig.cycle();return true;}
             if(isHovering(1,57,22,22,x,y)){action(1);return true;}
             if(isHovering(317,273,22,18,x,y)){action(0);return true;}
-            if(isHovering(321,38,14,200,x,y)){setFillLimit(y);return true;}
+            if(isHovering(321,fuelGaugeTop(),14,fuelGaugeHeight()+4,x,y)){setFillLimit(y);return true;}
         }
         return super.mouseClicked(x,y,b);
     }
     /** Clicking or dragging on the fuel gauge sets the fuel cap, and so how hot the fire may burn. */
     private void setFillLimit(double mouseY){
-        double fraction=Math.clamp((topPos+236-mouseY)/196.0,0,1);
+        double fraction=Math.clamp((topPos+236-mouseY)/(double)fuelGaugeHeight(),0,1);
         action(dev.zsskayr.merlins_inferno.menu.HellForgeMenu.FILL_LIMIT+(int)Math.round(fraction*1000));
     }
     @Override public boolean mouseDragged(double x,double y,int b,double dx,double dy) {
-        if(b==0&&isHovering(321,38,14,200,x,y)){setFillLimit(y);return true;}
+        if(b==0&&isHovering(321,fuelGaugeTop(),14,fuelGaugeHeight()+4,x,y)){setFillLimit(y);return true;}
         if(isHovering(60,36,122,148,x,y)){
             if(b==0){rotation+=(float)dx*2;pitch=Math.clamp(pitch+(float)dy*1.5F,-89F,89F);tipHidden=true;return true;}
             if(b==1){panX=Math.clamp(panX+(float)dx,-70F,70F);panY=Math.clamp(panY+(float)dy,-70F,70F);tipHidden=true;return true;}
@@ -460,10 +472,19 @@ public class HellForgeScreen extends AbstractContainerScreen<HellForgeMenu> {
         super.render(g,x,y,pt);
         if(vaultPanel){g.pose().pushPose();g.pose().translate(0,0,400);renderDrawer(g);g.pose().popPose();}
         if(!vaultPanel||!isHovering(drawerX(),28,DRAWER_W,DRAWER_H,x,y))renderTooltip(g,x,y);
+        if(menu.magmatic()&&isHovering(259,264,16,16,x,y)&&!vaultPanelCovers(x,y)){
+            ItemStack required=menu.crystalEssence();
+            List<Component> lines=new ArrayList<>();
+            lines.add(required.isEmpty()?text("essence_needs_fluid"):text("essence_required",required.getHoverName()));
+            ItemStack present=menu.getSlot(HellForgeBlockEntity.SCRAP_SLOT).getItem();
+            if(!present.isEmpty()&&(required.isEmpty()||!present.is(required.getItem())))
+                lines.add(text("essence_wrong").copy().withStyle(net.minecraft.ChatFormatting.RED));
+            g.renderComponentTooltip(font,lines,x,y);
+        }
         if(isHovering(1,57,22,22,x,y))g.renderTooltip(font,Component.literal("Auto Sort: "+(menu.value(12)==1?"ON":"OFF")),x,y);
         if(isHovering(1,83,22,22,x,y))g.renderTooltip(font,Component.literal("Vault Settings"),x,y);
         if(isHovering(1,109,22,22,x,y))g.renderTooltip(font,Component.literal("Temperature Unit"),x,y);
-        if(isHovering(321,38,14,200,x,y)){
+        if(isHovering(321,fuelGaugeTop(),14,fuelGaugeHeight()+4,x,y)){
             List<Component> fuelLines=new ArrayList<>();
             fuelLines.add(Component.literal("Fuel: "+menu.getStoredFuel()+" / "+menu.getFuelCapacity()));
             fuelLines.add(text(menu.magmatic()?"reserve":"fill_limit",Math.round(menu.fillLimit()*100)).copy().withStyle(net.minecraft.ChatFormatting.GOLD));

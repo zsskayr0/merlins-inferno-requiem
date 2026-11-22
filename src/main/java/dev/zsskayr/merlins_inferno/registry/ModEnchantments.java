@@ -24,7 +24,7 @@ public final class ModEnchantments {
     public static final ResourceKey<Enchantment> EVIL = ResourceKey.create(Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "evil"));
     /**
-     * Evil's Angelical mirror - flat, per-level damage bonuses/penalties by target type, same shape as
+     * Evil's Angelical mirror - per-level damage bonuses/penalties (percent of the blow) by target type, same shape as
      * {@code evil.json}/{@code bane_of_humanity.json} (see {@code data/merlins_inferno/enchantment/holy.json}
      * for the actual per-tier numbers; {@code event.HolyCombatHandler} only covers the one tier - a generic
      * bonus against aggressive mobs - that has no tag to hang a vanilla effect off). Deliberately absent from

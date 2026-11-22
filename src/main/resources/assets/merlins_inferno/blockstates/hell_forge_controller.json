@@ -1,63 +1,123 @@
 {
   "variants": {
-    "active=false,facing=north,soul=false": {
+    "active=false,facing=north,soul=false,ymir=false": {
       "model": "merlins_inferno:block/hell_forge_controller"
     },
-    "active=false,facing=north,soul=true": {
+    "active=false,facing=north,soul=false,ymir=true": {
       "model": "merlins_inferno:block/hell_forge_controller"
     },
-    "active=true,facing=north,soul=false": {
+    "active=false,facing=north,soul=true,ymir=false": {
+      "model": "merlins_inferno:block/hell_forge_controller"
+    },
+    "active=false,facing=north,soul=true,ymir=true": {
+      "model": "merlins_inferno:block/hell_forge_controller"
+    },
+    "active=true,facing=north,soul=false,ymir=false": {
       "model": "merlins_inferno:block/hell_forge_controller_active"
     },
-    "active=true,facing=north,soul=true": {
+    "active=true,facing=north,soul=false,ymir=true": {
+      "model": "merlins_inferno:block/hell_forge_controller_active_ymir"
+    },
+    "active=true,facing=north,soul=true,ymir=false": {
       "model": "merlins_inferno:block/hell_forge_controller_active_soul"
     },
-    "active=false,facing=east,soul=false": {
+    "active=true,facing=north,soul=true,ymir=true": {
+      "model": "merlins_inferno:block/hell_forge_controller_active_ymir"
+    },
+    "active=false,facing=east,soul=false,ymir=false": {
       "model": "merlins_inferno:block/hell_forge_controller",
       "y": 90
     },
-    "active=false,facing=east,soul=true": {
+    "active=false,facing=east,soul=false,ymir=true": {
       "model": "merlins_inferno:block/hell_forge_controller",
       "y": 90
     },
-    "active=true,facing=east,soul=false": {
+    "active=false,facing=east,soul=true,ymir=false": {
+      "model": "merlins_inferno:block/hell_forge_controller",
+      "y": 90
+    },
+    "active=false,facing=east,soul=true,ymir=true": {
+      "model": "merlins_inferno:block/hell_forge_controller",
+      "y": 90
+    },
+    "active=true,facing=east,soul=false,ymir=false": {
       "model": "merlins_inferno:block/hell_forge_controller_active",
       "y": 90
     },
-    "active=true,facing=east,soul=true": {
+    "active=true,facing=east,soul=false,ymir=true": {
+      "model": "merlins_inferno:block/hell_forge_controller_active_ymir",
+      "y": 90
+    },
+    "active=true,facing=east,soul=true,ymir=false": {
       "model": "merlins_inferno:block/hell_forge_controller_active_soul",
       "y": 90
     },
-    "active=false,facing=south,soul=false": {
+    "active=true,facing=east,soul=true,ymir=true": {
+      "model": "merlins_inferno:block/hell_forge_controller_active_ymir",
+      "y": 90
+    },
+    "active=false,facing=south,soul=false,ymir=false": {
       "model": "merlins_inferno:block/hell_forge_controller",
       "y": 180
     },
-    "active=false,facing=south,soul=true": {
+    "active=false,facing=south,soul=false,ymir=true": {
       "model": "merlins_inferno:block/hell_forge_controller",
       "y": 180
     },
-    "active=true,facing=south,soul=false": {
+    "active=false,facing=south,soul=true,ymir=false": {
+      "model": "merlins_inferno:block/hell_forge_controller",
+      "y": 180
+    },
+    "active=false,facing=south,soul=true,ymir=true": {
+      "model": "merlins_inferno:block/hell_forge_controller",
+      "y": 180
+    },
+    "active=true,facing=south,soul=false,ymir=false": {
       "model": "merlins_inferno:block/hell_forge_controller_active",
       "y": 180
     },
-    "active=true,facing=south,soul=true": {
+    "active=true,facing=south,soul=false,ymir=true": {
+      "model": "merlins_inferno:block/hell_forge_controller_active_ymir",
+      "y": 180
+    },
+    "active=true,facing=south,soul=true,ymir=false": {
       "model": "merlins_inferno:block/hell_forge_controller_active_soul",
       "y": 180
     },
-    "active=false,facing=west,soul=false": {
+    "active=true,facing=south,soul=true,ymir=true": {
+      "model": "merlins_inferno:block/hell_forge_controller_active_ymir",
+      "y": 180
+    },
+    "active=false,facing=west,soul=false,ymir=false": {
       "model": "merlins_inferno:block/hell_forge_controller",
       "y": 270
     },
-    "active=false,facing=west,soul=true": {
+    "active=false,facing=west,soul=false,ymir=true": {
       "model": "merlins_inferno:block/hell_forge_controller",
       "y": 270
     },
-    "active=true,facing=west,soul=false": {
+    "active=false,facing=west,soul=true,ymir=false": {
+      "model": "merlins_inferno:block/hell_forge_controller",
+      "y": 270
+    },
+    "active=false,facing=west,soul=true,ymir=true": {
+      "model": "merlins_inferno:block/hell_forge_controller",
+      "y": 270
+    },
+    "active=true,facing=west,soul=false,ymir=false": {
       "model": "merlins_inferno:block/hell_forge_controller_active",
       "y": 270
     },
-    "active=true,facing=west,soul=true": {
+    "active=true,facing=west,soul=false,ymir=true": {
+      "model": "merlins_inferno:block/hell_forge_controller_active_ymir",
+      "y": 270
+    },
+    "active=true,facing=west,soul=true,ymir=false": {
       "model": "merlins_inferno:block/hell_forge_controller_active_soul",
+      "y": 270
+    },
+    "active=true,facing=west,soul=true,ymir=true": {
+      "model": "merlins_inferno:block/hell_forge_controller_active_ymir",
       "y": 270
     }
   }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "merlins_inferno:blocks/raw_paragon_block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "merlins_inferno:raw_paragon_block"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

@@ -10,7 +10,8 @@
   "cooling_rate": 0.002,
   "operation": "heating",
   "allowed_fuels": [
-    "merlins_inferno:soul_lava_bucket"
+    "merlins_inferno:soul_lava_bucket",
+    "merlins_inferno:ymirs_blood_bucket"
   ],
   "speed_bonus": 0.5,
   "yield_bonus": 0.15,

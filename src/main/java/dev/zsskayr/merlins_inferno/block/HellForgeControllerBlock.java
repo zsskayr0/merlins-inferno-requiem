@@ -42,11 +42,12 @@ public class HellForgeControllerBlock extends HorizontalDirectionalBlock impleme
     /** True while the forge is cooking: switches the front face to its animated texture. */
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     /** Burning a soul fuel: the glow turns blue. */
+    public static final BooleanProperty YMIR = BooleanProperty.create("ymir");
     public static final BooleanProperty SOUL = BooleanProperty.create("soul");
 
     public HellForgeControllerBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false).setValue(SOUL, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false).setValue(SOUL, false).setValue(YMIR, false));
     }
 
     @Override
@@ -56,7 +57,7 @@ public class HellForgeControllerBlock extends HorizontalDirectionalBlock impleme
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, ACTIVE, SOUL);
+        builder.add(FACING, ACTIVE, SOUL, YMIR);
     }
 
     @Nullable

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "merlins_inferno:seraphium_block",
     "merlins_inferno:smooth_meteorite",
     "merlins_inferno:meteorite_bricks",
     "merlins_inferno:arganite_bricks",

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "merlins_inferno:eldren_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "merlins_inferno:eldren_ingot"
+  }
+}

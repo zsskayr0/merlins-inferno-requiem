@@ -103,8 +103,13 @@
     "merlins_inferno:blighted_hellforge_controller",
     "merlins_inferno:magmatic_core",
     "merlins_inferno:blighted_hell_forge_vault",
-    "merlins_inferno:paragonium_ore",
-    "merlins_inferno:paragonium_block",
-    "merlins_inferno:raw_paragonium_block"
+    "merlins_inferno:paragon_ore",
+    "merlins_inferno:deepslate_paragon_ore",
+    "merlins_inferno:paragon_block",
+    "merlins_inferno:ebony_block",
+    "merlins_inferno:eldren_block",
+    "merlins_inferno:seraphium_block",
+    "merlins_inferno:demonblood_block",
+    "merlins_inferno:raw_paragon_block"
   ]
 }

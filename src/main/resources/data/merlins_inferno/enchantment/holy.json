@@ -7,11 +7,11 @@
     "minecraft:damage": [
       {
         "effect": {
-          "type": "minecraft:add",
-          "value": {
+          "type": "minecraft:multiply",
+          "factor": {
             "type": "minecraft:linear",
-            "base": 3.0,
-            "per_level_above_first": 1.5
+            "base": 1.15,
+            "per_level_above_first": 0.075
           }
         },
         "requirements": {
@@ -24,11 +24,11 @@
       },
       {
         "effect": {
-          "type": "minecraft:add",
-          "value": {
+          "type": "minecraft:multiply",
+          "factor": {
             "type": "minecraft:linear",
-            "base": 2.0,
-            "per_level_above_first": 1.0
+            "base": 1.1,
+            "per_level_above_first": 0.05
           }
         },
         "requirements": {
@@ -41,10 +41,10 @@
       },
       {
         "effect": {
-          "type": "minecraft:add",
-          "value": {
+          "type": "minecraft:multiply",
+          "factor": {
             "type": "minecraft:linear",
-            "base": -1.0,
+            "base": 0.95,
             "per_level_above_first": 0.0
           }
         },
@@ -58,10 +58,10 @@
       },
       {
         "effect": {
-          "type": "minecraft:add",
-          "value": {
+          "type": "minecraft:multiply",
+          "factor": {
             "type": "minecraft:linear",
-            "base": -2.0,
+            "base": 0.9,
             "per_level_above_first": 0.0
           }
         },

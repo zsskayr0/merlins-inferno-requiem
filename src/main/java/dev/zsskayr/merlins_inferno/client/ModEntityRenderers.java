@@ -92,6 +92,14 @@ public final class ModEntityRenderers {
         }, ModItems.PANDORA_BOX.get());
         event.registerItem(ZaeldrisPose.INSTANCE, ModItems.ZAELDRIS.get());
         event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "block/ymirs_blood_still");
+            }
+            @Override public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "block/ymirs_blood_flow");
+            }
+        }, dev.zsskayr.merlins_inferno.registry.ModFluids.YMIRS_BLOOD_TYPE.get());
+        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
             private final net.minecraft.resources.ResourceLocation still =
                     net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Merlins_inferno.MODID, "block/soul_lava_still");
             private final net.minecraft.resources.ResourceLocation flowing =
